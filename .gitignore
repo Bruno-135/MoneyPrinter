@@ -18,3 +18,6 @@ main.py-oauth2.json
 Backend/output*
 Songs/
 venv/
+# Prospecção Comercial (Prospector/)
+prospector.db
+*.sqlite3

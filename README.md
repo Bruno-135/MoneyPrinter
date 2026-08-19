@@ -33,6 +33,7 @@ Docs are centralized in [`docs/`](docs/README.md):
 - [Docker](docs/docker.md)
 - [Testing](docs/testing.md)
 - [Troubleshooting](docs/troubleshooting.md)
+- [Prospecção Comercial](docs/prospector.md) — standalone commercial prospecting web app in [`Prospector/`](Prospector/)
 
 ## FAQ 🤔
 

@@ -12,6 +12,10 @@ This folder is the single source of truth for setup, configuration, and troubles
 - [Testing](testing.md)
 - [Troubleshooting](troubleshooting.md)
 
+## Other Apps In This Repo
+
+- [Prospecção Comercial](prospector.md) — standalone commercial prospecting web app (`Prospector/`)
+
 ## Recommended Reading Order
 
 1. Quickstart

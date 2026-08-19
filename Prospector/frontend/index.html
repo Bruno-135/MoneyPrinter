@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Prospecção Comercial</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- ===== Login ===== -->
+    <div id="loginView" class="login-view">
+      <form id="loginForm" class="login-card">
+        <h1>Prospecção Comercial</h1>
+        <p class="subtitle">Entre com o seu utilizador e password.</p>
+
+        <div class="field">
+          <label for="username">Utilizador</label>
+          <input id="username" type="text" autocomplete="username" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password" required />
+        </div>
+
+        <button id="loginButton" type="submit" class="btn block">Entrar</button>
+        <div id="loginError" class="error-text"></div>
+      </form>
+    </div>
+
+    <!-- ===== Aplicação ===== -->
+    <div id="appView" class="hidden">
+      <header class="topbar">
+        <div class="brand">🎯 Prospecção <span>Comercial</span></div>
+        <div class="topbar-right">
+          <span id="currentUser"></span>
+          <button id="logoutButton" class="btn secondary small">Sair</button>
+        </div>
+      </header>
+
+      <nav class="tabs">
+        <button class="tab active" data-tab="painel">Painel</button>
+        <button class="tab" data-tab="busca">Busca de contactos</button>
+        <button class="tab" data-tab="leads">Leads</button>
+      </nav>
+
+      <main>
+        <!-- ---- Painel ---- -->
+        <section id="tab-painel" class="tab-panel">
+          <div class="card">
+            <h2>Painel</h2>
+            <p class="hint">Distribuição dos leads por estado.</p>
+            <div id="statusStats" class="stats"></div>
+          </div>
+
+          <div class="card">
+            <h2>Prioridade</h2>
+            <p class="hint">
+              Alvos com presença digital fraca — os que mais precisam do que
+              vende.
+            </p>
+            <div id="priorityStats" class="stats"></div>
+          </div>
+        </section>
+
+        <!-- ---- Busca ---- -->
+        <section id="tab-busca" class="tab-panel hidden">
+          <div class="card">
+            <h2>Busca de contactos</h2>
+            <p class="hint">
+              Fonte: Google Places API. Cada resultado fica gravado na base de
+              leads, sem duplicados.
+            </p>
+
+            <form id="searchForm">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="segment">Segmento</label>
+                  <input
+                    id="segment"
+                    type="text"
+                    placeholder="restaurantes, clínicas de estética, médicos"
+                    required
+                  />
+                </div>
+                <div class="field">
+                  <label for="region">Região</label>
+                  <input
+                    id="region"
+                    type="text"
+                    placeholder="Vila Nova de Gaia, Carvalhos"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="entityFilter">Tipo de contacto</label>
+                  <select id="entityFilter">
+                    <option value="ambos">Pessoa jurídica e pessoa física</option>
+                    <option value="pj">Apenas pessoa jurídica</option>
+                    <option value="pf">Apenas pessoa física</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="maxResults">Máximo de resultados</label>
+                  <input id="maxResults" type="number" min="10" max="120" step="10" value="60" />
+                </div>
+              </div>
+
+              <label class="check">
+                <input id="weakOnly" type="checkbox" checked />
+                <span>
+                  Apenas presença digital fraca
+                  <small>Sem site, poucas avaliações ou perfil incompleto.</small>
+                </span>
+              </label>
+
+              <label class="check">
+                <input id="findEmails" type="checkbox" />
+                <span>
+                  Procurar email no site do próprio negócio
+                  <small>
+                    Lê apenas o site oficial indicado no Google, respeitando o
+                    robots.txt. Torna a pesquisa mais lenta.
+                  </small>
+                </span>
+              </label>
+
+              <button id="searchButton" type="submit" class="btn block">Procurar</button>
+              <div id="searchError" class="error-text"></div>
+            </form>
+          </div>
+
+          <div id="searchSummary" class="card hidden">
+            <h2>Resultados</h2>
+            <p class="hint" id="searchSummaryText"></p>
+            <div id="searchResults" class="lead-list"></div>
+          </div>
+        </section>
+
+        <!-- ---- Leads ---- -->
+        <section id="tab-leads" class="tab-panel hidden">
+          <div class="card">
+            <h2>Leads guardados</h2>
+            <p class="hint">Filtre, abra um lead e faça a gestão do contacto.</p>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="filterStatus">Estado</label>
+                <select id="filterStatus">
+                  <option value="">Todos</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="filterEntity">Tipo</label>
+                <select id="filterEntity">
+                  <option value="ambos">Todos</option>
+                  <option value="pj">Pessoa jurídica</option>
+                  <option value="pf">Pessoa física</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="filterQuery">Pesquisar</label>
+                <input id="filterQuery" type="search" placeholder="nome, morada, região" />
+              </div>
+            </div>
+
+            <label class="check">
+              <input id="filterWeak" type="checkbox" />
+              <span>Apenas presença digital fraca</span>
+            </label>
+          </div>
+
+          <div id="leadsList" class="lead-list"></div>
+          <div id="leadsEmpty" class="empty-state hidden">
+            Ainda não há leads com estes filtros.
+          </div>
+        </section>
+      </main>
+
+      <!-- ---- Detalhe do lead ---- -->
+      <div id="drawerBackdrop" class="drawer-backdrop hidden">
+        <aside id="leadDrawer" class="drawer"></aside>
+      </div>
+
+      <div id="toast" class="toast hidden"></div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

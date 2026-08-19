@@ -6,6 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 MoneyPrinter automates YouTube Shorts creation from text topics. It uses Ollama for script generation, TikTok TTS for voiceover, Pexels for stock footage, and moviepy/ImageMagick for video composition. Output: a 9:16 vertical video (`output.mp4`).
 
+`Prospector/` is a separate, self-contained commercial prospecting web app
+(Google Places lead search, Supabase storage, outreach drafting). It shares the
+repo and `.env` but nothing else — its own Flask app, DB schema, frontend, and
+test suite. See `docs/prospector.md`.
+
 ## Commands
 
 ### Setup
@@ -34,11 +39,17 @@ uv run python -m compileall Backend          # syntax check
 curl http://localhost:8080/api/models         # API smoke test
 ```
 
-### Tests
-No test suite exists yet. If added, use pytest:
+### Run (Prospector)
 ```bash
-uv run pytest -q                                           # all tests
+uv run python Prospector/backend/app.py                    # app on :8090 (serves its own frontend)
+uv run python Prospector/backend/create_user.py <user> <pw>
+```
+
+### Tests
+```bash
+uv run pytest -q                                           # MoneyPrinter suite
 uv run pytest tests/test_file.py::test_name -q             # single test
+uv run pytest Prospector/tests -q                          # Prospector suite (separate: same module names)
 ```
 
 ## Architecture
