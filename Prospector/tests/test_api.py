@@ -167,3 +167,12 @@ def test_delete_lead(client, auth_headers, session, user):
 
     assert client.delete(f"/api/leads/{lead_id}", headers=auth_headers).status_code == 200
     assert client.get(f"/api/leads/{lead_id}", headers=auth_headers).status_code == 404
+
+
+def test_health_reports_configuration(client):
+    body = client.get("/api/health").get_json()
+
+    assert body["status"] == "success"
+    assert body["health"]["database"]["reachable"] is True
+    assert body["health"]["placesConfigured"] is False
+    assert body["health"]["userConfigured"] is True

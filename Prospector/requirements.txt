@@ -1,0 +1,8 @@
+# Dependências da aplicação de prospecção (deploy no Vercel).
+# O MoneyPrinter tem as suas próprias em pyproject.toml — nada aqui é partilhado.
+flask==3.0.0
+flask-cors==4.0.0
+python-dotenv==1.0.0
+requests==2.31.0
+sqlalchemy==2.0.36
+psycopg[binary]==3.2.3

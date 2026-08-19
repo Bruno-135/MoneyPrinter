@@ -5,8 +5,9 @@ from typing import Any, Optional
 from sqlalchemy import JSON, create_engine, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.pool import NullPool
 
-from config import DATABASE_URL, DB_SCHEMA
+from config import AUTO_INIT_DB, DATABASE_URL, DB_SCHEMA, IS_SERVERLESS
 
 
 class Base(DeclarativeBase):
@@ -42,20 +43,44 @@ def table_args(*args: Any) -> tuple:
     return args
 
 
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,
-    connect_args={"check_same_thread": False} if is_sqlite() else {},
-)
+def _connect_args() -> dict:
+    """Argumentos de ligação por dialecto."""
+    if is_sqlite():
+        return {"check_same_thread": False}
+
+    # Supabase liga-se através do pooler em modo transacção, que não suporta
+    # prepared statements nomeados; e exige TLS.
+    return {"prepare_threshold": None, "sslmode": "require"}
+
+
+def _engine_options() -> dict:
+    options: dict = {"pool_pre_ping": True, "connect_args": _connect_args()}
+    if IS_SERVERLESS and not is_sqlite():
+        # Numa função serverless cada invocação é isolada: manter um pool aberto
+        # só esgota as ligações do Postgres.
+        options["poolclass"] = NullPool
+        options.pop("pool_pre_ping")
+    return options
+
+
+engine = create_engine(DATABASE_URL, **_engine_options())
 
 SessionLocal = sessionmaker(
     bind=engine, autoflush=False, autocommit=False, expire_on_commit=False
 )
 
 
-def init_db() -> None:
-    """Cria o schema e as tabelas caso ainda não existam."""
+def init_db(force: bool = False) -> None:
+    """
+    Cria o schema e as tabelas caso ainda não existam.
+
+    Args:
+        force: Executa mesmo com PROSPECTOR_AUTO_INIT_DB desligado.
+    """
     import models  # noqa: F401  (regista os modelos no metadata)
+
+    if not (AUTO_INIT_DB or force):
+        return
 
     schema = table_schema()
     if schema:

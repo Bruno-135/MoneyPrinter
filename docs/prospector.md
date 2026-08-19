@@ -46,9 +46,10 @@ Copie `.env.example` para `.env` e preencha o bloco de prospecção:
 | `PROSPECTOR_PLACES_REGION` / `_LANGUAGE` | não | Omissão: `PT` / `pt-PT`. |
 | `PROSPECTOR_PLACES_MAX_RESULTS` | não | Resultados por pesquisa. Omissão: `60`. |
 | `PROSPECTOR_SESSION_TTL_HOURS` | não | Validade da sessão. Omissão: `720` (30 dias). |
-| `PROSPECTOR_OUTREACH_USE_LLM` | não | Usar Ollama nas mensagens. Omissão: `true`. |
+| `PROSPECTOR_OUTREACH_USE_LLM` | não | Usar Ollama nas mensagens. Omissão: `false`. |
 | `PROSPECTOR_OLLAMA_MODEL` | não | Modelo do Ollama. Omissão: `OLLAMA_MODEL`. |
 | `PROSPECTOR_ENRICHMENT_ENABLED` | não | Camada de registo comercial. Omissão: `false`. |
+| `PROSPECTOR_AUTO_INIT_DB` | não | Criar esquema no arranque. Omissão: `true`. |
 
 A ligação do Supabase encontra-se em *Project Settings → Database → Connection
 string → URI*. Troque o prefixo `postgresql://` por `postgresql+psycopg://`:
@@ -72,6 +73,60 @@ Para criar outro utilizador ou repor uma password:
 ```bash
 uv run python Prospector/backend/create_user.py <utilizador> <password>
 ```
+
+## Deploy (Vercel + Supabase)
+
+A aplicação corre no Vercel como uma função Python única (`api/index.py`), que
+serve tanto a API como o frontend. A base de dados é o Postgres do Supabase.
+
+### 1. Supabase
+
+Crie o projecto e aplique `Prospector/migrations/001_initial.sql` no editor SQL.
+Se preferir, salte este passo: com `PROSPECTOR_AUTO_INIT_DB=true` (omissão) a
+aplicação cria o schema e as tabelas no primeiro arranque.
+
+A ligação está em *Project Settings → Database → Connection string*. Use a do
+**Transaction pooler** (porta `6543`) — é a indicada para funções serverless —
+e troque o prefixo `postgresql://` por `postgresql+psycopg://`.
+
+### 2. Projecto no Vercel
+
+Aponte o *Root Directory* do projecto Vercel a `Prospector/`. O `vercel.json`
+encaminha todos os pedidos para a função e o `requirements.txt` instala apenas
+as dependências desta aplicação — nada do MoneyPrinter é instalado.
+
+### 3. Variáveis de ambiente no Vercel
+
+| Variável | Valor |
+|---|---|
+| `PROSPECTOR_DATABASE_URL` | ligação do *transaction pooler* do Supabase, com `postgresql+psycopg://` |
+| `PROSPECTOR_USERNAME` | o seu utilizador |
+| `PROSPECTOR_PASSWORD` | a sua password |
+| `GOOGLE_PLACES_API_KEY` | chave da Places API (New) |
+| `PROSPECTOR_SENDER_NAME` | nome que assina as mensagens |
+
+Depois de as gravar, faça *Redeploy* — as variáveis só entram numa build nova.
+
+### 4. Verificar
+
+`GET /api/health` diz o que está bem e o que falta:
+
+```json
+{"health": {"database": {"reachable": true}, "placesConfigured": true, "userConfigured": true}}
+```
+
+Se `database.reachable` for `false`, o campo `error` explica porquê — quase
+sempre a ligação errada (use a do *transaction pooler*, não a directa).
+
+### Notas sobre o ambiente serverless
+
+- As ligações usam `NullPool` e desligam prepared statements nomeados, como o
+  pooler do Supabase em modo transacção exige.
+- O Ollama não é alcançável a partir do Vercel, por isso as mensagens são
+  escritas pelos modelos de texto internos. `PROSPECTOR_OUTREACH_USE_LLM` está
+  desligado por omissão precisamente por isso; ligue-o apenas onde tenha Ollama.
+- A procura de email no site do negócio faz vários pedidos HTTP e é a operação
+  mais lenta; a função tem `maxDuration` de 60 segundos.
 
 ## Como funciona
 
@@ -172,6 +227,7 @@ Todas as respostas seguem `{"status": "success|error", ...}`. Excepto
 
 | Método | Endpoint | Descrição |
 |---|---|---|
+| `GET` | `/api/health` | Diagnóstico: base de dados, chave do Places, utilizador. |
 | `GET` | `/api/config` | Configuração pública (estados, canais, se o enriquecimento está ligado). |
 | `POST` | `/api/auth/login` | Autentica e devolve o token de sessão. |
 | `POST` | `/api/auth/logout` | Revoga o token actual. |
@@ -202,6 +258,9 @@ Todas as respostas seguem `{"status": "success|error", ...}`. Excepto
 | `backend/enrichment.py` | Registo comercial português (preparado, desativado) |
 | `backend/create_user.py` | Criar utilizadores e repor passwords |
 | `frontend/` | Interface (`index.html`, `styles.css`, `app.js`) |
+| `api/index.py` | Ponto de entrada WSGI no Vercel |
+| `vercel.json` | Encaminhamento e limites da função |
+| `migrations/` | Esquema SQL para o Supabase |
 
 ## Testes
 

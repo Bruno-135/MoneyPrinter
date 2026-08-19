@@ -32,7 +32,7 @@ from config import (
     PLACES_MAX_RESULTS,
     PORT,
 )
-from db import SessionLocal, init_db
+from db import SessionLocal, engine, init_db
 from messaging import generate_outreach
 from repository import (
     dashboard_summary,
@@ -83,6 +83,30 @@ def frontend_asset(filename: str):
 
 
 # --- Configuração pública -------------------------------------------------
+
+
+@app.route("/api/health", methods=["GET"])
+def health():
+    """Diagnóstico: diz se a base de dados responde e o que falta configurar."""
+    from sqlalchemy import text
+
+    database_ok, database_error = True, None
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+    except Exception as err:
+        database_ok, database_error = False, str(err)[:300]
+
+    payload = {
+        "database": {"reachable": database_ok, "error": database_error},
+        "placesConfigured": places.is_configured(),
+        "userConfigured": bool(BOOTSTRAP_USERNAME and BOOTSTRAP_PASSWORD),
+        "enrichmentEnabled": enrichment.is_enabled(),
+    }
+    return (ok(health=payload), 200) if database_ok else (
+        jsonify({"status": "error", "message": "Base de dados inacessível.", "health": payload}),
+        503,
+    )
 
 
 @app.route("/api/config", methods=["GET"])
@@ -444,10 +468,24 @@ def enrich(lead_id: str):
         return ok(lead=serialize_lead(lead), message=result.message)
 
 
-def bootstrap() -> None:
-    """Prepara a base de dados e o utilizador inicial definido no .env."""
-    init_db()
-    user = ensure_bootstrap_user(BOOTSTRAP_USERNAME, BOOTSTRAP_PASSWORD)
+def bootstrap(strict: bool = True) -> None:
+    """
+    Prepara a base de dados e o utilizador inicial definido nas variáveis de ambiente.
+
+    Args:
+        strict: Se False, um erro de ligação é registado em vez de levantado —
+            usado no arranque serverless, onde uma excepção derrubaria a função
+            inteira e esconderia a causa. O endpoint /api/health mostra o estado.
+    """
+    try:
+        init_db()
+        user = ensure_bootstrap_user(BOOTSTRAP_USERNAME, BOOTSTRAP_PASSWORD)
+    except Exception as err:
+        if strict:
+            raise
+        logger.error("Arranque incompleto: %s", err)
+        return
+
     if user:
         logger.info("Utilizador disponível: %s", user.username)
     else:

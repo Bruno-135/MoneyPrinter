@@ -1,0 +1,6 @@
+tests/
+migrations/
+README.md
+__pycache__/
+*.pyc
+prospector.db

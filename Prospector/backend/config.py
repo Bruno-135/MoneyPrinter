@@ -40,6 +40,11 @@ PORT = _env_int("PROSPECTOR_PORT", 8090)
 # --- Base de dados (Supabase/Postgres) ------------------------------------
 DATABASE_URL = _env("PROSPECTOR_DATABASE_URL") or "sqlite:///prospector.db"
 DB_SCHEMA = _env("PROSPECTOR_DB_SCHEMA", "prospeccao")
+#: Criar o schema e as tabelas no arranque. Desligue em produção depois de
+#: aplicar Prospector/migrations/001_initial.sql, para poupar viagens à base.
+AUTO_INIT_DB = _env_bool("PROSPECTOR_AUTO_INIT_DB", True)
+#: True quando a aplicação corre como função serverless (Vercel).
+IS_SERVERLESS = bool(_env("VERCEL") or _env("PROSPECTOR_SERVERLESS"))
 
 # --- Autenticação ---------------------------------------------------------
 BOOTSTRAP_USERNAME = _env("PROSPECTOR_USERNAME")
@@ -72,8 +77,10 @@ ENRICHMENT_PROVIDER = _env("PROSPECTOR_ENRICHMENT_PROVIDER", "pt_registo_comerci
 # --- Geração de mensagens -------------------------------------------------
 OLLAMA_BASE_URL = _env("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
 OLLAMA_MODEL = _env("PROSPECTOR_OLLAMA_MODEL") or _env("OLLAMA_MODEL", "llama3.1:8b")
-OLLAMA_TIMEOUT = _env_int("PROSPECTOR_OLLAMA_TIMEOUT", 120)
-OUTREACH_USE_LLM = _env_bool("PROSPECTOR_OUTREACH_USE_LLM", True)
+OLLAMA_TIMEOUT = _env_int("PROSPECTOR_OLLAMA_TIMEOUT", 45)
+#: Desligado por omissão: sem Ollama acessível a chamada só atrasa o pedido.
+#: Ligue-o localmente com PROSPECTOR_OUTREACH_USE_LLM=true.
+OUTREACH_USE_LLM = _env_bool("PROSPECTOR_OUTREACH_USE_LLM", False)
 #: Nome com que as mensagens de abordagem são assinadas.
 SENDER_NAME = _env("PROSPECTOR_SENDER_NAME", "Bruno")
 

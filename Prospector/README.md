@@ -14,4 +14,9 @@ uv sync
 uv run python backend/app.py   # http://localhost:8090
 ```
 
-Guia completo, variáveis de ambiente e API: [`docs/prospector.md`](../docs/prospector.md).
+Para produção corre no Vercel (função Python única em `api/index.py`) com o
+Postgres do Supabase. Aponte o *Root Directory* do projecto Vercel a esta
+pasta e configure as variáveis de ambiente; `GET /api/health` diz o que falta.
+
+Guia completo, deploy, variáveis de ambiente e API:
+[`docs/prospector.md`](../docs/prospector.md).
