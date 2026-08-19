@@ -79,9 +79,19 @@ uv run python Prospector/backend/create_user.py <utilizador> <password>
 A aplicação corre no Vercel como uma função Python única (`api/index.py`), que
 serve tanto a API como o frontend. A base de dados é o Postgres do Supabase.
 
+Ambiente já provisionado:
+
+| Serviço | Recurso |
+|---|---|
+| Supabase | projecto `prospeccao-comercial`, ref `xsygmykwpaulntqqivxn`, região eu-west-1 |
+| Vercel | projecto `prospeccao-comercial`, *root directory* `Prospector`, ligado a este repositório |
+
+O branch de produção do Vercel é o `main`; qualquer outro branch gera um
+deployment de pré-visualização a cada push.
+
 ### 1. Supabase
 
-Crie o projecto e aplique `Prospector/migrations/001_initial.sql` no editor SQL.
+Aplique `Prospector/migrations/001_initial.sql` no editor SQL do projecto.
 Se preferir, salte este passo: com `PROSPECTOR_AUTO_INIT_DB=true` (omissão) a
 aplicação cria o schema e as tabelas no primeiro arranque.
 
@@ -91,7 +101,7 @@ e troque o prefixo `postgresql://` por `postgresql+psycopg://`.
 
 ### 2. Projecto no Vercel
 
-Aponte o *Root Directory* do projecto Vercel a `Prospector/`. O `vercel.json`
+O *Root Directory* do projecto aponta para `Prospector/`. O `vercel.json`
 encaminha todos os pedidos para a função e o `requirements.txt` instala apenas
 as dependências desta aplicação — nada do MoneyPrinter é instalado.
 
