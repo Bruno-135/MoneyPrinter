@@ -58,7 +58,9 @@ GOOGLE_PLACES_API_KEY = _env("GOOGLE_PLACES_API_KEY")
 GOOGLE_PLACES_ENDPOINT = "https://places.googleapis.com/v1/places:searchText"
 PLACES_LANGUAGE = _env("PROSPECTOR_PLACES_LANGUAGE", "pt-PT")
 PLACES_REGION = _env("PROSPECTOR_PLACES_REGION", "PT")
-PLACES_MAX_RESULTS = _env_int("PROSPECTOR_PLACES_MAX_RESULTS", 60)
+#: 20 resultados = 1 chamada à API. O escalão que a aplicação usa dá 1.000
+#: chamadas gratuitas por mês, por isso o valor por omissão é conservador.
+PLACES_MAX_RESULTS = _env_int("PROSPECTOR_PLACES_MAX_RESULTS", 20)
 PLACES_TIMEOUT = _env_int("PROSPECTOR_PLACES_TIMEOUT", 30)
 
 # --- Descoberta de email no site do próprio negócio -----------------------

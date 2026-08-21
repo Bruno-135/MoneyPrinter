@@ -44,7 +44,7 @@ Copie `.env.example` para `.env` e preencha o bloco de prospecção:
 | `PROSPECTOR_SENDER_NAME` | não | Nome que assina as mensagens. Omissão: `Bruno`. |
 | `PROSPECTOR_PORT` | não | Porta da aplicação. Omissão: `8090`. |
 | `PROSPECTOR_PLACES_REGION` / `_LANGUAGE` | não | Omissão: `PT` / `pt-PT`. |
-| `PROSPECTOR_PLACES_MAX_RESULTS` | não | Resultados por pesquisa. Omissão: `60`. |
+| `PROSPECTOR_PLACES_MAX_RESULTS` | não | Resultados por pesquisa. Omissão: `20`. |
 | `PROSPECTOR_SESSION_TTL_HOURS` | não | Validade da sessão. Omissão: `720` (30 dias). |
 | `PROSPECTOR_OUTREACH_USE_LLM` | não | Usar Ollama nas mensagens. Omissão: `false`. |
 | `PROSPECTOR_OLLAMA_MODEL` | não | Modelo do Ollama. Omissão: `OLLAMA_MODEL`. |
@@ -117,7 +117,32 @@ as dependências desta aplicação — nada do MoneyPrinter é instalado.
 
 Depois de as gravar, faça *Redeploy* — as variáveis só entram numa build nova.
 
-### 4. Verificar
+### 4. Custos do Google Places
+
+O crédito mensal de 200 USD do Google foi retirado em março de 2025. O modelo
+actual dá uma quota gratuita por SKU, e os campos que a aplicação pede
+(telefone, site, nota e número de avaliações) colocam cada pesquisa no escalão
+**Text Search Enterprise**: **1.000 chamadas gratuitas por mês**.
+
+| | |
+|---|---|
+| 1 chamada | até 20 resultados |
+| Pesquisa de 20 resultados (omissão) | 1 chamada |
+| Pesquisa de 60 resultados | 3 chamadas |
+| Quota gratuita mensal | ~1.000 pesquisas de 20 resultados |
+
+Para garantir que nunca há cobrança, ponha um tecto rígido na Google Cloud
+Console em **APIs e Serviços → Places API (New) → Quotas**: um limite diário de
+30 pedidos dá 900/mês, abaixo do limite gratuito. Ao atingi-lo a API recusa em
+vez de passar para a parte paga. Um orçamento de 1 € em **Faturação →
+Orçamentos e alertas** avisa se algo escapar.
+
+O escalão é determinado pela `FIELD_MASK` em `backend/places.py`: retirar de lá
+o telefone, o site, a nota e o número de avaliações desce o escalão e aumenta a
+quota gratuita — mas deixa a aplicação sem os dados de que depende o cálculo de
+presença digital fraca.
+
+### 5. Verificar
 
 `GET /api/health` diz o que está bem e o que falta:
 

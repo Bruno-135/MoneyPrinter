@@ -243,6 +243,14 @@ textarea {
   margin-bottom: 14px;
 }
 
+.field small {
+  display: block;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
