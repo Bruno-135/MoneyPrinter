@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
  * Verificação de saúde: confirma que a aplicação consegue falar com o Supabase
  * e que as migrações foram aplicadas.
  *
- * Usa o cliente de servidor com a chave anónima de propósito — sem sessão, a
+ * Usa o cliente de servidor com a chave publishable de propósito — sem sessão, a
  * RLS devolve zero linhas, e é exatamente esse o comportamento correto. O que
  * aqui se testa é a ligação e a existência da tabela, não o conteúdo.
  */

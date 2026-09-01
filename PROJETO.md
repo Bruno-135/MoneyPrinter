@@ -65,7 +65,7 @@ Fluxo completo, do início ao fim:
 
 ### Chaves e segredos
 
-- `NEXT_PUBLIC_*` → vai para o browser. Só a URL do Supabase e a chave anónima.
+- `NEXT_PUBLIC_*` → vai para o browser. Só a URL do Supabase e a chave publishable.
 - Tudo o resto (service role, Google Places) é **exclusivamente de servidor**.
   **A service role key nunca é importada num Client Component nem prefixada com `NEXT_PUBLIC_`.**
 - As variáveis são validadas no arranque em `src/lib/env.ts`. Falta uma → o processo falha logo,
@@ -81,8 +81,8 @@ src/
   lib/
     env.ts                 # validação das variáveis de ambiente
     supabase/
-      client.ts            # cliente browser  (chave anónima)
-      server.ts            # cliente servidor (cookies, chave anónima, respeita RLS)
+      client.ts            # cliente browser  (chave publishable)
+      server.ts            # cliente servidor (cookies, chave publishable, respeita RLS)
       admin.ts             # cliente service role — só servidor, ignora RLS
   types/
     database.types.ts      # tipos gerados a partir do schema
@@ -101,7 +101,7 @@ exportada passou de `middleware` para `proxy`. É o mesmo mecanismo, outro nome.
 
 | Contexto | Cliente | Notas |
 |----------|---------|-------|
-| Client Component | `createBrowserClient()` de `lib/supabase/client` | Chave anónima, RLS ativa |
+| Client Component | `createBrowserClient()` de `lib/supabase/client` | Chave publishable, RLS ativa |
 | Server Component / Route Handler / Server Action | `createServerClient()` de `lib/supabase/server` | Lê a sessão dos cookies, RLS ativa |
 | Jobs, webhooks, tarefas de sistema | `createAdminClient()` de `lib/supabase/admin` | **Ignora RLS.** Filtrar `owner_id` à mão, sempre |
 
@@ -200,7 +200,7 @@ Modelo completo em `.env.local.example`.
 | Variável | Lado | Obrigatória | Para quê |
 |----------|------|-------------|----------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Browser + servidor | Sim | URL do projeto Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser + servidor | Sim | Chave anónima (RLS aplica-se) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Browser + servidor | Sim | Chave publishable (RLS aplica-se) |
 | `SUPABASE_SERVICE_ROLE_KEY` | **Só servidor** | Sim | Tarefas de sistema. Ignora RLS — nunca expor |
 | `GOOGLE_PLACES_API_KEY` | **Só servidor** | Sim | Busca de comércios |
 | `NEXT_PUBLIC_SITE_URL` | Browser + servidor | Sim | Base dos links públicos das landing pages |

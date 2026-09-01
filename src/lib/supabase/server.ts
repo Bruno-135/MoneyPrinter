@@ -9,7 +9,7 @@ import type { Database } from "@/types/database.types";
  * Cliente Supabase para o servidor (Server Components, Route Handlers,
  * Server Actions).
  *
- * Lê a sessão dos cookies e usa a chave anónima — a RLS aplica-se, tal como no
+ * Lê a sessão dos cookies e usa a chave publishable — a RLS aplica-se, tal como no
  * browser. É este o cliente por omissão para tudo o que corre no servidor.
  */
 export async function createClient() {
@@ -17,7 +17,7 @@ export async function createClient() {
 
   return createServerClient<Database>(
     publicEnv.NEXT_PUBLIC_SUPABASE_URL,
-    publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     {
       cookies: {
         getAll() {
