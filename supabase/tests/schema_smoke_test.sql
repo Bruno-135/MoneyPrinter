@@ -30,9 +30,15 @@ exception when unique_violation then
 end $$;
 
 \echo '== 3. cache: is_region_search_stale =='
-select public.is_region_search_stale(id, 30) as stale_30d,
-       public.is_region_search_stale(id, 0)  as stale_0d
-from public.searched_regions;
+-- Testar com datas reais, nunca com um limite de 0 dias: dentro de uma
+-- transação o now() está congelado, portanto uma linha acabada de inserir
+-- nunca é "mais velha que agora" e o teste diria o contrário do que parece.
+update public.searched_regions set last_searched_at = now() - interval '60 days';
+select public.is_region_search_stale(id, 30) as velha_apos_60d from public.searched_regions;
+update public.searched_regions set last_searched_at = now() - interval '5 days';
+select public.is_region_search_stale(id, 30) as velha_apos_5d from public.searched_regions;
+select public.is_region_search_stale(gen_random_uuid(), 30) as regiao_inexistente_conta_como_velha;
+update public.searched_regions set last_searched_at = now();
 
 \echo '== 4. comércio: colunas geradas (has_website, has_social, is_food_service) =='
 insert into public.businesses (
@@ -141,9 +147,17 @@ select public.record_site_click(
 ) is not null as clique_registado;
 
 \echo '   site em rascunho não regista nada:'
-select public.record_site_visit(
-  (select public_code from public.generated_sites where template = 'standard'), 'h', 's'
-) is null as rascunho_ignorado;
+-- O código do rascunho tem de ser lido ANTES de passar a anon: a RLS não
+-- deixa o anónimo ver rascunhos, e um select vazio aqui faria o teste passar
+-- sem chegar a testar coisa nenhuma.
+reset role; set role authenticated;
+set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
+select public_code as codigo_rascunho from public.generated_sites where template = 'standard' \gset
+reset role; set role anon;
+set request.jwt.claim.sub = '';
+select public.record_site_visit(:'codigo_rascunho', 'h', 's') is null as rascunho_sem_visita,
+       public.record_site_click(:'codigo_rascunho', 'whatsapp', 'x') is null as rascunho_sem_clique,
+       public.record_site_visit('codigoinexistente', 'h', 's') is null as codigo_falso_ignorado;
 
 \echo '   anon não consegue escrever diretamente nas tabelas:'
 do $$ begin
@@ -163,6 +177,22 @@ set request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
 select business_name, to_char(month, 'YYYY-MM') as mes, visits, unique_visitors,
        clicks, whatsapp_clicks, click_through_rate
 from public.monthly_site_report;
+
+-- Conferir contra as tabelas de eventos em vez de contra um número escrito à
+-- mão: assim o teste continua correto se se acrescentarem visitas ao cenário.
+do $$
+declare r record; v_visitas bigint; v_cliques bigint; v_unicos bigint;
+begin
+  select count(*) into v_visitas from public.site_visits;
+  select count(*) into v_cliques from public.site_clicks;
+  select count(distinct visitor_hash) into v_unicos from public.site_visits;
+  select * into r from public.monthly_site_report;
+  if r.visits <> v_visitas or r.clicks <> v_cliques or r.unique_visitors <> v_unicos then
+    raise exception 'FALHOU: relatorio (% visitas, % cliques, % unicos) nao bate com as tabelas (%, %, %)',
+      r.visits, r.clicks, r.unique_visitors, v_visitas, v_cliques, v_unicos;
+  end if;
+  raise notice 'OK: relatorio bate certo com site_visits e site_clicks';
+end $$;
 
 \echo '== 13. isolamento entre donos =='
 set request.jwt.claim.sub = '22222222-2222-2222-2222-222222222222';

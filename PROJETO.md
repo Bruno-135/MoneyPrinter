@@ -128,6 +128,9 @@ Vista `monthly_site_report` agrega visitas e cliques por site e por mês
 
 Detalhe tabela a tabela, com o porquê de cada decisão, em `supabase/README.md`.
 
+O schema está aplicado no projeto Supabase `amjqibwoqfkbmtbyysgy`
+("Prospecção e criação de site", eu-west-3, Postgres 17) através de 9 migrações.
+
 Duas notas que condicionam o código das etapas seguintes:
 
 - **A página pública lê-se de `generated_sites.content`**, não de `businesses`:
@@ -197,6 +200,10 @@ Verificação rápida da ligação com a aplicação a correr: `GET /api/health`
 
 Modelo completo em `.env.local.example`.
 
+Antes de tocar na chave da Google, ler as restrições documentadas em
+`.env.local.example`: `Application restrictions = None` e `API restrictions`
+limitada à "Places API (New)", mais uma quota diária de pedidos.
+
 | Variável | Lado | Obrigatória | Para quê |
 |----------|------|-------------|----------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Browser + servidor | Sim | URL do projeto Supabase |
@@ -215,6 +222,8 @@ para Production, Preview e Development.
 ## 8. Estado das etapas
 
 - [x] **Etapa 1** — Instruções do projeto, estrutura + ligação ao Supabase, schema em migrações SQL.
+      Migrações aplicadas e teste de fumo corrido contra o Supabase real; linter de
+      segurança sem erros.
 - [ ] **Etapa 2** — Integração com o Google Places e cache de regiões.
 - [ ] **Etapa 3** — Cálculo do score e lista ordenada de comércios.
 - [ ] **Etapa 4** — Gerador de landing pages (modelo geral + modelo restaurante/padaria).

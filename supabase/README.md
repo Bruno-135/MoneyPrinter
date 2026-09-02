@@ -14,6 +14,7 @@ Schema do sistema de prospeção comercial, em migrações SQL versionadas.
 | `0006_analytics.sql` | `site_visits`, `site_clicks` e a vista `monthly_site_report` |
 | `0007_row_level_security.sql` | RLS e políticas por `owner_id`, mais leitura pública das páginas publicadas |
 | `0008_public_tracking.sql` | `record_site_visit()` / `record_site_click()` para visitantes anónimos |
+| `0009_revoke_trigger_function_execute.sql` | Retira as funções de trigger da API REST pública |
 
 **Nunca editar uma migração já aplicada.** Alteração ao schema = ficheiro novo.
 
@@ -50,6 +51,11 @@ npm run db:types          # regenerar src/types/database.types.ts
   derivados pela função, portanto não há forma de inserir eventos falsos noutro site.
 - **Dinheiro em cêntimos** (`price_cents`, `expected_value_cents`) + coluna `currency`,
   porque PT usa EUR e BR usa BRL.
+- **As funções de trigger não são chamáveis por REST.** O Supabase publica tudo o que
+  está em `public` como `/rest/v1/rpc/<nome>`, incluindo funções de trigger que não
+  servem para ser chamadas por ninguém. A `0009` revoga-lhes o `execute`. As duas
+  exceções deliberadas são `record_site_visit` e `record_site_click`, que existem
+  precisamente para serem chamadas por visitantes anónimos.
 
 ## Testar o schema localmente
 
