@@ -104,3 +104,13 @@ Optional: `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, `ASSEMBLY_AI_API_KEY`, `DATABASE_UR
 - **Long-running work**: database-backed queue and separate worker process
 - **Concurrency**: multiple jobs can be queued; worker processes them safely via DB locking
 - Update `docs/` when setup, env vars, or runtime behavior changes
+
+## Sistema de Prospeção Comercial (Next.js)
+
+Este repositório aloja também um segundo projeto, independente do MoneyPrinter:
+uma ferramenta de prospeção comercial em Next.js + Supabase (`src/`, `supabase/`).
+
+**As instruções desse projeto estão em [`PROJETO.md`](PROJETO.md) — ler no início
+de cada etapa de trabalho sobre ele.** Tudo o que está acima neste ficheiro
+diz respeito ao MoneyPrinter (Python/Flask, `Backend/`, `Frontend/`) e não se
+aplica ao projeto de prospeção.
