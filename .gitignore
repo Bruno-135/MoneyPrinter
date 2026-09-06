@@ -1,3 +1,6 @@
+# ---------------------------------------------------------------------------
+# MoneyPrinter (Python)
+# ---------------------------------------------------------------------------
 __pycache__
 .env
 temp/*
@@ -18,3 +21,23 @@ main.py-oauth2.json
 Backend/output*
 Songs/
 venv/
+
+# ---------------------------------------------------------------------------
+# Sistema de Prospeção Comercial (Next.js)
+# ---------------------------------------------------------------------------
+node_modules/
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# variáveis de ambiente locais
+.env*.local
+
+# Vercel
+.vercel
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/
