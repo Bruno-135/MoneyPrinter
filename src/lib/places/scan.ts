@@ -58,7 +58,13 @@ export interface ScanSummary {
   dryRun: boolean;
 
   grid: { total: number; cached: number; toSearch: number; searched: number };
-  api: { calls: number; failed: number; estimatedUsd: number; usedTextFallback: boolean };
+  /**
+   * `calls` é o total de chamadas feitas; `billable` é quantas a Google fatura.
+   * Não são a mesma coisa: uma resposta 400 (chave inválida, tipo desconhecido)
+   * não é cobrada, e apresentar um custo por chamadas que ninguém vai cobrar
+   * assusta sem motivo.
+   */
+  api: { calls: number; billable: number; failed: number; estimatedUsd: number; usedTextFallback: boolean };
 
   found: { total: number; created: number; updated: number };
   websites: Record<WebsiteKind, number>;
@@ -81,7 +87,7 @@ function emptySummary(request: ScanRequest, category: CategoryDefinition): ScanS
     },
     dryRun: request.dryRun,
     grid: { total: 0, cached: 0, toSearch: 0, searched: 0 },
-    api: { calls: 0, failed: 0, estimatedUsd: 0, usedTextFallback: false },
+    api: { calls: 0, billable: 0, failed: 0, estimatedUsd: 0, usedTextFallback: false },
     found: { total: 0, created: 0, updated: 0 },
     websites: { none: 0, social_only: 0, real: 0 },
     prospects: 0,
@@ -209,7 +215,7 @@ export async function scanRegion(
     await handleResult(db, region.id, cell, result, collected, summary);
   }
 
-  summary.api.estimatedUsd = round2(summary.api.calls * USD_PER_CALL);
+  summary.api.estimatedUsd = round2(summary.api.billable * USD_PER_CALL);
 
   // ---------------------------------------------------------------------
   // 4. Gravar os comércios
@@ -280,6 +286,8 @@ async function handleResult(
   }
 
   summary.grid.searched += 1;
+  // Só as respostas com sucesso são faturadas.
+  summary.api.billable += 1;
 
   if (result.places.length >= MAX_RESULTS_PER_CALL) {
     summary.saturatedCells += 1;

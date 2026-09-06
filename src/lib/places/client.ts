@@ -79,13 +79,22 @@ export interface TextParams {
 }
 
 /**
- * Sinais de que a Google rejeitou o pedido por causa de um tipo desconhecido.
- * Estas respostas (400) não são faturadas.
+ * A Google rejeitou o pedido por causa de um tipo desconhecido em
+ * `includedTypes`? Estas respostas (400) não são faturadas, e são o sinal para
+ * passar à pesquisa por texto.
+ *
+ * A verificação olha só para a MENSAGEM do erro, e procura a expressão
+ * concreta. A primeira versão disto procurava a palavra "type" em qualquer
+ * ponto do corpo — e todos os erros da Google trazem um campo `@type` nos
+ * detalhes, portanto uma chave inválida era diagnosticada como tipo errado.
+ * O varrimento anunciava o problema errado e ainda gastava uma chamada extra a
+ * tentar um recurso que não podia funcionar.
  */
-function looksLikeInvalidType(status: number, body: string): boolean {
+function looksLikeInvalidType(status: number, parsed: unknown): boolean {
   if (status !== 400) return false;
-  const lower = body.toLowerCase();
-  return lower.includes('included_types') || lower.includes('includedtypes') || lower.includes('type');
+
+  const message = (extractError(parsed) ?? '').toLowerCase();
+  return /included[\s_]*type/.test(message) || message.includes('invalid type');
 }
 
 export class PlacesClient {
@@ -196,7 +205,7 @@ export class PlacesClient {
         places: [],
         raw: parsed,
         errorMessage: extractError(parsed) ?? `HTTP ${response.status}`,
-        invalidType: looksLikeInvalidType(response.status, text),
+        invalidType: looksLikeInvalidType(response.status, parsed),
         nextPageToken: null,
       };
     }

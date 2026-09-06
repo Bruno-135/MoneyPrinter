@@ -138,10 +138,16 @@ function Summary({ summary }: { summary: ScanFormState['summary'] }) {
         <Stat label="Pontos da grelha" value={String(summary.grid.total)} />
         <Stat
           label={summary.dryRun ? 'Chamadas previstas' : 'Chamadas feitas'}
-          value={String(summary.dryRun ? summary.grid.toSearch : summary.api.calls)}
+          value={
+            summary.dryRun
+              ? String(summary.grid.toSearch)
+              : summary.api.failed > 0
+                ? `${summary.api.calls} (${summary.api.failed} falharam)`
+                : String(summary.api.calls)
+          }
         />
         <Stat
-          label={summary.dryRun ? 'Custo estimado' : 'Custo'}
+          label={summary.dryRun ? 'Custo estimado' : 'Custo (só o faturado)'}
           value={`~${summary.api.estimatedUsd.toFixed(2)} USD`}
         />
         <Stat label="Em cache" value={String(summary.grid.cached)} />

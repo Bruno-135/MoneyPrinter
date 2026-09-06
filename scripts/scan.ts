@@ -98,7 +98,7 @@ function render(summary: ScanSummary): string {
     lines.push(`  Chamadas previstas: ${summary.grid.toSearch}    custo estimado ${eur(summary.api.estimatedUsd)}`);
   } else {
     lines.push(
-      `  Chamadas API:  ${summary.api.calls}${summary.api.failed > 0 ? ` (${summary.api.failed} falharam)` : ''}    ` +
+      `  Chamadas API:  ${summary.api.calls}${summary.api.failed > 0 ? ` (${summary.api.failed} falharam, não faturadas)` : ''}    ` +
         `custo ${eur(summary.api.estimatedUsd)}`,
     );
   }
