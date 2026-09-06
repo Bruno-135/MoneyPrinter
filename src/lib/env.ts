@@ -20,17 +20,29 @@ const publicSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().url("NEXT_PUBLIC_SITE_URL tem de ser um URL válido"),
 });
 
+/**
+ * Só é obrigatório o que a aplicação web precisa mesmo para funcionar.
+ *
+ * O resto é opcional de propósito: cada variável obrigatória a mais é mais uma
+ * coisa que alguém tem de ir buscar e colar num painel, e mais uma maneira de o
+ * arranque falhar. Quem precisa das opcionais valida-as no momento em que as
+ * usa, com uma mensagem que diz exatamente o que falta e para quê.
+ */
 const serverSchema = z.object({
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "SUPABASE_SERVICE_ROLE_KEY é obrigatória"),
+  // Obrigatória: sem ela não há varrimento nenhum.
   GOOGLE_PLACES_API_KEY: z.string().min(1, "GOOGLE_PLACES_API_KEY é obrigatória"),
 
-  // Utilizador com que o varrimento se autentica. Ver lib/supabase/prospector.ts
-  // para o motivo de não usarmos a service_role aqui.
-  PROSPECTOR_EMAIL: z.string().email("PROSPECTOR_EMAIL tem de ser um email válido"),
-  PROSPECTOR_PASSWORD: z.string().min(1, "PROSPECTOR_PASSWORD é obrigatória"),
+  // Só a linha de comandos (`npm run scan`, `npm run list`) precisa destas.
+  // Na aplicação web quem procura é o utilizador com sessão iniciada.
+  PROSPECTOR_EMAIL: z.string().email("PROSPECTOR_EMAIL tem de ser um email válido").optional(),
+  PROSPECTOR_PASSWORD: z.string().min(1).optional(),
 
-  // Segredo do cabeçalho x-scan-secret. Protege uma rota que gasta dinheiro.
-  SCAN_API_SECRET: z.string().min(16, "SCAN_API_SECRET tem de ter pelo menos 16 caracteres"),
+  // Só a rota POST /api/scan precisa deste. Sem ele, a rota recusa-se a
+  // funcionar em vez de ficar aberta ao mundo.
+  SCAN_API_SECRET: z.string().min(16, "SCAN_API_SECRET tem de ter pelo menos 16 caracteres").optional(),
+
+  // Só tarefas de sistema precisam desta. Nada no caminho normal a usa.
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
 
   PUBLIC_SITE_DEFAULT_TTL_DAYS: z.coerce.number().int().positive().default(30),
   REGION_SEARCH_CACHE_DAYS: z.coerce.number().int().positive().default(30),
@@ -82,11 +94,11 @@ export function getServerEnv(): ServerEnv {
   }
 
   const parsed = serverSchema.safeParse({
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || undefined,
     GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
-    PROSPECTOR_EMAIL: process.env.PROSPECTOR_EMAIL,
-    PROSPECTOR_PASSWORD: process.env.PROSPECTOR_PASSWORD,
-    SCAN_API_SECRET: process.env.SCAN_API_SECRET,
+    PROSPECTOR_EMAIL: process.env.PROSPECTOR_EMAIL || undefined,
+    PROSPECTOR_PASSWORD: process.env.PROSPECTOR_PASSWORD || undefined,
+    SCAN_API_SECRET: process.env.SCAN_API_SECRET || undefined,
     PUBLIC_SITE_DEFAULT_TTL_DAYS: process.env.PUBLIC_SITE_DEFAULT_TTL_DAYS || undefined,
     REGION_SEARCH_CACHE_DAYS: process.env.REGION_SEARCH_CACHE_DAYS || undefined,
   });

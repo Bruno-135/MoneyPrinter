@@ -63,6 +63,22 @@ Fluxo completo, do início ao fim:
 - Tipos da base de dados vivem em `src/types/database.types.ts` e são **atualizados a cada migração**.
 - Respostas de API: `{ "data": ... }` em sucesso, `{ "error": { "message": ... } }` em erro, com o código HTTP correto.
 
+### Obrigatório vs opcional nas variáveis
+
+Só `GOOGLE_PLACES_API_KEY` e as três `NEXT_PUBLIC_*` são obrigatórias. As outras
+(`PROSPECTOR_*`, `SCAN_API_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`) são opcionais no
+arranque e validadas no ponto onde são usadas, com uma mensagem que diz o que
+falta e para quê. Cada variável obrigatória a mais é mais uma forma de o
+arranque falhar num sítio que não explica porquê.
+
+### Quem procura, e com que identidade
+
+- **No painel**, quem procura é o utilizador com sessão iniciada. As Server
+  Actions correm no servidor com essa sessão, portanto a RLS aplica-se e o
+  `owner_id` vem do `default auth.uid()`. Não é preciso segredo nenhum.
+- **Na linha de comandos e na rota `/api/scan`**, não há sessão de browser, e é
+  aí que entram `PROSPECTOR_EMAIL`/`PROSPECTOR_PASSWORD` e o `SCAN_API_SECRET`.
+
 ### Chaves e segredos
 
 - `NEXT_PUBLIC_*` → vai para o browser. Só a URL do Supabase e a chave publishable.
@@ -78,7 +94,9 @@ Fluxo completo, do início ao fim:
 ```
 src/
   app/                     # App Router (rotas, layouts, route handlers)
-    api/scan/route.ts      # POST /api/scan — varrimento, protegido por token
+    entrar/                # ecrã de entrada (Supabase Auth, sem registo aberto)
+    painel/                # painel: formulário de varrimento + lista ordenada
+    api/scan/route.ts      # POST /api/scan — varrimento sem interface, por token
   lib/
     env.ts                 # validação das variáveis de ambiente
     scoring/               # score de venda e lista ordenada (etapa 3)

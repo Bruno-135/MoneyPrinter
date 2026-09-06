@@ -20,6 +20,13 @@ import type { Database } from "@/types/database.types";
 export function createAdminClient() {
   const { SUPABASE_SERVICE_ROLE_KEY } = getServerEnv();
 
+  if (!SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error(
+      'SUPABASE_SERVICE_ROLE_KEY não está definida. É opcional no arranque porque ' +
+        'o caminho normal da aplicação não precisa dela — mas este cliente precisa.',
+    );
+  }
+
   return createSupabaseClient<Database>(
     publicEnv.NEXT_PUBLIC_SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY,

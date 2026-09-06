@@ -38,6 +38,20 @@ const bodySchema = z.object({
 export async function POST(request: NextRequest) {
   const env = getServerEnv();
 
+  // Sem segredo definido a rota fica fechada, em vez de ficar aberta a todos.
+  if (!env.SCAN_API_SECRET) {
+    return NextResponse.json(
+      {
+        error: {
+          message:
+            'Esta rota está desativada: falta a variável SCAN_API_SECRET. ' +
+            'Usa o painel da aplicação, ou define o segredo para a activar.',
+        },
+      },
+      { status: 503 },
+    );
+  }
+
   const provided = request.headers.get('x-scan-secret');
   if (!provided || provided !== env.SCAN_API_SECRET) {
     return NextResponse.json(

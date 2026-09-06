@@ -23,6 +23,14 @@ import type { Database } from '@/types/database.types';
 export async function createProspectorClient(): Promise<SupabaseClient<Database>> {
   const { PROSPECTOR_EMAIL, PROSPECTOR_PASSWORD } = getServerEnv();
 
+  if (!PROSPECTOR_EMAIL || !PROSPECTOR_PASSWORD) {
+    throw new Error(
+      'Faltam PROSPECTOR_EMAIL e/ou PROSPECTOR_PASSWORD no .env.local. ' +
+        'São precisas para os comandos de terminal (npm run scan, npm run list); ' +
+        'na aplicação web quem procura é o utilizador com sessão iniciada.',
+    );
+  }
+
   const client = createSupabaseClient<Database>(
     publicEnv.NEXT_PUBLIC_SUPABASE_URL,
     publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
