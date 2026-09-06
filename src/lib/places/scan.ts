@@ -5,6 +5,7 @@ import { buildGrid, type GridCell } from './grid';
 import { findCategory, type CategoryDefinition } from './categories';
 import { normalizePlace, type NormalizedBusiness } from './normalize';
 import { classifyWebsite, type WebsiteKind } from './website';
+import { calculateScore } from '@/lib/scoring/score';
 import type { PlaceResult } from './types';
 
 /**
@@ -402,15 +403,36 @@ async function upsertBusinesses(
   const known = new Set((before ?? []).map((r) => r.google_place_id));
 
   const now = new Date().toISOString();
-  const payload = rows.map((row) => ({
-    ...row,
-    region_id: regionId,
-    google_raw: row.google_raw as never,
-    social_links: row.social_links as never,
-    opening_hours: (row.opening_hours ?? null) as never,
-    google_fetched_at: now,
-    last_synced_at: now,
-  }));
+  const payload = rows.map((row) => {
+    // O score é calculado à entrada, para a lista já sair ordenada do primeiro
+    // varrimento. `website_kind` e `is_food_service` são colunas geradas: aqui
+    // ainda não existem, portanto derivam-se dos mesmos dados de origem que a
+    // base de dados vai usar.
+    const scored = calculateScore({
+      website_kind: classifyWebsite(row.website_url),
+      reviews_count: row.reviews_count,
+      rating: row.rating,
+      phone_e164: row.phone_e164,
+      phone_raw: row.phone_raw,
+      is_food_service: isFoodService(row.google_types),
+      business_status: row.business_status,
+      has_social: Object.keys(row.social_links).length > 0,
+    });
+
+    return {
+      ...row,
+      region_id: regionId,
+      google_raw: row.google_raw as never,
+      social_links: row.social_links as never,
+      opening_hours: (row.opening_hours ?? null) as never,
+      score: scored.score,
+      score_breakdown: scored.breakdown as never,
+      score_version: scored.version,
+      score_calculated_at: now,
+      google_fetched_at: now,
+      last_synced_at: now,
+    };
+  });
 
   const { error } = await db
     .from('businesses')
@@ -437,4 +459,21 @@ async function fillWebsiteCounts(db: Db, regionId: string, summary: ScanSummary)
 
 function round2(value: number): number {
   return Math.round(value * 100) / 100;
+}
+
+/**
+ * Espelho da coluna gerada `businesses.is_food_service` (migração 0003).
+ *
+ * Existe porque o score é calculado antes da linha chegar à base de dados, e
+ * nessa altura a coluna gerada ainda não foi avaliada. Se mexeres na lista da
+ * migração, mexe também aqui.
+ */
+const FOOD_SERVICE_TYPES = new Set([
+  'restaurant', 'bakery', 'cafe', 'coffee_shop', 'bar',
+  'meal_takeaway', 'meal_delivery', 'food', 'pizza_restaurant',
+  'sandwich_shop', 'ice_cream_shop', 'brunch_restaurant', 'breakfast_restaurant',
+]);
+
+function isFoodService(types: string[]): boolean {
+  return types.some((t) => FOOD_SERVICE_TYPES.has(t));
 }

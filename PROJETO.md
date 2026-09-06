@@ -81,6 +81,9 @@ src/
     api/scan/route.ts      # POST /api/scan — varrimento, protegido por token
   lib/
     env.ts                 # validação das variáveis de ambiente
+    scoring/               # score de venda e lista ordenada (etapa 3)
+      score.ts             # 0-100 em 5 fatores, com explicação por fator
+      rank.ts              # lista ordenada, com filtros
     places/                # integração com o Google Places (etapa 2)
       categories.ts        # ramo em português -> tipos do Places
       grid.ts              # grelha hexagonal que cobre a região
@@ -101,6 +104,7 @@ src/
 scripts/
   load-env.ts              # carrega o .env.local antes de tudo o resto
   scan.ts                  # npm run scan — varrimento pela linha de comandos
+  list.ts                  # npm run list — lista ordenada por probabilidade
 supabase/
   migrations/              # migrações SQL numeradas
   tests/                   # stubs do Supabase + teste de fumo do schema
@@ -190,7 +194,21 @@ npm run scan -- --zona "Braga centro" --ramo padaria --lat 41.5454 --lng -8.4265
 
 # A sério (gasta dinheiro)
 npm run scan -- --zona "Braga centro" --ramo padaria --lat 41.5454 --lng -8.4265 --confirmar
+
+# Ver a lista ordenada por probabilidade de venda
+npm run list
+npm run list -- --filtro sem-site --ramo padaria
+npm run list -- --id <uuid>          # explica a nota de um comércio
 ```
+
+### O score
+
+0 a 100, cinco fatores: presença digital (40), atividade (25), reputação (15),
+contactabilidade (10) e encaixe no produto (10). Um comércio fechado dá 0.
+
+Cada fator devolve os pontos **e a razão em texto**, guardados em
+`score_breakdown` — a nota tem sempre de ser explicável ao utilizador. Ao mudar
+os pesos, subir `SCORE_VERSION` em `src/lib/scoring/score.ts`.
 
 Testar o schema num Postgres qualquer, sem projeto Supabase — ver
 `supabase/README.md`. O teste de fumo verifica deduplicação de regiões, colunas
@@ -259,7 +277,7 @@ para Production, Preview e Development.
       segurança sem erros.
 - [x] **Etapa 2** — Google Places (API nova), grelha hexagonal, cache a dois níveis,
       classificação dos três casos de site, modo de simulação.
-- [ ] **Etapa 3** — Cálculo do score e lista ordenada de comércios.
+- [x] **Etapa 3** — Score 0-100 (5 fatores explicáveis) e lista ordenada.
 - [ ] **Etapa 4** — Gerador de landing pages (modelo geral + modelo restaurante/padaria).
 - [ ] **Etapa 5** — Exportação em PDF de apresentação.
 - [ ] **Etapa 6** — Funil de negociação com histórico.
