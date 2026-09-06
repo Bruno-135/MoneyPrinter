@@ -140,10 +140,11 @@ export async function scanRegion(
   const region = await upsertRegion(db, request, category, grid.length);
   summary.region.regionId = region.id;
 
-  if (!request.force && region.freshUntilDays > 0) {
+  if (!request.force && region.everSearched && region.freshUntilDays > 0) {
     summary.warnings.push(
-      `Região pesquisada há ${region.ageDays} dias (validade ${request.cacheDays}). ` +
-        `Nada foi consultado. Usa --forcar para procurar na mesma.`,
+      `Esta zona e ramo já foram pesquisados há ${region.ageDays} dia(s), e a validade ` +
+        `do cache é de ${request.cacheDays}. Não se consultou nada para não pagar duas ` +
+        `vezes pelo mesmo. Para procurar na mesma, marca "ignorar cache".`,
     );
     summary.grid.cached = grid.length;
     summary.found.total = region.placesFound;
@@ -243,18 +244,28 @@ export async function scanRegion(
   }
   summary.prospects = summary.websites.none + summary.websites.social_only;
 
-  await db
-    .from('searched_regions')
-    .update({
-      last_searched_at: new Date().toISOString(),
-      search_count: region.searchCount + 1,
-      places_found: rows.length,
-      new_places_last_search: summary.found.created,
-      grid_cells_total: grid.length,
-      saturated_cells: summary.saturatedCells,
-      is_exhausted: summary.saturatedCells === 0,
-    })
-    .eq('id', region.id);
+  // Só se marca a região como pesquisada quando houve mesmo chamadas com
+  // sucesso. Um varrimento em que tudo falhou não pode envenenar o cache e
+  // impedir a tentativa seguinte.
+  if (summary.api.billable > 0) {
+    await db
+      .from('searched_regions')
+      .update({
+        last_searched_at: new Date().toISOString(),
+        search_count: region.searchCount + 1,
+        places_found: rows.length,
+        new_places_last_search: summary.found.created,
+        grid_cells_total: grid.length,
+        saturated_cells: summary.saturatedCells,
+        is_exhausted: summary.saturatedCells === 0,
+      })
+      .eq('id', region.id);
+  } else if (summary.api.failed > 0) {
+    summary.warnings.push(
+      'Nenhuma chamada teve sucesso, portanto a zona NÃO ficou marcada como pesquisada. ' +
+        'Resolve a causa e tenta outra vez — não é preciso ignorar o cache.',
+    );
+  }
 
   if (summary.saturatedCells > 0) {
     summary.warnings.push(
@@ -327,6 +338,15 @@ interface RegionState {
   freshUntilDays: number;
   searchCount: number;
   placesFound: number;
+  /**
+   * Alguma vez houve um varrimento que chegou ao fim com chamadas faturadas?
+   *
+   * Uma região registada mas nunca varrida com sucesso NÃO conta como fresca.
+   * Sem esta distinção, um varrimento falhado (chave inválida, rede em baixo)
+   * deixava a região marcada como acabada de pesquisar e o cache bloqueava a
+   * tentativa seguinte — exatamente quando era preciso repetir.
+   */
+  everSearched: boolean;
 }
 
 async function upsertRegion(
@@ -368,6 +388,7 @@ async function upsertRegion(
       freshUntilDays: Math.max(0, request.cacheDays - ageDays),
       searchCount: existing.search_count,
       placesFound: existing.places_found,
+      everSearched: existing.search_count > 0,
     };
   }
 
@@ -382,7 +403,7 @@ async function upsertRegion(
   }
 
   // Região nova: nunca pesquisada, portanto não há cache a respeitar.
-  return { id: data.id, ageDays: 0, freshUntilDays: 0, searchCount: 0, placesFound: 0 };
+  return { id: data.id, ageDays: 0, freshUntilDays: 0, searchCount: 0, placesFound: 0, everSearched: false };
 }
 
 async function fetchDoneCells(db: Db, regionId: string): Promise<Set<string>> {

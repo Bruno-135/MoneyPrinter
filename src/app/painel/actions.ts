@@ -35,6 +35,7 @@ export async function runScan(_previous: ScanFormState, formData: FormData): Pro
   const celula = Number(formData.get('celula') ?? 1500);
   const pais = String(formData.get('pais') ?? 'PT').toUpperCase();
   const confirmar = formData.get('confirmar') === 'sim';
+  const forcar = formData.get('forcar') === 'sim';
 
   if (zona === '') return { summary: null, error: 'Dá um nome à zona.' };
   if (!findCategory(ramo)) return { summary: null, error: `Ramo desconhecido: ${ramo}` };
@@ -60,6 +61,7 @@ export async function runScan(_previous: ScanFormState, formData: FormData): Pro
         dryRun: !confirmar,
         maxRequests: 60,
         cacheDays: env.REGION_SEARCH_CACHE_DAYS,
+        force: forcar,
       },
     );
 

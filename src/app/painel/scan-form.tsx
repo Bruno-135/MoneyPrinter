@@ -95,6 +95,16 @@ export function ScanForm() {
 
         <input type="hidden" name="celula" value={1500} />
 
+        <label className="flex items-center gap-2.5 text-sm">
+          <input type="checkbox" name="forcar" value="sim" className="size-4 accent-brand-600" />
+          <span>
+            Ignorar cache
+            <span className="ml-1.5 opacity-55">
+              — procura outra vez mesmo que esta zona e ramo já tenham sido feitos. Gasta dinheiro.
+            </span>
+          </span>
+        </label>
+
         <details className="text-sm">
           <summary className="cursor-pointer opacity-70">Coordenadas de cidades</summary>
           <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 opacity-70">
