@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
 import type { WebsiteKind } from '@/lib/places/website';
+import type { DealStage } from '@/lib/deals/stages';
 import { scoreLabel } from './score';
 
 /**
@@ -18,12 +19,16 @@ export interface RankOptions {
   filter?: ProspectFilter;
   category?: string | null;
   locality?: string | null;
+  /** Filtra por estado da negociação. 'por-contactar' inclui quem ainda não tem negociação. */
+  stage?: DealStage | 'por-contactar' | null;
   limit?: number;
   offset?: number;
 }
 
 export interface RankedBusiness {
   id: string;
+  /** Necessário para montar o link do Google Maps sem chamar a API. */
+  googlePlaceId: string;
   name: string;
   category: string;
   score: number;
@@ -38,6 +43,9 @@ export interface RankedBusiness {
   countryCode: string;
   isFoodService: boolean;
   scoreBreakdown: unknown;
+  /** Um comércio sem linha em `deals` conta como 'new' — por contactar. */
+  stage: DealStage;
+  nextActionAt: string | null;
 }
 
 export interface RankResult {
@@ -46,17 +54,37 @@ export interface RankResult {
 }
 
 const SELECT = [
-  'id', 'name', 'business_category', 'score', 'score_breakdown',
+  'id', 'google_place_id', 'name', 'business_category', 'score', 'score_breakdown',
   'website_kind', 'website_url', 'rating', 'reviews_count',
   'phone_e164', 'phone_raw', 'formatted_address', 'locality',
   'country_code', 'is_food_service',
+  // A negociação vem embutida. PostgREST devolve uma lista mesmo havendo no
+  // máximo uma (a restrição única é composta e ele não a reconhece como
+  // um-para-um), por isso lê-se o primeiro elemento.
+  'deals(stage,next_action_at)',
 ].join(',');
+
+/** PostgREST devolve a negociação embutida como lista; aqui reduz-se a um objeto. */
+function dealFields(raw: unknown): { stage: DealStage; nextActionAt: string | null } {
+  const first = Array.isArray(raw) ? raw[0] : raw;
+  if (!first || typeof first !== 'object') return { stage: 'new', nextActionAt: null };
+
+  const deal = first as { stage?: DealStage; next_action_at?: string | null };
+  return { stage: deal.stage ?? 'new', nextActionAt: deal.next_action_at ?? null };
+}
 
 export async function rankBusinesses(
   db: SupabaseClient<Database>,
   options: RankOptions = {},
 ): Promise<RankResult> {
-  const { filter = 'prospetos', category = null, locality = null, limit = 50, offset = 0 } = options;
+  const {
+    filter = 'prospetos',
+    category = null,
+    locality = null,
+    stage = null,
+    limit = 50,
+    offset = 0,
+  } = options;
 
   let query = db
     .from('businesses')
@@ -80,6 +108,14 @@ export async function rankBusinesses(
   if (category) query = query.eq('business_category', category);
   if (locality) query = query.ilike('locality', locality);
 
+  // 'por-contactar' é o único filtro que também tem de apanhar os comércios
+  // sem negociação nenhuma, que são a maioria logo depois de um varrimento.
+  if (stage === 'por-contactar') {
+    query = query.or('stage.is.null,stage.eq.new', { referencedTable: 'deals' });
+  } else if (stage) {
+    query = query.eq('deals.stage', stage).not('deals', 'is', null);
+  }
+
   const { data, count, error } = await query
     .order('score', { ascending: false })
     .order('reviews_count', { ascending: false, nullsFirst: false })
@@ -95,6 +131,7 @@ export async function rankBusinesses(
     total: count ?? rows.length,
     businesses: rows.map((row) => ({
       id: String(row.id),
+      googlePlaceId: String(row.google_place_id),
       name: String(row.name),
       category: String(row.business_category),
       score: Number(row.score ?? 0),
@@ -109,6 +146,7 @@ export async function rankBusinesses(
       countryCode: String(row.country_code ?? ''),
       isFoodService: Boolean(row.is_food_service),
       scoreBreakdown: row.score_breakdown ?? {},
+      ...dealFields(row.deals),
     })),
   };
 }

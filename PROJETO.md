@@ -95,16 +95,21 @@ arranque falhar num sítio que não explica porquê.
 src/
   app/                     # App Router (rotas, layouts, route handlers)
     entrar/                # ecrã de entrada (Supabase Auth, sem registo aberto)
-    painel/                # painel: formulário de varrimento + lista ordenada
+    painel/                # painel: varrimento, lista ordenada, funil
+      comercio/[id]/       # ficha do comércio: contacto, negociação, histórico, score
     api/scan/route.ts      # POST /api/scan — varrimento sem interface, por token
   lib/
     env.ts                 # validação das variáveis de ambiente
+    deals/                 # funil de negociação (etapa 6)
+      stages.ts            # os 8 estados, em português e por ordem de funil
+      repository.ts        # ler e escrever negociações; o histórico é do trigger
     scoring/               # score de venda e lista ordenada (etapa 3)
       score.ts             # 0-100 em 5 fatores, com explicação por fator
       rank.ts              # lista ordenada, com filtros
     places/                # integração com o Google Places (etapa 2)
       categories.ts        # ramo em português -> tipos do Places
       grid.ts              # grelha hexagonal que cobre a região
+      links.ts             # Google Maps e WhatsApp, montados sem chamar a API
       client.ts            # cliente HTTP da Places API (New)
       website.ts           # classificação none / social_only / real
       phone.ts             # normalização de telefones PT e BR
@@ -219,6 +224,17 @@ npm run list -- --filtro sem-site --ramo padaria
 npm run list -- --id <uuid>          # explica a nota de um comércio
 ```
 
+### O funil
+
+Oito estados, de "Por contactar" a "Ganho"/"Perdido". Um comércio **sem linha em
+`deals` conta como "Por contactar"** — as linhas só nascem quando se mexe pela
+primeira vez no estado, para um varrimento de 111 comércios não criar 111
+negociações vazias nem um histórico com uma mudança que nunca aconteceu.
+
+O histórico é escrito por um trigger na base de dados, não pela aplicação, e não
+tem política de escrita para ninguém (migração 0005 e 0007). Nem a aplicação nem
+eu conseguimos forjar ou apagar uma entrada.
+
 ### O score
 
 0 a 100, cinco fatores: presença digital (40), atividade (25), reputação (15),
@@ -298,7 +314,9 @@ para Production, Preview e Development.
 - [x] **Etapa 3** — Score 0-100 (5 fatores explicáveis) e lista ordenada.
 - [ ] **Etapa 4** — Gerador de landing pages (modelo geral + modelo restaurante/padaria).
 - [ ] **Etapa 5** — Exportação em PDF de apresentação.
-- [ ] **Etapa 6** — Funil de negociação com histórico.
+- [x] **Etapa 6** — Funil de negociação com histórico, filtros por estado, notas
+      e próximo passo. Feita antes das etapas 4 e 5 a pedido: com 90 prospetos
+      em lista, saber quem já foi contactado passou a ser o mais urgente.
 - [ ] **Etapa 7** — Relatórios mensais de visitas e cliques.
 
 ---
