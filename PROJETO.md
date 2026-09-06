@@ -78,16 +78,29 @@ Fluxo completo, do início ao fim:
 ```
 src/
   app/                     # App Router (rotas, layouts, route handlers)
+    api/scan/route.ts      # POST /api/scan — varrimento, protegido por token
   lib/
     env.ts                 # validação das variáveis de ambiente
+    places/                # integração com o Google Places (etapa 2)
+      categories.ts        # ramo em português -> tipos do Places
+      grid.ts              # grelha hexagonal que cobre a região
+      client.ts            # cliente HTTP da Places API (New)
+      website.ts           # classificação none / social_only / real
+      phone.ts             # normalização de telefones PT e BR
+      normalize.ts         # resposta do Places -> linha de `businesses`
+      scan.ts              # orquestrador: grelha, cache, gravação, resumo
     supabase/
       client.ts            # cliente browser  (chave publishable)
       server.ts            # cliente servidor (cookies, chave publishable, respeita RLS)
       admin.ts             # cliente service role — só servidor, ignora RLS
+      prospector.ts        # cliente autenticado como utilizador (usa a RLS)
   types/
     database.types.ts      # tipos gerados a partir do schema
   app/api/health/route.ts  # verificação da ligação ao Supabase
   proxy.ts                 # refresh da sessão Supabase (o antigo middleware.ts)
+scripts/
+  load-env.ts              # carrega o .env.local antes de tudo o resto
+  scan.ts                  # npm run scan — varrimento pela linha de comandos
 supabase/
   migrations/              # migrações SQL numeradas
   tests/                   # stubs do Supabase + teste de fumo do schema
@@ -166,6 +179,19 @@ npm run db:push             # supabase db push
 npm run db:types            # regenerar src/types/database.types.ts
 ```
 
+Testes e varrimento:
+
+```bash
+npm test                    # vitest: grelha, telefones, classificação de site
+npm run scan -- --help      # ajuda do varrimento
+
+# Simulação: mostra a grelha e o custo, NÃO chama a API
+npm run scan -- --zona "Braga centro" --ramo padaria --lat 41.5454 --lng -8.4265
+
+# A sério (gasta dinheiro)
+npm run scan -- --zona "Braga centro" --ramo padaria --lat 41.5454 --lng -8.4265 --confirmar
+```
+
 Testar o schema num Postgres qualquer, sem projeto Supabase — ver
 `supabase/README.md`. O teste de fumo verifica deduplicação de regiões, colunas
 geradas, validação de telefone e score, restrição do cardápio, histórico da
@@ -189,6 +215,10 @@ Verificação rápida da ligação com a aplicação a correr: `GET /api/health`
 6. **Alterou setup, variáveis de ambiente ou comportamento em runtime?** Atualizar este ficheiro
    e o `README` do projeto na mesma etapa.
 7. **Não chamar o Google Places sem verificar a cache de região primeiro.**
+   O varrimento arranca sempre em simulação; só `--confirmar` gasta dinheiro.
+   O mapa de ramos em `src/lib/places/categories.ts` **não foi confirmado contra
+   a documentação da Google** — um tipo inválido devolve 400 (não faturado) e o
+   varrimento passa sozinho à pesquisa por texto, avisando no resumo.
 8. **Não inventar dados de comércios.** O que não vier da API fica `null`.
 9. **Commits**: mensagem descritiva no imperativo, em inglês, com prefixo de tipo
    (`feat:`, `fix:`, `docs:`, `chore:`).
@@ -211,6 +241,9 @@ limitada à "Places API (New)", mais uma quota diária de pedidos.
 | `SUPABASE_SERVICE_ROLE_KEY` | **Só servidor** | Sim | Tarefas de sistema. Ignora RLS — nunca expor |
 | `GOOGLE_PLACES_API_KEY` | **Só servidor** | Sim | Busca de comércios |
 | `NEXT_PUBLIC_SITE_URL` | Browser + servidor | Sim | Base dos links públicos das landing pages |
+| `PROSPECTOR_EMAIL` | **Só servidor** | Sim | Utilizador com que o varrimento inicia sessão |
+| `PROSPECTOR_PASSWORD` | **Só servidor** | Sim | Password desse utilizador |
+| `SCAN_API_SECRET` | **Só servidor** | Sim | Cabeçalho `x-scan-secret` da rota que gasta dinheiro |
 | `PUBLIC_SITE_DEFAULT_TTL_DAYS` | Só servidor | Não (30) | Validade por omissão das landing pages |
 | `REGION_SEARCH_CACHE_DAYS` | Só servidor | Não (30) | Dias até uma região pesquisada ser considerada velha |
 
@@ -224,7 +257,8 @@ para Production, Preview e Development.
 - [x] **Etapa 1** — Instruções do projeto, estrutura + ligação ao Supabase, schema em migrações SQL.
       Migrações aplicadas e teste de fumo corrido contra o Supabase real; linter de
       segurança sem erros.
-- [ ] **Etapa 2** — Integração com o Google Places e cache de regiões.
+- [x] **Etapa 2** — Google Places (API nova), grelha hexagonal, cache a dois níveis,
+      classificação dos três casos de site, modo de simulação.
 - [ ] **Etapa 3** — Cálculo do score e lista ordenada de comércios.
 - [ ] **Etapa 4** — Gerador de landing pages (modelo geral + modelo restaurante/padaria).
 - [ ] **Etapa 5** — Exportação em PDF de apresentação.

@@ -23,6 +23,15 @@ const publicSchema = z.object({
 const serverSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "SUPABASE_SERVICE_ROLE_KEY é obrigatória"),
   GOOGLE_PLACES_API_KEY: z.string().min(1, "GOOGLE_PLACES_API_KEY é obrigatória"),
+
+  // Utilizador com que o varrimento se autentica. Ver lib/supabase/prospector.ts
+  // para o motivo de não usarmos a service_role aqui.
+  PROSPECTOR_EMAIL: z.string().email("PROSPECTOR_EMAIL tem de ser um email válido"),
+  PROSPECTOR_PASSWORD: z.string().min(1, "PROSPECTOR_PASSWORD é obrigatória"),
+
+  // Segredo do cabeçalho x-scan-secret. Protege uma rota que gasta dinheiro.
+  SCAN_API_SECRET: z.string().min(16, "SCAN_API_SECRET tem de ter pelo menos 16 caracteres"),
+
   PUBLIC_SITE_DEFAULT_TTL_DAYS: z.coerce.number().int().positive().default(30),
   REGION_SEARCH_CACHE_DAYS: z.coerce.number().int().positive().default(30),
 });
@@ -75,6 +84,9 @@ export function getServerEnv(): ServerEnv {
   const parsed = serverSchema.safeParse({
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
+    PROSPECTOR_EMAIL: process.env.PROSPECTOR_EMAIL,
+    PROSPECTOR_PASSWORD: process.env.PROSPECTOR_PASSWORD,
+    SCAN_API_SECRET: process.env.SCAN_API_SECRET,
     PUBLIC_SITE_DEFAULT_TTL_DAYS: process.env.PUBLIC_SITE_DEFAULT_TTL_DAYS || undefined,
     REGION_SEARCH_CACHE_DAYS: process.env.REGION_SEARCH_CACHE_DAYS || undefined,
   });

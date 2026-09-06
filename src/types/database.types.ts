@@ -65,6 +65,8 @@ export type Database = {
           last_synced_at: string
           created_at: string
           updated_at: string
+          website_host: string | null
+          website_kind: Database["public"]["Enums"]["website_kind"] | null
         };
         Insert: {
           id?: string
@@ -110,6 +112,8 @@ export type Database = {
           last_synced_at?: string
           created_at?: string
           updated_at?: string
+          website_host?: never
+          website_kind?: never
         };
         Update: {
           id?: string
@@ -155,6 +159,8 @@ export type Database = {
           last_synced_at?: string
           created_at?: string
           updated_at?: string
+          website_host?: never
+          website_kind?: never
         };
         Relationships: [
           {
@@ -485,6 +491,7 @@ export type Database = {
           error_message: string | null
           requested_at: string
           created_at: string
+          grid_cell_key: string | null
         };
         Insert: {
           id?: string
@@ -501,6 +508,7 @@ export type Database = {
           error_message?: string | null
           requested_at?: string
           created_at?: string
+          grid_cell_key?: string | null
         };
         Update: {
           id?: string
@@ -517,6 +525,7 @@ export type Database = {
           error_message?: string | null
           requested_at?: string
           created_at?: string
+          grid_cell_key?: string | null
         };
         Relationships: [
           {
@@ -560,6 +569,9 @@ export type Database = {
           notes: string | null
           created_at: string
           updated_at: string
+          grid_radius_meters: number | null
+          grid_cells_total: number
+          saturated_cells: number
         };
         Insert: {
           id?: string
@@ -585,6 +597,9 @@ export type Database = {
           notes?: string | null
           created_at?: string
           updated_at?: string
+          grid_radius_meters?: number | null
+          grid_cells_total?: number
+          saturated_cells?: number
         };
         Update: {
           id?: string
@@ -610,6 +625,9 @@ export type Database = {
           notes?: string | null
           created_at?: string
           updated_at?: string
+          grid_radius_meters?: number | null
+          grid_cells_total?: number
+          saturated_cells?: number
         };
         Relationships: [
           {
@@ -866,6 +884,7 @@ export type Database = {
       deal_stage: "new" | "contacted" | "meeting_scheduled" | "proposal_sent" | "negotiating" | "won" | "lost" | "on_hold";
       site_status: "draft" | "published" | "expired" | "archived";
       site_template: "standard" | "food_service";
+      website_kind: "none" | "social_only" | "real";
     };
     CompositeTypes: Record<string, never>;
   };

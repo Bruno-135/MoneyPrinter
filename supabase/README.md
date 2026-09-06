@@ -15,6 +15,7 @@ Schema do sistema de prospeção comercial, em migrações SQL versionadas.
 | `0007_row_level_security.sql` | RLS e políticas por `owner_id`, mais leitura pública das páginas publicadas |
 | `0008_public_tracking.sql` | `record_site_visit()` / `record_site_click()` para visitantes anónimos |
 | `0009_revoke_trigger_function_execute.sql` | Retira as funções de trigger da API REST pública |
+| `0010_website_kind_and_grid_cache.sql` | `website_kind` (os três casos de site) e cache por célula da grelha |
 
 **Nunca editar uma migração já aplicada.** Alteração ao schema = ficheiro novo.
 
@@ -51,6 +52,20 @@ npm run db:types          # regenerar src/types/database.types.ts
   derivados pela função, portanto não há forma de inserir eventos falsos noutro site.
 - **Dinheiro em cêntimos** (`price_cents`, `expected_value_cents`) + coluna `currency`,
   porque PT usa EUR e BR usa BRL.
+- **Três casos de presença digital, não dois.** `website_kind` distingue `none`,
+  `social_only` e `real`. Quem pôs a página de Facebook — ou um `business.site`, o
+  criador de sites grátis da própria Google — no campo do website conta como
+  `social_only`, e é dos melhores prospetos que há: já percebeu que precisa de
+  presença online. A regra é uma coluna gerada, portanto vive na base de dados;
+  há uma cópia em TypeScript em `src/lib/places/website.ts` para a aplicação
+  classificar antes de gravar, e as duas têm de andar a par.
+- **`has_website` não mudou de significado.** Continua a querer dizer "o campo vem
+  preenchido". Redefini-la para "tem site a sério" teria sido mudar em silêncio o
+  que uma coluna significa, que é como se fabricam bugs meses depois.
+- **`region_searches.grid_cell_key` com índice único por região** é o que torna
+  impossível pagar duas vezes pela mesma célula da grelha, mesmo que um
+  varrimento seja interrompido a meio. O índice só cobre as chamadas bem
+  sucedidas, para uma célula que falhou poder ser repetida.
 - **As funções de trigger não são chamáveis por REST.** O Supabase publica tudo o que
   está em `public` como `/rest/v1/rpc/<nome>`, incluindo funções de trigger que não
   servem para ser chamadas por ninguém. A `0009` revoga-lhes o `execute`. As duas

@@ -1,0 +1,65 @@
+/**
+ * Tipos da Google Places API (New).
+ *
+ * Só estão aqui os campos que o `fieldMask` pede — pedir campos a mais custa
+ * dinheiro sem trazer nada, porque o escalão de preço é determinado pelo campo
+ * mais caro da máscara.
+ */
+
+/** Um resultado do Places, limitado aos campos que pedimos. */
+export interface PlaceResult {
+  id: string;
+  displayName?: { text?: string; languageCode?: string };
+  primaryType?: string;
+  primaryTypeDisplayName?: { text?: string };
+  types?: string[];
+  formattedAddress?: string;
+  shortFormattedAddress?: string;
+  addressComponents?: AddressComponent[];
+  location?: { latitude?: number; longitude?: number };
+  businessStatus?: string;
+
+  // Campos do escalão Enterprise — são estes que determinam o preço.
+  nationalPhoneNumber?: string;
+  internationalPhoneNumber?: string;
+  websiteUri?: string;
+  rating?: number;
+  userRatingCount?: number;
+  priceLevel?: string;
+  regularOpeningHours?: unknown;
+}
+
+export interface AddressComponent {
+  longText?: string;
+  shortText?: string;
+  types?: string[];
+}
+
+export interface SearchNearbyResponse {
+  places?: PlaceResult[];
+}
+
+export interface SearchTextResponse {
+  places?: PlaceResult[];
+  nextPageToken?: string;
+}
+
+/** Resultado de uma chamada, já com o que é preciso para gravar e contabilizar. */
+export interface PlacesCallResult {
+  ok: boolean;
+  httpStatus: number;
+  places: PlaceResult[];
+  /** Corpo completo da resposta, para gravar em `response_raw`. */
+  raw: unknown;
+  /** Parâmetros enviados, para gravar em `request_params`. */
+  requestParams: unknown;
+  endpoint: string;
+  errorMessage: string | null;
+  /**
+   * true quando a Google rejeitou o pedido por causa de um tipo desconhecido.
+   * Estas respostas não são faturadas e são o sinal para passar à pesquisa
+   * por texto.
+   */
+  invalidType: boolean;
+  nextPageToken: string | null;
+}
