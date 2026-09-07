@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read", "Glob", "Grep", "Edit", "Write", "Artifact",
+      "Bash(git *)", "Bash(npm *)", "Bash(npx *)", "Bash(node *)", "Bash(curl *)",
+      "Bash(ls *)", "Bash(cat *)", "Bash(head *)", "Bash(tail *)", "Bash(grep *)",
+      "Bash(rg *)", "Bash(find *)", "Bash(wc *)", "Bash(sed *)", "Bash(awk *)",
+      "Bash(diff *)", "Bash(echo *)", "Bash(jq *)", "Bash(mkdir *)", "Bash(cp *)", "Bash(mv *)",
+      "mcp__Supabase", "mcp__Vercel", "mcp__github"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -fd*)",
+      "mcp__Supabase__pause_project",
+      "mcp__Supabase__delete_branch"
+    ]
+  },
+  "enableAllProjectMcpServers": true
+}
