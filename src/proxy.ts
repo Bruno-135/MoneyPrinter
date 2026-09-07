@@ -41,9 +41,17 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Todos os caminhos exceto ficheiros estáticos e imagens — não vale a pena
-     * validar sessão para servir um favicon.
+     * Todos os caminhos exceto:
+     *
+     *   - ficheiros estáticos e imagens — não vale a pena validar sessão para
+     *     servir um favicon;
+     *   - `/s/...`, as landing pages públicas. Quem as abre é um cliente do
+     *     comerciante, sem sessão nenhuma para renovar. Sem esta exceção, cada
+     *     visita a uma página pública fazia uma ida ao Supabase para confirmar
+     *     uma sessão que não existe — latência acrescentada exatamente na
+     *     página onde ela mais se nota, e que é a que o comerciante mostra aos
+     *     clientes dele.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|s/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
