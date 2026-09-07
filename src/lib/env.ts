@@ -49,16 +49,19 @@ const serverSchema = z.object({
   // o PDF — e só o botão de gerar por IA diz que falta a chave. Torná-la
   // obrigatória faria a aplicação inteira recusar-se a arrancar por causa de
   // uma funcionalidade que se pode dispensar.
-  ANTHROPIC_API_KEY: z
-    .string()
-    .min(1)
-    .refine((key) => key.startsWith('sk-ant-'), {
-      // Uma chave colada com um espaço a mais, ou a chave errada de outro
-      // serviço, dá um 401 da Anthropic que não diz qual foi o engano. Este
-      // aviso apanha o caso comum antes de se gastar a chamada.
-      message: 'ANTHROPIC_API_KEY não parece uma chave da Anthropic (deve começar por "sk-ant-")',
-    })
-    .optional(),
+  //
+  // Não se valida o formato, e isso é uma correção deliberada a uma versão
+  // anterior deste ficheiro. Tinha aqui uma regra a exigir que a chave
+  // começasse por "sk-ant-", escrita de cor. Uma chave real que não batia
+  // certo com esse palpite fez o esquema falhar — e como isto corre no
+  // arranque, o ecrã inteiro devolvia 500 em vez de a funcionalidade avisar
+  // que não estava configurada.
+  //
+  // Duas lições, as duas gravadas aqui: quem decide se uma chave é válida é a
+  // API que a recebe, não um palpite sobre prefixos; e uma variável OPCIONAL
+  // mal preenchida tem de degradar a sua funcionalidade, nunca derrubar o
+  // resto da aplicação.
+  ANTHROPIC_API_KEY: z.string().min(1).optional(),
 
   PUBLIC_SITE_DEFAULT_TTL_DAYS: z.coerce.number().int().positive().default(30),
   REGION_SEARCH_CACHE_DAYS: z.coerce.number().int().positive().default(30),
