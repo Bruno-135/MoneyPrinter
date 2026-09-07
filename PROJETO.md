@@ -386,6 +386,20 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       (barato, continua editável campo a campo) e gerar HTML livre (mais
       variedade, deixa de ser editável por campos). Precisa de uma chave da API
       da Anthropic com faturação; até lá as páginas geram-se pelo botão ou à mão.
+
+      **Seletor de modelo no ecrã de geração** (pedido explícito). Opus 5 por
+      omissão — nunca se baixa de modelo por iniciativa própria, a troca é uma
+      decisão de quem paga. Sonnet 5 e Haiku 4.5 à escolha para quando se geram
+      muitos de uma vez. Custo por site, medido nos preços de tabela:
+
+      | Modelo | Preencher modelo | HTML livre |
+      |---|---|---|
+      | `claude-opus-5` | ~3,8 cênt. | ~21 cênt. |
+      | `claude-sonnet-5` | ~1,5 cênt. | ~8 cênt. |
+      | `claude-haiku-4-5` | ~0,8 cênt. | ~4 cênt. |
+
+      O modelo usado fica gravado com a página, para se saber a que custo e com
+      que qualidade cada uma foi feita quando se comparar o que vendeu.
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
 ---
