@@ -273,6 +273,12 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                       Ver a página
                     </Link>
                     <Link
+                      href={`/painel/site/${site.id}/gerar`}
+                      className="rounded-md border border-brand-500 px-3 py-1.5 font-medium text-brand-600"
+                    >
+                      Gerar com IA
+                    </Link>
+                    <Link
                       href={`/painel/site/${site.id}/editar`}
                       className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
                     >

@@ -382,24 +382,31 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
 
 ### Por fazer
 
-- [ ] **Fase 2** — caixa de texto livre com IA, em dois modos: preencher o modelo
-      (barato, continua editável campo a campo) e gerar HTML livre (mais
-      variedade, deixa de ser editável por campos). Precisa de uma chave da API
-      da Anthropic com faturação; até lá as páginas geram-se pelo botão ou à mão.
+- [x] **Fase 2** — geração por IA, nos dois modos, com seletor de modelo.
 
-      **Seletor de modelo no ecrã de geração** (pedido explícito). Opus 5 por
-      omissão — nunca se baixa de modelo por iniciativa própria, a troca é uma
-      decisão de quem paga. Sonnet 5 e Haiku 4.5 à escolha para quando se geram
-      muitos de uma vez. Custo por site, medido nos preços de tabela:
+      `fields` — o modelo escreve subtítulo, texto de apresentação e três
+      destaques, e escolhe paleta e tipo de letra de uma lista fechada. Entra
+      nos mesmos campos que o editor edita, por isso a página continua
+      editável. `html` — o modelo desenha a página inteira; grava em
+      `custom_html` e a página deixa de ter campos (há um botão para voltar
+      atrás sem perder o que havia).
 
-      | Modelo | Preencher modelo | HTML livre |
-      |---|---|---|
-      | `claude-opus-5` | ~3,8 cênt. | ~21 cênt. |
-      | `claude-sonnet-5` | ~1,5 cênt. | ~8 cênt. |
-      | `claude-haiku-4-5` | ~0,8 cênt. | ~4 cênt. |
+      **Os factos nunca vêm do modelo.** Nome, telefone, morada e avaliação são
+      do Google e são passados como dados; o modelo escreve à volta deles. Uma
+      página que diga ao dono que ele abriu em 1987 quando abriu em 2019 perde
+      a venda ali mesmo.
 
-      O modelo usado fica gravado com a página, para se saber a que custo e com
-      que qualidade cada uma foi feita quando se comparar o que vendeu.
+      **O HTML é limpo antes de gravar** (`src/lib/ai/sanitize.ts`), com uma
+      lista do que passa e não do que se bloqueia. O pedido é escrito por uma
+      pessoa e vai inteiro para dentro do prompt; o que sair daí é servido num
+      endereço público. Limpa-se na escrita e não na leitura, para não haver
+      caminho de leitura que alguém se esqueça de proteger — e por isso os
+      testes atacam o sanitizador a sério.
+
+      Modelo por omissão: `claude-opus-5`. Baixar de modelo é decisão de quem
+      paga, tomada no ecrã com o preço à frente dos olhos. O modelo usado, o
+      pedido e os tokens ficam gravados com a página.
+
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
 ---

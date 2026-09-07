@@ -5,6 +5,7 @@ import { getPublicSite } from '@/lib/sites/repository';
 import { parseContent } from '@/lib/sites/content';
 import { parseTheme } from '@/lib/sites/theme';
 import { SiteRender } from '@/components/site/site-render';
+import { CustomHtmlSite } from '@/components/site/custom-html';
 import { VisitTracker, TrackedLink } from './tracking';
 
 /**
@@ -49,6 +50,17 @@ export default async function PaginaPublica({ params }: Props) {
   const { site, menu } = result;
   const content = parseContent(site.content);
   if (!content) notFound();
+
+  // Desenhada de raiz pela IA: mostra-se tal como foi gerada. O registo de
+  // visitas continua, que é o que alimenta o relatório mensal.
+  if (site.custom_html) {
+    return (
+      <>
+        <VisitTracker publicCode={code} />
+        <CustomHtmlSite html={site.custom_html} />
+      </>
+    );
+  }
 
   return (
     <>

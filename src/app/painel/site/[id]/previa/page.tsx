@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { loadSite } from '@/lib/sites/load';
 import { SiteRender } from '@/components/site/site-render';
+import { CustomHtmlSite } from '@/components/site/custom-html';
 import { publicEnv } from '@/lib/env';
 import { publish, unpublish } from '../../../site-actions';
 
@@ -65,6 +66,12 @@ export default async function PreviaPage({ params }: Props) {
 
           <div className="ml-auto flex flex-wrap items-center gap-2.5 text-sm">
             <Link
+              href={`/painel/site/${id}/gerar`}
+              className="rounded-md border border-brand-500 px-3 py-1.5 font-medium text-brand-600"
+            >
+              Gerar com IA
+            </Link>
+            <Link
               href={`/painel/site/${id}/editar`}
               className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
             >
@@ -111,6 +118,9 @@ export default async function PreviaPage({ params }: Props) {
         )}
       </div>
 
+      {site.custom_html ? (
+        <CustomHtmlSite html={site.custom_html} />
+      ) : (
       <SiteRender
         mode="preview"
         content={content}
@@ -120,6 +130,7 @@ export default async function PreviaPage({ params }: Props) {
         whatsappNumber={site.whatsapp_number_e164}
         whatsappGreeting={site.whatsapp_greeting}
       />
+      )}
     </div>
   );
 }

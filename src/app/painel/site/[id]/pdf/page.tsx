@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { loadSite } from '@/lib/sites/load';
 import { SiteRender } from '@/components/site/site-render';
+import { CustomHtmlSite } from '@/components/site/custom-html';
 import { PrintButton } from './print-button';
 
 /**
@@ -77,6 +78,9 @@ export default async function SitePdfPage({ params }: Props) {
         </div>
       </div>
 
+      {site.custom_html ? (
+        <CustomHtmlSite html={site.custom_html} forPrint />
+      ) : (
       <SiteRender
         mode="print"
         content={content}
@@ -86,6 +90,7 @@ export default async function SitePdfPage({ params }: Props) {
         whatsappNumber={site.whatsapp_number_e164}
         whatsappGreeting={site.whatsapp_greeting}
       />
+      )}
     </>
   );
 }

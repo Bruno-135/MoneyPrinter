@@ -44,6 +44,22 @@ const serverSchema = z.object({
   // Só tarefas de sistema precisam desta. Nada no caminho normal a usa.
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
 
+  // Só a geração de páginas por IA precisa desta. Opcional de propósito: sem
+  // ela, tudo o resto continua a funcionar — o varrimento, a lista, o editor,
+  // o PDF — e só o botão de gerar por IA diz que falta a chave. Torná-la
+  // obrigatória faria a aplicação inteira recusar-se a arrancar por causa de
+  // uma funcionalidade que se pode dispensar.
+  ANTHROPIC_API_KEY: z
+    .string()
+    .min(1)
+    .refine((key) => key.startsWith('sk-ant-'), {
+      // Uma chave colada com um espaço a mais, ou a chave errada de outro
+      // serviço, dá um 401 da Anthropic que não diz qual foi o engano. Este
+      // aviso apanha o caso comum antes de se gastar a chamada.
+      message: 'ANTHROPIC_API_KEY não parece uma chave da Anthropic (deve começar por "sk-ant-")',
+    })
+    .optional(),
+
   PUBLIC_SITE_DEFAULT_TTL_DAYS: z.coerce.number().int().positive().default(30),
   REGION_SEARCH_CACHE_DAYS: z.coerce.number().int().positive().default(30),
 });
@@ -95,6 +111,7 @@ export function getServerEnv(): ServerEnv {
 
   const parsed = serverSchema.safeParse({
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || undefined,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY?.trim() || undefined,
     GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
     PROSPECTOR_EMAIL: process.env.PROSPECTOR_EMAIL || undefined,
     PROSPECTOR_PASSWORD: process.env.PROSPECTOR_PASSWORD || undefined,

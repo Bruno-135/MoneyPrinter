@@ -101,6 +101,62 @@ export async function updateSiteContent(
   if (error) throw new Error(`Não foi possível guardar: ${error.message}`);
 }
 
+/**
+ * Grava o resultado de uma geração por IA.
+ *
+ * `customHtml` a `null` significa modo "preencher campos": a página volta a ser
+ * uma página normal, editável campo a campo. Passar HTML muda-a para o outro
+ * modo. É a mesma função para os dois porque o que se grava a seguir — modelo,
+ * pedido, tokens — é igual, e separá-la em duas duplicava essa parte.
+ */
+export async function saveAiGeneration(
+  db: Db,
+  siteId: string,
+  input: {
+    content: SiteContent;
+    theme: SiteTheme;
+    customHtml: string | null;
+    model: string;
+    brief: string;
+    inputTokens: number;
+    outputTokens: number;
+  },
+): Promise<void> {
+  const { error } = await db
+    .from('generated_sites')
+    .update({
+      title: input.content.hero.headline,
+      content: input.content as never,
+      theme: input.theme as never,
+      custom_html: input.customHtml,
+      ai_model: input.model,
+      ai_brief: input.brief || null,
+      ai_generated_at: new Date().toISOString(),
+      ai_input_tokens: input.inputTokens,
+      ai_output_tokens: input.outputTokens,
+    })
+    .eq('id', siteId);
+
+  if (error) throw new Error(`Não foi possível guardar a geração: ${error.message}`);
+}
+
+/**
+ * Volta ao modo de campos, deitando fora o HTML gerado.
+ *
+ * Existe porque o caminho inverso não é simétrico: gerar HTML apaga a
+ * possibilidade de editar por campos, e sem uma forma de voltar atrás a única
+ * saída seria apagar a página e começar do zero — perdendo o código público,
+ * que pode já ter sido enviado ao comerciante.
+ */
+export async function discardCustomHtml(db: Db, siteId: string): Promise<void> {
+  const { error } = await db
+    .from('generated_sites')
+    .update({ custom_html: null })
+    .eq('id', siteId);
+
+  if (error) throw new Error(`Não foi possível voltar ao modelo: ${error.message}`);
+}
+
 export async function publishSite(db: Db, siteId: string, ttlDays: number): Promise<void> {
   const expiresAt = new Date(Date.now() + ttlDays * 86_400_000).toISOString();
 

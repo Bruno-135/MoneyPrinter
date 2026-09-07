@@ -327,6 +327,12 @@ export type Database = {
       };
       generated_sites: {
         Row: {
+          ai_brief: string | null
+          ai_generated_at: string | null
+          ai_input_tokens: number | null
+          ai_model: string | null
+          ai_output_tokens: number | null
+          custom_html: string | null
           id: string
           owner_id: string
           business_id: string
@@ -348,6 +354,12 @@ export type Database = {
           updated_at: string
         };
         Insert: {
+          ai_brief?: string | null
+          ai_generated_at?: string | null
+          ai_input_tokens?: number | null
+          ai_model?: string | null
+          ai_output_tokens?: number | null
+          custom_html?: string | null
           id?: string
           owner_id?: string
           business_id: string
@@ -369,6 +381,12 @@ export type Database = {
           updated_at?: string
         };
         Update: {
+          ai_brief?: string | null
+          ai_generated_at?: string | null
+          ai_input_tokens?: number | null
+          ai_model?: string | null
+          ai_output_tokens?: number | null
+          custom_html?: string | null
           id?: string
           owner_id?: string
           business_id?: string
