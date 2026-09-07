@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
-import { buildContent, templateFor, type SiteTemplate } from './content';
+import { buildContent, templateFor, type SiteContent, type SiteTemplate } from './content';
+import { suggestPalette, type SiteTheme } from './theme';
 
 /**
  * Criação e gestão das landing pages.
@@ -41,6 +42,11 @@ export async function generateSite(db: Db, businessId: string): Promise<string> 
   const template = templateFor(business);
   const content = buildContent(business, template);
 
+  // A paleta é um palpite a partir do ramo, não uma escolha definitiva: o
+  // editor muda-a num clique. Serve para uma floricultura não nascer com as
+  // cores de uma padaria só porque foi esse o primeiro modelo que se fez.
+  const theme: SiteTheme = { palette: suggestPalette(business.google_types), font: 'sans' };
+
   const { data, error } = await db
     .from('generated_sites')
     .insert({
@@ -49,6 +55,7 @@ export async function generateSite(db: Db, businessId: string): Promise<string> 
       status: 'draft',
       title: business.name,
       content: content as never,
+      theme: theme as never,
       whatsapp_number_e164: business.phone_e164,
       whatsapp_country: business.phone_country,
       whatsapp_greeting: content.ordering?.greeting ?? null,
@@ -61,6 +68,37 @@ export async function generateSite(db: Db, businessId: string): Promise<string> 
   }
 
   return data.id;
+}
+
+/**
+ * Grava o conteúdo e o tema editados.
+ *
+ * Escreve o JSON inteiro de uma vez em vez de campo a campo. O conteúdo é um
+ * documento, não um conjunto de colunas: gravar metade dele deixaria a página
+ * num estado que nenhum ecrã produziu.
+ *
+ * `title` acompanha o título da capa porque é o que aparece no separador do
+ * browser e nas partilhas — se divergirem, o comerciante manda o link e vê
+ * outro nome.
+ */
+export async function updateSiteContent(
+  db: Db,
+  siteId: string,
+  content: SiteContent,
+  theme: SiteTheme,
+  whatsappGreeting: string | null,
+): Promise<void> {
+  const { error } = await db
+    .from('generated_sites')
+    .update({
+      title: content.hero.headline,
+      content: content as never,
+      theme: theme as never,
+      whatsapp_greeting: whatsappGreeting,
+    })
+    .eq('id', siteId);
+
+  if (error) throw new Error(`Não foi possível guardar: ${error.message}`);
 }
 
 export async function publishSite(db: Db, siteId: string, ttlDays: number): Promise<void> {

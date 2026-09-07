@@ -266,12 +266,30 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                   )}
 
                   <div className="mt-3 flex flex-wrap gap-2.5 text-sm">
+                    <Link
+                      href={`/painel/site/${site.id}/previa`}
+                      className="rounded-md bg-black/[0.06] px-3 py-1.5 font-medium dark:bg-white/10"
+                    >
+                      Ver a página
+                    </Link>
+                    <Link
+                      href={`/painel/site/${site.id}/editar`}
+                      className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
+                    >
+                      Editar
+                    </Link>
+                    <Link
+                      href={`/painel/site/${site.id}/pdf`}
+                      className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
+                    >
+                      PDF do site
+                    </Link>
                     {site.template === 'food_service' && (
                       <Link
                         href={`/painel/site/${site.id}/cardapio`}
                         className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
                       >
-                        Editar cardápio
+                        Cardápio
                       </Link>
                     )}
                     <form action={site.isLive ? unpublish : publish}>

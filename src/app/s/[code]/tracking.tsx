@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import type { Database } from '@/types/database.types';
 
 /**
  * Registo de visitas e cliques na página pública.
@@ -54,7 +55,14 @@ export function VisitTracker({ publicCode }: { publicCode: string }) {
   return null;
 }
 
-type ClickTarget = 'whatsapp' | 'phone' | 'directions' | 'menu_item' | 'social' | 'external_link';
+/**
+ * Vem do enum da base de dados em vez de estar escrito à mão.
+ *
+ * A lista escrita à mão que aqui estava já tinha ficado para trás do esquema —
+ * faltavam-lhe `email` e `other`. Uma cópia de um enum é uma cópia que
+ * eventualmente diverge, e quem a escreve não é avisado.
+ */
+type ClickTarget = Database['public']['Enums']['click_target'];
 
 /**
  * Envolve uma ligação e regista o clique antes de a seguir.

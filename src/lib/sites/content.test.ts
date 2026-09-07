@@ -122,3 +122,55 @@ describe('parseContent', () => {
     expect(parsed?.contact.phone).toBeNull();
   });
 });
+
+describe('parseContent — fotografias', () => {
+  const base = { hero: { headline: 'Padaria do Zé' } };
+
+  it('uma página gerada antes das fotos existirem continua a abrir', () => {
+    // As primeiras páginas foram gravadas sem `cover` nem `gallery`. Se a
+    // leitura rebentasse com isso, deixavam de abrir para quem já as tem.
+    const content = parseContent(base);
+
+    expect(content).not.toBeNull();
+    expect(content?.cover).toBeNull();
+    expect(content?.gallery).toEqual([]);
+  });
+
+  it('lê uma capa e uma galeria', () => {
+    const content = parseContent({
+      ...base,
+      cover: { url: 'https://exemplo.pt/capa.jpg', alt: 'Montra' },
+      gallery: [{ url: 'https://exemplo.pt/1.jpg', alt: 'Pão' }],
+    });
+
+    expect(content?.cover).toEqual({ url: 'https://exemplo.pt/capa.jpg', alt: 'Montra' });
+    expect(content?.gallery).toHaveLength(1);
+  });
+
+  it('recusa endereços que não sejam http ou https', () => {
+    // O URL vai parar a um `src` numa página que qualquer pessoa abre. Deixar
+    // passar `javascript:` seria executar código no site do comerciante.
+    for (const url of ['javascript:alert(1)', 'data:text/html,<script>x</script>', 'file:///etc']) {
+      expect(parseContent({ ...base, cover: { url, alt: '' } })?.cover, url).toBeNull();
+    }
+  });
+
+  it('deita fora fotos inválidas da galeria e guarda as boas', () => {
+    const content = parseContent({
+      ...base,
+      gallery: [
+        { url: 'https://exemplo.pt/boa.jpg', alt: 'Boa' },
+        { url: 'javascript:alert(1)', alt: 'Má' },
+        { alt: 'Sem endereço' },
+        'nem sequer um objeto',
+      ],
+    });
+
+    expect(content?.gallery).toEqual([{ url: 'https://exemplo.pt/boa.jpg', alt: 'Boa' }]);
+  });
+
+  it('aceita uma foto sem descrição, com o texto vazio', () => {
+    const content = parseContent({ ...base, cover: { url: 'https://exemplo.pt/c.jpg' } });
+    expect(content?.cover).toEqual({ url: 'https://exemplo.pt/c.jpg', alt: '' });
+  });
+});
