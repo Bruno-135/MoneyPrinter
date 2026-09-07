@@ -355,6 +355,39 @@ para Production, Preview e Development.
 - [x] **Etapa 7** — Relatórios mensais de visitas e cliques, a partir da vista
       `monthly_site_report`.
 
+### Fase 1 do editor de sites
+
+Pedida depois das sete etapas, a partir do fluxo de um concorrente (AIVIO-IA):
+gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
+
+- [x] **Componente único da página** — `components/site/site-render.tsx`, com três
+      modos: `public` (regista cliques), `preview` (não regista) e `print`
+      (quebra de página por secção). O que o dono aprova no PDF é literalmente o
+      que fica no ar, porque é o mesmo código.
+- [x] **Temas** — seis paletas nomeadas e três tipos de letra em `lib/sites/theme.ts`,
+      gravados na coluna `theme` que já existia vazia. São nomes de uma lista
+      fechada de propósito: na Fase 2 é isto que a IA vai escolher a partir de
+      uma frase, e escolher um nome de uma lista é fiável, escolher duas cores
+      com contraste suficiente não é.
+- [x] **Pré-visualização** — `/painel/site/[id]/previa`.
+- [x] **PDF do site** — `/painel/site/[id]/pdf`, uma secção por folha. Distinto da
+      apresentação da etapa 5: aquela é uma folha de venda *sobre* o negócio,
+      para ti; esta é uma fotografia do *site*, para o dono.
+- [x] **Editor** — `/painel/site/[id]/editar`. Os campos deste formulário **são** o
+      formato do conteúdo: a geração automática, a edição à mão e a IA da Fase 2
+      escrevem todos no mesmo sítio.
+- [x] **Fotografias** — balde `fotos-sites` (migração 0011), escrita só do dono,
+      leitura pública. Redimensionadas no browser antes de enviar e carregadas
+      diretamente para o armazenamento, sem passar pelo servidor.
+
+### Por fazer
+
+- [ ] **Fase 2** — caixa de texto livre com IA, em dois modos: preencher o modelo
+      (barato, continua editável campo a campo) e gerar HTML livre (mais
+      variedade, deixa de ser editável por campos). Precisa de uma chave da API
+      da Anthropic com faturação; até lá as páginas geram-se pelo botão ou à mão.
+- [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
+
 ---
 
 ## 9. Nota sobre o repositório

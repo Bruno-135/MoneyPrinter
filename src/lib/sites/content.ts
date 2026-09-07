@@ -26,6 +26,22 @@ export interface SiteHighlight {
   text: string;
 }
 
+/**
+ * Fotografias do comerciante.
+ *
+ * Guardam-se os URL públicos e não os caminhos internos do armazenamento: a
+ * página pública lê-se do JSON sem tocar em mais nenhuma tabela, e essa regra
+ * vale também para as imagens.
+ *
+ * `alt` existe porque uma foto sem descrição é invisível para quem usa leitor
+ * de ecrã e para o Google — e um dos argumentos de venda é justamente aparecer
+ * nas pesquisas.
+ */
+export interface SitePhoto {
+  url: string;
+  alt: string;
+}
+
 export interface SiteContent {
   hero: {
     headline: string;
@@ -35,6 +51,10 @@ export interface SiteContent {
   };
   about: string;
   highlights: SiteHighlight[];
+  /** Foto de capa, por trás do título. Ausente até o comerciante dar uma. */
+  cover: SitePhoto | null;
+  /** Galeria, por baixo do texto. Vazia até o comerciante dar fotos. */
+  gallery: SitePhoto[];
   contact: {
     phone: string | null;
     phoneLabel: string | null;
@@ -133,6 +153,10 @@ export function buildContent(business: Business, template: SiteTemplate): SiteCo
     },
     about: buildAbout(business, template),
     highlights: buildHighlights(business, template),
+    // Sem fotografias à partida: as do Google não se podem usar (ver o topo do
+    // ficheiro) e as do comerciante ainda não existem. O editor enche isto.
+    cover: null,
+    gallery: [],
     contact: {
       phone: business.phone_e164,
       phoneLabel: business.phone_raw ?? business.phone_e164,
@@ -151,6 +175,29 @@ export function buildContent(business: Business, template: SiteTemplate): SiteCo
   };
 }
 
+/**
+ * Lê uma fotografia do JSON.
+ *
+ * Só se aceita `http(s)`. O URL vai parar a um atributo `src` numa página que
+ * qualquer pessoa pode abrir; deixar passar `javascript:` ou `data:` seria
+ * abrir a porta a execução de código na página do comerciante.
+ */
+function parsePhoto(raw: unknown): SitePhoto | null {
+  if (!raw || typeof raw !== 'object') return null;
+
+  const photo = raw as Partial<SitePhoto>;
+  if (typeof photo.url !== 'string') return null;
+
+  try {
+    const { protocol } = new URL(photo.url);
+    if (protocol !== 'https:' && protocol !== 'http:') return null;
+  } catch {
+    return null;
+  }
+
+  return { url: photo.url, alt: typeof photo.alt === 'string' ? photo.alt : '' };
+}
+
 /** Lê conteúdo vindo da base de dados com valores seguros para o que faltar. */
 export function parseContent(raw: unknown): SiteContent | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -165,6 +212,12 @@ export function parseContent(raw: unknown): SiteContent | null {
     },
     about: content.about ?? '',
     highlights: Array.isArray(content.highlights) ? content.highlights : [],
+    // As páginas geradas antes das fotografias existirem não têm estes campos.
+    // Ler uma delas tem de continuar a funcionar, não a rebentar.
+    cover: parsePhoto(content.cover),
+    gallery: Array.isArray(content.gallery)
+      ? content.gallery.map(parsePhoto).filter((photo): photo is SitePhoto => photo !== null)
+      : [],
     contact: {
       phone: content.contact?.phone ?? null,
       phoneLabel: content.contact?.phoneLabel ?? null,
