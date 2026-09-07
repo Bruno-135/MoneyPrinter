@@ -52,11 +52,16 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           <p className="text-sm font-medium tracking-wide text-brand-600 uppercase">Prospeção comercial</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Procurar comércios</h1>
         </div>
-        <form action={signOut}>
-          <button type="submit" className="text-sm underline underline-offset-4 opacity-60">
-            Sair ({auth.user.email})
-          </button>
-        </form>
+        <div className="flex items-center gap-4 text-sm">
+          <Link href="/painel/relatorios" className="underline underline-offset-4 opacity-70">
+            Relatórios
+          </Link>
+          <form action={signOut}>
+            <button type="submit" className="underline underline-offset-4 opacity-60">
+              Sair ({auth.user.email})
+            </button>
+          </form>
+        </div>
       </header>
 
       <ScanForm />

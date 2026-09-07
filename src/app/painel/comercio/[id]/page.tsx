@@ -5,6 +5,9 @@ import { getDeal, getStageHistory } from '@/lib/deals/repository';
 import { STAGE_STYLE, stageDefinition, stageLabel } from '@/lib/deals/stages';
 import { scoreLabel } from '@/lib/scoring/score';
 import { googleMapsUrl, whatsappUrl, firstContactMessage } from '@/lib/places/links';
+import { listSites } from '@/lib/sites/repository';
+import { publicEnv } from '@/lib/env';
+import { createSite, publish, unpublish, removeSite } from '../../site-actions';
 import { StageSelect } from '../../stage-select';
 import { saveNotes } from '../../deal-actions';
 
@@ -47,9 +50,10 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
   if (!business) notFound();
 
-  const [deal, history] = await Promise.all([
+  const [deal, history, sites] = await Promise.all([
     getDeal(supabase, id),
     getStageHistory(supabase, id),
+    listSites(supabase, id),
   ]);
 
   const stage = deal?.stage ?? 'new';
@@ -195,6 +199,104 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
             Guardar
           </button>
         </form>
+      </section>
+
+      {/* ---------------- Landing pages ---------------- */}
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold tracking-tight">Landing page</h2>
+          <div className="flex gap-2.5">
+            <Link
+              href={`/painel/comercio/${id}/apresentacao`}
+              className="rounded-md border border-black/15 px-3 py-2 text-sm font-medium dark:border-white/15"
+            >
+              Apresentação em PDF
+            </Link>
+            <form action={createSite}>
+              <input type="hidden" name="businessId" value={id} />
+              <button type="submit" className="rounded-md bg-brand-600 px-3 py-2 text-sm font-medium text-white">
+                Gerar página
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {sites.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-black/15 px-5 py-6 text-center text-sm opacity-60 dark:border-white/15">
+            Ainda não há nenhuma página para este comércio. &ldquo;Gerar página&rdquo; cria uma
+            com os dados que já temos
+            {business.is_food_service ? ', no modelo com cardápio e pedido por WhatsApp' : ''}.
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {sites.map((site) => {
+              const url = `${publicEnv.NEXT_PUBLIC_SITE_URL}/s/${site.publicCode}`;
+              return (
+                <li key={site.id} className="rounded-lg border border-black/10 p-4 dark:border-white/10">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                    <span
+                      className={`rounded px-2 py-0.5 text-xs font-medium ${
+                        site.isLive
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                          : 'bg-black/[0.06] opacity-60 dark:bg-white/10'
+                      }`}
+                    >
+                      {site.isLive ? 'no ar' : site.status === 'published' ? 'expirada' : 'rascunho'}
+                    </span>
+                    <span className="text-sm opacity-60">
+                      {site.template === 'food_service' ? 'Com cardápio' : 'Modelo genérico'}
+                      {site.template === 'food_service' && ` · ${site.menuItemCount} itens`}
+                    </span>
+                    {site.expiresAt && (
+                      <span className="text-sm opacity-45">
+                        válida até {new Date(site.expiresAt).toLocaleDateString('pt-PT')}
+                      </span>
+                    )}
+                  </div>
+
+                  {site.isLive && (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2.5 block font-mono text-sm break-all text-brand-600 underline underline-offset-4"
+                    >
+                      {url}
+                    </a>
+                  )}
+
+                  <div className="mt-3 flex flex-wrap gap-2.5 text-sm">
+                    {site.template === 'food_service' && (
+                      <Link
+                        href={`/painel/site/${site.id}/cardapio`}
+                        className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
+                      >
+                        Editar cardápio
+                      </Link>
+                    )}
+                    <form action={site.isLive ? unpublish : publish}>
+                      <input type="hidden" name="siteId" value={site.id} />
+                      <input type="hidden" name="businessId" value={id} />
+                      <button
+                        type="submit"
+                        className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
+                      >
+                        {site.isLive ? 'Despublicar' : 'Publicar'}
+                      </button>
+                    </form>
+                    <form action={removeSite}>
+                      <input type="hidden" name="siteId" value={site.id} />
+                      <input type="hidden" name="businessId" value={id} />
+                      <button type="submit" className="rounded-md px-3 py-1.5 text-red-600 dark:text-red-400">
+                        Apagar
+                      </button>
+                    </form>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
 
       {/* ---------------- Histórico ---------------- */}

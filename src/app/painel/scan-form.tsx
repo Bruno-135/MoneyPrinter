@@ -93,7 +93,19 @@ export function ScanForm() {
           </label>
         </div>
 
-        <input type="hidden" name="celula" value={1500} />
+        <label className="flex max-w-xs flex-col gap-1.5">
+          <span className="text-sm font-medium">Raio de cada busca (m)</span>
+          <select name="celula" defaultValue="1500" className={field}>
+            <option value="2000">2000 — mais barato, pode falhar comércios</option>
+            <option value="1500">1500 — equilibrado</option>
+            <option value="1000">1000 — mais caro, apanha mais</option>
+            <option value="700">700 — para zonas muito densas</option>
+          </select>
+          <span className="text-xs opacity-55">
+            Um raio menor faz mais buscas — mais chamadas, mais custo, mas apanha comércios que
+            um raio grande deixa de fora quando a zona é densa.
+          </span>
+        </label>
 
         <label className="flex items-center gap-2.5 text-sm">
           <input type="checkbox" name="forcar" value="sim" className="size-4 accent-brand-600" />

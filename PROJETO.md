@@ -95,11 +95,18 @@ arranque falhar num sítio que não explica porquê.
 src/
   app/                     # App Router (rotas, layouts, route handlers)
     entrar/                # ecrã de entrada (Supabase Auth, sem registo aberto)
+    s/[code]/              # landing page pública (sem sessão, lida pela RLS)
     painel/                # painel: varrimento, lista ordenada, funil
       comercio/[id]/       # ficha do comércio: contacto, negociação, histórico, score
+        apresentacao/      # proposta A4 para guardar em PDF pelo navegador
+      site/[id]/cardapio/  # edição do cardápio de uma landing page
+      relatorios/          # visitas e cliques por mês
     api/scan/route.ts      # POST /api/scan — varrimento sem interface, por token
   lib/
     env.ts                 # validação das variáveis de ambiente
+    sites/                 # landing pages (etapa 4)
+      content.ts           # dados do comércio -> conteúdo da página
+      repository.ts        # gerar, publicar, expirar; cardápio; preços
     deals/                 # funil de negociação (etapa 6)
       stages.ts            # os 8 estados, em português e por ordem de funil
       repository.ts        # ler e escrever negociações; o histórico é do trigger
@@ -224,6 +231,32 @@ npm run list -- --filtro sem-site --ramo padaria
 npm run list -- --id <uuid>          # explica a nota de um comércio
 ```
 
+### As landing pages
+
+- **A página pública lê-se do JSON em `content`, nunca da tabela `businesses`.**
+  Um visitante anónimo não tem acesso aos comércios — essa é a lista de
+  prospeção. Tudo o que a página mostra tem de estar no JSON no momento da
+  geração.
+- **Não se usam fotografias do Google.** As imagens do Places têm licença própria
+  e condições de atribuição; pô-las numa página comercial vendida a terceiros
+  seria um problema legal à espera de acontecer. A página assenta em tipografia
+  e no que o comércio tem de concreto. As fotografias vêm do comerciante depois
+  de fechar negócio.
+- **O texto gerado só afirma o que os dados sustentam.** Um comércio sem
+  avaliações não recebe uma frase sobre a sua reputação. Inventar aqui seria pôr
+  o comerciante a apresentar-se com uma mentira.
+- **Visitas e cliques passam pelas funções `record_site_visit` e
+  `record_site_click`** (migração 0008), nunca por escrita direta. Não se guarda
+  IP: cada visita leva um identificador de sessão que morre com o separador.
+
+### O PDF de apresentação
+
+Gera-se pelo **navegador**, com `@media print` numa página A4, e não por um
+Chromium no servidor. Levar um Chromium para dentro de uma função serverless
+custa dezenas de MB, arranques lentos e um limite de tempo que se atinge com
+facilidade — para produzir o mesmo ficheiro que o "Guardar como PDF" do sistema
+já faz, com texto selecionável e sem instalar nada.
+
 ### O funil
 
 Oito estados, de "Por contactar" a "Ganho"/"Perdido". Um comércio **sem linha em
@@ -312,12 +345,15 @@ para Production, Preview e Development.
 - [x] **Etapa 2** — Google Places (API nova), grelha hexagonal, cache a dois níveis,
       classificação dos três casos de site, modo de simulação.
 - [x] **Etapa 3** — Score 0-100 (5 fatores explicáveis) e lista ordenada.
-- [ ] **Etapa 4** — Gerador de landing pages (modelo geral + modelo restaurante/padaria).
-- [ ] **Etapa 5** — Exportação em PDF de apresentação.
+- [x] **Etapa 4** — Gerador de landing pages, com modelo genérico e modelo de
+      restauração (cardápio + pedido por WhatsApp), publicação com validade e
+      registo de visitas e cliques.
+- [x] **Etapa 5** — Apresentação A4 para guardar em PDF pelo navegador.
 - [x] **Etapa 6** — Funil de negociação com histórico, filtros por estado, notas
       e próximo passo. Feita antes das etapas 4 e 5 a pedido: com 90 prospetos
       em lista, saber quem já foi contactado passou a ser o mais urgente.
-- [ ] **Etapa 7** — Relatórios mensais de visitas e cliques.
+- [x] **Etapa 7** — Relatórios mensais de visitas e cliques, a partir da vista
+      `monthly_site_report`.
 
 ---
 
