@@ -8,8 +8,8 @@
  *
  * (equivalente a `supabase gen types typescript --linked > src/types/database.types.ts`)
  *
- * EXCEÇÃO, e vale a pena saber porquê: a entrada da vista `region_prospects`
- * (migração 0013) foi acrescentada à mão. A versão do gerador disponível no
+ * EXCEÇÃO, e vale a pena saber porquê: as entradas da vista `region_prospects`
+ * (migração 0013) e da tabela `city_lookups` (0014) foram acrescentadas à mão. A versão do gerador disponível no
  * ambiente onde foi feita perdia os `?: never` das colunas GERADAS —
  * `website_kind`, `is_food_service`, `has_website`, `search_key` — que são o
  * que impede o código de tentar escrever numa coluna que a base de dados
@@ -187,6 +187,42 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      city_lookups: {
+        Row: {
+          id: string
+          owner_id: string
+          query_key: string
+          query_text: string
+          country_code: string
+          results: Json
+          results_count: number
+          looked_up_at: string
+          created_at: string
+        };
+        Insert: {
+          id?: string
+          owner_id?: string
+          query_key: string
+          query_text: string
+          country_code: string
+          results?: Json
+          results_count?: number
+          looked_up_at?: string
+          created_at?: string
+        };
+        Update: {
+          id?: string
+          owner_id?: string
+          query_key?: string
+          query_text?: string
+          country_code?: string
+          results?: Json
+          results_count?: number
+          looked_up_at?: string
+          created_at?: string
+        };
+        Relationships: [];
       };
       deal_stage_events: {
         Row: {

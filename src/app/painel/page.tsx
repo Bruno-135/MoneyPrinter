@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { rankBusinesses, type ProspectFilter } from '@/lib/scoring/rank';
 import { countByStage } from '@/lib/deals/repository';
 import { listSearchBatches } from '@/lib/places/searches';
+import { FilterBar } from './filter-bar';
 import { STAGES, isValidStage, type DealStage } from '@/lib/deals/stages';
 import { googleMapsUrl } from '@/lib/places/links';
 import { ScanForm } from './scan-form';
@@ -120,57 +121,54 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           </span>
         </h2>
 
-        {batches.length > 0 && (
-          <FilterRow label="Procura">
-            <FilterLink
-              label="Todas as procuras"
-              href={painelHref(here, { procura: null })}
-              active={procura === null}
-            />
-            {batches.map((b) => (
-              <FilterLink
-                key={b.regionId}
-                label={`${b.label} · ${b.categoryLabel}`}
-                count={b.prospects}
-                href={painelHref(here, { procura: b.regionId })}
-                active={procura === b.regionId}
-              />
-            ))}
-          </FilterRow>
-        )}
-
-        <FilterRow label="Estado">
-          <FilterLink
-            label="Todos"
-            href={painelHref(here, { estado: null })}
-            active={stageFilter === null}
-          />
-          <FilterLink
-            label="Por contactar"
-            href={painelHref(here, { estado: 'por-contactar' })}
-            active={stageFilter === 'por-contactar'}
-          />
-          {STAGES.filter((s) => s.value !== 'new').map((s) => (
-            <FilterLink
-              key={s.value}
-              label={s.label}
-              count={stageCounts[s.value]}
-              href={painelHref(here, { estado: s.value })}
-              active={stageFilter === s.value}
-            />
-          ))}
-        </FilterRow>
-
-        <FilterRow label="Site">
-          {SITE_FILTERS.map((f) => (
-            <FilterLink
-              key={f.value}
-              label={f.label}
-              href={painelHref(here, { site: f.value })}
-              active={siteFilter === f.value}
-            />
-          ))}
-        </FilterRow>
+        <FilterBar
+          groups={[
+            ...(batches.length > 0
+              ? [
+                  {
+                    label: 'Procura',
+                    current: procura ?? '',
+                    options: [
+                      { value: '', label: 'Todas as procuras', href: painelHref(here, { procura: null }) },
+                      ...batches.map((b) => ({
+                        value: b.regionId,
+                        label: `${b.label} · ${b.categoryLabel} (${b.prospects})`,
+                        href: painelHref(here, { procura: b.regionId }),
+                      })),
+                    ],
+                  },
+                ]
+              : []),
+            {
+              label: 'Estado',
+              current: params.estado ?? '',
+              options: [
+                { value: '', label: 'Todos os estados', href: painelHref(here, { estado: null }) },
+                {
+                  value: 'por-contactar',
+                  label: 'Por contactar',
+                  href: painelHref(here, { estado: 'por-contactar' }),
+                },
+                ...STAGES.filter((stage) => stage.value !== 'new').map((stage) => ({
+                  value: stage.value,
+                  label: stageCounts[stage.value]
+                    ? `${stage.label} (${stageCounts[stage.value]})`
+                    : stage.label,
+                  href: painelHref(here, { estado: stage.value }),
+                })),
+              ],
+            },
+            {
+              label: 'Site',
+              current: siteFilter,
+              options: SITE_FILTERS.map((f) => ({
+                value: f.value,
+                label: f.label,
+                href: painelHref(here, { site: f.value }),
+              })),
+            },
+          ]}
+        />
 
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-black/15 px-5 py-8 text-center text-sm opacity-60 dark:border-white/15">
@@ -257,39 +255,3 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   );
 }
 
-function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="w-16 shrink-0 text-xs uppercase tracking-wide opacity-45">{label}</span>
-      {children}
-    </div>
-  );
-}
-
-function FilterLink({
-  label,
-  href,
-  active,
-  count,
-}: {
-  label: string;
-  href: Route;
-  active: boolean;
-  count?: number;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`rounded-full px-3 py-1.5 ${
-        active
-          ? 'bg-brand-600 font-medium text-white'
-          : 'bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.07] dark:hover:bg-white/[0.12]'
-      }`}
-    >
-      {label}
-      {count !== undefined && count > 0 && (
-        <span className={`ml-1.5 tabular-nums ${active ? 'opacity-80' : 'opacity-50'}`}>{count}</span>
-      )}
-    </Link>
-  );
-}

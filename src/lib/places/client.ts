@@ -49,6 +49,22 @@ const FIELD_MASK = [
 
 const TEXT_FIELD_MASK = `${FIELD_MASK},nextPageToken`;
 
+/**
+ * Máscara para procurar uma CIDADE, e não um comércio.
+ *
+ * É deliberadamente curta. Não leva telefone, website, avaliação nem horário —
+ * os campos caros — porque de uma cidade só se quer saber onde fica e que área
+ * ocupa. A `viewport` é o que dá o raio sem ter de o perguntar a ninguém.
+ */
+const CITY_FIELD_MASK = [
+  'places.id',
+  'places.displayName',
+  'places.formattedAddress',
+  'places.location',
+  'places.viewport',
+  'places.types',
+].join(',');
+
 /** Limite duro do Places: mais do que isto não devolve, haja o que houver. */
 export const MAX_RESULTS_PER_CALL = 20;
 
@@ -134,6 +150,33 @@ export class PlacesClient {
     };
 
     return this.call<SearchNearbyResponse>('places:searchNearby', FIELD_MASK, body);
+  }
+
+  /**
+   * Procura uma cidade pelo nome.
+   *
+   * Separada da `searchText` de propósito: máscara diferente (mais barata),
+   * sem enviesamento por localização — o ponto é justamente não saber ainda
+   * onde é — e limitada a poucos resultados, que é quanto uma pessoa lê antes
+   * de escolher.
+   */
+  async searchCity(query: string): Promise<PlacesCallResult> {
+    // O corpo leva o MÍNIMO. Cada campo a mais é uma hipótese de a Google
+    // devolver 400 por causa de um nome que mudou entre versões da API — e um
+    // 400 aqui é o ecrã a dizer que não encontrou a cidade quando o problema
+    // era outro. O número de resultados corta-se depois, do lado de cá, que é
+    // de graça.
+    //
+    // `includedType: 'locality'` limitaria a resposta a cidades, mas deixaria
+    // de fora freguesias e bairros que também interessam ao varrimento. O
+    // filtro pelo que serve faz-se sobre `types`, também sem custo.
+    const body = {
+      textQuery: query,
+      languageCode: this.languageCode,
+      ...(this.regionCode ? { regionCode: this.regionCode } : {}),
+    };
+
+    return this.call<SearchTextResponse>('places:searchText', CITY_FIELD_MASK, body);
   }
 
   /** Pesquisa por texto. Usada como recurso quando o tipo não serve. */

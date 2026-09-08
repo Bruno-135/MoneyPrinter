@@ -7,6 +7,9 @@ import { getServerEnv } from '@/lib/env';
 import { PlacesClient } from '@/lib/places/client';
 import { scanRegion, type ScanSummary } from '@/lib/places/scan';
 import { findCategory } from '@/lib/places/categories';
+import { searchCities } from '@/lib/places/city-search';
+import type { CityMatch } from '@/lib/places/cities';
+import { clampRadius } from '@/lib/places/cities';
 
 /**
  * Ações do painel.
@@ -22,6 +25,49 @@ export interface ScanFormState {
   error: string | null;
 }
 
+export interface CityFormState {
+  cities: CityMatch[];
+  /** true quando a resposta veio do cache e não custou nada. */
+  fromCache: boolean;
+  /** O que foi procurado, para o ecrã poder dizer "nada encontrado para X". */
+  query: string;
+  error: string | null;
+}
+
+/**
+ * Procura uma cidade pelo nome e devolve as que o Google conhece.
+ *
+ * É uma chamada paga, e por isso passa pelo cache antes de sair para a rede —
+ * ver `city-search.ts`. O resultado volta como valor e não por exceção: quem
+ * está a escrever o nome de uma cidade não pode ser atirado para um ecrã de
+ * erro do Next por causa de uma falha de rede.
+ */
+export async function findCity(
+  _previous: CityFormState,
+  formData: FormData,
+): Promise<CityFormState> {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) redirect('/entrar');
+
+  const query = String(formData.get('cidade') ?? '').trim().slice(0, 120);
+  const pais = String(formData.get('pais') ?? 'PT').toUpperCase() === 'BR' ? 'BR' : 'PT';
+
+  if (query === '') {
+    return { cities: [], fromCache: false, query: '', error: 'Escreve o nome de uma cidade.' };
+  }
+
+  const env = getServerEnv();
+  const result = await searchCities(
+    supabase,
+    new PlacesClient({ apiKey: env.GOOGLE_PLACES_API_KEY, regionCode: pais }),
+    query,
+    pais,
+  );
+
+  return { cities: result.cities, fromCache: result.fromCache, query, error: result.error };
+}
+
 export async function runScan(_previous: ScanFormState, formData: FormData): Promise<ScanFormState> {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
@@ -31,7 +77,10 @@ export async function runScan(_previous: ScanFormState, formData: FormData): Pro
   const ramo = String(formData.get('ramo') ?? '').trim();
   const latitude = Number(formData.get('latitude'));
   const longitude = Number(formData.get('longitude'));
-  const raio = Number(formData.get('raio') ?? 2000);
+  // O raio já não se pergunta: vem da área que a cidade ocupa, calculada quando
+  // se escolheu a cidade. Continua a passar pelos limites, porque um valor vindo
+  // de um formulário nunca é de confiança.
+  const raio = clampRadius(Number(formData.get('raio') ?? 5000));
   const celula = Number(formData.get('celula') ?? 1500);
   const pais = String(formData.get('pais') ?? 'PT').toUpperCase();
   const confirmar = formData.get('confirmar') === 'sim';
@@ -40,7 +89,7 @@ export async function runScan(_previous: ScanFormState, formData: FormData): Pro
   if (zona === '') return { summary: null, error: 'Dá um nome à zona.' };
   if (!findCategory(ramo)) return { summary: null, error: `Ramo desconhecido: ${ramo}` };
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-    return { summary: null, error: 'Latitude e longitude têm de ser números.' };
+    return { summary: null, error: 'Escolhe uma cidade da lista antes de procurar.' };
   }
 
   const env = getServerEnv();

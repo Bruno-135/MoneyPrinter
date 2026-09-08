@@ -17,6 +17,12 @@ export interface PlaceResult {
   shortFormattedAddress?: string;
   addressComponents?: AddressComponent[];
   location?: { latitude?: number; longitude?: number };
+  /** Área que o sítio ocupa no mapa. Pedida só na procura de cidades: é ela
+   *  que dá o raio do varrimento sem ser preciso perguntá-lo a ninguém. */
+  viewport?: {
+    low?: { latitude?: number; longitude?: number };
+    high?: { latitude?: number; longitude?: number };
+  };
   businessStatus?: string;
 
   // Campos do escalão Enterprise — são estes que determinam o preço.
