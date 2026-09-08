@@ -1,5 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { getServerEnv } from '@/lib/env';
+import { AiError, redactSecrets } from './redact';
+
+export { AiError, redactSecrets };
 
 /**
  * Cliente da API da Anthropic.
@@ -11,18 +14,6 @@ import { getServerEnv } from '@/lib/env';
  * estava mais abaixo. Custou uma chamada e meia hora. Aqui cada falha tem a sua
  * mensagem e nenhuma se disfarça de outra.
  */
-
-/** Falha que se pode mostrar ao utilizador tal como está. */
-export class AiError extends Error {
-  constructor(
-    message: string,
-    /** O que fazer a seguir, se houver alguma coisa a fazer. */
-    readonly hint?: string,
-  ) {
-    super(message);
-    this.name = 'AiError';
-  }
-}
 
 export const MISSING_KEY_MESSAGE = 'Falta a chave da API da Anthropic.';
 

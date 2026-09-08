@@ -8,7 +8,7 @@ import { saveAiGeneration, discardCustomHtml } from '@/lib/sites/repository';
 import type { SiteContent } from '@/lib/sites/content';
 import { DEFAULT_MODEL, isGenerationMode, isModelId } from '@/lib/ai/models';
 import { generateFields, generateHtml } from '@/lib/ai/generate';
-import { AiError } from '@/lib/ai/client';
+import { describeAiError } from '@/lib/ai/client';
 import type { AiActionState } from '@/lib/ai/action-state';
 
 /**
@@ -96,14 +96,12 @@ export async function generateWithAi(
       });
     }
   } catch (cause) {
-    if (cause instanceof AiError) {
-      return { ok: false, message: cause.message, hint: cause.hint };
-    }
-
-    return {
-      ok: false,
-      message: cause instanceof Error ? cause.message : 'Falhou a geração.',
-    };
+    // Tudo passa por `describeAiError`, que devolve sempre um `AiError` — e o
+    // construtor de `AiError` limpa segredos da mensagem. Antes havia aqui um
+    // ramo que devolvia `cause.message` em cru para erros não reconhecidos, e
+    // foi por esse buraco que uma chave de API apareceu no ecrã.
+    const error = describeAiError(cause);
+    return { ok: false, message: error.message, hint: error.hint };
   }
 
   revalidatePath(`/painel/site/${siteId}/previa`);
