@@ -7,6 +7,15 @@
  *     npm run db:types
  *
  * (equivalente a `supabase gen types typescript --linked > src/types/database.types.ts`)
+ *
+ * EXCEÇÃO, e vale a pena saber porquê: a entrada da vista `region_prospects`
+ * (migração 0013) foi acrescentada à mão. A versão do gerador disponível no
+ * ambiente onde foi feita perdia os `?: never` das colunas GERADAS —
+ * `website_kind`, `is_food_service`, `has_website`, `search_key` — que são o
+ * que impede o código de tentar escrever numa coluna que a base de dados
+ * calcula sozinha. Regerar o ficheiro inteiro trocava um bloco novo por essa
+ * proteção em todo o schema. Na próxima vez que correres `npm run db:types`
+ * com o CLI, confirma que esses `never` continuam lá.
  */
 
 export type Json =
@@ -840,6 +849,23 @@ export type Database = {
           menu_item_clicks: number | null
           directions_clicks: number | null
           click_through_rate: number | null
+        };
+        Relationships: [];
+      };
+      region_prospects: {
+        Row: {
+          owner_id: string | null
+          region_id: string | null
+          label: string | null
+          business_category: string | null
+          country_code: string | null
+          locality: string | null
+          last_searched_at: string | null
+          search_count: number | null
+          businesses: number | null
+          prospects: number | null
+          without_site: number | null
+          social_only: number | null
         };
         Relationships: [];
       };

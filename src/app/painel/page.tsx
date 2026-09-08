@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { rankBusinesses, type ProspectFilter } from '@/lib/scoring/rank';
 import { countByStage } from '@/lib/deals/repository';
+import { listSearchBatches } from '@/lib/places/searches';
 import { STAGES, isValidStage, type DealStage } from '@/lib/deals/stages';
 import { googleMapsUrl } from '@/lib/places/links';
 import { ScanForm } from './scan-form';
@@ -25,7 +26,38 @@ const SITE_STYLE: Record<string, string> = {
 };
 
 interface PainelProps {
-  searchParams: Promise<{ estado?: string; site?: string }>;
+  searchParams: Promise<{ estado?: string; site?: string; procura?: string }>;
+}
+
+const SITE_FILTERS: ReadonlyArray<{ value: ProspectFilter; label: string }> = [
+  { value: 'prospetos', label: 'Prospetos' },
+  { value: 'sem-site', label: 'Sem site' },
+  { value: 'so-rede-social', label: 'Só rede social' },
+  { value: 'todos', label: 'Todos, com site incluído' },
+];
+
+/**
+ * Monta o endereço mudando UMA das três dimensões e mantendo as outras duas.
+ *
+ * Antes, cada link era escrito à mão com `site=${siteFilter}` lá dentro. Com um
+ * filtro a mais isso passa a ser o sítio onde se perde um parâmetro sem dar por
+ * isso — carregar num estado apagava a procura escolhida e a lista voltava a
+ * misturar tudo, que é exatamente o problema que este ecrã existe para
+ * resolver.
+ */
+function painelHref(
+  current: { site: ProspectFilter; estado: string | null; procura: string | null },
+  change: Partial<{ site: ProspectFilter; estado: string | null; procura: string | null }>,
+): Route {
+  const next = { ...current, ...change };
+  const params = new URLSearchParams();
+
+  if (next.site !== 'prospetos') params.set('site', next.site);
+  if (next.procura) params.set('procura', next.procura);
+  if (next.estado) params.set('estado', next.estado);
+
+  const query = params.toString();
+  return (query ? `/painel?${query}` : '/painel') as Route;
 }
 
 export default async function PainelPage({ searchParams }: PainelProps) {
@@ -40,9 +72,23 @@ export default async function PainelPage({ searchParams }: PainelProps) {
 
   const siteFilter = (params.site ?? 'prospetos') as ProspectFilter;
 
+  // Os lotes leem-se primeiro, e não em paralelo com o resto, porque é o que
+  // valida o `procura` que vem do endereço. Um identificador inventado à mão
+  // não pode chegar à consulta: no melhor caso devolvia uma lista vazia sem
+  // explicação, no pior rebentava a ler um uuid que não é um uuid.
+  const batches = await listSearchBatches(supabase);
+  const batch = batches.find((b) => b.regionId === params.procura) ?? null;
+  const procura = batch?.regionId ?? null;
+  const here = { site: siteFilter, estado: params.estado ?? null, procura };
+
   const [{ businesses, total }, stageCounts] = await Promise.all([
-    rankBusinesses(supabase, { filter: siteFilter, stage: stageFilter, limit: 100 }),
-    countByStage(supabase),
+    rankBusinesses(supabase, {
+      filter: siteFilter,
+      stage: stageFilter,
+      regionId: procura,
+      limit: 100,
+    }),
+    countByStage(supabase, procura),
   ]);
 
   return (
@@ -68,17 +114,40 @@ export default async function PainelPage({ searchParams }: PainelProps) {
 
       <section className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold tracking-tight">
-          Prospetos{' '}
+          {batch ? `${batch.label} · ${batch.categoryLabel}` : 'Prospetos'}{' '}
           <span className="text-base font-normal opacity-55">
             {total > 0 ? `· ${total} por ordem de probabilidade` : ''}
           </span>
         </h2>
 
-        <nav className="flex flex-wrap gap-2 text-sm">
-          <FilterLink label="Todos" href={`/painel?site=${siteFilter}` as Route} active={stageFilter === null} />
+        {batches.length > 0 && (
+          <FilterRow label="Procura">
+            <FilterLink
+              label="Todas as procuras"
+              href={painelHref(here, { procura: null })}
+              active={procura === null}
+            />
+            {batches.map((b) => (
+              <FilterLink
+                key={b.regionId}
+                label={`${b.label} · ${b.categoryLabel}`}
+                count={b.prospects}
+                href={painelHref(here, { procura: b.regionId })}
+                active={procura === b.regionId}
+              />
+            ))}
+          </FilterRow>
+        )}
+
+        <FilterRow label="Estado">
+          <FilterLink
+            label="Todos"
+            href={painelHref(here, { estado: null })}
+            active={stageFilter === null}
+          />
           <FilterLink
             label="Por contactar"
-            href={`/painel?site=${siteFilter}&estado=por-contactar` as Route}
+            href={painelHref(here, { estado: 'por-contactar' })}
             active={stageFilter === 'por-contactar'}
           />
           {STAGES.filter((s) => s.value !== 'new').map((s) => (
@@ -86,17 +155,32 @@ export default async function PainelPage({ searchParams }: PainelProps) {
               key={s.value}
               label={s.label}
               count={stageCounts[s.value]}
-              href={`/painel?site=${siteFilter}&estado=${s.value}` as Route}
+              href={painelHref(here, { estado: s.value })}
               active={stageFilter === s.value}
             />
           ))}
-        </nav>
+        </FilterRow>
+
+        <FilterRow label="Site">
+          {SITE_FILTERS.map((f) => (
+            <FilterLink
+              key={f.value}
+              label={f.label}
+              href={painelHref(here, { site: f.value })}
+              active={siteFilter === f.value}
+            />
+          ))}
+        </FilterRow>
 
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-black/15 px-5 py-8 text-center text-sm opacity-60 dark:border-white/15">
-            {stageFilter
-              ? 'Nenhum comércio neste estado.'
-              : 'Ainda não há comércios. Faz uma simulação primeiro para ver o custo, e depois procura a sério.'}
+            {batch && stageFilter
+              ? `Nenhum comércio neste estado, dentro de ${batch.label} · ${batch.categoryLabel}.`
+              : batch
+                ? `Esta procura não deu nenhum comércio com este filtro de site.`
+                : stageFilter
+                  ? 'Nenhum comércio neste estado.'
+                  : 'Ainda não há comércios. Faz uma simulação primeiro para ver o custo, e depois procura a sério.'}
           </p>
         ) : (
           <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
@@ -164,6 +248,15 @@ export default async function PainelPage({ searchParams }: PainelProps) {
         )}
       </section>
     </main>
+  );
+}
+
+function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-sm">
+      <span className="w-16 shrink-0 text-xs uppercase tracking-wide opacity-45">{label}</span>
+      {children}
+    </div>
   );
 }
 

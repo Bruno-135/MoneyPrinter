@@ -123,11 +123,26 @@ export async function getStageHistory(db: Db, businessId: string): Promise<Stage
 }
 
 /** Quantos comércios em cada estado. Alimenta os filtros do painel. */
-export async function countByStage(db: Db): Promise<Record<string, number>> {
-  const { data } = await db.from('deals').select('stage');
+/**
+ * Quantas negociações há em cada estado.
+ *
+ * Com `regionId`, conta só as do varrimento escolhido. Sem isso, os números nos
+ * separadores do painel seriam os de tudo o que existe enquanto a lista por
+ * baixo mostrava só um lote — dois números diferentes no mesmo ecrã a dizerem
+ * que são a mesma coisa.
+ */
+export async function countByStage(
+  db: Db,
+  regionId?: string | null,
+): Promise<Record<string, number>> {
+  const query = regionId
+    ? db.from('deals').select('stage, businesses!inner(region_id)').eq('businesses.region_id', regionId)
+    : db.from('deals').select('stage');
+
+  const { data } = await query;
 
   const counts: Record<string, number> = {};
-  for (const row of data ?? []) {
+  for (const row of (data ?? []) as Array<{ stage: string }>) {
     counts[row.stage] = (counts[row.stage] ?? 0) + 1;
   }
   return counts;

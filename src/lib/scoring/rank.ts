@@ -19,6 +19,14 @@ export interface RankOptions {
   filter?: ProspectFilter;
   category?: string | null;
   locality?: string | null;
+  /**
+   * Mostra só os comércios que saíram de um varrimento.
+   *
+   * Um comércio encontrado por duas procuras fica com a última — ver a nota na
+   * migração 0013. Para o filtro do painel é o que interessa: a resposta a "o
+   * que é que esta procura me deu" inclui o que já era conhecido de antes.
+   */
+  regionId?: string | null;
   /** Filtra por estado da negociação. 'por-contactar' inclui quem ainda não tem negociação. */
   stage?: DealStage | 'por-contactar' | null;
   limit?: number;
@@ -81,6 +89,7 @@ export async function rankBusinesses(
     filter = 'prospetos',
     category = null,
     locality = null,
+    regionId = null,
     stage = null,
     limit = 50,
     offset = 0,
@@ -105,6 +114,7 @@ export async function rankBusinesses(
       break;
   }
 
+  if (regionId) query = query.eq('region_id', regionId);
   if (category) query = query.eq('business_category', category);
   if (locality) query = query.ilike('locality', locality);
 

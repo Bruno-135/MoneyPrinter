@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
 import { PlacesClient, MAX_RESULTS_PER_CALL } from './client';
+import { regionSearchKey } from './region-key';
 import { buildGrid, type GridCell } from './grid';
 import { findCategory, type CategoryDefinition } from './categories';
 import { normalizePlace, type NormalizedBusiness } from './normalize';
@@ -368,14 +369,28 @@ async function upsertRegion(
     search_query: `${category.label} @ ${request.label}`,
   };
 
-  // `search_key` é uma coluna gerada, portanto não pode ir no conflito. A
-  // procura pela linha existente faz-se pelos campos que a compõem.
+  // `search_key` é uma coluna gerada, portanto não pode ir num upsert com
+  // conflito. A linha existente procura-se pela MESMA chave que a base de dados
+  // gera — ver `region-key.ts`.
+  //
+  // Isto já esteve errado, e o erro era caro: a procura era por ramo + país +
+  // raio, sem a localidade nem as coordenadas. Procurar padarias no Porto
+  // depois de as ter procurado em Braga encontrava a linha de Braga, rebatizava
+  // -a de "Porto", e o cache passava a dizer que o Porto já tinha sido
+  // pesquisado. A busca nunca acontecia.
+  const searchKey = regionSearchKey({
+    countryCode: payload.country_code,
+    locality: payload.locality,
+    latitude: request.latitude,
+    longitude: request.longitude,
+    radiusMeters: request.regionRadiusMeters,
+    category: category.slug,
+  });
+
   const { data: existing } = await db
     .from('searched_regions')
     .select('id, last_searched_at, search_count, places_found')
-    .eq('business_category', category.slug)
-    .eq('country_code', payload.country_code)
-    .eq('radius_meters', request.regionRadiusMeters)
+    .eq('search_key', searchKey)
     .maybeSingle();
 
   if (existing) {
