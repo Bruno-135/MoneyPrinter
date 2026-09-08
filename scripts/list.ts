@@ -78,7 +78,7 @@ async function main(): Promise<void> {
   const wanted = arg('id');
   const { businesses, total } = await rankBusinesses(db, {
     kinds: wanted ? WEBSITE_KINDS : kinds,
-    category: arg('ramo'),
+    categories: arg('ramo') ? [arg('ramo') as string] : [],
     locality: arg('zona'),
     limit: wanted ? 200 : Number(arg('limite') ?? 30),
   });

@@ -52,9 +52,8 @@ export interface RankOptions {
   kinds?: readonly WebsiteKindFilter[];
   /** Estados da negociação a mostrar. Vazio = todos. */
   stages?: readonly DealStage[];
-  /** Comércios a mostrar, por identificador. Vazio = todos. */
-  businessIds?: readonly string[];
-  category?: string | null;
+  /** Ramos a mostrar, pelo slug da categoria. Vazio = todos. */
+  categories?: readonly string[];
   locality?: string | null;
   /**
    * Mostra só os comércios que saíram de um varrimento.
@@ -132,15 +131,14 @@ interface Filterable {
 
 /** Aplica os filtros comuns à lista e às caixas, para não divergirem. */
 function applyFilters<T extends Filterable>(query: T, options: RankOptions): T {
-  const { kinds = [], stages = [], businessIds = [], category = null, locality = null, regionId = null } = options;
+  const { kinds = [], stages = [], categories = [], locality = null, regionId = null } = options;
 
   let q = query;
 
   if (kinds.length > 0) q = q.in('website_kind', kinds);
   if (stages.length > 0) q = q.in('stage', stages);
-  if (businessIds.length > 0) q = q.in('id', businessIds);
+  if (categories.length > 0) q = q.in('business_category', categories);
   if (regionId) q = q.eq('region_id', regionId);
-  if (category) q = q.eq('business_category', category);
   if (locality) q = q.ilike('locality', locality);
 
   return q;
@@ -228,8 +226,8 @@ export async function rankBusinesses(db: Db, options: RankOptions = {}): Promise
  *
  * Cada caixa é calculada com os filtros das OUTRAS caixas, e nunca com o dela
  * própria. É assim que o Excel faz e é a única maneira que funciona: se a caixa
- * do comércio se filtrasse a si mesma, escolher um comércio deixava-a com uma
- * opção só e ficava-se lá preso, sem maneira de trocar.
+ * do ramo se filtrasse a si mesma, escolher "Padaria" deixava-a com uma opção
+ * só e ficava-se lá preso, sem maneira de trocar para outro ramo.
  */
 export interface FacetValue {
   value: string;
@@ -239,19 +237,13 @@ export interface FacetValue {
 
 export async function listFacet(
   db: Db,
-  field: 'id' | 'stage' | 'website_kind',
+  field: 'stage' | 'website_kind' | 'business_category',
   options: RankOptions,
 ): Promise<FacetValue[]> {
-  const select = field === 'id' ? 'id, name' : field;
-
   const { data, error } = await applyFilters(
-    db.from('businesses_with_stage').select(select).eq('is_archived', false),
+    db.from('businesses_with_stage').select(field).eq('is_archived', false),
     options,
-  )
-    .order(field === 'id' ? 'name' : field, { ascending: true })
-    // Mil é muito mais do que uma pessoa escolhe de uma lista, e ao mesmo tempo
-    // impede que um dia isto puxe a tabela inteira para dentro da página.
-    .limit(1000);
+  ).limit(5000);
 
   if (error) {
     throw new Error(`Não foi possível ler os valores do filtro: ${error.message}`);
@@ -259,15 +251,16 @@ export async function listFacet(
 
   const rows = (data ?? []) as unknown as Array<Record<string, unknown>>;
 
-  if (field === 'id') {
-    return rows.map((row) => ({ value: String(row.id), label: String(row.name), count: 1 }));
-  }
-
   const counts = new Map<string, number>();
   for (const row of rows) {
     const value = String(row[field] ?? '');
+    if (value === '') continue;
     counts.set(value, (counts.get(value) ?? 0) + 1);
   }
 
-  return [...counts.entries()].map(([value, count]) => ({ value, label: value, count }));
+  // Por ordem alfabética do valor. Quem procura um ramo numa lista procura-o
+  // pelo nome, não pela quantidade.
+  return [...counts.entries()]
+    .map(([value, count]) => ({ value, label: value, count }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'pt'));
 }

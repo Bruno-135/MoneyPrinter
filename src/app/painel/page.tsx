@@ -11,6 +11,7 @@ import {
   type WebsiteKindFilter,
 } from '@/lib/scoring/rank';
 import { listSearchBatches } from '@/lib/places/searches';
+import { CATEGORIES, findCategory } from '@/lib/places/categories';
 import {
   DEFAULT_SORT,
   SORTS,
@@ -47,7 +48,7 @@ interface PainelProps {
     site?: string;
     procura?: string;
     ordem?: string;
-    comercio?: string;
+    ramo?: string;
   }>;
 }
 
@@ -66,8 +67,8 @@ interface PainelFilters {
   site: string[];
   /** Estados marcados. Vazio = todos. */
   estado: string[];
-  /** Comércios marcados. Vazio = todos. */
-  comercio: string[];
+  /** Ramos marcados. Vazio = todos. */
+  ramo: string[];
   procura: string | null;
   ordem: string;
 }
@@ -84,7 +85,7 @@ function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Rou
 
   if (next.procura) params.set('procura', next.procura);
   if (next.ordem !== DEFAULT_SORT) params.set('ordem', next.ordem);
-  if (next.comercio.length > 0) params.set('comercio', next.comercio.join(','));
+  if (next.ramo.length > 0) params.set('ramo', next.ramo.join(','));
   if (next.estado.length > 0) params.set('estado', next.estado.join(','));
   if (next.site.length > 0) params.set('site', next.site.join(','));
 
@@ -119,24 +120,24 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   // dela própria. É o que o Excel faz, e é a única maneira que funciona: uma
   // caixa que se filtre a si mesma fica com uma opção só depois da primeira
   // escolha, e não há como voltar atrás lá de dentro.
-  const semComercio = { kinds, stages: estados, regionId: procura };
-  const semEstado = { kinds, regionId: procura };
-  const semSite = { stages: estados, regionId: procura };
+  const ramos = readList(params.ramo, (v) => CATEGORIES.some((c) => c.slug === v));
 
-  const [comerciosFacet, estadosFacet, sitesFacet] = await Promise.all([
-    listFacet(supabase, 'id', semComercio),
+  const semRamo = { kinds, stages: estados, regionId: procura };
+  const semEstado = { kinds, categories: ramos, regionId: procura };
+  const semSite = { stages: estados, categories: ramos, regionId: procura };
+
+  const [ramosFacet, estadosFacet, sitesFacet] = await Promise.all([
+    listFacet(supabase, 'business_category', semRamo),
     listFacet(supabase, 'stage', semEstado),
     listFacet(supabase, 'website_kind', semSite),
   ]);
 
-  const comercios = readList(params.comercio, (v) => comerciosFacet.some((c) => c.value === v));
-
-  const here: PainelFilters = { site: sites, estado: estados, comercio: comercios, procura, ordem };
+  const here: PainelFilters = { site: sites, estado: estados, ramo: ramos, procura, ordem };
 
   const { businesses, total } = await rankBusinesses(supabase, {
     kinds,
     stages: estados,
-    businessIds: comercios,
+    categories: ramos,
     regionId: procura,
     sort: ordem,
     limit: 100,
@@ -211,7 +212,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
 
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-black/15 px-5 py-8 text-center text-sm opacity-60 dark:border-white/15">
-            {comercios.length > 0 || estados.length > 0 || sites.length > 0
+            {ramos.length > 0 || estados.length > 0 || sites.length > 0
               ? 'Nenhum comércio com estes filtros. Limpa um dos funis no cabeçalho da tabela.'
               : batch
                 ? `A procura ${batch.label} · ${batch.categoryLabel} não deu nenhum comércio.`
@@ -226,12 +227,19 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                 <tr>
                   <SortHeader label="Score" sort="score" current={ordem} here={here} />
                   <SortHeader label="Comércio" sort="nome" current={ordem} here={here}>
+                    {/* Filtra por RAMO e não por nome: com quinhentos comércios,
+                        uma lista de nomes é para ler, não para escolher. O ramo
+                        de cada um está à vista na própria célula. */}
                     <ColumnFilter
-                      label="Comércio"
-                      param="comercio"
-                      values={comerciosFacet}
-                      selected={comercios}
-                      baseHref={painelHref(here, { comercio: [] })}
+                      label="Ramo"
+                      param="ramo"
+                      values={ramosFacet
+                        .map((f) => ({ ...f, label: findCategory(f.value)?.label ?? f.value }))
+                        // Por ordem do NOME mostrado, e não do slug: quem lê a
+                        // lista lê "Salão de beleza", não "salao-beleza".
+                        .sort((a, b) => a.label.localeCompare(b.label, 'pt'))}
+                      selected={ramos}
+                      baseHref={painelHref(here, { ramo: [] })}
                     />
                   </SortHeader>
                   <SortHeader label="Adicionado" sort="adicionados" current={ordem} here={here} />
