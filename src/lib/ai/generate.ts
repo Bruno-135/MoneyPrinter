@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { findCategory } from '@/lib/places/categories';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import type { Database } from '@/types/database.types';
 import { FONTS, FONT_IDS, PALETTES, PALETTE_IDS } from '@/lib/sites/theme';
@@ -64,7 +65,11 @@ export interface GenerationResult<T> {
 function businessFacts(business: Business): string {
   const facts: string[] = [
     `Nome: ${business.name}`,
-    `Ramo: ${business.business_category}`,
+    // O rótulo e não o slug: a coluna guarda "salao-beleza", e mandar isso ao
+    // modelo é mandar-lhe um identificador de base de dados em vez do nome da
+    // coisa. Passou a ser preciso desde que a coluna deixou de guardar o
+    // rótulo (migração 0017).
+    `Ramo: ${findCategory(business.business_category)?.label ?? business.business_category}`,
     `Tipos do Google: ${business.google_types.join(', ')}`,
   ];
 
