@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { rankBusinesses, type ProspectFilter } from '@/lib/scoring/rank';
 import { countByStage } from '@/lib/deals/repository';
 import { listSearchBatches } from '@/lib/places/searches';
+import { DEFAULT_SORT, SORTS, describeWhen, isProspectSort } from '@/lib/scoring/sort';
 import { FilterBar } from './filter-bar';
 import { STAGES, isValidStage, type DealStage } from '@/lib/deals/stages';
 import { googleMapsUrl } from '@/lib/places/links';
@@ -27,7 +28,7 @@ const SITE_STYLE: Record<string, string> = {
 };
 
 interface PainelProps {
-  searchParams: Promise<{ estado?: string; site?: string; procura?: string }>;
+  searchParams: Promise<{ estado?: string; site?: string; procura?: string; ordem?: string }>;
 }
 
 const SITE_FILTERS: ReadonlyArray<{ value: ProspectFilter; label: string }> = [
@@ -46,16 +47,21 @@ const SITE_FILTERS: ReadonlyArray<{ value: ProspectFilter; label: string }> = [
  * misturar tudo, que é exatamente o problema que este ecrã existe para
  * resolver.
  */
-function painelHref(
-  current: { site: ProspectFilter; estado: string | null; procura: string | null },
-  change: Partial<{ site: ProspectFilter; estado: string | null; procura: string | null }>,
-): Route {
+interface PainelFilters {
+  site: ProspectFilter;
+  estado: string | null;
+  procura: string | null;
+  ordem: string;
+}
+
+function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Route {
   const next = { ...current, ...change };
   const params = new URLSearchParams();
 
   if (next.site !== 'prospetos') params.set('site', next.site);
   if (next.procura) params.set('procura', next.procura);
   if (next.estado) params.set('estado', next.estado);
+  if (next.ordem !== DEFAULT_SORT) params.set('ordem', next.ordem);
 
   const query = params.toString();
   return (query ? `/painel?${query}` : '/painel') as Route;
@@ -80,13 +86,15 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const batches = await listSearchBatches(supabase);
   const batch = batches.find((b) => b.regionId === params.procura) ?? null;
   const procura = batch?.regionId ?? null;
-  const here = { site: siteFilter, estado: params.estado ?? null, procura };
+  const ordem = isProspectSort(params.ordem) ? params.ordem : DEFAULT_SORT;
+  const here = { site: siteFilter, estado: params.estado ?? null, procura, ordem };
 
   const [{ businesses, total }, stageCounts] = await Promise.all([
     rankBusinesses(supabase, {
       filter: siteFilter,
       stage: stageFilter,
       regionId: procura,
+      sort: ordem,
       limit: 100,
     }),
     countByStage(supabase, procura),
@@ -167,6 +175,15 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                 href: painelHref(here, { site: f.value }),
               })),
             },
+            {
+              label: 'Ordem',
+              current: ordem,
+              options: SORTS.map((s) => ({
+                value: s.value,
+                label: s.label,
+                href: painelHref(here, { ordem: s.value }),
+              })),
+            },
           ]}
         />
 
@@ -223,6 +240,12 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                         ↗
                       </a>
                       <span className="ml-2 text-xs opacity-50">{b.category}</span>
+                      {/* A data por baixo do nome e não numa coluna nova: no
+                          telemóvel a tabela já anda de lado, e mais uma coluna
+                          empurrava o telefone para fora do ecrã. */}
+                      <span className="block text-xs opacity-40">
+                        {describeWhen(b.lastSyncedAt)}
+                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <StageSelect businessId={b.id} stage={b.stage} />

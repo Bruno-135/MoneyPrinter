@@ -3,13 +3,14 @@ import type { Database } from '@/types/database.types';
 import type { WebsiteKind } from '@/lib/places/website';
 import type { DealStage } from '@/lib/deals/stages';
 import { scoreLabel } from './score';
+import { DEFAULT_SORT, type ProspectSort } from './sort';
 
 /**
  * A lista ordenada de comércios — o ecrã principal do produto, ainda sem ecrã.
  *
- * A ordenação é por score decrescente e, em empate, por número de avaliações:
- * entre dois prospetos igualmente prováveis, o maior negócio vale mais o
- * telefonema.
+ * A ordem por omissão é o score decrescente e, em empate, o número de
+ * avaliações: entre dois prospetos igualmente prováveis, o maior negócio vale
+ * mais o telefonema. Há outras, e a razão de existirem está em `sort.ts`.
  */
 
 export type ProspectFilter = 'todos' | 'prospetos' | 'sem-site' | 'so-rede-social';
@@ -29,6 +30,8 @@ export interface RankOptions {
   regionId?: string | null;
   /** Filtra por estado da negociação. 'por-contactar' inclui quem ainda não tem negociação. */
   stage?: DealStage | 'por-contactar' | null;
+  /** Por que ordem se mostra. Ver `sort.ts`. */
+  sort?: ProspectSort;
   limit?: number;
   offset?: number;
 }
@@ -52,6 +55,11 @@ export interface RankedBusiness {
    *  para o caso de o identificador do sítio ter deixado de resolver. */
   latitude: number | null;
   longitude: number | null;
+  /** Quando o último varrimento tocou neste comércio. É por aqui que se ordena
+   *  "encontrados há menos tempo": todo um varrimento sobe junto ao topo. */
+  lastSyncedAt: string | null;
+  /** Quando entrou na base de dados pela primeira vez. */
+  firstSeenAt: string | null;
   countryCode: string;
   isFoodService: boolean;
   scoreBreakdown: unknown;
@@ -69,6 +77,7 @@ const SELECT = [
   'id', 'google_place_id', 'name', 'business_category', 'score', 'score_breakdown',
   'website_kind', 'website_url', 'rating', 'reviews_count',
   'phone_e164', 'phone_raw', 'formatted_address', 'locality', 'latitude', 'longitude',
+  'first_seen_at', 'last_synced_at',
   'country_code', 'is_food_service',
   // A negociação vem embutida. PostgREST devolve uma lista mesmo havendo no
   // máximo uma (a restrição única é composta e ele não a reconhece como
@@ -95,6 +104,7 @@ export async function rankBusinesses(
     locality = null,
     regionId = null,
     stage = null,
+    sort = DEFAULT_SORT,
     limit = 50,
     offset = 0,
   } = options;
@@ -130,10 +140,31 @@ export async function rankBusinesses(
     query = query.eq('deals.stage', stage).not('deals', 'is', null);
   }
 
-  const { data, count, error } = await query
-    .order('score', { ascending: false })
-    .order('reviews_count', { ascending: false, nullsFirst: false })
-    .range(offset, offset + limit - 1);
+  // Cada ordem leva um critério de desempate, e nunca o mesmo por que já se
+  // ordenou: sem ele, dois comércios com o mesmo valor trocavam de sítio entre
+  // dois carregamentos da página, o que é a maneira mais fácil de fazer alguém
+  // pensar que a lista está partida.
+  switch (sort) {
+    case 'recentes':
+      query = query
+        .order('last_synced_at', { ascending: false, nullsFirst: false })
+        .order('score', { ascending: false });
+      break;
+    case 'avaliacoes':
+      query = query
+        .order('reviews_count', { ascending: false, nullsFirst: false })
+        .order('score', { ascending: false });
+      break;
+    case 'score':
+      query = query
+        .order('score', { ascending: false })
+        // Entre dois prospetos igualmente prováveis, o maior negócio vale mais
+        // o telefonema.
+        .order('reviews_count', { ascending: false, nullsFirst: false });
+      break;
+  }
+
+  const { data, count, error } = await query.range(offset, offset + limit - 1);
 
   if (error) {
     throw new Error(`Não foi possível ler a lista de comércios: ${error.message}`);
@@ -159,6 +190,8 @@ export async function rankBusinesses(
       locality: (row.locality as string | null) ?? null,
       latitude: (row.latitude as number | null) ?? null,
       longitude: (row.longitude as number | null) ?? null,
+      lastSyncedAt: (row.last_synced_at as string | null) ?? null,
+      firstSeenAt: (row.first_seen_at as string | null) ?? null,
       countryCode: String(row.country_code ?? ''),
       isFoodService: Boolean(row.is_food_service),
       scoreBreakdown: row.score_breakdown ?? {},
