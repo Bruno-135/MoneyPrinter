@@ -2,8 +2,14 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { listBusinessOptions, rankBusinesses, type ProspectFilter } from '@/lib/scoring/rank';
-import { countByStage } from '@/lib/deals/repository';
+import {
+  DEFAULT_KINDS,
+  WEBSITE_KIND_LABELS,
+  isWebsiteKind,
+  listFacet,
+  rankBusinesses,
+  type WebsiteKindFilter,
+} from '@/lib/scoring/rank';
 import { listSearchBatches } from '@/lib/places/searches';
 import {
   DEFAULT_SORT,
@@ -14,6 +20,7 @@ import {
   type ProspectSort,
 } from '@/lib/scoring/sort';
 import { FilterBar } from './filter-bar';
+import { ColumnFilter } from './column-filter';
 import { STAGES, isValidStage, type DealStage } from '@/lib/deals/stages';
 import { googleMapsUrl } from '@/lib/places/links';
 import { ScanForm } from './scan-form';
@@ -44,12 +51,6 @@ interface PainelProps {
   }>;
 }
 
-const SITE_FILTERS: ReadonlyArray<{ value: ProspectFilter; label: string }> = [
-  { value: 'prospetos', label: 'Prospetos' },
-  { value: 'sem-site', label: 'Sem site' },
-  { value: 'so-rede-social', label: 'Só rede social' },
-  { value: 'todos', label: 'Todos, com site incluído' },
-];
 
 /**
  * Monta o endereço mudando UMA das três dimensões e mantendo as outras duas.
@@ -61,22 +62,31 @@ const SITE_FILTERS: ReadonlyArray<{ value: ProspectFilter; label: string }> = [
  * resolver.
  */
 interface PainelFilters {
-  site: ProspectFilter;
-  estado: string | null;
+  /** Tipos de presença online marcados. Vazio = todos. */
+  site: string[];
+  /** Estados marcados. Vazio = todos. */
+  estado: string[];
+  /** Comércios marcados. Vazio = todos. */
+  comercio: string[];
   procura: string | null;
   ordem: string;
-  comercio: string;
+}
+
+/** Lê um parâmetro com vários valores separados por vírgula. */
+function readList(raw: string | undefined, valid: (v: string) => boolean): string[] {
+  if (!raw) return [];
+  return [...new Set(raw.split(',').map((v) => v.trim()).filter((v) => v !== '' && valid(v)))];
 }
 
 function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Route {
   const next = { ...current, ...change };
   const params = new URLSearchParams();
 
-  if (next.site !== 'prospetos') params.set('site', next.site);
   if (next.procura) params.set('procura', next.procura);
-  if (next.estado) params.set('estado', next.estado);
   if (next.ordem !== DEFAULT_SORT) params.set('ordem', next.ordem);
-  if (next.comercio !== '') params.set('comercio', next.comercio);
+  if (next.comercio.length > 0) params.set('comercio', next.comercio.join(','));
+  if (next.estado.length > 0) params.set('estado', next.estado.join(','));
+  if (next.site.length > 0) params.set('site', next.site.join(','));
 
   const query = params.toString();
   return (query ? `/painel?${query}` : '/painel') as Route;
@@ -88,11 +98,6 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   if (!auth.user) redirect('/entrar');
 
   const params = await searchParams;
-  const estado = params.estado ?? null;
-  const stageFilter: DealStage | 'por-contactar' | null =
-    estado === 'por-contactar' ? 'por-contactar' : estado && isValidStage(estado) ? estado : null;
-
-  const siteFilter = (params.site ?? 'prospetos') as ProspectFilter;
 
   // Os lotes leem-se primeiro, e não em paralelo com o resto, porque é o que
   // valida o `procura` que vem do endereço. Um identificador inventado à mão
@@ -102,29 +107,40 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const batch = batches.find((b) => b.regionId === params.procura) ?? null;
   const procura = batch?.regionId ?? null;
   const ordem = isProspectSort(params.ordem) ? params.ordem : DEFAULT_SORT;
-  // A lista de nomes para o seletor lê-se com os mesmos filtros MENOS o do
-  // comércio, e antes de escolher: um identificador colado à mão no endereço
-  // não pode chegar à consulta.
-  const comercios = await listBusinessOptions(supabase, {
-    filter: siteFilter,
-    stage: stageFilter,
-    regionId: procura,
-  });
-  const escolhido = params.comercio ?? '';
-  const comercio = comercios.some((c) => c.id === escolhido) ? escolhido : '';
-  const here = { site: siteFilter, estado: params.estado ?? null, procura, ordem, comercio };
 
-  const [{ businesses, total }, stageCounts] = await Promise.all([
-    rankBusinesses(supabase, {
-      filter: siteFilter,
-      stage: stageFilter,
-      regionId: procura,
-      sort: ordem,
-      businessId: comercio || null,
-      limit: 100,
-    }),
-    countByStage(supabase, procura),
+  const estados = readList(params.estado, isValidStage) as DealStage[];
+  const sites = readList(params.site, isWebsiteKind) as WebsiteKindFilter[];
+
+  // Sem escolha nenhuma no filtro de site, mostram-se os prospetos. Quem já tem
+  // site a sério não se vai contactar, e enchia a lista.
+  const kinds = sites.length > 0 ? sites : DEFAULT_KINDS;
+
+  // Cada caixa de filtro calcula-se com os filtros das OUTRAS, nunca com a
+  // dela própria. É o que o Excel faz, e é a única maneira que funciona: uma
+  // caixa que se filtre a si mesma fica com uma opção só depois da primeira
+  // escolha, e não há como voltar atrás lá de dentro.
+  const semComercio = { kinds, stages: estados, regionId: procura };
+  const semEstado = { kinds, regionId: procura };
+  const semSite = { stages: estados, regionId: procura };
+
+  const [comerciosFacet, estadosFacet, sitesFacet] = await Promise.all([
+    listFacet(supabase, 'id', semComercio),
+    listFacet(supabase, 'stage', semEstado),
+    listFacet(supabase, 'website_kind', semSite),
   ]);
+
+  const comercios = readList(params.comercio, (v) => comerciosFacet.some((c) => c.value === v));
+
+  const here: PainelFilters = { site: sites, estado: estados, comercio: comercios, procura, ordem };
+
+  const { businesses, total } = await rankBusinesses(supabase, {
+    kinds,
+    stages: estados,
+    businessIds: comercios,
+    regionId: procura,
+    sort: ordem,
+    limit: 100,
+  });
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-12">
@@ -151,10 +167,18 @@ export default async function PainelPage({ searchParams }: PainelProps) {
         <h2 className="text-xl font-semibold tracking-tight">
           {batch ? `${batch.label} · ${batch.categoryLabel}` : 'Prospetos'}{' '}
           <span className="text-base font-normal opacity-55">
-            {total > 0 ? `· ${total} por ordem de probabilidade` : ''}
+            {total > 0
+              ? `· ${total} · ${(SORTS.find((s) => s.value === ordem)?.label ?? '').toLowerCase()}`
+              : ''}
           </span>
         </h2>
 
+        {/*
+          Em cima ficam só os dois filtros que NÃO são colunas da tabela: de que
+          procura veio, e por que ordem se mostra. Os outros três — comércio,
+          estado e site — mudaram-se para o funil do respetivo cabeçalho, que é
+          onde uma pessoa que usa Excel os vai procurar.
+        */}
         <FilterBar
           groups={[
             ...(batches.length > 0
@@ -174,46 +198,6 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                 ]
               : []),
             {
-              label: 'Comércio',
-              current: comercio,
-              options: [
-                { value: '', label: `Todos os comércios (${comercios.length})`, href: painelHref(here, { comercio: '' }) },
-                ...comercios.map((c) => ({
-                  value: c.id,
-                  label: c.name,
-                  href: painelHref(here, { comercio: c.id }),
-                })),
-              ],
-            },
-            {
-              label: 'Estado',
-              current: params.estado ?? '',
-              options: [
-                { value: '', label: 'Todos os estados', href: painelHref(here, { estado: null }) },
-                {
-                  value: 'por-contactar',
-                  label: 'Por contactar',
-                  href: painelHref(here, { estado: 'por-contactar' }),
-                },
-                ...STAGES.filter((stage) => stage.value !== 'new').map((stage) => ({
-                  value: stage.value,
-                  label: stageCounts[stage.value]
-                    ? `${stage.label} (${stageCounts[stage.value]})`
-                    : stage.label,
-                  href: painelHref(here, { estado: stage.value }),
-                })),
-              ],
-            },
-            {
-              label: 'Site',
-              current: siteFilter,
-              options: SITE_FILTERS.map((f) => ({
-                value: f.value,
-                label: f.label,
-                href: painelHref(here, { site: f.value }),
-              })),
-            },
-            {
               label: 'Ordem',
               current: ordem,
               options: SORTS.map((s) => ({
@@ -227,13 +211,11 @@ export default async function PainelPage({ searchParams }: PainelProps) {
 
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-black/15 px-5 py-8 text-center text-sm opacity-60 dark:border-white/15">
-            {batch && stageFilter
-              ? `Nenhum comércio neste estado, dentro de ${batch.label} · ${batch.categoryLabel}.`
+            {comercios.length > 0 || estados.length > 0 || sites.length > 0
+              ? 'Nenhum comércio com estes filtros. Limpa um dos funis no cabeçalho da tabela.'
               : batch
-                ? `Esta procura não deu nenhum comércio com este filtro de site.`
-                : stageFilter
-                  ? 'Nenhum comércio neste estado.'
-                  : 'Ainda não há comércios. Faz uma simulação primeiro para ver o custo, e depois procura a sério.'}
+                ? `A procura ${batch.label} · ${batch.categoryLabel} não deu nenhum comércio.`
+                : 'Ainda não há comércios. Faz uma simulação primeiro para ver o custo, e depois procura a sério.'}
           </p>
         ) : (
           <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
@@ -241,10 +223,46 @@ export default async function PainelPage({ searchParams }: PainelProps) {
               <thead className="bg-black/[0.03] text-left text-xs uppercase tracking-wide opacity-60 dark:bg-white/[0.04]">
                 <tr>
                   <SortHeader label="Score" sort="score" current={ordem} here={here} />
-                  <SortHeader label="Comércio" sort="nome" current={ordem} here={here} />
+                  <SortHeader label="Comércio" sort="nome" current={ordem} here={here}>
+                    <ColumnFilter
+                      label="Comércio"
+                      param="comercio"
+                      values={comerciosFacet}
+                      selected={comercios}
+                      baseHref={painelHref(here, { comercio: [] })}
+                    />
+                  </SortHeader>
                   <SortHeader label="Adicionado" sort="adicionados" current={ordem} here={here} />
-                  <th className="px-4 py-3 font-medium">Estado</th>
-                  <th className="px-4 py-3 font-medium">Site</th>
+                  <th className="px-4 py-3 font-medium">
+                    <span className="inline-flex items-center gap-1">
+                      Estado
+                      <ColumnFilter
+                        label="Estado"
+                        param="estado"
+                        values={estadosFacet.map((f) => ({
+                          ...f,
+                          label: STAGES.find((stage) => stage.value === f.value)?.label ?? f.value,
+                        }))}
+                        selected={estados}
+                        baseHref={painelHref(here, { estado: [] })}
+                      />
+                    </span>
+                  </th>
+                  <th className="px-4 py-3 font-medium">
+                    <span className="inline-flex items-center gap-1">
+                      Site
+                      <ColumnFilter
+                        label="Site"
+                        param="site"
+                        values={sitesFacet.map((f) => ({
+                          ...f,
+                          label: WEBSITE_KIND_LABELS[f.value as WebsiteKindFilter] ?? f.value,
+                        }))}
+                        selected={sites}
+                        baseHref={painelHref(here, { site: [] })}
+                      />
+                    </span>
+                  </th>
                   <SortHeader label="Avaliações" sort="avaliacoes" current={ordem} here={here} />
                   <th className="px-4 py-3 font-medium">Telefone</th>
                 </tr>
@@ -334,25 +352,32 @@ function SortHeader({
   sort,
   current,
   here,
+  children,
 }: {
   label: string;
   sort: ProspectSort;
   current: ProspectSort;
   here: PainelFilters;
+  /** O funil do filtro, quando a coluna tem um. Fica ao lado do nome, fora do
+   *  link: clicar no funil não pode ordenar a lista de caminho. */
+  children?: React.ReactNode;
 }) {
   const active = current === sort;
 
   return (
     <th className="px-4 py-3 font-medium">
-      <Link
-        href={painelHref(here, { ordem: sort })}
-        className={`inline-flex items-center gap-1 hover:text-brand-600 ${active ? 'text-brand-600' : ''}`}
-      >
-        {label}
-        <span aria-hidden className={active ? '' : 'opacity-25'}>
-          ↓
-        </span>
-      </Link>
+      <span className="inline-flex items-center gap-1">
+        <Link
+          href={painelHref(here, { ordem: sort })}
+          className={`inline-flex items-center gap-1 hover:text-brand-600 ${active ? 'text-brand-600' : ''}`}
+        >
+          {label}
+          <span aria-hidden className={active ? '' : 'opacity-25'}>
+            ↓
+          </span>
+        </Link>
+        {children}
+      </span>
     </th>
   );
 }

@@ -9,7 +9,8 @@
  * (equivalente a `supabase gen types typescript --linked > src/types/database.types.ts`)
  *
  * EXCEÇÃO, e vale a pena saber porquê: as entradas da vista `region_prospects`
- * (migração 0013) e da tabela `city_lookups` (0014) foram acrescentadas à mão. A versão do gerador disponível no
+ * (0013), da tabela `city_lookups` (0014) e da vista `businesses_with_stage`
+ * (0016) foram acrescentadas à mão. A versão do gerador disponível no
  * ambiente onde foi feita perdia os `?: never` das colunas GERADAS —
  * `website_kind`, `is_food_service`, `has_website`, `search_key` — que são o
  * que impede o código de tentar escrever numa coluna que a base de dados
@@ -885,6 +886,59 @@ export type Database = {
           menu_item_clicks: number | null
           directions_clicks: number | null
           click_through_rate: number | null
+        };
+        Relationships: [];
+      };
+      businesses_with_stage: {
+        Row: {
+          id: string
+          owner_id: string
+          region_id: string | null
+          google_place_id: string
+          name: string
+          business_category: string
+          google_types: string[]
+          is_food_service: boolean | null
+          formatted_address: string | null
+          street: string | null
+          street_number: string | null
+          postal_code: string | null
+          locality: string | null
+          admin_area: string | null
+          country_code: string
+          latitude: number | null
+          longitude: number | null
+          phone_raw: string | null
+          phone_e164: string | null
+          phone_country_code: string | null
+          phone_country: string | null
+          website_url: string | null
+          has_website: boolean | null
+          social_links: Json
+          has_social: boolean | null
+          rating: number | null
+          reviews_count: number | null
+          price_level: number | null
+          business_status: string | null
+          opening_hours: Json | null
+          score: number
+          score_breakdown: Json
+          score_version: number
+          score_calculated_at: string | null
+          google_raw: Json
+          google_fetched_at: string
+          details_fetched_at: string | null
+          is_archived: boolean
+          internal_notes: string | null
+          first_seen_at: string
+          last_synced_at: string
+          created_at: string
+          updated_at: string
+          website_host: string | null
+          website_kind: Database["public"]["Enums"]["website_kind"] | null
+          stage: Database["public"]["Enums"]["deal_stage"]
+          next_action_at: string | null
+          deal_notes: string | null
         };
         Relationships: [];
       };

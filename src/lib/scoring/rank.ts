@@ -6,22 +6,56 @@ import { scoreLabel } from './score';
 import { DEFAULT_SORT, type ProspectSort } from './sort';
 
 /**
- * A lista ordenada de comércios — o ecrã principal do produto, ainda sem ecrã.
+ * A lista ordenada de comércios — o ecrã principal do produto.
  *
  * A ordem por omissão é o score decrescente e, em empate, o número de
  * avaliações: entre dois prospetos igualmente prováveis, o maior negócio vale
  * mais o telefonema. Há outras, e a razão de existirem está em `sort.ts`.
+ *
+ * Lê da vista `businesses_with_stage` e não da tabela. A razão está na migração
+ * 0016, e vale a pena repeti-la: com a negociação embutida (`deals(stage)`), um
+ * filtro por estado decidia que negociações vinham agarradas, não que comércios
+ * apareciam — o filtro parecia funcionar e mentia. Com o estado como coluna,
+ * filtrar é `where stage in (...)` e não há como enganar ninguém.
+ *
+ * Os filtros são todos LISTAS, e não valores soltos, porque no ecrã são caixas
+ * para marcar à maneira do Excel: marcam-se três estados e veem-se os três.
+ * Uma lista vazia significa "não filtrar por isto", e nunca "não mostrar nada".
  */
 
-export type ProspectFilter = 'todos' | 'prospetos' | 'sem-site' | 'so-rede-social';
+type Db = SupabaseClient<Database>;
+
+/** Presença online: é o eixo que separa um prospeto de quem já está servido. */
+export const WEBSITE_KINDS = ['none', 'social_only', 'real'] as const;
+export type WebsiteKindFilter = (typeof WEBSITE_KINDS)[number];
+
+/**
+ * O que se vê sem mexer em nada: quem não tem site e quem só tem rede social.
+ *
+ * Quem já tem site a sério não é prospeto, e enchia a lista com quem não se vai
+ * contactar. Continua a estar a uma caixinha de distância.
+ */
+export const DEFAULT_KINDS: readonly WebsiteKindFilter[] = ['none', 'social_only'];
+
+export const WEBSITE_KIND_LABELS: Record<WebsiteKindFilter, string> = {
+  none: 'Sem site',
+  social_only: 'Só rede social',
+  real: 'Tem site',
+};
+
+export function isWebsiteKind(value: unknown): value is WebsiteKindFilter {
+  return typeof value === 'string' && (WEBSITE_KINDS as readonly string[]).includes(value);
+}
 
 export interface RankOptions {
-  /** Por omissão só mostra prospetos: quem já tem site não interessa. */
-  filter?: ProspectFilter;
+  /** Tipos de presença online a mostrar. Vazio = todos. */
+  kinds?: readonly WebsiteKindFilter[];
+  /** Estados da negociação a mostrar. Vazio = todos. */
+  stages?: readonly DealStage[];
+  /** Comércios a mostrar, por identificador. Vazio = todos. */
+  businessIds?: readonly string[];
   category?: string | null;
   locality?: string | null;
-  /** Mostra um único comércio, escolhido da lista. */
-  businessId?: string | null;
   /**
    * Mostra só os comércios que saíram de um varrimento.
    *
@@ -30,8 +64,6 @@ export interface RankOptions {
    * que é que esta procura me deu" inclui o que já era conhecido de antes.
    */
   regionId?: string | null;
-  /** Filtra por estado da negociação. 'por-contactar' inclui quem ainda não tem negociação. */
-  stage?: DealStage | 'por-contactar' | null;
   /** Por que ordem se mostra. Ver `sort.ts`. */
   sort?: ProspectSort;
   limit?: number;
@@ -58,7 +90,7 @@ export interface RankedBusiness {
   latitude: number | null;
   longitude: number | null;
   /** Quando o último varrimento tocou neste comércio. É por aqui que se ordena
-   *  "encontrados há menos tempo": todo um varrimento sobe junto ao topo. */
+   *  "vistos na última procura": todo um varrimento sobe junto ao topo. */
   lastSyncedAt: string | null;
   /** Quando entrou na base de dados pela primeira vez. */
   firstSeenAt: string | null;
@@ -81,68 +113,46 @@ const SELECT = [
   'phone_e164', 'phone_raw', 'formatted_address', 'locality', 'latitude', 'longitude',
   'first_seen_at', 'last_synced_at',
   'country_code', 'is_food_service',
-  // A negociação vem embutida. PostgREST devolve uma lista mesmo havendo no
-  // máximo uma (a restrição única é composta e ele não a reconhece como
-  // um-para-um), por isso lê-se o primeiro elemento.
-  'deals(stage,next_action_at)',
+  // Vêm da vista, já resolvidos: sem linha em `deals`, o estado é 'new'.
+  'stage', 'next_action_at',
 ].join(',');
 
-/** PostgREST devolve a negociação embutida como lista; aqui reduz-se a um objeto. */
-function dealFields(raw: unknown): { stage: DealStage; nextActionAt: string | null } {
-  const first = Array.isArray(raw) ? raw[0] : raw;
-  if (!first || typeof first !== 'object') return { stage: 'new', nextActionAt: null };
-
-  const deal = first as { stage?: DealStage; next_action_at?: string | null };
-  return { stage: deal.stage ?? 'new', nextActionAt: deal.next_action_at ?? null };
+/**
+ * O pouco que este ficheiro precisa de saber sobre o construtor de consultas.
+ *
+ * Descrito por aquilo que faz, em vez de importar o tipo do PostgREST: os
+ * filtros devolvem sempre o próprio construtor, e é só disso que aqui se
+ * precisa para os poder encadear.
+ */
+interface Filterable {
+  in(column: string, values: readonly unknown[]): this;
+  eq(column: string, value: unknown): this;
+  ilike(column: string, pattern: string): this;
 }
 
-export async function rankBusinesses(
-  db: SupabaseClient<Database>,
-  options: RankOptions = {},
-): Promise<RankResult> {
-  const {
-    filter = 'prospetos',
-    category = null,
-    locality = null,
-    businessId = null,
-    regionId = null,
-    stage = null,
-    sort = DEFAULT_SORT,
-    limit = 50,
-    offset = 0,
-  } = options;
+/** Aplica os filtros comuns à lista e às caixas, para não divergirem. */
+function applyFilters<T extends Filterable>(query: T, options: RankOptions): T {
+  const { kinds = [], stages = [], businessIds = [], category = null, locality = null, regionId = null } = options;
 
-  let query = db
-    .from('businesses')
-    .select(SELECT, { count: 'exact' })
-    .eq('is_archived', false);
+  let q = query;
 
-  switch (filter) {
-    case 'prospetos':
-      query = query.neq('website_kind', 'real');
-      break;
-    case 'sem-site':
-      query = query.eq('website_kind', 'none');
-      break;
-    case 'so-rede-social':
-      query = query.eq('website_kind', 'social_only');
-      break;
-    case 'todos':
-      break;
-  }
+  if (kinds.length > 0) q = q.in('website_kind', kinds);
+  if (stages.length > 0) q = q.in('stage', stages);
+  if (businessIds.length > 0) q = q.in('id', businessIds);
+  if (regionId) q = q.eq('region_id', regionId);
+  if (category) q = q.eq('business_category', category);
+  if (locality) q = q.ilike('locality', locality);
 
-  if (regionId) query = query.eq('region_id', regionId);
-  if (businessId) query = query.eq('id', businessId);
-  if (category) query = query.eq('business_category', category);
-  if (locality) query = query.ilike('locality', locality);
+  return q;
+}
 
-  // 'por-contactar' é o único filtro que também tem de apanhar os comércios
-  // sem negociação nenhuma, que são a maioria logo depois de um varrimento.
-  if (stage === 'por-contactar') {
-    query = query.or('stage.is.null,stage.eq.new', { referencedTable: 'deals' });
-  } else if (stage) {
-    query = query.eq('deals.stage', stage).not('deals', 'is', null);
-  }
+export async function rankBusinesses(db: Db, options: RankOptions = {}): Promise<RankResult> {
+  const { sort = DEFAULT_SORT, limit = 50, offset = 0 } = options;
+
+  let query = applyFilters(
+    db.from('businesses_with_stage').select(SELECT, { count: 'exact' }).eq('is_archived', false),
+    options,
+  );
 
   // Cada ordem leva um critério de desempate, e nunca o mesmo por que já se
   // ordenou: sem ele, dois comércios com o mesmo valor trocavam de sítio entre
@@ -207,69 +217,57 @@ export async function rankBusinesses(
       countryCode: String(row.country_code ?? ''),
       isFoodService: Boolean(row.is_food_service),
       scoreBreakdown: row.score_breakdown ?? {},
-      ...dealFields(row.deals),
+      stage: (row.stage ?? 'new') as DealStage,
+      nextActionAt: (row.next_action_at as string | null) ?? null,
     })),
   };
 }
 
-
 /**
- * Os nomes para o seletor de comércio.
+ * Os valores que cada caixa de filtro oferece, com quantos há de cada.
  *
- * Leva os MESMOS filtros da lista menos o do próprio comércio. Se levasse
- * também esse, escolher um comércio deixava o seletor com uma opção só — e
- * ficava-se preso lá dentro, sem maneira de trocar para outro.
- *
- * Traz só o identificador e o nome: é uma lista para escolher, não linhas para
- * mostrar, e puxar tudo o resto seria carregar a página com dados que ninguém
- * vê.
+ * Cada caixa é calculada com os filtros das OUTRAS caixas, e nunca com o dela
+ * própria. É assim que o Excel faz e é a única maneira que funciona: se a caixa
+ * do comércio se filtrasse a si mesma, escolher um comércio deixava-a com uma
+ * opção só e ficava-se lá preso, sem maneira de trocar.
  */
-export async function listBusinessOptions(
-  db: SupabaseClient<Database>,
-  options: Omit<RankOptions, 'businessId' | 'sort' | 'limit' | 'offset'> = {},
-): Promise<Array<{ id: string; name: string }>> {
-  const { filter = 'prospetos', regionId = null, stage = null } = options;
+export interface FacetValue {
+  value: string;
+  label: string;
+  count: number;
+}
 
-  // O estado da negociação vive noutra tabela, portanto só se pede a junção
-  // quando se filtra por ele — pedi-la sempre seria trabalho a mais na base de
-  // dados por causa de um filtro que quase nunca está posto.
-  let query = db
-    .from('businesses')
-    .select(stage ? 'id, name, deals(stage)' : 'id, name')
-    .eq('is_archived', false);
+export async function listFacet(
+  db: Db,
+  field: 'id' | 'stage' | 'website_kind',
+  options: RankOptions,
+): Promise<FacetValue[]> {
+  const select = field === 'id' ? 'id, name' : field;
 
-  switch (filter) {
-    case 'prospetos':
-      query = query.neq('website_kind', 'real');
-      break;
-    case 'sem-site':
-      query = query.eq('website_kind', 'none');
-      break;
-    case 'so-rede-social':
-      query = query.eq('website_kind', 'social_only');
-      break;
-    case 'todos':
-      break;
-  }
-
-  if (regionId) query = query.eq('region_id', regionId);
-
-  if (stage === 'por-contactar') {
-    query = query.or('stage.is.null,stage.eq.new', { referencedTable: 'deals' });
-  } else if (stage) {
-    query = query.eq('deals.stage', stage).not('deals', 'is', null);
-  }
-
-  // Mil nomes é muito mais do que uma pessoa escolhe de uma lista, e ao mesmo
-  // tempo impede que um dia isto puxe a tabela inteira para dentro da página.
-  const { data, error } = await query.order('name', { ascending: true }).limit(1000);
+  const { data, error } = await applyFilters(
+    db.from('businesses_with_stage').select(select).eq('is_archived', false),
+    options,
+  )
+    .order(field === 'id' ? 'name' : field, { ascending: true })
+    // Mil é muito mais do que uma pessoa escolhe de uma lista, e ao mesmo tempo
+    // impede que um dia isto puxe a tabela inteira para dentro da página.
+    .limit(1000);
 
   if (error) {
-    throw new Error(`Não foi possível ler a lista de comércios: ${error.message}`);
+    throw new Error(`Não foi possível ler os valores do filtro: ${error.message}`);
   }
 
-  return ((data ?? []) as unknown as Array<{ id: string; name: string }>).map((row) => ({
-    id: String(row.id),
-    name: String(row.name),
-  }));
+  const rows = (data ?? []) as unknown as Array<Record<string, unknown>>;
+
+  if (field === 'id') {
+    return rows.map((row) => ({ value: String(row.id), label: String(row.name), count: 1 }));
+  }
+
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const value = String(row[field] ?? '');
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+
+  return [...counts.entries()].map(([value, count]) => ({ value, label: value, count }));
 }

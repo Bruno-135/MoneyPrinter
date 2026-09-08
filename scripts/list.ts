@@ -8,10 +8,25 @@
 
 import './load-env';
 
-import { rankBusinesses, type ProspectFilter } from '../src/lib/scoring/rank';
+import {
+  DEFAULT_KINDS,
+  rankBusinesses,
+  WEBSITE_KINDS,
+  type WebsiteKindFilter,
+} from '../src/lib/scoring/rank';
 import { createProspectorClient } from '../src/lib/supabase/prospector';
 
-const FILTERS: ProspectFilter[] = ['todos', 'prospetos', 'sem-site', 'so-rede-social'];
+/**
+ * Os filtros do terminal mapeiam-se nos tipos de presença online, que é o que a
+ * consulta passou a receber. Os nomes antigos ficam porque estão escritos na
+ * documentação e nos dedos de quem os usa.
+ */
+const FILTERS: Record<string, readonly WebsiteKindFilter[]> = {
+  todos: WEBSITE_KINDS,
+  prospetos: DEFAULT_KINDS,
+  'sem-site': ['none'],
+  'so-rede-social': ['social_only'],
+};
 
 function arg(name: string): string | null {
   const i = process.argv.indexOf(`--${name}`);
@@ -50,16 +65,19 @@ async function main(): Promise<void> {
 
   const db = await createProspectorClient();
 
-  const filtro = (arg('filtro') ?? 'prospetos') as ProspectFilter;
-  if (!FILTERS.includes(filtro)) {
-    process.stderr.write(`\n  Filtro inválido: "${filtro}". Usa um de: ${FILTERS.join(', ')}\n\n`);
+  const filtro = arg('filtro') ?? 'prospetos';
+  const kinds = FILTERS[filtro];
+  if (!kinds) {
+    process.stderr.write(
+      `\n  Filtro inválido: "${filtro}". Usa um de: ${Object.keys(FILTERS).join(', ')}\n\n`,
+    );
     process.exitCode = 1;
     return;
   }
 
   const wanted = arg('id');
   const { businesses, total } = await rankBusinesses(db, {
-    filter: wanted ? 'todos' : filtro,
+    kinds: wanted ? WEBSITE_KINDS : kinds,
     category: arg('ramo'),
     locality: arg('zona'),
     limit: wanted ? 200 : Number(arg('limite') ?? 30),
