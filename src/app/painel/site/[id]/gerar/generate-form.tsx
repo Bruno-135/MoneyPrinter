@@ -20,9 +20,13 @@ import { generateWithAi } from '../../ai-actions';
  * se escolhe. Uma chamada paga não devia precisar de fé: quem carrega no botão
  * deve saber, sem sair do ecrã, se aquilo vai custar meio cêntimo ou vinte.
  *
- * O estado local existe só para esse número acompanhar a escolha. O que conta
- * é sempre o que vai no formulário — se os dois divergirem, é o formulário que
- * manda, e o pior que acontece é o preço mostrado estar errado.
+ * Todos os campos são controlados. O React limpa sozinho um formulário cujo
+ * `action` é uma função, assim que a ação termina — e com campos não
+ * controlados isso dava duas coisas más: o pedido escrito desaparecia quando a
+ * geração falhava (ficar sem créditos apagava quatro mil caracteres), e os
+ * botões de modo e de modelo voltavam ao princípio enquanto o preço ao lado
+ * continuava a mostrar a escolha antiga. Sendo controlados, o que está no ecrã
+ * é o que vai no formulário, sempre.
  */
 
 interface Props {
@@ -63,6 +67,7 @@ export function GenerateForm({ siteId, businessName, hasKey, previousBrief }: Pr
   const [state, action] = useActionState(generateWithAi, AI_IDLE);
   const [mode, setMode] = useState<GenerationMode>('fields');
   const [model, setModel] = useState<ModelId>(DEFAULT_MODEL);
+  const [brief, setBrief] = useState(previousBrief);
 
   return (
     <form action={action} className="flex flex-col gap-6">
@@ -76,7 +81,7 @@ export function GenerateForm({ siteId, businessName, hasKey, previousBrief }: Pr
             type="radio"
             name="mode"
             value="fields"
-            defaultChecked
+            checked={mode === 'fields'}
             onChange={() => setMode('fields')}
             className="mt-1"
           />
@@ -93,6 +98,7 @@ export function GenerateForm({ siteId, businessName, hasKey, previousBrief }: Pr
             type="radio"
             name="mode"
             value="html"
+            checked={mode === 'html'}
             onChange={() => setMode('html')}
             className="mt-1"
           />
@@ -111,7 +117,8 @@ export function GenerateForm({ siteId, businessName, hasKey, previousBrief }: Pr
         <textarea
           name="brief"
           rows={5}
-          defaultValue={previousBrief}
+          value={brief}
+          onChange={(e) => setBrief(e.target.value)}
           placeholder={PLACEHOLDER[mode]}
           maxLength={4000}
           className="rounded-md border border-black/15 bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5"
@@ -131,7 +138,7 @@ export function GenerateForm({ siteId, businessName, hasKey, previousBrief }: Pr
               type="radio"
               name="model"
               value={id}
-              defaultChecked={id === DEFAULT_MODEL}
+              checked={model === id}
               onChange={() => setModel(id)}
               className="mt-1"
             />
