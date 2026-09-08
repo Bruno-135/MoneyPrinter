@@ -1,5 +1,6 @@
 import type { Database } from '@/types/database.types';
 import { googleMapsUrl } from '@/lib/places/links';
+import { findCategory } from '@/lib/places/categories';
 
 /**
  * Conteúdo de uma landing page, gerado a partir dos dados do comércio.
@@ -140,6 +141,17 @@ function buildAbout(business: Business, template: SiteTemplate): string {
   );
 }
 
+/**
+ * O nome do ramo como se lê, a partir do slug gravado.
+ *
+ * A coluna guarda "salao-beleza"; numa página que o comerciante vai ver, isso
+ * tem de sair "Salão de beleza". Um ramo que já não exista no mapa mostra-se
+ * pelo slug em vez de desaparecer.
+ */
+function categoryLabel(business: { business_category: string }): string {
+  return findCategory(business.business_category)?.label ?? business.business_category;
+}
+
 export function buildContent(business: Business, template: SiteTemplate): SiteContent {
   const isFood = template === 'food_service';
 
@@ -147,8 +159,8 @@ export function buildContent(business: Business, template: SiteTemplate): SiteCo
     hero: {
       headline: business.name,
       subheadline: isFood
-        ? `${business.business_category}${business.locality ? ` em ${business.locality}` : ''} · peça pelo WhatsApp`
-        : `${business.business_category}${business.locality ? ` em ${business.locality}` : ''}`,
+        ? `${categoryLabel(business)}${business.locality ? ` em ${business.locality}` : ''} · peça pelo WhatsApp`
+        : `${categoryLabel(business)}${business.locality ? ` em ${business.locality}` : ''}`,
       badge: ratingBadge(business),
     },
     about: buildAbout(business, template),

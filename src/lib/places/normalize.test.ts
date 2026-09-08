@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { normalizePlace } from './normalize';
 import type { PlaceResult } from './types';
 
-const OPTIONS = { categoryLabel: 'Padaria', fallbackCountryCode: 'PT' };
+const OPTIONS = { categorySlug: 'padaria', fallbackCountryCode: 'PT' };
 
 function place(overrides: Partial<PlaceResult> = {}): PlaceResult {
   return {

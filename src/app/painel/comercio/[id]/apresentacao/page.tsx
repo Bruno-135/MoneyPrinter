@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { listSites } from '@/lib/sites/repository';
 import { publicEnv } from '@/lib/env';
+import { findCategory } from '@/lib/places/categories';
 import { PrintButton } from './print-button';
 
 /**
@@ -66,7 +67,7 @@ export default async function ApresentacaoPage({ params }: { params: Promise<{ i
           <p className="text-xs font-semibold tracking-[0.18em] uppercase opacity-55">Proposta de presença online</p>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight text-balance">{business.name}</h1>
           <p className="mt-1.5 opacity-65">
-            {business.business_category}
+            {findCategory(business.business_category)?.label ?? business.business_category}
             {business.formatted_address ? ` · ${business.formatted_address}` : ''}
           </p>
         </header>

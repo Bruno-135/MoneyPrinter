@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getDeal, getStageHistory } from '@/lib/deals/repository';
 import { STAGE_STYLE, stageDefinition, stageLabel } from '@/lib/deals/stages';
 import { scoreLabel } from '@/lib/scoring/score';
+import { findCategory } from '@/lib/places/categories';
 import { googleMapsUrl, whatsappUrl, firstContactMessage } from '@/lib/places/links';
 import { listSites } from '@/lib/sites/repository';
 import { publicEnv } from '@/lib/env';
@@ -70,7 +71,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
         </Link>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">{business.name}</h1>
         <p className="mt-1 opacity-65">
-          {business.business_category}
+          {findCategory(business.business_category)?.label ?? business.business_category}
           {business.formatted_address ? ` · ${business.formatted_address}` : ''}
         </p>
 

@@ -225,7 +225,7 @@ export async function scanRegion(
   const rows: NormalizedBusiness[] = [];
   for (const place of collected.values()) {
     const row = normalizePlace(place, {
-      categoryLabel: category.label,
+      categorySlug: category.slug,
       fallbackCountryCode: countryCode,
     });
     if (row) rows.push(row);

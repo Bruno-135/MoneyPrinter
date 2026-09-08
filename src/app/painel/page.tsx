@@ -306,7 +306,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                       >
                         ↗
                       </a>
-                      <span className="ml-2 text-xs opacity-50">{b.category}</span>
+                      <span className="ml-2 text-xs opacity-50">{findCategory(b.category)?.label ?? b.category}</span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap opacity-55">
                       {/* A data mostrada acompanha a ordem escolhida: ordenar

@@ -198,9 +198,17 @@ export function ScanForm() {
         </div>
 
         {cidade && (
-          <p className="-mt-1 text-sm opacity-60">
-            A procurar em <strong className="font-medium opacity-100">{cidade.name}</strong>, num
-            raio de {(cidade.radiusMeters / 1000).toFixed(1)} km à volta do centro.
+          // O que se vai procurar, escrito por extenso e mesmo por cima dos
+          // botões. Um varrimento no ramo errado custa dinheiro e enche a lista
+          // de comércios que não se queriam; a confirmação tem de estar onde os
+          // olhos já estão antes de carregar.
+          <p className="-mt-1 text-sm opacity-70">
+            Vais procurar{' '}
+            <strong className="font-semibold opacity-100">
+              {CATEGORIES.find((c) => c.slug === ramo)?.label ?? ramo}
+            </strong>{' '}
+            em <strong className="font-semibold opacity-100">{cidade.name}</strong>, num raio de{' '}
+            {(cidade.radiusMeters / 1000).toFixed(1)} km à volta do centro.
           </p>
         )}
 

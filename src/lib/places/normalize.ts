@@ -62,8 +62,15 @@ const PRICE_LEVELS: Record<string, number> = {
 };
 
 export interface NormalizeOptions {
-  /** Rótulo do ramo, para gravar em `business_category`. */
-  categoryLabel: string;
+  /**
+   * SLUG do ramo, para gravar em `business_category`.
+   *
+   * Slug e não rótulo: era o rótulo ("Padaria") que aqui ficava, enquanto
+   * `searched_regions` guardava o slug ("padaria") e a lista de ramos do código
+   * também. Três sítios, duas grafias — e o filtro por ramo no painel, que
+   * compara com os slugs, nunca encontrava nada.
+   */
+  categorySlug: string;
   /** País da região pesquisada, usado quando a morada não o traz. */
   fallbackCountryCode: string;
 }
@@ -95,7 +102,7 @@ export function normalizePlace(
   return {
     google_place_id: id,
     name,
-    business_category: options.categoryLabel,
+    business_category: options.categorySlug,
     google_types: place.types ?? [],
 
     formatted_address: place.formattedAddress?.trim() ?? null,
