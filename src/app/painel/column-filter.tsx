@@ -129,7 +129,9 @@ export function ColumnFilter({ label, values, selected, baseHref, param }: Props
       : baseHref;
 
     fechar();
-    router.push(destino as Route);
+    // Sem `scroll: false`, aplicar um filtro atira a página para o topo e a
+    // tabela que se estava a ver fica lá em baixo.
+    router.push(destino as Route, { scroll: false });
   }
 
   return (

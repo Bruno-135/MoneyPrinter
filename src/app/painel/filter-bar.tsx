@@ -48,7 +48,11 @@ export function FilterBar({ groups }: { groups: FilterGroup[] }) {
             value={group.current}
             onChange={(event) => {
               const chosen = group.options.find((option) => option.value === event.target.value);
-              if (chosen) router.push(chosen.href);
+              // `scroll: false` é o que impede o Next de atirar a página para
+              // o topo a cada mudança de filtro. Sem isto, filtrar a meio de
+              // uma lista de quinhentos manda a pessoa de volta ao princípio —
+              // e o sítio onde ela estava era precisamente o que queria ver.
+              if (chosen) router.push(chosen.href, { scroll: false });
             }}
             className="w-full rounded-md border border-black/15 bg-white/60 px-3 py-2 text-sm outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5"
           >

@@ -379,6 +379,9 @@ function SortHeader({
       <span className="inline-flex items-center gap-1">
         <Link
           href={painelHref(here, { ordem: sort })}
+          // Ordenar não é mudar de página: a vista fica onde está, como numa
+          // folha de cálculo.
+          scroll={false}
           className={`inline-flex items-center gap-1 hover:text-brand-600 ${active ? 'text-brand-600' : ''}`}
         >
           {label}
