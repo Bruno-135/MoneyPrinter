@@ -210,13 +210,19 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                         {b.name}
                       </Link>
                       <a
-                        href={googleMapsUrl(b.googlePlaceId)}
+                        href={googleMapsUrl({
+                          googlePlaceId: b.googlePlaceId,
+                          name: b.name,
+                          address: b.address,
+                          latitude: b.latitude,
+                          longitude: b.longitude,
+                        })}
                         target="_blank"
                         rel="noopener noreferrer"
                         title="Ver no Google Maps"
                         className="ml-2 opacity-45 hover:opacity-100"
                       >
-                        &nearr;
+                        ↗
                       </a>
                       <span className="ml-2 text-xs opacity-50">{b.category}</span>
                     </td>

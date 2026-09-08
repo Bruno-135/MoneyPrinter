@@ -161,7 +161,13 @@ export function buildContent(business: Business, template: SiteTemplate): SiteCo
       phone: business.phone_e164,
       phoneLabel: business.phone_raw ?? business.phone_e164,
       address: business.formatted_address,
-      mapsUrl: googleMapsUrl(business.google_place_id),
+      mapsUrl: googleMapsUrl({
+        googlePlaceId: business.google_place_id,
+        name: business.name,
+        address: business.formatted_address,
+        latitude: business.latitude,
+        longitude: business.longitude,
+      }),
       locality: business.locality,
     },
     ordering: isFood

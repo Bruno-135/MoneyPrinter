@@ -48,6 +48,10 @@ export interface RankedBusiness {
   phone: string | null;
   address: string | null;
   locality: string | null;
+  /** Servem a ligação para o Google Maps, que precisa de um alvo alternativo
+   *  para o caso de o identificador do sítio ter deixado de resolver. */
+  latitude: number | null;
+  longitude: number | null;
   countryCode: string;
   isFoodService: boolean;
   scoreBreakdown: unknown;
@@ -64,7 +68,7 @@ export interface RankResult {
 const SELECT = [
   'id', 'google_place_id', 'name', 'business_category', 'score', 'score_breakdown',
   'website_kind', 'website_url', 'rating', 'reviews_count',
-  'phone_e164', 'phone_raw', 'formatted_address', 'locality',
+  'phone_e164', 'phone_raw', 'formatted_address', 'locality', 'latitude', 'longitude',
   'country_code', 'is_food_service',
   // A negociação vem embutida. PostgREST devolve uma lista mesmo havendo no
   // máximo uma (a restrição única é composta e ele não a reconhece como
@@ -153,6 +157,8 @@ export async function rankBusinesses(
       phone: (row.phone_e164 as string | null) ?? (row.phone_raw as string | null) ?? null,
       address: (row.formatted_address as string | null) ?? null,
       locality: (row.locality as string | null) ?? null,
+      latitude: (row.latitude as number | null) ?? null,
+      longitude: (row.longitude as number | null) ?? null,
       countryCode: String(row.country_code ?? ''),
       isFoodService: Boolean(row.is_food_service),
       scoreBreakdown: row.score_breakdown ?? {},

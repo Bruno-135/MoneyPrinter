@@ -76,12 +76,18 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
         <div className="mt-4 flex flex-wrap gap-2.5 text-sm">
           <a
-            href={googleMapsUrl(business.google_place_id)}
+            href={googleMapsUrl({
+              googlePlaceId: business.google_place_id,
+              name: business.name,
+              address: business.formatted_address,
+              latitude: business.latitude,
+              longitude: business.longitude,
+            })}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-md border border-black/15 px-3 py-2 font-medium hover:border-brand-500 dark:border-white/15"
           >
-            Ver no Google Maps &nearr;
+            Ver no Google Maps ↗
           </a>
 
           {business.phone_e164 && (
