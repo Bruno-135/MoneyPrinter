@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SORT, SORTS, describeWhen, isProspectSort } from './sort';
+import { DEFAULT_SORT, SORTS, dateShownFor, describeWhen, isProspectSort } from './sort';
 
 describe('isProspectSort', () => {
   it('aceita as ordens que existem', () => {
@@ -18,6 +18,22 @@ describe('isProspectSort', () => {
 
   it('a ordem por omissão é uma das que existem', () => {
     expect(isProspectSort(DEFAULT_SORT)).toBe(true);
+  });
+});
+
+describe('dateShownFor', () => {
+  it('a data visível acompanha a ordem escolhida', () => {
+    // Ordenar por "adicionados" e mostrar por baixo a data da última procura
+    // daria números que não batem certo com a ordem — e quem olha conclui, com
+    // razão, que a lista está partida.
+    expect(dateShownFor('adicionados')).toBe('first');
+    expect(dateShownFor('recentes')).toBe('last');
+  });
+
+  it('tem resposta para todas as ordens, incluindo as que não são datas', () => {
+    for (const sort of SORTS) {
+      expect(['first', 'last'], sort.value).toContain(dateShownFor(sort.value));
+    }
   });
 });
 

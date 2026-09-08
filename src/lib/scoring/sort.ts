@@ -8,13 +8,27 @@
  * acabou de encontrar.
  */
 
-export type ProspectSort = 'score' | 'recentes' | 'avaliacoes';
+export type ProspectSort = 'score' | 'adicionados' | 'recentes' | 'avaliacoes' | 'nome';
 
 export const SORTS: ReadonlyArray<{ value: ProspectSort; label: string }> = [
-  { value: 'score', label: 'Probabilidade' },
-  { value: 'recentes', label: 'Encontrados há menos tempo' },
+  { value: 'score', label: 'Relevância' },
+  { value: 'adicionados', label: 'Adicionados há menos tempo' },
+  { value: 'recentes', label: 'Vistos na última procura' },
   { value: 'avaliacoes', label: 'Mais avaliações' },
+  { value: 'nome', label: 'Nome (A-Z)' },
 ];
+
+/**
+ * Que data mostrar na lista, para cada ordem.
+ *
+ * A data visível acompanha a ordem escolhida. Mostrar sempre a mesma faria a
+ * lista parecer desordenada: ordenada por "adicionados", com a data da última
+ * procura por baixo de cada nome, os números não bateriam certo com a ordem — e
+ * quem olha conclui, com razão, que aquilo está partido.
+ */
+export function dateShownFor(sort: ProspectSort): 'first' | 'last' {
+  return sort === 'recentes' ? 'last' : 'first';
+}
 
 export const DEFAULT_SORT: ProspectSort = 'score';
 

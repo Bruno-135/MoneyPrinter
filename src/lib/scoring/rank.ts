@@ -20,6 +20,8 @@ export interface RankOptions {
   filter?: ProspectFilter;
   category?: string | null;
   locality?: string | null;
+  /** Filtra pelo nome do comércio. Pedaço de texto, em qualquer posição. */
+  name?: string | null;
   /**
    * Mostra só os comércios que saíram de um varrimento.
    *
@@ -102,6 +104,7 @@ export async function rankBusinesses(
     filter = 'prospetos',
     category = null,
     locality = null,
+    name = null,
     regionId = null,
     stage = null,
     sort = DEFAULT_SORT,
@@ -129,6 +132,13 @@ export async function rankBusinesses(
   }
 
   if (regionId) query = query.eq('region_id', regionId);
+  if (name) {
+    // `%` e `_` são caracteres especiais no LIKE. Sem os escapar, procurar por
+    // "100%" devolveria tudo — e uma pesquisa que devolve tudo parece uma
+    // pesquisa que não funciona.
+    const escaped = name.replace(/[\\%_]/g, (match) => `\\${match}`);
+    query = query.ilike('name', `%${escaped}%`);
+  }
   if (category) query = query.eq('business_category', category);
   if (locality) query = query.ilike('locality', locality);
 
@@ -145,6 +155,14 @@ export async function rankBusinesses(
   // dois carregamentos da página, o que é a maneira mais fácil de fazer alguém
   // pensar que a lista está partida.
   switch (sort) {
+    case 'adicionados':
+      query = query
+        .order('first_seen_at', { ascending: false, nullsFirst: false })
+        .order('score', { ascending: false });
+      break;
+    case 'nome':
+      query = query.order('name', { ascending: true });
+      break;
     case 'recentes':
       query = query
         .order('last_synced_at', { ascending: false, nullsFirst: false })

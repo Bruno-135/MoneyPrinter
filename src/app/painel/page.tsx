@@ -5,7 +5,15 @@ import { createClient } from '@/lib/supabase/server';
 import { rankBusinesses, type ProspectFilter } from '@/lib/scoring/rank';
 import { countByStage } from '@/lib/deals/repository';
 import { listSearchBatches } from '@/lib/places/searches';
-import { DEFAULT_SORT, SORTS, describeWhen, isProspectSort } from '@/lib/scoring/sort';
+import {
+  DEFAULT_SORT,
+  SORTS,
+  dateShownFor,
+  describeWhen,
+  isProspectSort,
+  type ProspectSort,
+} from '@/lib/scoring/sort';
+import { NameFilter } from './name-filter';
 import { FilterBar } from './filter-bar';
 import { STAGES, isValidStage, type DealStage } from '@/lib/deals/stages';
 import { googleMapsUrl } from '@/lib/places/links';
@@ -28,7 +36,13 @@ const SITE_STYLE: Record<string, string> = {
 };
 
 interface PainelProps {
-  searchParams: Promise<{ estado?: string; site?: string; procura?: string; ordem?: string }>;
+  searchParams: Promise<{
+    estado?: string;
+    site?: string;
+    procura?: string;
+    ordem?: string;
+    nome?: string;
+  }>;
 }
 
 const SITE_FILTERS: ReadonlyArray<{ value: ProspectFilter; label: string }> = [
@@ -52,6 +66,7 @@ interface PainelFilters {
   estado: string | null;
   procura: string | null;
   ordem: string;
+  nome: string;
 }
 
 function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Route {
@@ -62,6 +77,7 @@ function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Rou
   if (next.procura) params.set('procura', next.procura);
   if (next.estado) params.set('estado', next.estado);
   if (next.ordem !== DEFAULT_SORT) params.set('ordem', next.ordem);
+  if (next.nome !== '') params.set('nome', next.nome);
 
   const query = params.toString();
   return (query ? `/painel?${query}` : '/painel') as Route;
@@ -87,7 +103,8 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const batch = batches.find((b) => b.regionId === params.procura) ?? null;
   const procura = batch?.regionId ?? null;
   const ordem = isProspectSort(params.ordem) ? params.ordem : DEFAULT_SORT;
-  const here = { site: siteFilter, estado: params.estado ?? null, procura, ordem };
+  const nome = (params.nome ?? '').trim().slice(0, 80);
+  const here = { site: siteFilter, estado: params.estado ?? null, procura, ordem, nome };
 
   const [{ businesses, total }, stageCounts] = await Promise.all([
     rankBusinesses(supabase, {
@@ -95,6 +112,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
       stage: stageFilter,
       regionId: procura,
       sort: ordem,
+      name: nome || null,
       limit: 100,
     }),
     countByStage(supabase, procura),
@@ -187,6 +205,8 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           ]}
         />
 
+        <NameFilter current={nome} baseHref={painelHref(here, { nome: '' })} />
+
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-black/15 px-5 py-8 text-center text-sm opacity-60 dark:border-white/15">
             {batch && stageFilter
@@ -202,11 +222,12 @@ export default async function PainelPage({ searchParams }: PainelProps) {
             <table className="w-full text-sm">
               <thead className="bg-black/[0.03] text-left text-xs uppercase tracking-wide opacity-60 dark:bg-white/[0.04]">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Score</th>
-                  <th className="px-4 py-3 font-medium">Comércio</th>
+                  <SortHeader label="Score" sort="score" current={ordem} here={here} />
+                  <SortHeader label="Comércio" sort="nome" current={ordem} here={here} />
+                  <SortHeader label="Adicionado" sort="adicionados" current={ordem} here={here} />
                   <th className="px-4 py-3 font-medium">Estado</th>
                   <th className="px-4 py-3 font-medium">Site</th>
-                  <th className="px-4 py-3 font-medium">Avaliações</th>
+                  <SortHeader label="Avaliações" sort="avaliacoes" current={ordem} here={here} />
                   <th className="px-4 py-3 font-medium">Telefone</th>
                 </tr>
               </thead>
@@ -240,12 +261,14 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                         ↗
                       </a>
                       <span className="ml-2 text-xs opacity-50">{b.category}</span>
-                      {/* A data por baixo do nome e não numa coluna nova: no
-                          telemóvel a tabela já anda de lado, e mais uma coluna
-                          empurrava o telefone para fora do ecrã. */}
-                      <span className="block text-xs opacity-40">
-                        {describeWhen(b.lastSyncedAt)}
-                      </span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap opacity-55">
+                      {/* A data mostrada acompanha a ordem escolhida: ordenar
+                          por "adicionados" e mostrar a data da última procura
+                          daria números que não batem certo com a ordem. */}
+                      {describeWhen(
+                        dateShownFor(ordem) === 'last' ? b.lastSyncedAt : b.firstSeenAt,
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <StageSelect businessId={b.id} stage={b.stage} />
@@ -278,3 +301,40 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   );
 }
 
+
+/**
+ * Cabeçalho de coluna que ordena a lista ao ser clicado.
+ *
+ * Faz o mesmo que a caixa "Ordem" lá em cima, de propósito: as duas escrevem o
+ * mesmo parâmetro no endereço, portanto não são dois controlos a discordar — é
+ * um controlo com duas maneiras de lhe chegar. A caixa serve o telemóvel, onde
+ * a tabela anda de lado e os cabeçalhos ficam fora do ecrã; o cabeçalho serve
+ * quem está no computador, com a coluna à frente dos olhos.
+ */
+function SortHeader({
+  label,
+  sort,
+  current,
+  here,
+}: {
+  label: string;
+  sort: ProspectSort;
+  current: ProspectSort;
+  here: PainelFilters;
+}) {
+  const active = current === sort;
+
+  return (
+    <th className="px-4 py-3 font-medium">
+      <Link
+        href={painelHref(here, { ordem: sort })}
+        className={`inline-flex items-center gap-1 hover:text-brand-600 ${active ? 'text-brand-600' : ''}`}
+      >
+        {label}
+        <span aria-hidden className={active ? '' : 'opacity-25'}>
+          ↓
+        </span>
+      </Link>
+    </th>
+  );
+}
