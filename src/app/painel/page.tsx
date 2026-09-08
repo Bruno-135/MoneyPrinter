@@ -220,7 +220,9 @@ export default async function PainelPage({ searchParams }: PainelProps) {
         ) : (
           <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
             <table className="w-full text-sm">
-              <thead className="bg-black/[0.03] text-left text-xs uppercase tracking-wide opacity-60 dark:bg-white/[0.04]">
+{/* Cor em vez de `opacity`: a opacidade aplica-se a tudo o que está
+                  dentro do cabeçalho, e deixava o funil do filtro apagado. */}
+              <thead className="bg-black/[0.03] text-left text-xs uppercase tracking-wide text-black/55 dark:bg-white/[0.04] dark:text-white/55">
                 <tr>
                   <SortHeader label="Score" sort="score" current={ordem} here={here} />
                   <SortHeader label="Comércio" sort="nome" current={ordem} here={here}>
