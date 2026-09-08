@@ -12,8 +12,14 @@ import type { Route } from 'next';
  * ver. Passam a três caixas de seleção, como a do ramo no ecrã de procurar.
  *
  * Cada opção já traz o endereço completo lá dentro, calculado no servidor: mudar
- * uma coisa não pode apagar as outras duas, e essa era a maneira mais fácil de
- * o fazer sem dar por isso.
+ * uma coisa não pode apagar as outras, e essa era a maneira mais fácil de o
+ * fazer sem dar por isso.
+ *
+ * São caixas nativas do sistema e não listas desenhadas por nós. No telemóvel
+ * isso vale muito: a do comércio pode ter centenas de nomes, e o seletor do
+ * telefone abre-a em ecrã inteiro, com rolagem a sério e com a escrita rápida
+ * do teclado a saltar para a letra certa. Uma lista feita à mão em HTML teria
+ * de reimplementar tudo isso, pior.
  */
 
 export interface FilterOption {
@@ -34,7 +40,7 @@ export function FilterBar({ groups }: { groups: FilterGroup[] }) {
   const router = useRouter();
 
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {groups.map((group) => (
         <label key={group.label} className="flex flex-col gap-1.5">
           <span className="text-xs uppercase tracking-wide opacity-45">{group.label}</span>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { rankBusinesses, type ProspectFilter } from '@/lib/scoring/rank';
+import { listBusinessOptions, rankBusinesses, type ProspectFilter } from '@/lib/scoring/rank';
 import { countByStage } from '@/lib/deals/repository';
 import { listSearchBatches } from '@/lib/places/searches';
 import {
@@ -13,7 +13,6 @@ import {
   isProspectSort,
   type ProspectSort,
 } from '@/lib/scoring/sort';
-import { NameFilter } from './name-filter';
 import { FilterBar } from './filter-bar';
 import { STAGES, isValidStage, type DealStage } from '@/lib/deals/stages';
 import { googleMapsUrl } from '@/lib/places/links';
@@ -41,7 +40,7 @@ interface PainelProps {
     site?: string;
     procura?: string;
     ordem?: string;
-    nome?: string;
+    comercio?: string;
   }>;
 }
 
@@ -66,7 +65,7 @@ interface PainelFilters {
   estado: string | null;
   procura: string | null;
   ordem: string;
-  nome: string;
+  comercio: string;
 }
 
 function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Route {
@@ -77,7 +76,7 @@ function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Rou
   if (next.procura) params.set('procura', next.procura);
   if (next.estado) params.set('estado', next.estado);
   if (next.ordem !== DEFAULT_SORT) params.set('ordem', next.ordem);
-  if (next.nome !== '') params.set('nome', next.nome);
+  if (next.comercio !== '') params.set('comercio', next.comercio);
 
   const query = params.toString();
   return (query ? `/painel?${query}` : '/painel') as Route;
@@ -103,8 +102,17 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const batch = batches.find((b) => b.regionId === params.procura) ?? null;
   const procura = batch?.regionId ?? null;
   const ordem = isProspectSort(params.ordem) ? params.ordem : DEFAULT_SORT;
-  const nome = (params.nome ?? '').trim().slice(0, 80);
-  const here = { site: siteFilter, estado: params.estado ?? null, procura, ordem, nome };
+  // A lista de nomes para o seletor lê-se com os mesmos filtros MENOS o do
+  // comércio, e antes de escolher: um identificador colado à mão no endereço
+  // não pode chegar à consulta.
+  const comercios = await listBusinessOptions(supabase, {
+    filter: siteFilter,
+    stage: stageFilter,
+    regionId: procura,
+  });
+  const escolhido = params.comercio ?? '';
+  const comercio = comercios.some((c) => c.id === escolhido) ? escolhido : '';
+  const here = { site: siteFilter, estado: params.estado ?? null, procura, ordem, comercio };
 
   const [{ businesses, total }, stageCounts] = await Promise.all([
     rankBusinesses(supabase, {
@@ -112,7 +120,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
       stage: stageFilter,
       regionId: procura,
       sort: ordem,
-      name: nome || null,
+      businessId: comercio || null,
       limit: 100,
     }),
     countByStage(supabase, procura),
@@ -166,6 +174,18 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                 ]
               : []),
             {
+              label: 'Comércio',
+              current: comercio,
+              options: [
+                { value: '', label: `Todos os comércios (${comercios.length})`, href: painelHref(here, { comercio: '' }) },
+                ...comercios.map((c) => ({
+                  value: c.id,
+                  label: c.name,
+                  href: painelHref(here, { comercio: c.id }),
+                })),
+              ],
+            },
+            {
               label: 'Estado',
               current: params.estado ?? '',
               options: [
@@ -204,8 +224,6 @@ export default async function PainelPage({ searchParams }: PainelProps) {
             },
           ]}
         />
-
-        <NameFilter current={nome} baseHref={painelHref(here, { nome: '' })} />
 
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-black/15 px-5 py-8 text-center text-sm opacity-60 dark:border-white/15">

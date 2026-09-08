@@ -20,8 +20,8 @@ export interface RankOptions {
   filter?: ProspectFilter;
   category?: string | null;
   locality?: string | null;
-  /** Filtra pelo nome do comércio. Pedaço de texto, em qualquer posição. */
-  name?: string | null;
+  /** Mostra um único comércio, escolhido da lista. */
+  businessId?: string | null;
   /**
    * Mostra só os comércios que saíram de um varrimento.
    *
@@ -104,7 +104,7 @@ export async function rankBusinesses(
     filter = 'prospetos',
     category = null,
     locality = null,
-    name = null,
+    businessId = null,
     regionId = null,
     stage = null,
     sort = DEFAULT_SORT,
@@ -132,13 +132,7 @@ export async function rankBusinesses(
   }
 
   if (regionId) query = query.eq('region_id', regionId);
-  if (name) {
-    // `%` e `_` são caracteres especiais no LIKE. Sem os escapar, procurar por
-    // "100%" devolveria tudo — e uma pesquisa que devolve tudo parece uma
-    // pesquisa que não funciona.
-    const escaped = name.replace(/[\\%_]/g, (match) => `\\${match}`);
-    query = query.ilike('name', `%${escaped}%`);
-  }
+  if (businessId) query = query.eq('id', businessId);
   if (category) query = query.eq('business_category', category);
   if (locality) query = query.ilike('locality', locality);
 
@@ -216,4 +210,66 @@ export async function rankBusinesses(
       ...dealFields(row.deals),
     })),
   };
+}
+
+
+/**
+ * Os nomes para o seletor de comércio.
+ *
+ * Leva os MESMOS filtros da lista menos o do próprio comércio. Se levasse
+ * também esse, escolher um comércio deixava o seletor com uma opção só — e
+ * ficava-se preso lá dentro, sem maneira de trocar para outro.
+ *
+ * Traz só o identificador e o nome: é uma lista para escolher, não linhas para
+ * mostrar, e puxar tudo o resto seria carregar a página com dados que ninguém
+ * vê.
+ */
+export async function listBusinessOptions(
+  db: SupabaseClient<Database>,
+  options: Omit<RankOptions, 'businessId' | 'sort' | 'limit' | 'offset'> = {},
+): Promise<Array<{ id: string; name: string }>> {
+  const { filter = 'prospetos', regionId = null, stage = null } = options;
+
+  // O estado da negociação vive noutra tabela, portanto só se pede a junção
+  // quando se filtra por ele — pedi-la sempre seria trabalho a mais na base de
+  // dados por causa de um filtro que quase nunca está posto.
+  let query = db
+    .from('businesses')
+    .select(stage ? 'id, name, deals(stage)' : 'id, name')
+    .eq('is_archived', false);
+
+  switch (filter) {
+    case 'prospetos':
+      query = query.neq('website_kind', 'real');
+      break;
+    case 'sem-site':
+      query = query.eq('website_kind', 'none');
+      break;
+    case 'so-rede-social':
+      query = query.eq('website_kind', 'social_only');
+      break;
+    case 'todos':
+      break;
+  }
+
+  if (regionId) query = query.eq('region_id', regionId);
+
+  if (stage === 'por-contactar') {
+    query = query.or('stage.is.null,stage.eq.new', { referencedTable: 'deals' });
+  } else if (stage) {
+    query = query.eq('deals.stage', stage).not('deals', 'is', null);
+  }
+
+  // Mil nomes é muito mais do que uma pessoa escolhe de uma lista, e ao mesmo
+  // tempo impede que um dia isto puxe a tabela inteira para dentro da página.
+  const { data, error } = await query.order('name', { ascending: true }).limit(1000);
+
+  if (error) {
+    throw new Error(`Não foi possível ler a lista de comércios: ${error.message}`);
+  }
+
+  return ((data ?? []) as unknown as Array<{ id: string; name: string }>).map((row) => ({
+    id: String(row.id),
+    name: String(row.name),
+  }));
 }
