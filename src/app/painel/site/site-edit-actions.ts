@@ -93,6 +93,9 @@ export async function saveSiteContent(formData: FormData): Promise<void> {
   const theme: SiteTheme = {
     palette: isPaletteId(palette) ? palette : loaded.theme.palette,
     font: isFontId(font) ? font : loaded.theme.font,
+    // O editor mexe na paleta e na letra. A família das imagens geradas segue
+    // o ramo do comércio e não se escolhe à mão.
+    imagem: loaded.theme.imagem,
   };
 
   await updateSiteContent(
@@ -182,6 +185,89 @@ export async function detachPhoto(formData: FormData): Promise<void> {
     }
   }
 
+  revalidatePath(`/painel/site/${siteId}/editar`);
+  revalidatePath(`/painel/site/${siteId}/previa`);
+}
+
+/**
+ * Põe na página uma fotografia vinda de um banco de imagens grátis.
+ *
+ * Ao contrário do `attachPhoto`, aqui não há ficheiro nosso: a imagem fica no
+ * banco de origem e a página aponta para lá. Por isso viaja com o crédito
+ * agarrado — sem ele a licença não se cumpre, e mais tarde já não haveria
+ * maneira de saber de quem era a foto.
+ *
+ * Os campos vêm do formulário, mas não se acredita neles: o endereço é
+ * confirmado contra o cache, que é onde estão as fotos que este dono
+ * realmente procurou. Um formulário forjado não consegue meter um endereço
+ * qualquer dentro da página de um comerciante.
+ */
+export async function usarFotoGratis(formData: FormData): Promise<void> {
+  const { supabase } = await requireSession();
+
+  const siteId = text(formData, 'siteId');
+  const url = text(formData, 'url');
+  const slot = text(formData, 'slot');
+  if (!siteId || !url) return;
+
+  const loaded = await loadSite(supabase, siteId);
+  if (!loaded) return;
+
+  const { data: linhas } = await supabase
+    .from('stock_photos')
+    .select('results')
+    .eq('query_key', text(formData, 'chave'));
+
+  const conhecidas = (linhas ?? []).flatMap(
+    (linha) => (linha.results ?? []) as unknown as Array<{ url?: string; autor?: string; autorUrl?: string; origem?: string; alt?: string }>,
+  );
+  const encontrada = conhecidas.find((foto) => foto.url === url);
+  if (!encontrada) return;
+
+  const photo: SitePhoto = {
+    url,
+    alt: text(formData, 'alt') || encontrada.alt || loaded.content.hero.headline,
+    credito: `Foto de ${encontrada.autor ?? 'autor desconhecido'} · Pexels`,
+    creditoUrl: encontrada.origem ?? encontrada.autorUrl ?? null,
+  };
+
+  const content: SiteContent =
+    slot === 'cover'
+      ? { ...loaded.content, cover: photo }
+      : { ...loaded.content, gallery: [...loaded.content.gallery, photo] };
+
+  await updateSiteContent(supabase, siteId, content, loaded.theme, loaded.site.whatsapp_greeting);
+
+  revalidatePath(`/painel/site/${siteId}/imagens`);
+  revalidatePath(`/painel/site/${siteId}/editar`);
+  revalidatePath(`/painel/site/${siteId}/previa`);
+}
+
+/**
+ * Volta à imagem gerada, tirando a capa que lá estava.
+ *
+ * Não apaga ficheiro nenhum: a capa pode ser uma foto de banco, que não é
+ * nossa para apagar. Quem quiser apagar um ficheiro do armazenamento usa o
+ * `detachPhoto`, que sabe distinguir os dois casos.
+ */
+export async function usarImagemGerada(formData: FormData): Promise<void> {
+  const { supabase } = await requireSession();
+
+  const siteId = text(formData, 'siteId');
+  if (!siteId) return;
+
+  const loaded = await loadSite(supabase, siteId);
+  if (!loaded) return;
+
+  await updateSiteContent(
+    supabase,
+    siteId,
+    { ...loaded.content, cover: null },
+    loaded.theme,
+    loaded.site.whatsapp_greeting,
+  );
+
+  revalidatePath(`/painel/site/${siteId}/imagens`);
   revalidatePath(`/painel/site/${siteId}/editar`);
   revalidatePath(`/painel/site/${siteId}/previa`);
 }

@@ -41,6 +41,19 @@ export interface SiteHighlight {
 export interface SitePhoto {
   url: string;
   alt: string;
+  /**
+   * Crédito, quando a foto vem de um banco de imagens.
+   *
+   * A licença das fotografias grátis exige que se diga de quem é a foto. O
+   * crédito viaja com a imagem, dentro do conteúdo, para o site público o
+   * poder mostrar sem consultar nada — nem sequer a tabela do cache, que um
+   * visitante anónimo não pode ler.
+   *
+   * `null` nas fotografias do próprio comerciante e nas imagens geradas, que
+   * não devem nada a ninguém.
+   */
+  credito?: string | null;
+  creditoUrl?: string | null;
 }
 
 export interface SiteContent {
@@ -196,9 +209,14 @@ export function buildContent(business: Business, template: SiteTemplate): SiteCo
 /**
  * Lê uma fotografia do JSON.
  *
- * Só se aceita `http(s)`. O URL vai parar a um atributo `src` numa página que
- * qualquer pessoa pode abrir; deixar passar `javascript:` ou `data:` seria
- * abrir a porta a execução de código na página do comerciante.
+ * Só se aceita `http(s)` e os caminhos das imagens geradas (`/arte/...`), que
+ * são servidos por esta mesma aplicação. O URL vai parar a um atributo `src`
+ * numa página que qualquer pessoa pode abrir; deixar passar `javascript:` ou
+ * `data:` seria abrir a porta a execução de código na página do comerciante.
+ *
+ * `/arte/` é aceite com a barra à frente e mais nada: um `//outro-sitio.com`
+ * também começa por barra e apontaria para fora, e um `/arte/../qualquer`
+ * sairia da rota. A verificação é literal por isso mesmo.
  */
 function parsePhoto(raw: unknown): SitePhoto | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -206,14 +224,34 @@ function parsePhoto(raw: unknown): SitePhoto | null {
   const photo = raw as Partial<SitePhoto>;
   if (typeof photo.url !== 'string') return null;
 
-  try {
-    const { protocol } = new URL(photo.url);
-    if (protocol !== 'https:' && protocol !== 'http:') return null;
-  } catch {
-    return null;
+  const gerada = photo.url.startsWith('/arte/') && !photo.url.includes('..');
+
+  if (!gerada) {
+    try {
+      const { protocol } = new URL(photo.url);
+      if (protocol !== 'https:' && protocol !== 'http:') return null;
+    } catch {
+      return null;
+    }
   }
 
-  return { url: photo.url, alt: typeof photo.alt === 'string' ? photo.alt : '' };
+  // O endereço do crédito vai para um `href`: aceita-se `http(s)` e mais nada.
+  let creditoUrl: string | null = null;
+  if (typeof photo.creditoUrl === 'string') {
+    try {
+      const { protocol } = new URL(photo.creditoUrl);
+      if (protocol === 'https:' || protocol === 'http:') creditoUrl = photo.creditoUrl;
+    } catch {
+      creditoUrl = null;
+    }
+  }
+
+  return {
+    url: photo.url,
+    alt: typeof photo.alt === 'string' ? photo.alt : '',
+    credito: typeof photo.credito === 'string' && photo.credito.trim() !== '' ? photo.credito : null,
+    creditoUrl,
+  };
 }
 
 /** Lê conteúdo vindo da base de dados com valores seguros para o que faltar. */

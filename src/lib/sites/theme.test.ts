@@ -7,6 +7,7 @@ import {
   PALETTE_IDS,
   parseTheme,
   suggestPalette,
+  themeForBusiness,
   themeVars,
 } from './theme';
 
@@ -18,9 +19,10 @@ describe('parseTheme', () => {
   });
 
   it('lê uma paleta e um tipo de letra válidos', () => {
-    expect(parseTheme({ palette: 'fresh', font: 'serif' })).toEqual({
+    expect(parseTheme({ palette: 'fresh', font: 'serif', imagem: 'padaria' })).toEqual({
       palette: 'fresh',
       font: 'serif',
+      imagem: 'padaria',
     });
   });
 
@@ -31,7 +33,11 @@ describe('parseTheme', () => {
   });
 
   it('aceita metade do tema e completa a outra metade', () => {
-    expect(parseTheme({ palette: 'ocean' })).toEqual({ palette: 'ocean', font: 'sans' });
+    expect(parseTheme({ palette: 'ocean' })).toEqual({
+      palette: 'ocean',
+      font: 'sans',
+      imagem: 'neutro',
+    });
   });
 });
 
@@ -91,7 +97,7 @@ describe('suggestPalette', () => {
 
 describe('themeVars', () => {
   it('devolve as sete variáveis que a página usa', () => {
-    const vars = themeVars({ palette: 'fresh', font: 'serif' }, 'light');
+    const vars = themeVars({ palette: 'fresh', font: 'serif', imagem: 'neutro' }, 'light');
 
     expect(Object.keys(vars).sort()).toEqual([
       '--site-accent',
@@ -112,5 +118,28 @@ describe('themeVars', () => {
     for (const id of FONT_IDS) {
       expect(FONTS[id].stack.split(',').length).toBeGreaterThan(1);
     }
+  });
+});
+
+describe('parseTheme e a família das imagens', () => {
+  it('recusa uma família que não existe em vez de a deixar chegar ao endereço', () => {
+    expect(parseTheme({ palette: 'ocean', imagem: '../../etc/passwd' }).imagem).toBe('neutro');
+  });
+
+  it('os sites antigos, sem o campo, ficam no neutro', () => {
+    expect(parseTheme({ palette: 'warm', font: 'sans' }).imagem).toBe('neutro');
+  });
+});
+
+describe('themeForBusiness', () => {
+  it('tira a família do ramo e não dos tipos da Google', () => {
+    expect(themeForBusiness([], 'padaria').imagem).toBe('padaria');
+    expect(themeForBusiness([], 'advogados').imagem).toBe('escritorio');
+  });
+
+  it('um comércio sem ramo conhecido continua a ter tema', () => {
+    const tema = themeForBusiness(['florist'], 'floricultura');
+    expect(tema.imagem).toBe('neutro');
+    expect(tema.palette).toBeDefined();
   });
 });

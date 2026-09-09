@@ -1,4 +1,5 @@
 import type { SiteDocument, SiteSection } from '../sections';
+import { arteUrl, type Familia } from '../imagens/arte';
 
 /**
  * Conteúdo de demonstração para a biblioteca de temas.
@@ -25,20 +26,27 @@ export interface DemoSeed {
   ctaHeadline: string;
 }
 
-/** Uma imagem de demonstração: um SVG gerado, sem licença nem ficheiro. */
-export function demoPhoto(kind: string, alt: string) {
-  return { url: `/demo/${kind}.svg`, alt, isDemo: true };
+/**
+ * Uma imagem de demonstração: um SVG gerado, sem licença nem ficheiro.
+ *
+ * O endereço aponta para a rota `/arte`, que desenha a imagem no momento a
+ * partir da família de cor e da semente. Não há aqui nenhum ficheiro para
+ * existir em disco — e é de propósito: um `/demo/padaria.svg` que ninguém se
+ * lembrasse de criar dava uma biblioteca de temas cheia de quadrados partidos.
+ */
+export function demoPhoto(familia: Familia, semente: string, alt: string) {
+  return { url: arteUrl(familia, semente), alt, isDemo: true };
 }
 
 /**
  * Monta o documento de demonstração a partir da semente e das secções que o
- * template pede. Cada template fica assim com meia dúzia de linhas em vez de
+ * template pede. A `familia` escolhe as cores das imagens geradas. Cada template fica assim com meia dúzia de linhas em vez de
  * duzentas — e a estrutura sai sempre coerente.
  */
 export function buildDemo(
   seed: DemoSeed,
   sections: readonly string[],
-  imageKind: string,
+  familia: Familia,
 ): SiteDocument {
   const byType: Record<string, SiteSection> = {
     hero: {
@@ -47,7 +55,7 @@ export function buildDemo(
       headline: seed.nome,
       subheadline: seed.tagline,
       badge: '4,7★ · 186 avaliações',
-      photo: demoPhoto(imageKind, `Imagem de demonstração — ${seed.nome}`),
+      photo: demoPhoto(familia, `${seed.nome}-capa`, `Imagem de demonstração — ${seed.nome}`),
       ctas: [
         { label: 'Ligar agora', action: 'telefone' },
         { label: 'Como chegar', action: 'morada' },
@@ -58,7 +66,7 @@ export function buildDemo(
       variant: 'texto-imagem',
       title: 'A casa',
       paragraphs: seed.sobre,
-      photo: demoPhoto(`${imageKind}-2`, 'Imagem de demonstração — o espaço'),
+      photo: demoPhoto(familia, `${seed.nome}-espaco`, 'Imagem de demonstração — o espaço'),
     },
     servicos: {
       type: 'servicos',
@@ -84,7 +92,7 @@ export function buildDemo(
       variant: 'mosaico',
       title: 'Um olhar por dentro',
       photos: [1, 2, 3, 4, 5, 6].map((n) =>
-        demoPhoto(`${imageKind}-${n}`, `Imagem de demonstração ${n}`),
+        demoPhoto(familia, `${seed.nome}-galeria-${n}`, `Imagem de demonstração ${n}`),
       ),
     },
     diferenciais: {

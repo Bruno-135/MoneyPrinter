@@ -54,7 +54,7 @@ export const servicosMinimal: SiteTemplate = {
   palette: 'calm',
   font: 'sans',
   sections: [...MINIMAL],
-  demo: buildDemo(seed, MINIMAL, 'servicos'),
+  demo: buildDemo(seed, MINIMAL, 'escritorio'),
   active: true,
 };
 
@@ -82,7 +82,7 @@ export const servicosPremium: SiteTemplate = {
   palette: 'ocean',
   font: 'sans',
   sections: [...PREMIUM],
-  demo: buildDemo(seed, PREMIUM, 'servicos'),
+  demo: buildDemo(seed, PREMIUM, 'escritorio'),
   active: true,
 };
 
@@ -102,6 +102,6 @@ export const servicosSimples: SiteTemplate = {
   palette: 'calm',
   font: 'sans',
   sections: [...SIMPLES],
-  demo: buildDemo(seed, SIMPLES, 'servicos'),
+  demo: buildDemo(seed, SIMPLES, 'escritorio'),
   active: true,
 };

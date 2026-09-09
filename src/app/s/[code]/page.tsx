@@ -67,6 +67,7 @@ export default async function PaginaPublica({ params }: Props) {
       <VisitTracker publicCode={code} />
       <SiteRender
         mode="public"
+        semente={site.public_code}
         content={content}
         theme={parseTheme(site.theme)}
         menu={menu}

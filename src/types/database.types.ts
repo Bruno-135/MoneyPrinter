@@ -866,6 +866,45 @@ export type Database = {
           },
         ];
       };
+      stock_photos: {
+        Row: {
+          created_at: string;
+          fetched_at: string;
+          id: string;
+          orientation: string;
+          owner_id: string;
+          provider: string;
+          query_key: string;
+          query_text: string;
+          results: Json;
+          results_count: number;
+        };
+        Insert: {
+          created_at?: string;
+          fetched_at?: string;
+          id?: string;
+          orientation?: string;
+          owner_id?: string;
+          provider?: string;
+          query_key: string;
+          query_text: string;
+          results?: Json;
+          results_count?: number;
+        };
+        Update: {
+          created_at?: string;
+          fetched_at?: string;
+          id?: string;
+          orientation?: string;
+          owner_id?: string;
+          provider?: string;
+          query_key?: string;
+          query_text?: string;
+          results?: Json;
+          results_count?: number;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       monthly_site_report: {

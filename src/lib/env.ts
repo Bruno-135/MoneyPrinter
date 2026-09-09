@@ -63,6 +63,12 @@ const serverSchema = z.object({
   // resto da aplicação.
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
 
+  // Só as fotografias grátis precisam desta, e são um extra: sem ela as
+  // páginas continuam a sair inteiras, com as imagens geradas em SVG. É por
+  // isso que é opcional — nunca se troca o arranque da aplicação por um
+  // acabamento.
+  PEXELS_API_KEY: z.string().min(1).optional(),
+
   PUBLIC_SITE_DEFAULT_TTL_DAYS: z.coerce.number().int().positive().default(30),
   REGION_SEARCH_CACHE_DAYS: z.coerce.number().int().positive().default(30),
 });
@@ -115,6 +121,7 @@ export function getServerEnv(): ServerEnv {
   const parsed = serverSchema.safeParse({
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || undefined,
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY?.trim() || undefined,
+    PEXELS_API_KEY: process.env.PEXELS_API_KEY?.trim() || undefined,
     GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
     PROSPECTOR_EMAIL: process.env.PROSPECTOR_EMAIL || undefined,
     PROSPECTOR_PASSWORD: process.env.PROSPECTOR_PASSWORD || undefined,

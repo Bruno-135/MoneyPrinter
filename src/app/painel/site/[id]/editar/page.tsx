@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Route } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { loadSite } from '@/lib/sites/load';
@@ -72,6 +73,14 @@ export default async function EditarSitePage({ params }: Props) {
           <p className="mt-1 text-sm opacity-60">
             Peça-as ao dono do comércio. Não se usam as fotos do Google: têm licença própria e
             estas páginas são vendidas.
+          </p>
+          <p className="mt-2 text-sm">
+            <Link
+              href={`/painel/site/${id}/imagens` as Route}
+              className="underline underline-offset-4 opacity-80"
+            >
+              Enquanto ele não as dá &rarr; fotografias grátis e imagem gerada
+            </Link>
           </p>
         </div>
 

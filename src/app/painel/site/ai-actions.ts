@@ -85,7 +85,13 @@ export async function generateWithAi(
 
       await saveAiGeneration(supabase, siteId, {
         content,
-        theme: { palette: result.value.palette, font: result.value.font },
+        // A IA escolhe a paleta e a letra. A família das imagens não lhe é
+        // perguntada: sai do ramo, que é um facto, e não de um palpite.
+        theme: {
+          palette: result.value.palette,
+          font: result.value.font,
+          imagem: loaded.theme.imagem,
+        },
         // Gerar por campos desfaz um HTML anterior de propósito: as duas coisas
         // não podem estar as duas a valer, e o que se acabou de pedir ganha.
         customHtml: null,

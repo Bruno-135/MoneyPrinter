@@ -123,6 +123,7 @@ export default async function PreviaPage({ params }: Props) {
       ) : (
       <SiteRender
         mode="preview"
+        semente={site.public_code}
         content={content}
         theme={theme}
         menu={menu}

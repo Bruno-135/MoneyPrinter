@@ -95,7 +95,7 @@ export const salaoMinimal: SiteTemplate = {
   demo: buildDemo(
     seedSalao,
     ['hero', 'servicos', 'galeria', 'sobre', 'reputacao', 'localizacao', 'cta'],
-    'salao',
+    'beleza',
   ),
   active: true,
 };

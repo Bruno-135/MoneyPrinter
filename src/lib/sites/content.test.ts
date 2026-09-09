@@ -143,7 +143,12 @@ describe('parseContent — fotografias', () => {
       gallery: [{ url: 'https://exemplo.pt/1.jpg', alt: 'Pão' }],
     });
 
-    expect(content?.cover).toEqual({ url: 'https://exemplo.pt/capa.jpg', alt: 'Montra' });
+    expect(content?.cover).toEqual({
+      url: 'https://exemplo.pt/capa.jpg',
+      alt: 'Montra',
+      credito: null,
+      creditoUrl: null,
+    });
     expect(content?.gallery).toHaveLength(1);
   });
 
@@ -166,11 +171,49 @@ describe('parseContent — fotografias', () => {
       ],
     });
 
-    expect(content?.gallery).toEqual([{ url: 'https://exemplo.pt/boa.jpg', alt: 'Boa' }]);
+    expect(content?.gallery).toEqual([
+      { url: 'https://exemplo.pt/boa.jpg', alt: 'Boa', credito: null, creditoUrl: null },
+    ]);
   });
 
   it('aceita uma foto sem descrição, com o texto vazio', () => {
     const content = parseContent({ ...base, cover: { url: 'https://exemplo.pt/c.jpg' } });
-    expect(content?.cover).toEqual({ url: 'https://exemplo.pt/c.jpg', alt: '' });
+    expect(content?.cover).toEqual({
+      url: 'https://exemplo.pt/c.jpg',
+      alt: '',
+      credito: null,
+      creditoUrl: null,
+    });
+  });
+
+  it('aceita a imagem gerada, que é um caminho desta aplicação e não um URL', () => {
+    const content = parseContent({ ...base, cover: { url: '/arte/padaria/casa-do-forno.svg', alt: '' } });
+    expect(content?.cover?.url).toBe('/arte/padaria/casa-do-forno.svg');
+  });
+
+  it('recusa um caminho que só parece ser desta aplicação', () => {
+    for (const url of ['//outro-sitio.com/x.jpg', '/arte/../../etc/passwd', '/outra-coisa.svg']) {
+      expect(parseContent({ ...base, cover: { url, alt: '' } })?.cover, url).toBeNull();
+    }
+  });
+
+  it('guarda o crédito da foto de banco e recusa um endereço de crédito perigoso', () => {
+    const bom = parseContent({
+      ...base,
+      cover: {
+        url: 'https://exemplo.pt/c.jpg',
+        alt: '',
+        credito: 'Foto de Ana Silva · Pexels',
+        creditoUrl: 'https://www.pexels.com/photo/1/',
+      },
+    });
+    expect(bom?.cover?.credito).toBe('Foto de Ana Silva · Pexels');
+    expect(bom?.cover?.creditoUrl).toBe('https://www.pexels.com/photo/1/');
+
+    const mau = parseContent({
+      ...base,
+      cover: { url: 'https://exemplo.pt/c.jpg', alt: '', credito: 'X', creditoUrl: 'javascript:alert(1)' },
+    });
+    expect(mau?.cover?.creditoUrl).toBeNull();
   });
 });

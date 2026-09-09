@@ -83,6 +83,7 @@ export default async function SitePdfPage({ params }: Props) {
       ) : (
       <SiteRender
         mode="print"
+        semente={site.public_code}
         content={content}
         theme={theme}
         menu={menu}

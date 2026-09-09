@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
 import { buildContent, templateFor, type SiteContent, type SiteTemplate } from './content';
-import { suggestPalette, type SiteTheme } from './theme';
+import { themeForBusiness, type SiteTheme } from './theme';
 
 /**
  * Criação e gestão das landing pages.
@@ -44,8 +44,9 @@ export async function generateSite(db: Db, businessId: string): Promise<string> 
 
   // A paleta é um palpite a partir do ramo, não uma escolha definitiva: o
   // editor muda-a num clique. Serve para uma floricultura não nascer com as
-  // cores de uma padaria só porque foi esse o primeiro modelo que se fez.
-  const theme: SiteTheme = { palette: suggestPalette(business.google_types), font: 'sans' };
+  // cores de uma padaria só porque foi esse o primeiro modelo que se fez. A
+  // família das imagens geradas sai do mesmo sítio, pela mesma razão.
+  const theme: SiteTheme = themeForBusiness(business.google_types, business.business_category);
 
   const { data, error } = await db
     .from('generated_sites')

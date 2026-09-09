@@ -4,6 +4,7 @@ import type { SiteContent, SitePhoto } from '@/lib/sites/content';
 import { type SiteTheme, themeVars } from '@/lib/sites/theme';
 import { formatPrice } from '@/lib/sites/repository';
 import { whatsappUrl } from '@/lib/places/links';
+import { arteUrl } from '@/lib/sites/imagens/arte';
 
 /**
  * O desenho da landing page, num sítio só.
@@ -51,6 +52,14 @@ export interface SiteRenderProps {
   whatsappGreeting: string | null;
   /** Envolve os links no modo público, para registar o clique. */
   linkWrapper?: (props: SiteLinkProps) => ReactNode;
+  /**
+   * Identificador estável do site, usado como semente da imagem gerada.
+   *
+   * O código público serve: é único, não muda quando o comerciante edita o
+   * texto, e é o mesmo nos três modos — por isso a capa que ele aprova no PDF
+   * é exatamente a que fica no ar.
+   */
+  semente: string;
 }
 
 /** Uma secção do site. No PDF, cada uma é uma folha. */
@@ -87,6 +96,7 @@ export function SiteRender({
   whatsappNumber,
   whatsappGreeting,
   linkWrapper,
+  semente,
 }: SiteRenderProps) {
   const whatsapp = whatsappUrl(whatsappNumber, whatsappGreeting ?? undefined);
 
@@ -119,6 +129,18 @@ export function SiteRender({
   const outlineButton =
     'rounded-lg border-2 border-[var(--site-accent)] px-6 py-3 text-base font-semibold text-[var(--site-accent)]';
 
+  // Um crédito por fotógrafo, mesmo que a mesma pessoa apareça em três fotos.
+  const creditos = [...new Map(
+    [content.cover, ...content.gallery]
+      .filter((foto): foto is SitePhoto => foto?.credito != null)
+      .map((foto) => [foto.credito!, { texto: foto.credito!, url: foto.creditoUrl ?? null }]),
+  ).values()];
+
+  const capa: SitePhoto = content.cover ?? {
+    url: arteUrl(theme.imagem, semente),
+    alt: `Imagem ilustrativa — ${content.hero.headline}`,
+  };
+
   return (
     <div
       style={themeVars(theme, 'light')}
@@ -126,11 +148,15 @@ export function SiteRender({
     >
       {/* ---------------- Capa ---------------- */}
       <Sheet mode={mode}>
-        {content.cover && (
-          <div className="relative h-56 w-full overflow-hidden sm:h-80">
-            <Photo photo={content.cover} className="h-full w-full object-cover" />
-          </div>
-        )}
+        {/*
+          Uma página sem capa é uma página que começa com uma parede branca, e
+          uma parede branca não se vende. Quem não deu fotografia fica com a
+          imagem gerada do seu ramo — que não finge ser uma fotografia da loja,
+          mas dá cor, altura e um princípio à página.
+        */}
+        <div className="relative h-56 w-full overflow-hidden sm:h-80">
+          <Photo photo={capa} className="h-full w-full object-cover" />
+        </div>
 
         <header className="mx-auto max-w-3xl px-6 pt-16 pb-14 text-center">
           {content.hero.badge && (
@@ -309,7 +335,30 @@ export function SiteRender({
         </div>
       </section>
 
-      <footer className="pb-10 text-center text-xs opacity-40">{content.hero.headline}</footer>
+      <footer className="flex flex-col items-center gap-1 pb-10 text-center text-xs opacity-40">
+        <span>{content.hero.headline}</span>
+        {/*
+          O crédito das fotografias de banco não é decoração: é a condição da
+          licença que permite usá-las numa página comercial. Fica pequeno e no
+          fim, como em qualquer site, mas fica.
+        */}
+        {creditos.length > 0 && (
+          <span>
+            {creditos.map((credito, i) => (
+              <span key={credito.texto}>
+                {i > 0 && ' · '}
+                {credito.url ? (
+                  <a href={credito.url} rel="nofollow noopener" target="_blank" className="underline">
+                    {credito.texto}
+                  </a>
+                ) : (
+                  credito.texto
+                )}
+              </span>
+            ))}
+          </span>
+        )}
+      </footer>
     </div>
   );
 }

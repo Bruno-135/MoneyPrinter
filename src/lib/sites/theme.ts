@@ -1,3 +1,5 @@
+import { ehFamilia, familiaParaRamo, type Familia } from './imagens/arte';
+
 /**
  * Aparência da landing page: paleta e tipo de letra.
  *
@@ -52,9 +54,17 @@ export type FontId = (typeof FONT_IDS)[number];
 export interface SiteTheme {
   palette: PaletteId;
   font: FontId;
+  /**
+   * A família de cor das imagens geradas (ver `imagens/arte.ts`).
+   *
+   * Vive no tema e não no conteúdo por uma razão de acesso: a página pública é
+   * aberta por gente sem sessão, que a base de dados não deixa ler a tabela dos
+   * comércios. O ramo não chega lá — o tema, que é do próprio site, chega.
+   */
+  imagem: Familia;
 }
 
-export const DEFAULT_THEME: SiteTheme = { palette: 'warm', font: 'sans' };
+export const DEFAULT_THEME: SiteTheme = { palette: 'warm', font: 'sans', imagem: 'neutro' };
 
 /**
  * As seis paletas.
@@ -225,8 +235,12 @@ export function parseTheme(raw: unknown): SiteTheme {
   const value = raw as Partial<SiteTheme>;
   const palette = isPaletteId(value.palette) ? value.palette : DEFAULT_THEME.palette;
   const font = isFontId(value.font) ? value.font : DEFAULT_THEME.font;
+  // Os sites criados antes de as imagens geradas existirem não têm este campo.
+  // Ficam no neutro, que é cinzento e discreto — nunca partido.
+  const imagem =
+    typeof value.imagem === 'string' && ehFamilia(value.imagem) ? value.imagem : DEFAULT_THEME.imagem;
 
-  return { palette, font };
+  return { palette, font, imagem };
 }
 
 export function isPaletteId(value: unknown): value is PaletteId {
@@ -279,5 +293,20 @@ export function themeVars(theme: SiteTheme, mode: 'light' | 'dark'): Record<stri
     '--site-on-accent': tokens.onAccent,
     '--site-line': tokens.line,
     '--site-font': FONTS[theme.font].stack,
+  };
+}
+
+/**
+ * O tema com que um site nasce.
+ *
+ * A paleta sai dos tipos que a Google devolveu e a família das imagens sai do
+ * ramo, para uma padaria não nascer com fundos azuis nem um advogado com
+ * fundos cor de pão.
+ */
+export function themeForBusiness(googleTypes: readonly string[], categorySlug: string | null): SiteTheme {
+  return {
+    palette: suggestPalette(googleTypes),
+    font: DEFAULT_THEME.font,
+    imagem: familiaParaRamo(categorySlug),
   };
 }
