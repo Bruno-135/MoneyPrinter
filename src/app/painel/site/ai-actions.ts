@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { loadSite } from '@/lib/sites/load';
 import { saveAiGeneration, discardCustomHtml } from '@/lib/sites/repository';
-import type { SiteContent } from '@/lib/sites/content';
+import { socialFrom, type SiteContent } from '@/lib/sites/content';
 import { DEFAULT_MODEL, isGenerationMode, isModelId } from '@/lib/ai/models';
 import { generateFields, generateHtml } from '@/lib/ai/generate';
 import { describeAiError } from '@/lib/ai/client';
@@ -192,6 +192,10 @@ export async function generateWithAi(
         gallery:
           loaded.content.gallery.length > 0 ? loaded.content.gallery : (fotos?.galeria ?? []),
         reviews: avaliacoes ? paraSite(avaliacoes.avaliacoes) : loaded.content.reviews,
+        // As redes vêm sempre do comércio e não do que estava guardado: são
+        // um facto do Google, não uma escolha de ninguém, e assim as páginas
+        // feitas antes de isto existir apanham-nas ao serem geradas de novo.
+        social: socialFrom(business.social_links),
       };
 
       await saveAiGeneration(supabase, siteId, {

@@ -76,6 +76,26 @@ export interface SiteReview {
   traduzida: boolean;
 }
 
+/** Uma rede social do comércio: qual é e para onde vai. */
+export interface SiteSocial {
+  rede: RedeSocial;
+  url: string;
+}
+
+/**
+ * As redes que se sabe desenhar. Uma rede fora desta lista não entra na
+ * página — mais vale não a mostrar do que mostrar um símbolo errado.
+ */
+export const REDES_SOCIAIS = [
+  'instagram',
+  'facebook',
+  'tiktok',
+  'youtube',
+  'linkedin',
+  'linktree',
+] as const;
+export type RedeSocial = (typeof REDES_SOCIAIS)[number];
+
 export interface SiteContent {
   hero: {
     headline: string;
@@ -91,6 +111,15 @@ export interface SiteContent {
   gallery: SitePhoto[];
   /** Avaliações escritas, vindas do Google. Vazia até alguém as ir buscar. */
   reviews: SiteReview[];
+  /**
+   * Redes sociais do comércio, no rodapé.
+   *
+   * Vêm do campo "site" do Google: muitos destes comércios não têm site
+   * nenhum e põem lá o Instagram — é por isso que entram na lista de
+   * prospeção. Na página do próprio, essa ligação deixa de ser um sinal de
+   * fraqueza e passa a ser um sítio para onde mandar quem quer ver mais.
+   */
+  social: SiteSocial[];
   contact: {
     phone: string | null;
     phoneLabel: string | null;
@@ -205,6 +234,7 @@ export function buildContent(business: Business, template: SiteTemplate): SiteCo
     cover: null,
     gallery: [],
     reviews: [],
+    social: socialFrom(business.social_links),
     contact: {
       phone: business.phone_e164,
       phoneLabel: business.phone_raw ?? business.phone_e164,
@@ -321,6 +351,46 @@ function parseReview(raw: unknown): SiteReview | null {
   };
 }
 
+/**
+ * Lê as redes sociais, de onde quer que venham.
+ *
+ * Serve tanto o formato guardado em `businesses.social_links` — um objeto
+ * `{ instagram: "https://..." }` — como a lista já montada que fica no
+ * conteúdo do site. Só passam redes conhecidas e endereços `http(s)`: isto
+ * acaba num `href` de uma página que qualquer pessoa abre.
+ */
+export function socialFrom(bruto: unknown): SiteSocial[] {
+  const pares: Array<[string, unknown]> = Array.isArray(bruto)
+    ? bruto.map((item) => {
+        const s = item as Partial<SiteSocial>;
+        return [String(s?.rede ?? ''), s?.url];
+      })
+    : bruto && typeof bruto === 'object'
+      ? Object.entries(bruto as Record<string, unknown>)
+      : [];
+
+  const vistas = new Set<string>();
+  const redes: SiteSocial[] = [];
+
+  for (const [chave, valor] of pares) {
+    const rede = chave.trim().toLowerCase();
+    if (!(REDES_SOCIAIS as readonly string[]).includes(rede)) continue;
+    if (vistas.has(rede) || typeof valor !== 'string') continue;
+
+    try {
+      const { protocol } = new URL(valor);
+      if (protocol !== 'https:' && protocol !== 'http:') continue;
+    } catch {
+      continue;
+    }
+
+    vistas.add(rede);
+    redes.push({ rede: rede as RedeSocial, url: valor });
+  }
+
+  return redes;
+}
+
 /** Lê conteúdo vindo da base de dados com valores seguros para o que faltar. */
 export function parseContent(raw: unknown): SiteContent | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -341,6 +411,7 @@ export function parseContent(raw: unknown): SiteContent | null {
     gallery: Array.isArray(content.gallery)
       ? content.gallery.map(parsePhoto).filter((photo): photo is SitePhoto => photo !== null)
       : [],
+    social: socialFrom(content.social),
     reviews: Array.isArray(content.reviews)
       ? content.reviews.map(parseReview).filter((r): r is SiteReview => r !== null).slice(0, 6)
       : [],

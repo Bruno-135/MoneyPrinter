@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildContent, parseContent, templateFor } from './content';
+import { buildContent, parseContent, templateFor, socialFrom } from './content';
 import type { Database } from '@/types/database.types';
 
 type Business = Database['public']['Tables']['businesses']['Row'];
@@ -273,5 +273,44 @@ describe('parseContent — avaliações', () => {
   it('não deixa a secção crescer sem fim', () => {
     const muitas = Array.from({ length: 20 }, (_, i) => ({ texto: `Avaliação ${i}`, autor: 'X' }));
     expect(parseContent({ ...base, reviews: muitas })?.reviews).toHaveLength(6);
+  });
+});
+
+describe('socialFrom', () => {
+  it('lê o formato guardado nos comércios', () => {
+    expect(socialFrom({ instagram: 'https://instagram.com/casa' })).toEqual([
+      { rede: 'instagram', url: 'https://instagram.com/casa' },
+    ]);
+  });
+
+  it('lê a lista já montada que fica no conteúdo do site', () => {
+    expect(socialFrom([{ rede: 'facebook', url: 'https://facebook.com/casa' }])).toEqual([
+      { rede: 'facebook', url: 'https://facebook.com/casa' },
+    ]);
+  });
+
+  it('deita fora redes que não se sabe desenhar', () => {
+    // Mais vale não mostrar do que mostrar um símbolo errado.
+    expect(socialFrom({ myspace: 'https://myspace.com/casa' })).toEqual([]);
+  });
+
+  it('recusa endereços que não sejam http(s) — isto acaba num href público', () => {
+    expect(socialFrom({ instagram: 'javascript:alert(1)' })).toEqual([]);
+    expect(socialFrom({ facebook: 'nao-e-um-endereco' })).toEqual([]);
+  });
+
+  it('não repete a mesma rede duas vezes', () => {
+    expect(
+      socialFrom([
+        { rede: 'instagram', url: 'https://instagram.com/a' },
+        { rede: 'instagram', url: 'https://instagram.com/b' },
+      ]),
+    ).toHaveLength(1);
+  });
+
+  it('aguenta lixo sem rebentar', () => {
+    expect(socialFrom(null)).toEqual([]);
+    expect(socialFrom('nada')).toEqual([]);
+    expect(socialFrom(42)).toEqual([]);
   });
 });

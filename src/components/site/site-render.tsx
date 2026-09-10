@@ -5,6 +5,7 @@ import { type SiteTheme, themeVars } from '@/lib/sites/theme';
 import { formatPrice } from '@/lib/sites/repository';
 import { whatsappUrl } from '@/lib/places/links';
 import { arteUrl } from '@/lib/sites/imagens/arte';
+import { RedesSociais } from './redes-sociais';
 
 /**
  * O desenho da landing page, num sítio só.
@@ -619,7 +620,12 @@ export function SiteRender({
         </div>
       </section>
 
-      <footer className="flex flex-col items-center gap-1 border-t border-[var(--site-line)] px-6 py-8 text-center text-xs opacity-45">
+      <footer className="flex flex-col items-center gap-3 border-t border-[var(--site-line)] px-6 py-8 text-center text-xs opacity-45">
+        {/* As redes ficam ACIMA do nome e num tamanho que se acerta com o
+            dedo. São o único sítio da página para onde se pode ir ver mais, e
+            estavam a faltar. No PDF não se clicam, por isso não vão. */}
+        {mode !== 'print' && <RedesSociais redes={content.social} />}
+
         <span className="text-sm font-semibold opacity-80">{content.hero.headline}</span>
         {content.contact.locality && <span>{content.contact.locality}</span>}
         {/*
