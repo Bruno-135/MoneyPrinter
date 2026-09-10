@@ -30,20 +30,9 @@ import { StageSelect } from './stage-select';
 import { signOut } from './actions';
 import { Destaques, fotosDosDestaques } from './destaques';
 import { Numeros, type Numero } from './numeros';
+import { CartoesComercios, SITE_LABEL, SITE_STYLE } from './cartoes-comercios';
 
 export const dynamic = 'force-dynamic';
-
-const SITE_LABEL: Record<string, string> = {
-  none: 'sem site',
-  social_only: 'só rede social',
-  real: 'tem site',
-};
-
-const SITE_STYLE: Record<string, string> = {
-  none: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
-  social_only: 'bg-sky-500/15 text-sky-700 dark:text-sky-300',
-  real: 'bg-black/10 opacity-60 dark:bg-white/10',
-};
 
 interface PainelProps {
   searchParams: Promise<{
@@ -315,7 +304,14 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                 : 'Ainda não há comércios. Faz uma simulação primeiro para ver o custo, e depois procura a sério.'}
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+          <>
+            {/* Cartões no telemóvel, tabela no computador. Sete colunas não
+                cabem em 390px, e `overflow-x-auto` só escondia cinco delas
+                fora do ecrã — o telefone incluído, que é o que se vem cá
+                buscar. Ver `cartoes-comercios.tsx`. */}
+            <CartoesComercios businesses={businesses} ordem={ordem} />
+
+            <div className="hidden overflow-x-auto rounded-lg border border-black/10 md:block dark:border-white/10">
             <table className="w-full text-sm">
 {/* Cor em vez de `opacity`: a opacidade aplica-se a tudo o que está
                   dentro do cabeçalho, e deixava o funil do filtro apagado. */}
@@ -438,7 +434,8 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
       </section>
     </main>
