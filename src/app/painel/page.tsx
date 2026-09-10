@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import {
   DEFAULT_KINDS,
   WEBSITE_KIND_LABELS,
+  WEBSITE_KINDS,
   isWebsiteKind,
   listFacet,
   rankBusinesses,
@@ -28,6 +29,7 @@ import { ScanForm } from './scan-form';
 import { StageSelect } from './stage-select';
 import { signOut } from './actions';
 import { Destaques, fotosDosDestaques } from './destaques';
+import { Numeros, type Numero } from './numeros';
 
 export const dynamic = 'force-dynamic';
 
@@ -127,10 +129,17 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const semEstado = { kinds, categories: ramos, regionId: procura };
   const semSite = { stages: estados, categories: ramos, regionId: procura };
 
-  const [ramosFacet, estadosFacet, sitesFacet] = await Promise.all([
+  // As duas últimas são para a fila de números e não para os funis: contam
+  // dentro da procura escolhida e fora dos filtros das colunas, para servirem
+  // de ponto de referência estável enquanto se mexe na tabela.
+  const soProcura = { regionId: procura };
+
+  const [ramosFacet, estadosFacet, sitesFacet, sitesTotal, estadosTotal] = await Promise.all([
     listFacet(supabase, 'business_category', semRamo),
     listFacet(supabase, 'stage', semEstado),
     listFacet(supabase, 'website_kind', semSite),
+    listFacet(supabase, 'website_kind', soProcura),
+    listFacet(supabase, 'stage', soProcura),
   ]);
 
   const here: PainelFilters = { site: sites, estado: estados, ramo: ramos, procura, ordem };
@@ -151,38 +160,115 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     ordem === 'score' ? businesses.filter((b) => b.stage === 'new').slice(0, 3) : [];
   const fotosDestaques = await fotosDosDestaques(supabase, destaques);
 
+  /** Quantos há de um valor, na contagem que ignora os funis das colunas. */
+  const quantos = (facet: readonly { value: string; count: number }[], ...valores: string[]) =>
+    facet.filter((f) => valores.includes(f.value)).reduce((soma, f) => soma + f.count, 0);
+
+  // Os estados do meio do funil, num número só. Separá-los daria cinco cartões
+  // com dois ou três cada, que é ruído: o que interessa saber de relance é
+  // quantas conversas estão abertas, não em que passo exato está cada uma.
+  const emConversa = STAGES.filter((s) => s.open && s.value !== 'new').map((s) => s.value);
+
+  // Os cartões de estado abrem com TODOS os tipos de site marcados. O número
+  // conta-os todos (um comércio ganho pode entretanto ter site), e um número
+  // que muda quando se carrega nele não serve para nada.
+  const numeros: Numero[] = [
+    {
+      label: 'Sem site',
+      valor: quantos(sitesTotal, 'none'),
+      href: painelHref(here, { site: ['none'], estado: [], ramo: [] }),
+      tom: 'text-emerald-600 dark:text-emerald-400',
+    },
+    {
+      label: 'Só rede social',
+      valor: quantos(sitesTotal, 'social_only'),
+      href: painelHref(here, { site: ['social_only'], estado: [], ramo: [] }),
+      tom: 'text-sky-600 dark:text-sky-400',
+    },
+    {
+      label: 'Por contactar',
+      valor: quantos(estadosTotal, 'new'),
+      href: painelHref(here, { estado: ['new'], site: [...WEBSITE_KINDS], ramo: [] }),
+    },
+    {
+      label: 'Em conversa',
+      valor: quantos(estadosTotal, ...emConversa),
+      href: painelHref(here, { estado: emConversa, site: [...WEBSITE_KINDS], ramo: [] }),
+      tom: 'text-amber-600 dark:text-amber-400',
+    },
+    {
+      label: 'Ganhos',
+      valor: quantos(estadosTotal, 'won'),
+      href: painelHref(here, { estado: ['won'], site: [...WEBSITE_KINDS], ramo: [] }),
+      tom: 'text-emerald-600 dark:text-emerald-400',
+    },
+  ];
+
+  /**
+   * O título dos resultados, escrito como uma frase.
+   *
+   * "Braga · Padaria · 214" é uma etiqueta de base de dados. "214 padarias sem
+   * site em Braga" é a mesma informação dita como quem fala — e é essa a frase
+   * que se repete ao cliente, portanto convém tê-la à frente dos olhos.
+   */
+  const tituloResultados = batch
+    ? `${batch.categoryLabel} sem site em ${batch.label}`
+    : 'Comércios encontrados';
+
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-12">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-medium tracking-wide text-brand-600 uppercase">Prospeção comercial</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Procurar comércios</h1>
-        </div>
-        <div className="flex items-center gap-4 text-sm">
+    <main className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-10">
+      {/* ---------------- Barra de conta ----------------
+          Fina e discreta, encostada ao topo. O que era um cabeçalho com o
+          título da página passou a ser só isto: o título está agora dentro da
+          caixa de procura, que é o que a pessoa vem cá fazer. */}
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.07] pb-4 text-sm dark:border-white/[0.07]">
+        <span className="font-semibold tracking-tight">Prospeção comercial</span>
+        <div className="flex items-center gap-4">
           <Link href="/painel/relatorios" className="underline underline-offset-4 opacity-70">
             Relatórios
           </Link>
           <form action={signOut}>
-            <button type="submit" className="underline underline-offset-4 opacity-60">
+            <button type="submit" className="underline underline-offset-4 opacity-55">
               Sair ({auth.user.email})
             </button>
           </form>
         </div>
       </header>
 
-      <ScanForm />
+      {/* ---------------- A procura, em destaque ----------------
+          É o que se vem cá fazer, e por isso ocupa o lugar de honra: caixa
+          própria, título grande e centrado, e o aviso do custo por baixo. */}
+      <section className="rounded-2xl border border-black/10 bg-black/[0.02] px-5 py-8 sm:px-10 dark:border-white/10 dark:bg-white/[0.02]">
+        <div className="mx-auto flex max-w-2xl flex-col gap-6">
+          <div className="flex flex-col items-center gap-2 text-center">
+            <span className="rounded-full bg-brand-600/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand-600 uppercase">
+              Encontrar comércios sem site
+            </span>
+            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Procurar comércios</h1>
+            <p className="text-sm opacity-60">
+              Escolhe a cidade e o ramo. Simula primeiro para ver quanto custa — a simulação não
+              gasta nada.
+            </p>
+          </div>
+
+          <ScanForm />
+        </div>
+      </section>
+
+      <Numeros numeros={numeros} />
 
       <Destaques destaques={destaques} fotos={fotosDestaques} />
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-xl font-semibold tracking-tight">
-          {batch ? `${batch.label} · ${batch.categoryLabel}` : 'Prospetos'}{' '}
-          <span className="text-base font-normal opacity-55">
-            {total > 0
-              ? `· ${total} · ${(SORTS.find((s) => s.value === ordem)?.label ?? '').toLowerCase()}`
-              : ''}
-          </span>
-        </h2>
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">{tituloResultados}</h2>
+          {total > 0 && (
+            <span className="text-sm opacity-55">
+              {total} {total === 1 ? 'comércio' : 'comércios'} ·{' '}
+              {(SORTS.find((s) => s.value === ordem)?.label ?? '').toLowerCase()}
+            </span>
+          )}
+        </div>
 
         {/*
           Em cima ficam só os dois filtros que NÃO são colunas da tabela: de que
