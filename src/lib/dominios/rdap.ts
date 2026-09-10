@@ -11,19 +11,28 @@
  *   200  alguém tem — está ocupado
  *   resto  não se sabe, e diz-se que não se sabe
  *
- * Esse "não se sabe" é a parte que interessa fazer bem. Nem todos os registos
- * publicam RDAP (o `.pt` e o `.com.br` são caprichosos), e há limites de
- * pedidos por minuto. Uma resposta que se não percebeu NUNCA se apresenta como
- * "disponível": mandar um comerciante comprar um domínio que afinal é de
- * outra pessoa é pior do que não responder.
+ * Nem todos os registos publicam RDAP — o `.pt` e o `.com.br` são
+ * precisamente os que faltam, e são os que aqui interessam. Quando ele não
+ * responde, pergunta-se ao DNS (ver `dns.ts`), que responde sempre. Um "não
+ * se sabe" é trabalho nosso empurrado para quem está a usar isto: quem lê a
+ * resposta ia ter de ir procurar lá fora de qualquer maneira, e então mais
+ * valia não ter perguntado.
+ *
+ * O que se mantém é a honestidade sobre a CERTEZA: quando a resposta vem do
+ * DNS e não do registo, diz-se. Mandar um comerciante comprar um domínio que
+ * afinal é de outra pessoa é pior do que dar a resposta com uma reserva.
  */
+
+import { existeNoDns } from './dns';
 
 export type EstadoDominio = 'livre' | 'ocupado' | 'desconhecido';
 
 export interface ResultadoDominio {
   dominio: string;
   estado: EstadoDominio;
-  /** Porque é que não se sabe, quando não se sabe. */
+  /** De onde veio a resposta. É o que separa a certeza do palpite fundamentado. */
+  fonte: 'registo' | 'dns' | 'nenhuma';
+  /** Uma reserva a dizer em letra pequena, quando existe. */
   nota: string | null;
 }
 
@@ -32,10 +41,11 @@ const RDAP_BASE = 'https://rdap.org/domain/';
 /** Quanto tempo se espera por um registo antes de desistir. */
 const TEMPO_LIMITE_MS = 6000;
 
-export async function verificarDominio(
+/** Só o RDAP, sem o segundo sinal. Separado para se poder testar sozinho. */
+export async function consultarRegisto(
   dominio: string,
   fetchImpl: typeof fetch = fetch,
-): Promise<ResultadoDominio> {
+): Promise<EstadoDominio> {
   const controlador = new AbortController();
   const relogio = setTimeout(() => controlador.abort(), TEMPO_LIMITE_MS);
 
@@ -46,28 +56,63 @@ export async function verificarDominio(
       cache: 'no-store',
     });
 
-    if (resposta.status === 404) return { dominio, estado: 'livre', nota: null };
-    if (resposta.ok) return { dominio, estado: 'ocupado', nota: null };
-
-    if (resposta.status === 429) {
-      return { dominio, estado: 'desconhecido', nota: 'Demasiadas consultas seguidas. Tenta daqui a um minuto.' };
-    }
-
-    return {
-      dominio,
-      estado: 'desconhecido',
-      nota: `O registo desta extensão respondeu ${resposta.status}. Confirma no registador.`,
-    };
-  } catch (causa) {
-    const abortado = causa instanceof Error && causa.name === 'AbortError';
-    return {
-      dominio,
-      estado: 'desconhecido',
-      nota: abortado ? 'O registo demorou de mais a responder.' : 'Não foi possível falar com o registo.',
-    };
+    if (resposta.status === 404) return 'livre';
+    if (resposta.ok) return 'ocupado';
+    return 'desconhecido';
+  } catch {
+    return 'desconhecido';
   } finally {
     clearTimeout(relogio);
   }
+}
+
+/**
+ * O estado de um domínio, com os dois sinais.
+ *
+ * O registo primeiro, porque é a fonte oficial. O DNS a seguir, para as
+ * extensões cujo registo se cala — que são a maioria das que aqui interessam.
+ * Só quando os dois falham é que se admite não saber, e isso passa a ser raro
+ * em vez de ser o caso normal.
+ */
+export async function verificarDominio(
+  dominio: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<ResultadoDominio> {
+  const [registo, dns] = await Promise.all([
+    consultarRegisto(dominio, fetchImpl),
+    existeNoDns(dominio, fetchImpl),
+  ]);
+
+  if (registo !== 'desconhecido') {
+    return { dominio, estado: registo, fonte: 'registo', nota: null };
+  }
+
+  if (dns === 'existe') {
+    return {
+      dominio,
+      estado: 'ocupado',
+      fonte: 'dns',
+      nota: 'Tem servidores de nome apontados, logo está registado.',
+    };
+  }
+
+  if (dns === 'nao-existe') {
+    return {
+      dominio,
+      estado: 'livre',
+      fonte: 'dns',
+      nota:
+        'O registo desta extensão não responde a consultas. Pelo DNS, o domínio não existe — ' +
+        'confirma no registador antes de o prometer.',
+    };
+  }
+
+  return {
+    dominio,
+    estado: 'desconhecido',
+    fonte: 'nenhuma',
+    nota: 'Nem o registo nem o DNS responderam.',
+  };
 }
 
 /**

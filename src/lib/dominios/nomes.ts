@@ -171,3 +171,18 @@ export function extensoes(countryCode: string | null | undefined): string[] {
   if (pais === 'PT') return ['pt', 'com', 'net', 'online'];
   return ['com', 'net', 'online'];
 }
+
+/**
+ * Onde ir confirmar e comprar, com o domínio já escrito.
+ *
+ * A resposta desta casa é um sinal forte, não um certificado — só o
+ * registador sabe ao certo, e é lá que se compra. Em vez de deixar isso como
+ * um problema de quem lê ("então tenho de ir procurar lá fora na mesma"), o
+ * "lá fora" fica a um toque e já preenchido.
+ *
+ * Não há aqui recomendação de registador nenhum: é uma procura, e a compra
+ * faz-se onde se quiser.
+ */
+export function linkDeCompra(dominio: string): string {
+  return `https://www.namecheap.com/domains/registration/results/?domain=${encodeURIComponent(dominio)}`;
+}

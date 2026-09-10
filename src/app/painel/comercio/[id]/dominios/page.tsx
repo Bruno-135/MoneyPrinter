@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { findCategory } from '@/lib/places/categories';
-import { candidatos, extensoes } from '@/lib/dominios/nomes';
+import { candidatos, extensoes, linkDeCompra } from '@/lib/dominios/nomes';
 import { verificarVarios, type ResultadoDominio } from '@/lib/dominios/rdap';
 
 /**
@@ -30,8 +30,17 @@ const MAX_NOMES = 4;
 function Estado({ resultado }: { resultado: ResultadoDominio }) {
   if (resultado.estado === 'livre') {
     return (
-      <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
-        livre
+      <span className="flex items-center gap-2">
+        <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+          livre
+        </span>
+        {/* Quando a resposta vem do DNS e não do registo, diz-se — mas
+            continua a ser uma resposta, e não um encolher de ombros. */}
+        {resultado.fonte === 'dns' && (
+          <span className="text-xs opacity-45" title={resultado.nota ?? undefined}>
+            pelo DNS
+          </span>
+        )}
       </span>
     );
   }
@@ -42,7 +51,7 @@ function Estado({ resultado }: { resultado: ResultadoDominio }) {
 
   return (
     <span className="text-xs text-amber-700 dark:text-amber-300" title={resultado.nota ?? undefined}>
-      não se sabe
+      sem resposta
     </span>
   );
 }
@@ -125,7 +134,19 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
                       className="flex flex-wrap items-center justify-between gap-2 py-2.5"
                     >
                       <span className="font-medium">{resultado.dominio}</span>
-                      <Estado resultado={resultado} />
+                      <span className="flex items-center gap-3">
+                        <Estado resultado={resultado} />
+                        {resultado.estado !== 'ocupado' && (
+                          <a
+                            href={linkDeCompra(resultado.dominio)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm underline underline-offset-4 opacity-70"
+                          >
+                            confirmar
+                          </a>
+                        )}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -136,13 +157,16 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
           <div className="flex flex-col gap-2 text-sm opacity-60">
             <p>
               <strong>&quot;Livre&quot; não é uma reserva.</strong> Quer dizer que, no momento em
-              que se perguntou, o registo não conhecia esse domínio. Quem o compra primeiro
-              fica com ele — se interessar, regista-se no dia.
+              que se perguntou, o domínio não existia. Quem o compra primeiro fica com ele — se
+              interessar, regista-se no dia. O <em>confirmar</em> abre a procura já com o nome
+              escrito, para não teres de o escrever outra vez.
             </p>
             <p>
-              <strong>&quot;Não se sabe&quot;</strong> aparece quando o registo daquela extensão
-              não respondeu. Nunca se apresenta como livre: mandar um comerciante comprar um
-              domínio que afinal é de outra pessoa é pior do que não responder.
+              <strong>&quot;Pelo DNS&quot;</strong> quer dizer que o registo daquela extensão não
+              responde a consultas — acontece com o <code className="font-mono">.pt</code> e com o{' '}
+              <code className="font-mono">.com.br</code> — e a resposta veio de perguntar ao DNS
+              se o domínio existe. É um sinal forte e engana muito raramente: um domínio comprado
+              há minutos, ou a expirar, ainda pode não existir no DNS.
             </p>
           </div>
         </>
