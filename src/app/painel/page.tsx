@@ -27,6 +27,7 @@ import { googleMapsUrl } from '@/lib/places/links';
 import { ScanForm } from './scan-form';
 import { StageSelect } from './stage-select';
 import { signOut } from './actions';
+import { Destaques, fotosDosDestaques } from './destaques';
 
 export const dynamic = 'force-dynamic';
 
@@ -143,6 +144,13 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     limit: 100,
   });
 
+  // Os três por onde começar: melhor pontuação, ainda por contactar, dentro
+  // dos filtros que estiverem postos. Só se a lista estiver por pontuação —
+  // noutra ordem, "os três primeiros" não quer dizer "os três melhores".
+  const destaques =
+    ordem === 'score' ? businesses.filter((b) => b.stage === 'new').slice(0, 3) : [];
+  const fotosDestaques = await fotosDosDestaques(supabase, destaques);
+
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-12">
       <header className="flex flex-wrap items-start justify-between gap-4">
@@ -163,6 +171,8 @@ export default async function PainelPage({ searchParams }: PainelProps) {
       </header>
 
       <ScanForm />
+
+      <Destaques destaques={destaques} fotos={fotosDestaques} />
 
       <section className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold tracking-tight">
