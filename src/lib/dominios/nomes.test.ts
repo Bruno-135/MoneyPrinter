@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { candidatos, etiqueta, extensoes, palavrasUteis } from './nomes';
+import { candidatos, etiqueta, extensoes, palavrasUteis, registadorPara } from './nomes';
 
 describe('etiqueta', () => {
   it('tira acentos, maiúsculas e pontuação', () => {
@@ -72,5 +72,28 @@ describe('extensoes', () => {
 
   it('um país desconhecido leva as internacionais', () => {
     expect(extensoes(null)).toEqual(['com', 'net', 'online']);
+  });
+});
+
+describe('registadorPara', () => {
+  it('manda .com e .net para a Cloudflare, com o domínio já escrito', () => {
+    const r = registadorPara('jamor.com');
+    expect(r.nome).toBe('Cloudflare');
+    expect(r.url).toContain('jamor.com');
+  });
+
+  it('NÃO manda .pt nem .com.br para a Cloudflare — ela não os vende', () => {
+    // Mandar para lá seria mandar para uma porta fechada, e são justamente as
+    // duas extensões que mais aparecem nesta lista.
+    expect(registadorPara('jamor.pt').nome).toBe('DNS.PT');
+    expect(registadorPara('jamor.com.br').nome).toBe('registro.br');
+  });
+
+  it('o registo brasileiro leva o domínio na pergunta', () => {
+    expect(registadorPara('jamor.com.br').url).toContain('jamor.com.br');
+  });
+
+  it('não se deixa enganar por maiúsculas', () => {
+    expect(registadorPara('JAMOR.PT').nome).toBe('DNS.PT');
   });
 });

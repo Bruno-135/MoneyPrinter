@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { findCategory } from '@/lib/places/categories';
-import { candidatos, extensoes, linkDeCompra } from '@/lib/dominios/nomes';
+import { candidatos, extensoes, registadorPara } from '@/lib/dominios/nomes';
 import { verificarVarios, type ResultadoDominio } from '@/lib/dominios/rdap';
 
 /**
@@ -138,12 +138,12 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
                         <Estado resultado={resultado} />
                         {resultado.estado !== 'ocupado' && (
                           <a
-                            href={linkDeCompra(resultado.dominio)}
+                            href={registadorPara(resultado.dominio).url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm underline underline-offset-4 opacity-70"
+                            className="text-sm whitespace-nowrap underline underline-offset-4 opacity-70"
                           >
-                            confirmar
+                            {registadorPara(resultado.dominio).nome} &rarr;
                           </a>
                         )}
                       </span>
@@ -156,9 +156,15 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
 
           <div className="flex flex-col gap-2 text-sm opacity-60">
             <p>
+              <strong>Onde vai dar cada ligação.</strong> A Cloudflare vende ao preço de custo e
+              não sobe o preço na renovação, mas não vende <code className="font-mono">.pt</code>{' '}
+              nem <code className="font-mono">.com.br</code> — essas vão para a DNS.PT e para o
+              registo.br, que é onde se compram de facto.
+            </p>
+            <p>
               <strong>&quot;Livre&quot; não é uma reserva.</strong> Quer dizer que, no momento em
               que se perguntou, o domínio não existia. Quem o compra primeiro fica com ele — se
-              interessar, regista-se no dia. O <em>confirmar</em> abre a procura já com o nome
+              interessar, regista-se no dia. A ligação à direita abre o registador já com o nome
               escrito, para não teres de o escrever outra vez.
             </p>
             <p>

@@ -172,6 +172,11 @@ export function extensoes(countryCode: string | null | undefined): string[] {
   return ['com', 'net', 'online'];
 }
 
+export interface Registador {
+  nome: string;
+  url: string;
+}
+
 /**
  * Onde ir confirmar e comprar, com o domínio já escrito.
  *
@@ -180,9 +185,28 @@ export function extensoes(countryCode: string | null | undefined): string[] {
  * um problema de quem lê ("então tenho de ir procurar lá fora na mesma"), o
  * "lá fora" fica a um toque e já preenchido.
  *
- * Não há aqui recomendação de registador nenhum: é uma procura, e a compra
- * faz-se onde se quiser.
+ * A Cloudflare é a escolha por omissão porque vende ao preço de custo e não
+ * sobe o preço na renovação — mas NÃO vende `.pt` nem `.com.br`, que são
+ * precisamente as duas extensões que mais aqui aparecem. Mandar essas para lá
+ * seria mandar para uma porta fechada, por isso vão para o registo de cada
+ * país, que é onde se compram de facto.
  */
-export function linkDeCompra(dominio: string): string {
-  return `https://www.namecheap.com/domains/registration/results/?domain=${encodeURIComponent(dominio)}`;
+export function registadorPara(dominio: string): Registador {
+  const nome = dominio.toLowerCase();
+
+  if (nome.endsWith('.com.br') || nome.endsWith('.br')) {
+    return {
+      nome: 'registro.br',
+      url: `https://registro.br/busca-dominio/?fqdn=${encodeURIComponent(nome)}`,
+    };
+  }
+
+  if (nome.endsWith('.pt')) {
+    return { nome: 'DNS.PT', url: 'https://www.dns.pt/pt/registar-dominio' };
+  }
+
+  return {
+    nome: 'Cloudflare',
+    url: `https://dash.cloudflare.com/?to=/:account/domains/register/${encodeURIComponent(nome)}`,
+  };
 }
