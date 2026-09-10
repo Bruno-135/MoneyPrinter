@@ -25,6 +25,16 @@ export interface PlaceResult {
   };
   businessStatus?: string;
 
+  /**
+   * Fotografias do próprio comércio, tiradas por clientes ou pelo dono.
+   *
+   * O que vem aqui NÃO é a imagem: é o nome dela, que depois se troca por um
+   * endereço temporário. As atribuições vêm agarradas porque mostrá-las é
+   * condição de uso — uma foto do Google sem o crédito de quem a tirou não se
+   * pode publicar.
+   */
+  photos?: PlacePhoto[];
+
   // Campos do escalão Enterprise — são estes que determinam o preço.
   nationalPhoneNumber?: string;
   internationalPhoneNumber?: string;
@@ -33,6 +43,20 @@ export interface PlaceResult {
   userRatingCount?: number;
   priceLevel?: string;
   regularOpeningHours?: unknown;
+}
+
+export interface PlacePhotoAttribution {
+  displayName?: string;
+  uri?: string;
+  photoUri?: string;
+}
+
+export interface PlacePhoto {
+  /** Identificador da foto, no formato `places/XXX/photos/YYY`. */
+  name?: string;
+  widthPx?: number;
+  heightPx?: number;
+  authorAttributions?: PlacePhotoAttribution[];
 }
 
 export interface AddressComponent {

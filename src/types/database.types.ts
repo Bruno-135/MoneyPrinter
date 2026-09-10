@@ -67,6 +67,8 @@ export type Database = {
           score_version: number
           score_calculated_at: string | null
           google_raw: Json
+          google_photos: Json
+          photos_fetched_at: string | null
           google_fetched_at: string
           details_fetched_at: string | null
           is_archived: boolean
@@ -114,6 +116,8 @@ export type Database = {
           score_version?: number
           score_calculated_at?: string | null
           google_raw?: Json
+          google_photos?: Json
+          photos_fetched_at?: string | null
           google_fetched_at?: string
           details_fetched_at?: string | null
           is_archived?: boolean
@@ -161,6 +165,8 @@ export type Database = {
           score_version?: number
           score_calculated_at?: string | null
           google_raw?: Json
+          google_photos?: Json
+          photos_fetched_at?: string | null
           google_fetched_at?: string
           details_fetched_at?: string | null
           is_archived?: boolean
@@ -865,6 +871,36 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      google_photo_uris: {
+        Row: {
+          created_at: string;
+          fetched_at: string;
+          id: string;
+          max_width_px: number;
+          owner_id: string;
+          photo_name: string;
+          photo_uri: string;
+        };
+        Insert: {
+          created_at?: string;
+          fetched_at?: string;
+          id?: string;
+          max_width_px: number;
+          owner_id?: string;
+          photo_name: string;
+          photo_uri: string;
+        };
+        Update: {
+          created_at?: string;
+          fetched_at?: string;
+          id?: string;
+          max_width_px?: number;
+          owner_id?: string;
+          photo_name?: string;
+          photo_uri?: string;
+        };
+        Relationships: [];
       };
       stock_photos: {
         Row: {

@@ -7,7 +7,15 @@ import { getServerEnv } from '@/lib/env';
 import { arteUrl } from '@/lib/sites/imagens/arte';
 import { consultasParaRamo } from '@/lib/sites/imagens/consultas';
 import { chaveConsulta, procurarFotosGratis } from '@/lib/sites/imagens/stock';
-import { escolherFotosPorMim, usarFotoGratis, usarImagemGerada } from '../../site-edit-actions';
+import {
+  buscarFotosDoGoogle,
+  escolherFotosPorMim,
+  usarFotoDoGoogle,
+  usarFotoGratis,
+  usarImagemGerada,
+} from '../../site-edit-actions';
+import { lerFotosGuardadas, resolverUri } from '@/lib/places/fotos';
+import { PlacesClient } from '@/lib/places/client';
 
 /**
  * Imagens da página: a gerada, as do banco grátis, e a que lá está.
@@ -46,9 +54,31 @@ export default async function ImagensPage({ params, searchParams }: Props) {
 
   const { data: comercio } = await supabase
     .from('businesses')
-    .select('name, business_category')
+    .select('name, business_category, country_code, google_photos, photos_fetched_at')
     .eq('id', site.business_id)
     .maybeSingle();
+
+  // As fotos do próprio comércio. A lista já está guardada (ou ainda não se
+  // pediu); o que se resolve aqui são os endereços, e esses vêm do cache
+  // enquanto forem frescos.
+  const fotosDoGoogle = lerFotosGuardadas(comercio?.google_photos);
+  const jaProcurou = comercio?.photos_fetched_at != null;
+
+  const enderecos = jaProcurou
+    ? await (async () => {
+        const places = new PlacesClient({
+          apiKey: getServerEnv().GOOGLE_PLACES_API_KEY,
+          regionCode: comercio?.country_code ?? undefined,
+        });
+        const pares = await Promise.all(
+          fotosDoGoogle.map(async (foto) => {
+            const { uri } = await resolverUri(supabase, places, foto.name);
+            return [foto.name, uri] as const;
+          }),
+        );
+        return new Map(pares);
+      })()
+    : new Map<string, string | null>();
 
   const sugestoes = consultasParaRamo(comercio?.business_category ?? null);
   const consulta = (q ?? sugestoes.capa).trim();
@@ -125,6 +155,94 @@ export default async function ImagensPage({ params, searchParams }: Props) {
             </p>
           </div>
         </div>
+      </section>
+
+      {/* ---------------- Fotos do próprio comércio ---------------- */}
+      <section className="flex flex-col gap-5 rounded-lg border border-black/10 p-5 dark:border-white/10">
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight">Fotografias do comércio</h2>
+          <p className="mt-1 text-sm opacity-60">
+            As que estão no Google, tiradas por clientes e pelo dono. São estas que fazem a
+            proposta parecer feita para ele — porque é a loja dele que aparece.
+          </p>
+        </div>
+
+        {!jaProcurou ? (
+          <div className="flex flex-col gap-2">
+            <form action={buscarFotosDoGoogle}>
+              <input type="hidden" name="siteId" value={id} />
+              <button
+                type="submit"
+                className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white"
+              >
+                Ir buscar as fotos ao Google
+              </button>
+            </form>
+            <p className="text-xs opacity-50">
+              Uma consulta paga, uma vez só por comércio. Depois disto, ver e trocar as fotos não
+              custa mais nada.
+            </p>
+          </div>
+        ) : fotosDoGoogle.length === 0 ? (
+          <p className="rounded-md bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
+            Este comércio não tem fotografias no Google. Usa as de banco aqui em baixo, ou pede-as
+            ao dono.
+          </p>
+        ) : (
+          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {fotosDoGoogle.map((foto) => {
+              const endereco = enderecos.get(foto.name);
+              if (!endereco) return null;
+
+              return (
+                <li key={foto.name} className="flex flex-col gap-2">
+                  <form action={usarFotoDoGoogle}>
+                    <input type="hidden" name="siteId" value={id} />
+                    <input type="hidden" name="photoName" value={foto.name} />
+                    <input type="hidden" name="slot" value="cover" />
+                    <button
+                      type="submit"
+                      className="relative block w-full overflow-hidden rounded-md"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={endereco}
+                        alt={foto.credito}
+                        className="aspect-4/3 w-full bg-black/10 object-cover"
+                        loading="lazy"
+                      />
+                      <span className="absolute inset-x-0 bottom-0 bg-black/65 py-2 text-center text-sm font-semibold text-white">
+                        Pôr na capa
+                      </span>
+                    </button>
+                  </form>
+                  <form action={usarFotoDoGoogle}>
+                    <input type="hidden" name="siteId" value={id} />
+                    <input type="hidden" name="photoName" value={foto.name} />
+                    <input type="hidden" name="slot" value="gallery" />
+                    <button
+                      type="submit"
+                      className="w-full rounded-md border border-black/15 py-2 text-sm font-medium dark:border-white/20"
+                    >
+                      Juntar à galeria
+                    </button>
+                  </form>
+                  <p className="text-xs opacity-55">{foto.credito}</p>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {jaProcurou && (
+          <form action={buscarFotosDoGoogle} className="text-sm">
+            <input type="hidden" name="siteId" value={id} />
+            <input type="hidden" name="forcar" value="sim" />
+            <button type="submit" className="underline underline-offset-4 opacity-60">
+              Procurar outra vez (nova consulta paga)
+            </button>
+          </form>
+        )}
       </section>
 
       {/* ---------------- Procurar no banco grátis ---------------- */}

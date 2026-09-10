@@ -11,7 +11,8 @@ import { generateFields, generateHtml } from '@/lib/ai/generate';
 import { describeAiError } from '@/lib/ai/client';
 import type { AiActionState } from '@/lib/ai/action-state';
 import { getServerEnv } from '@/lib/env';
-import { escolherFotosGratis } from '@/lib/sites/imagens/escolher';
+import { escolherImagens } from '@/lib/sites/imagens/escolher';
+import { PlacesClient } from '@/lib/places/client';
 
 /**
  * Geração de páginas por IA, a partir do ecrã.
@@ -21,6 +22,19 @@ import { escolherFotosGratis } from '@/lib/sites/imagens/escolher';
  * num ecrã de erro do Next que a manda recomeçar. Quem chama põe isto num
  * `useActionState`.
  */
+
+/**
+ * O cliente do Google para resolver endereços de fotos.
+ *
+ * Nunca vai buscar fotos novas — só troca por endereços as que já foram
+ * pedidas. Isso é uma consulta paga e continua a ser um botão.
+ */
+function clientePlaces(countryCode: string | null) {
+  return new PlacesClient({
+    apiKey: getServerEnv().GOOGLE_PLACES_API_KEY,
+    regionCode: countryCode ?? undefined,
+  });
+}
 
 export async function generateWithAi(
   _previous: AiActionState,
@@ -60,7 +74,8 @@ export async function generateWithAi(
       // fechada de endereços reais. Sem isto, ou a página sai sem fotografia
       // nenhuma, ou sai com endereços inventados — quadrados partidos numa
       // proposta que vai ser mostrada a um comerciante.
-      const escolhidas = await escolherFotosGratis(supabase, {
+      const escolhidas = await escolherImagens(supabase, clientePlaces(business.country_code), {
+        businessId: business.id,
         categorySlug: business.business_category,
         semente: loaded.site.public_code,
         nome: business.name,
@@ -97,7 +112,8 @@ export async function generateWithAi(
       // uma escolha de alguém, e uma geração não desfaz escolhas.
       const fotos =
         loaded.content.cover === null || loaded.content.gallery.length === 0
-          ? await escolherFotosGratis(supabase, {
+          ? await escolherImagens(supabase, clientePlaces(business.country_code), {
+              businessId: business.id,
               categorySlug: business.business_category,
               semente: loaded.site.public_code,
               nome: business.name,

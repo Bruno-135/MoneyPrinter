@@ -3,6 +3,7 @@ import type {
   PlacesCallResult,
   SearchNearbyResponse,
   SearchTextResponse,
+  PlacePhoto,
 } from './types';
 
 /**
@@ -24,8 +25,15 @@ const BASE_URL = 'https://places.googleapis.com/v1';
  * Campos pedidos. Manter esta lista curta e deliberada — cada campo a mais
  * pode subir o escalão de preço sem trazer nada de útil.
  *
- * Deixámos de fora, de propósito: `photos` (não mostramos fotos do Google),
- * `reviews` e `editorialSummary` (escalão Enterprise + Atmosphere, mais caro).
+ * `places.photos` entra sem subir a fatura, e a razão é aritmética: o preço da
+ * chamada é o do campo MAIS CARO da máscara, e esta já pede telefone,
+ * avaliação e horário, que são do escalão de cima. Acrescentar um campo de um
+ * escalão inferior não muda o escalão da chamada.
+ *
+ * Continua de fora `reviews` (e `editorialSummary`): esses SÃO de um escalão
+ * acima do que se paga hoje, e acrescentá-los encarece TODAS as procuras, não
+ * só as dos comércios de que se vai fazer site. Se um dia se quiserem as
+ * avaliações escritas, pedem-se à parte, comércio a comércio.
  */
 const FIELD_MASK = [
   'places.id',
@@ -45,6 +53,7 @@ const FIELD_MASK = [
   'places.userRatingCount',
   'places.priceLevel',
   'places.regularOpeningHours',
+  'places.photos',
 ].join(',');
 
 const TEXT_FIELD_MASK = `${FIELD_MASK},nextPageToken`;
@@ -195,6 +204,92 @@ export class PlacesClient {
     };
 
     return this.call<SearchTextResponse>('places:searchText', TEXT_FIELD_MASK, body);
+  }
+
+  /**
+   * As fotografias de UM comércio, pedidas à parte.
+   *
+   * Máscara mínima de propósito — só `id` e `photos`. Uma consulta de detalhe
+   * paga-se pelo campo mais caro que pede, e esta não pede nenhum dos caros:
+   * fica no escalão de baixo. É a diferença entre pagar fotos de 976 comércios
+   * e pagar as do punhado a que se vai mesmo fazer site.
+   *
+   * Devolve a lista tal como veio, com as atribuições agarradas. Mostrar quem
+   * tirou a foto é condição de uso, e uma lista sem atribuições seria uma
+   * lista que não se pode publicar.
+   */
+  async fetchPhotos(placeId: string): Promise<{ ok: boolean; photos: PlacePhoto[]; errorMessage: string | null }> {
+    const url = `${BASE_URL}/places/${encodeURIComponent(placeId)}`;
+
+    try {
+      const response = await this.fetchImpl(url, {
+        method: 'GET',
+        headers: {
+          'X-Goog-Api-Key': this.apiKey,
+          'X-Goog-FieldMask': 'id,photos',
+        },
+      });
+
+      if (!response.ok) {
+        return { ok: false, photos: [], errorMessage: `A Google respondeu ${response.status}.` };
+      }
+
+      const payload = (await response.json()) as { photos?: PlacePhoto[] };
+      return { ok: true, photos: payload.photos ?? [], errorMessage: null };
+    } catch (cause) {
+      return {
+        ok: false,
+        photos: [],
+        errorMessage: `Falha de rede: ${cause instanceof Error ? cause.message : String(cause)}`,
+      };
+    }
+  }
+
+  /**
+   * Troca o nome de uma foto pelo endereço da imagem.
+   *
+   * `skipHttpRedirect` faz a Google devolver o endereço em JSON em vez de
+   * responder com um desvio. Isso é o que permite que a chave nunca saia
+   * daqui: se se deixasse o browser seguir o desvio, o endereço com a chave
+   * lá dentro ficava à vista de quem abrisse a página.
+   *
+   * O endereço devolvido é temporário — por isso é que ele se guarda com uma
+   * validade e não para sempre.
+   */
+  async fetchPhotoUri(
+    photoName: string,
+    maxWidthPx: number,
+  ): Promise<{ ok: boolean; uri: string | null; errorMessage: string | null }> {
+    // O nome vem da Google no formato `places/X/photos/Y`. Segmento a
+    // segmento para não haver maneira de um valor forjado sair do caminho.
+    const caminho = photoName
+      .split('/')
+      .map((segmento) => encodeURIComponent(segmento))
+      .join('/');
+
+    const url =
+      `${BASE_URL}/${caminho}/media` +
+      `?maxWidthPx=${Math.round(maxWidthPx)}&skipHttpRedirect=true`;
+
+    try {
+      const response = await this.fetchImpl(url, {
+        method: 'GET',
+        headers: { 'X-Goog-Api-Key': this.apiKey },
+      });
+
+      if (!response.ok) {
+        return { ok: false, uri: null, errorMessage: `A Google respondeu ${response.status}.` };
+      }
+
+      const payload = (await response.json()) as { photoUri?: string };
+      return { ok: true, uri: payload.photoUri ?? null, errorMessage: null };
+    } catch (cause) {
+      return {
+        ok: false,
+        uri: null,
+        errorMessage: `Falha de rede: ${cause instanceof Error ? cause.message : String(cause)}`,
+      };
+    }
   }
 
   private async call<T extends SearchNearbyResponse | SearchTextResponse>(

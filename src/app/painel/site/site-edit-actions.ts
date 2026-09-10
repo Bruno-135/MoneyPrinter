@@ -9,7 +9,9 @@ import type { SiteContent, SiteHighlight, SitePhoto } from '@/lib/sites/content'
 import { isFontId, isPaletteId, type SiteTheme } from '@/lib/sites/theme';
 import { PHOTO_BUCKET } from '@/lib/sites/photos';
 import { getServerEnv } from '@/lib/env';
-import { escolherFotosGratis } from '@/lib/sites/imagens/escolher';
+import { escolherImagens } from '@/lib/sites/imagens/escolher';
+import { PlacesClient } from '@/lib/places/client';
+import { fotosDoComercio, lerFotosGuardadas, resolverUri } from '@/lib/places/fotos';
 
 /**
  * Gravação do editor.
@@ -296,16 +298,25 @@ export async function escolherFotosPorMim(formData: FormData): Promise<void> {
 
   const { data: comercio } = await supabase
     .from('businesses')
-    .select('name, business_category')
+    .select('name, business_category, country_code')
     .eq('id', loaded.site.business_id)
     .maybeSingle();
 
-  const escolhidas = await escolherFotosGratis(supabase, {
-    categorySlug: comercio?.business_category ?? null,
-    semente: loaded.site.public_code,
-    nome: comercio?.name ?? loaded.content.hero.headline,
-    chaveApi: getServerEnv().PEXELS_API_KEY,
-  });
+  const env = getServerEnv();
+  const escolhidas = await escolherImagens(
+    supabase,
+    new PlacesClient({
+      apiKey: env.GOOGLE_PLACES_API_KEY,
+      regionCode: comercio?.country_code ?? undefined,
+    }),
+    {
+      businessId: loaded.site.business_id,
+      categorySlug: comercio?.business_category ?? null,
+      semente: loaded.site.public_code,
+      nome: comercio?.name ?? loaded.content.hero.headline,
+      chaveApi: env.PEXELS_API_KEY,
+    },
+  );
 
   if (!escolhidas.capa && escolhidas.galeria.length === 0) return;
 
@@ -314,6 +325,94 @@ export async function escolherFotosPorMim(formData: FormData): Promise<void> {
     cover: loaded.content.cover ?? escolhidas.capa,
     gallery: loaded.content.gallery.length > 0 ? loaded.content.gallery : escolhidas.galeria,
   };
+
+  await updateSiteContent(supabase, siteId, content, loaded.theme, loaded.site.whatsapp_greeting);
+
+  revalidatePath(`/painel/site/${siteId}/imagens`);
+  revalidatePath(`/painel/site/${siteId}/editar`);
+  revalidatePath(`/painel/site/${siteId}/previa`);
+}
+
+/**
+ * Vai buscar ao Google a lista de fotos do comércio.
+ *
+ * É uma consulta paga, por isso é um botão e não acontece sozinha: o
+ * comerciante decide quando gastar. Uma vez feita, fica guardada e as vezes
+ * seguintes não custam nada.
+ */
+export async function buscarFotosDoGoogle(formData: FormData): Promise<void> {
+  const { supabase } = await requireSession();
+
+  const siteId = text(formData, 'siteId');
+  if (!siteId) return;
+
+  const loaded = await loadSite(supabase, siteId);
+  if (!loaded) return;
+
+  const { data: comercio } = await supabase
+    .from('businesses')
+    .select('country_code')
+    .eq('id', loaded.site.business_id)
+    .maybeSingle();
+
+  const places = new PlacesClient({
+    apiKey: getServerEnv().GOOGLE_PLACES_API_KEY,
+    regionCode: comercio?.country_code ?? undefined,
+  });
+
+  await fotosDoComercio(supabase, places, loaded.site.business_id, {
+    forcar: text(formData, 'forcar') === 'sim',
+  });
+
+  revalidatePath(`/painel/site/${siteId}/imagens`);
+}
+
+/**
+ * Põe na página uma fotografia do próprio comércio.
+ *
+ * O nome da foto vem do formulário mas não se acredita nele: confirma-se
+ * contra a lista guardada deste comércio. Sem essa verificação, um formulário
+ * forjado mandava-nos pagar consultas por fotos de qualquer sítio.
+ */
+export async function usarFotoDoGoogle(formData: FormData): Promise<void> {
+  const { supabase } = await requireSession();
+
+  const siteId = text(formData, 'siteId');
+  const photoName = text(formData, 'photoName');
+  const slot = text(formData, 'slot');
+  if (!siteId || !photoName) return;
+
+  const loaded = await loadSite(supabase, siteId);
+  if (!loaded) return;
+
+  const { data: comercio } = await supabase
+    .from('businesses')
+    .select('name, country_code, google_photos')
+    .eq('id', loaded.site.business_id)
+    .maybeSingle();
+
+  const conhecida = lerFotosGuardadas(comercio?.google_photos).find((f) => f.name === photoName);
+  if (!conhecida) return;
+
+  const places = new PlacesClient({
+    apiKey: getServerEnv().GOOGLE_PLACES_API_KEY,
+    regionCode: comercio?.country_code ?? undefined,
+  });
+
+  const { uri } = await resolverUri(supabase, places, photoName);
+  if (!uri) return;
+
+  const photo: SitePhoto = {
+    url: uri,
+    alt: `${comercio?.name ?? loaded.content.hero.headline} — fotografia do comércio`,
+    credito: conhecida.credito,
+    creditoUrl: conhecida.creditoUrl,
+  };
+
+  const content: SiteContent =
+    slot === 'cover'
+      ? { ...loaded.content, cover: photo }
+      : { ...loaded.content, gallery: [...loaded.content.gallery, photo] };
 
   await updateSiteContent(supabase, siteId, content, loaded.theme, loaded.site.whatsapp_greeting);
 
