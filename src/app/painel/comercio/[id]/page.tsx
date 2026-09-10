@@ -147,14 +147,6 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
               {business.website_host ?? business.website_url}
             </a>
           )}
-          {/* "O seu domínio ainda está livre" é das melhores primeiras frases
-              que há para começar uma conversa com quem não tem site. */}
-          <Link
-            href={`/painel/comercio/${id}/dominios` as Route}
-            className="mt-2 block text-sm underline underline-offset-4 opacity-70"
-          >
-            Ver domínios livres &rarr;
-          </Link>
         </div>
 
         <div className="rounded-lg border border-black/10 p-4 dark:border-white/10">
@@ -221,7 +213,17 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold tracking-tight">Landing page</h2>
-          <div className="flex gap-2.5">
+          <div className="flex flex-wrap gap-2.5">
+            {/* Ao lado de "gerar página" e não junto às redes sociais: o
+                domínio é uma decisão que se toma no mesmo momento em que se
+                decide fazer o site, e "o seu domínio ainda está livre" é das
+                melhores primeiras frases que há para essa conversa. */}
+            <Link
+              href={`/painel/comercio/${id}/dominios` as Route}
+              className="rounded-md border border-black/15 px-3 py-2 text-sm font-medium dark:border-white/15"
+            >
+              Domínios livres
+            </Link>
             <Link
               href={`/painel/comercio/${id}/apresentacao`}
               className="rounded-md border border-black/15 px-3 py-2 text-sm font-medium dark:border-white/15"
