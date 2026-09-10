@@ -78,6 +78,22 @@ function Sheet({
   return <section className={`${pageBreak} ${className}`}>{children}</section>;
 }
 
+/**
+ * O título de uma secção: centrado, com um traço curto de acento por baixo.
+ *
+ * Parece um detalhe e é o que mais separa uma página amadora de uma
+ * profissional. Um `<h2>` solto no meio do branco lê-se como um documento; o
+ * mesmo texto com uma marca por baixo lê-se como uma secção de um site.
+ */
+function TituloSeccao({ children }: { children: ReactNode }) {
+  return (
+    <div className="mb-10 flex flex-col items-center gap-3 text-center">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{children}</h2>
+      <span className="h-0.5 w-10 rounded-full bg-[var(--site-accent)]" />
+    </div>
+  );
+}
+
 function Photo({ photo, className }: { photo: SitePhoto; className?: string }) {
   // <img> e não next/image: os ficheiros vêm do armazenamento do Supabase em
   // tempo de execução e o otimizador do Next teria de os re-servir a cada
@@ -126,8 +142,9 @@ export function SiteRender({
 
   const accentButton =
     'rounded-lg px-6 py-3 text-base font-semibold bg-[var(--site-accent)] text-[var(--site-on-accent)]';
-  const outlineButton =
-    'rounded-lg border-2 border-[var(--site-accent)] px-6 py-3 text-base font-semibold text-[var(--site-accent)]';
+  /** Em cima da fotografia, o contorno é branco: o acento perde-se no escuro. */
+  const heroGhostButton =
+    'rounded-lg border border-white/45 bg-white/10 px-5 py-3 text-base font-semibold text-white';
 
   // Um crédito por fotógrafo, mesmo que a mesma pessoa apareça em três fotos.
   const creditos = [...new Map(
@@ -146,92 +163,150 @@ export function SiteRender({
       style={themeVars(theme, 'light')}
       className="min-h-screen bg-[var(--site-bg)] text-[var(--site-fg)] [font-family:var(--site-font)] print:min-h-0"
     >
-      {/* ---------------- Capa ---------------- */}
-      <Sheet mode={mode}>
-        {/*
-          Uma página sem capa é uma página que começa com uma parede branca, e
-          uma parede branca não se vende. Quem não deu fotografia fica com a
-          imagem gerada do seu ramo — que não finge ser uma fotografia da loja,
-          mas dá cor, altura e um princípio à página.
-        */}
-        <div className="relative h-56 w-full overflow-hidden sm:h-80">
-          <Photo photo={capa} className="h-full w-full object-cover" />
-        </div>
-
-        <header className="mx-auto max-w-3xl px-6 pt-16 pb-14 text-center">
-          {content.hero.badge && (
-            <p className="mb-5 inline-block rounded-full bg-[var(--site-surface)] px-4 py-1.5 text-sm font-medium">
-              {content.hero.badge}
-            </p>
-          )}
-          <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-            {content.hero.headline}
-          </h1>
-          <p className="mx-auto mt-4 max-w-xl text-lg opacity-70">{content.hero.subheadline}</p>
-
-          {/* No PDF os botões não se clicam: mostra-se o telefone, que é o que
-              o dono vai usar em papel. */}
-          {mode === 'print' ? (
-            content.contact.phoneLabel && (
-              <p className="mt-8 text-2xl font-semibold tabular-nums">
-                {content.contact.phoneLabel}
-              </p>
-            )
+      {/* ---------------- Barra de topo ----------------
+          Nome à esquerda, telefone à direita. É a barra que faz a página
+          parecer um site e não um folheto — e o telefone à vista no topo é o
+          que o cliente do comerciante procura primeiro. */}
+      <div className="flex items-center justify-between gap-4 border-b border-[var(--site-line)] px-5 py-3.5 sm:px-8">
+        <span className="truncate text-sm font-semibold tracking-tight sm:text-base">
+          {content.hero.headline}
+        </span>
+        {content.contact.phoneLabel &&
+          (mode === 'print' ? (
+            <span className="shrink-0 text-sm font-semibold tabular-nums">
+              {content.contact.phoneLabel}
+            </span>
           ) : (
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              {isFoodService &&
-                whatsapp &&
-                link({
-                  href: whatsapp,
-                  target: 'whatsapp',
-                  targetValue: whatsappNumber ?? undefined,
-                  className: accentButton,
-                  children: 'Fazer pedido pelo WhatsApp',
-                })}
-              {content.contact.phone &&
-                link({
-                  href: `tel:${content.contact.phone}`,
-                  target: 'phone',
-                  targetValue: content.contact.phone,
-                  className: outlineButton,
-                  children: `Ligar ${content.contact.phoneLabel ?? content.contact.phone}`,
-                })}
-            </div>
-          )}
+            content.contact.phone &&
+            link({
+              href: `tel:${content.contact.phone}`,
+              target: 'phone',
+              targetValue: content.contact.phone,
+              className:
+                'shrink-0 text-sm font-semibold tabular-nums text-[var(--site-accent)] sm:text-base',
+              children: content.contact.phoneLabel,
+            })
+          ))}
+      </div>
+
+      {/* ---------------- Herói ----------------
+          A fotografia ocupa o ecrã de entrada e o texto vive POR CIMA dela,
+          não ao lado. É isso que dá o ar de marca no primeiro segundo — e é
+          por isso que uma página sem capa fica com a imagem gerada do ramo:
+          uma parede branca não se vende.
+
+          Alturas fixas e nunca `vh`: esta mesma página é desenhada dentro de
+          uma moldura para o PDF, onde a altura do ecrã é a do conteúdo todo e
+          um herói medido em `vh` ficaria com o tamanho de uma casa. */}
+      <Sheet mode={mode}>
+        <header className="relative h-[440px] overflow-hidden sm:h-[560px]">
+          <Photo photo={capa} className="absolute inset-0 h-full w-full object-cover" />
+          {/* O véu escuro garante que o texto branco se lê em CIMA de qualquer
+              fotografia que o comerciante mande, clara ou escura. */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/55 to-black/80" />
+
+          <div className="absolute inset-x-0 bottom-0 flex flex-col items-start gap-4 px-6 pb-10 text-white sm:px-10 sm:pb-14">
+            {content.hero.badge && (
+              <p className="rounded-full border border-white/30 bg-white/15 px-3.5 py-1.5 text-xs font-semibold tracking-wide">
+                {content.hero.badge}
+              </p>
+            )}
+            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
+              {content.hero.headline}
+            </h1>
+            <p className="max-w-xl text-base text-white/85 sm:text-lg">
+              {content.hero.subheadline}
+            </p>
+
+            {/* No PDF os botões não se clicam: mostra-se o telefone, que é o
+                que o dono vai usar em papel. */}
+            {mode === 'print' ? (
+              content.contact.phoneLabel && (
+                <p className="mt-2 text-2xl font-semibold tabular-nums">
+                  {content.contact.phoneLabel}
+                </p>
+              )
+            ) : (
+              <div className="mt-2 flex flex-wrap gap-2.5">
+                {whatsapp &&
+                  link({
+                    href: whatsapp,
+                    target: 'whatsapp',
+                    targetValue: whatsappNumber ?? undefined,
+                    className: accentButton,
+                    children: isFoodService ? 'Fazer pedido pelo WhatsApp' : 'Falar no WhatsApp',
+                  })}
+                {content.contact.phone &&
+                  link({
+                    href: `tel:${content.contact.phone}`,
+                    target: 'phone',
+                    targetValue: content.contact.phone,
+                    className: heroGhostButton,
+                    children: 'Ligar agora',
+                  })}
+                {content.contact.mapsUrl &&
+                  link({
+                    href: content.contact.mapsUrl,
+                    target: 'directions',
+                    className: heroGhostButton,
+                    children: 'Como chegar',
+                  })}
+              </div>
+            )}
+          </div>
         </header>
       </Sheet>
 
-      {/* ---------------- Sobre, destaques e galeria ---------------- */}
-      {(content.about || content.highlights.length > 0 || content.gallery.length > 0) && (
+      {/* ---------------- Sobre a casa ---------------- */}
+      {content.about && (
         <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
-          {content.about && (
-            <div className="mx-auto max-w-2xl px-6 pb-14">
-              <p className="text-center text-lg leading-relaxed opacity-80">{content.about}</p>
-            </div>
-          )}
+          <div className="mx-auto max-w-2xl px-6 py-16">
+            <TituloSeccao>Sobre nós</TituloSeccao>
+            <p className="text-center text-lg leading-relaxed opacity-80">{content.about}</p>
+          </div>
+        </Sheet>
+      )}
 
-          {content.highlights.length > 0 && (
-            <div className="mx-auto grid max-w-4xl gap-6 px-6 pb-16 sm:grid-cols-3">
-              {content.highlights.map((h) => (
-                <div key={h.title} className="rounded-xl bg-[var(--site-surface)] p-6">
-                  <h2 className="font-semibold">{h.title}</h2>
-                  <p className="mt-2 text-sm opacity-70">{h.text}</p>
-                </div>
-              ))}
+      {/* ---------------- Porquê aqui ----------------
+          Três razões, em três colunas, com um número grande e discreto por
+          cima. O número não é enfeite: dá âncora ao olho e faz três blocos de
+          texto parecerem uma lista pensada em vez de três parágrafos soltos. */}
+      {content.highlights.length > 0 && (
+        <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
+          <div className="bg-[var(--site-surface)]">
+            <div className="mx-auto max-w-5xl px-6 py-16">
+              <TituloSeccao>Porquê aqui</TituloSeccao>
+              <div className="grid gap-8 sm:grid-cols-3">
+                {content.highlights.map((h, i) => (
+                  <div key={h.title} className="flex flex-col items-center gap-2 text-center">
+                    <span className="text-sm font-semibold tabular-nums text-[var(--site-accent)]">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <h3 className="text-lg font-semibold tracking-tight">{h.title}</h3>
+                    <p className="text-[0.9375rem] leading-relaxed opacity-70">{h.text}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
+          </div>
+        </Sheet>
+      )}
 
-          {content.gallery.length > 0 && (
-            <div className="mx-auto grid max-w-4xl grid-cols-2 gap-3 px-6 pb-16 sm:grid-cols-3">
+      {/* ---------------- O espaço ---------------- */}
+      {content.gallery.length > 0 && (
+        <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
+          <div className="mx-auto max-w-5xl px-6 py-16">
+            <TituloSeccao>Conheça o espaço</TituloSeccao>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {content.gallery.map((photo) => (
                 <Photo
                   key={photo.url}
                   photo={photo}
-                  className="aspect-4/3 w-full rounded-lg object-cover"
+                  className="aspect-4/3 w-full rounded-xl object-cover"
                 />
               ))}
             </div>
-          )}
+          </div>
         </Sheet>
       )}
 
@@ -243,10 +318,8 @@ export function SiteRender({
       {content.reviews.length > 0 && (
         <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
           <div className="mx-auto max-w-4xl px-6 pb-16">
-            <h2 className="mb-2 text-center text-2xl font-semibold tracking-tight">
-              O que dizem os clientes
-            </h2>
-            <p className="mb-8 text-center text-sm opacity-55">
+            <TituloSeccao>O que dizem os clientes</TituloSeccao>
+            <p className="-mt-6 mb-8 text-center text-sm opacity-55">
               Avaliações publicadas no Google
             </p>
 
@@ -280,7 +353,7 @@ export function SiteRender({
       {isFoodService && sections.size > 0 && (
         <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
           <div className="mx-auto max-w-2xl px-6 pb-16">
-            <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight">Cardápio</h2>
+            <TituloSeccao>Cardápio</TituloSeccao>
 
             {[...sections.entries()].map(([section, items]) => (
               <div key={section} className="mb-9 break-inside-avoid">
@@ -337,47 +410,63 @@ export function SiteRender({
         </Sheet>
       )}
 
-      {/* ---------------- Contactos ---------------- */}
+      {/* ---------------- Faixa de fecho ----------------
+          A cor do acento a toda a largura, com a chamada e os botões. É o
+          ponto da página onde a decisão acontece, e por isso é o único sítio
+          em que o acento ocupa tudo em vez de aparecer aos bocadinhos. */}
       <section
-        className={`border-t border-[var(--site-line)] ${mode === 'print' ? 'break-inside-avoid pt-16' : ''}`}
+        className={`bg-[var(--site-accent)] text-[var(--site-on-accent)] ${
+          mode === 'print' ? 'break-inside-avoid' : ''
+        }`}
       >
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 px-6 py-14 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">Onde nos encontra</h2>
-          {content.contact.address && <p className="opacity-70">{content.contact.address}</p>}
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 py-14 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+            Fale connosco
+          </h2>
+          {content.contact.address && (
+            <p className="opacity-85">{content.contact.address}</p>
+          )}
 
           {mode === 'print' ? (
-            <div className="mt-3 flex flex-col gap-1">
-              {content.contact.phoneLabel && (
-                <p className="text-lg font-semibold tabular-nums">{content.contact.phoneLabel}</p>
-              )}
-              {content.contact.mapsUrl && (
-                <p className="text-sm break-all opacity-55">{content.contact.mapsUrl}</p>
-              )}
-            </div>
+            content.contact.phoneLabel && (
+              <p className="text-3xl font-semibold tabular-nums">{content.contact.phoneLabel}</p>
+            )
           ) : (
-            <div className="mt-3 flex flex-wrap justify-center gap-3">
-              {content.contact.mapsUrl &&
-                link({
-                  href: content.contact.mapsUrl,
-                  target: 'directions',
-                  className: 'rounded-lg border border-[var(--site-line)] px-5 py-2.5 font-medium',
-                  children: 'Como chegar',
-                })}
+            <div className="mt-1 flex flex-wrap justify-center gap-2.5">
               {whatsapp &&
                 link({
                   href: whatsapp,
                   target: 'whatsapp',
+                  targetValue: whatsappNumber ?? undefined,
                   className:
-                    'rounded-lg bg-[var(--site-accent)] px-5 py-2.5 font-medium text-[var(--site-on-accent)]',
+                    'rounded-lg bg-[var(--site-on-accent)] px-6 py-3 text-base font-semibold text-[var(--site-accent)]',
                   children: 'WhatsApp',
+                })}
+              {content.contact.phone &&
+                link({
+                  href: `tel:${content.contact.phone}`,
+                  target: 'phone',
+                  targetValue: content.contact.phone,
+                  className:
+                    'rounded-lg border border-current/45 px-6 py-3 text-base font-semibold',
+                  children: `Ligar ${content.contact.phoneLabel ?? ''}`.trim(),
+                })}
+              {content.contact.mapsUrl &&
+                link({
+                  href: content.contact.mapsUrl,
+                  target: 'directions',
+                  className:
+                    'rounded-lg border border-current/45 px-6 py-3 text-base font-semibold',
+                  children: 'Como chegar',
                 })}
             </div>
           )}
         </div>
       </section>
 
-      <footer className="flex flex-col items-center gap-1 pb-10 text-center text-xs opacity-40">
-        <span>{content.hero.headline}</span>
+      <footer className="flex flex-col items-center gap-1 border-t border-[var(--site-line)] px-6 py-8 text-center text-xs opacity-45">
+        <span className="text-sm font-semibold opacity-80">{content.hero.headline}</span>
+        {content.contact.locality && <span>{content.contact.locality}</span>}
         {/*
           O crédito das fotografias de banco não é decoração: é a condição da
           licença que permite usá-las numa página comercial. Fica pequeno e no
