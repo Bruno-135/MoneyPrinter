@@ -34,6 +34,12 @@ export interface AvaliacaoReal {
   autorFoto: string | null;
   /** "há 2 meses", como a Google o escreve. */
   quando: string | null;
+  /**
+   * true quando o que se mostra é a tradução da Google e não o que a pessoa
+   * escreveu. A página di-lo em letra pequena: uma frase traduzida continua a
+   * ser da pessoa, mas as palavras já não são exatamente as dela.
+   */
+  traduzida: boolean;
 }
 
 /** Lê as avaliações guardadas, deitando fora as que não têm texto. */
@@ -42,6 +48,8 @@ export function lerAvaliacoes(bruto: unknown): AvaliacaoReal[] {
 
   return (bruto as PlaceReview[]).flatMap((avaliacao): AvaliacaoReal[] => {
     const texto = avaliacao?.text?.text ?? avaliacao?.originalText?.text ?? '';
+    const idioma = avaliacao?.text?.languageCode;
+    const idiomaOriginal = avaliacao?.originalText?.languageCode;
     // Uma avaliação de estrelas sem texto não serve para nada numa página: já
     // está contada na nota e no número, e sozinha não diz nada.
     if (typeof texto !== 'string' || texto.trim() === '') return [];
@@ -55,6 +63,10 @@ export function lerAvaliacoes(bruto: unknown): AvaliacaoReal[] {
         autorUrl: typeof autor?.uri === 'string' ? autor.uri : null,
         autorFoto: typeof autor?.photoUri === 'string' ? autor.photoUri : null,
         quando: avaliacao.relativePublishTimeDescription ?? null,
+        traduzida:
+          typeof idioma === 'string' &&
+          typeof idiomaOriginal === 'string' &&
+          idioma !== idiomaOriginal,
       },
     ];
   });

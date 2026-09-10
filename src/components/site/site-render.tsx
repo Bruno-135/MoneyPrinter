@@ -451,6 +451,13 @@ export function SiteRender({
                   <blockquote className="text-[0.9375rem] leading-relaxed">
                     {review.texto}
                   </blockquote>
+                  {/* Uma frase traduzida continua a ser da pessoa, mas as
+                      palavras já não são exatamente as dela. Dizê-lo custa uma
+                      linha pequena e evita que alguém leia como citação o que
+                      é uma tradução automática. */}
+                  {review.traduzida && (
+                    <p className="text-xs opacity-45">Traduzido pelo Google</p>
+                  )}
                   {/* A cara de quem escreveu, quando o Google a dá. É o que
                       separa um depoimento de uma frase numa caixa. */}
                   <figcaption className="mt-auto flex items-center gap-2.5 text-sm opacity-70">

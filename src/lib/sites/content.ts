@@ -72,6 +72,8 @@ export interface SiteReview {
   autorUrl: string | null;
   /** Foto de perfil de quem escreveu, quando o Google a dá. */
   autorFoto: string | null;
+  /** true quando o texto é a tradução da Google e não o original. */
+  traduzida: boolean;
 }
 
 export interface SiteContent {
@@ -315,6 +317,7 @@ function parseReview(raw: unknown): SiteReview | null {
     quando: typeof review.quando === 'string' ? review.quando : null,
     autorUrl,
     autorFoto,
+    traduzida: review.traduzida === true,
   };
 }
 

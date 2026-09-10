@@ -106,3 +106,29 @@ describe('PlacesClient — validação', () => {
     expect(() => new PlacesClient({ apiKey: '' })).toThrow(/GOOGLE_PLACES_API_KEY/);
   });
 });
+
+describe('fetchReviews', () => {
+  it('pede o idioma na QUERY, que é onde a Google o lê', async () => {
+    let pedido: string | undefined;
+    const places = client((async (url: string | URL) => {
+      pedido = url.toString();
+      return new Response(JSON.stringify({ reviews: [] }), { status: 200 });
+    }) as unknown as typeof fetch);
+
+    await places.fetchReviews('ChIJabc');
+
+    // Um cabeçalho `X-Goog-LanguageCode` seria ignorado em silêncio e as
+    // avaliações vinham na língua em que foram escritas — que foi o que
+    // aconteceu, e é o que este teste existe para impedir que volte.
+    expect(pedido).toContain('languageCode=pt');
+    expect(pedido).toContain('places/ChIJabc');
+  });
+
+  it('devolve a lista vazia em vez de rebentar quando a Google recusa', async () => {
+    const places = client((async () => new Response('nope', { status: 403 })) as unknown as typeof fetch);
+    const r = await places.fetchReviews('ChIJabc');
+    expect(r.ok).toBe(false);
+    expect(r.reviews).toEqual([]);
+    expect(r.errorMessage).toContain('403');
+  });
+});

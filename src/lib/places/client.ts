@@ -255,7 +255,15 @@ export class PlacesClient {
    * comércios para usar em meia dúzia não faz sentido nenhum.
    */
   async fetchReviews(placeId: string): Promise<{ ok: boolean; reviews: PlaceReview[]; errorMessage: string | null }> {
-    const url = `${BASE_URL}/places/${encodeURIComponent(placeId)}`;
+    // O idioma vai na QUERY e não num cabeçalho. Esteve aqui um
+    // `X-Goog-LanguageCode`, que não existe: a Google ignorou-o em silêncio e
+    // devolveu as avaliações na língua em que foram escritas. Numa cidade com
+    // turistas isso dá uma página portuguesa com metade dos depoimentos em
+    // inglês. Um cabeçalho inventado não dá erro — dá um resultado errado com
+    // ar de certo, que é pior.
+    const url = new URL(`${BASE_URL}/places/${encodeURIComponent(placeId)}`);
+    url.searchParams.set('languageCode', this.languageCode);
+    if (this.regionCode) url.searchParams.set('regionCode', this.regionCode);
 
     try {
       const response = await this.fetchImpl(url, {
@@ -263,9 +271,6 @@ export class PlacesClient {
         headers: {
           'X-Goog-Api-Key': this.apiKey,
           'X-Goog-FieldMask': 'id,reviews',
-          // A Google devolve a avaliação traduzida para este idioma quando
-          // existe tradução, e o original quando não existe.
-          'X-Goog-LanguageCode': this.languageCode,
         },
       });
 

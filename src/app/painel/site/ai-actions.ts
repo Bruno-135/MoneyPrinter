@@ -49,6 +49,7 @@ function paraSite(lista: readonly AvaliacaoReal[]) {
     quando: a.quando,
     autorUrl: a.autorUrl,
     autorFoto: a.autorFoto,
+    traduzida: a.traduzida,
   }));
 }
 

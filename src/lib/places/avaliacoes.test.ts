@@ -52,3 +52,31 @@ describe('lerAvaliacoes', () => {
     expect(lerAvaliacoes('nada')).toEqual([]);
   });
 });
+
+describe('lerAvaliacoes — traduções', () => {
+  it('marca como traduzida quando o idioma mostrado não é o original', () => {
+    const [a] = lerAvaliacoes([
+      {
+        text: { text: 'Excelente clínica', languageCode: 'pt' },
+        originalText: { text: 'Excellent clinic', languageCode: 'en' },
+      },
+    ]);
+    expect(a?.traduzida).toBe(true);
+    expect(a?.texto).toBe('Excelente clínica');
+  });
+
+  it('não marca quando a pessoa escreveu na própria língua', () => {
+    const [a] = lerAvaliacoes([
+      {
+        text: { text: 'Excelente clínica', languageCode: 'pt' },
+        originalText: { text: 'Excelente clínica', languageCode: 'pt' },
+      },
+    ]);
+    expect(a?.traduzida).toBe(false);
+  });
+
+  it('sem informação de idioma, não inventa que é tradução', () => {
+    const [a] = lerAvaliacoes([{ text: { text: 'Bom' } }]);
+    expect(a?.traduzida).toBe(false);
+  });
+});
