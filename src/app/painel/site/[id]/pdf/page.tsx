@@ -1,10 +1,12 @@
 import Link from 'next/link';
+import type { Route } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { loadSite } from '@/lib/sites/load';
 import { SiteRender } from '@/components/site/site-render';
 import { CustomHtmlSite } from '@/components/site/custom-html';
 import { PrintButton } from './print-button';
+import { MolduraImpressao } from './moldura-impressao';
 
 /**
  * O site inteiro em PDF, uma secção por folha, num ficheiro só.
@@ -19,16 +21,72 @@ import { PrintButton } from './print-button';
  * alternativa seria mais uma peça a manter, mais custo de execução, e o mesmo
  * papel no fim. Se um dia for preciso enviar o PDF por email sem alguém o
  * abrir, aí mudamos.
+ *
+ * Três formatos, porque servem três conversas diferentes:
+ *
+ *   secções  — uma folha por secção, A4 em pé. É o documento de trabalho:
+ *              vê-se cada parte em grande e escreve-se ao lado.
+ *   paisagem — a folha deitada, com a página inteira a correr sem cortes.
+ *              É o mais parecido com abrir o site num computador.
+ *   telemóvel— folhas do tamanho de um telemóvel, com a página desenhada
+ *              com as regras do telemóvel — tal como o cliente do
+ *              comerciante a vai ver.
+ *
+ * Os dois últimos são desenhados dentro de uma moldura (ver
+ * `moldura-impressao.tsx`), e isso não é enfeite. Ao imprimir, o Chrome mede
+ * as regras de "ecrã estreito" contra a JANELA e não contra a folha: uma folha
+ * do tamanho de um telemóvel, sozinha, daria na mesma a página larga espremida.
+ * Isto foi medido, não suposto. Dentro de uma moldura de 390 pontos as regras
+ * medem-se contra a moldura, e o resultado é o mesmo quer se carregue em
+ * imprimir no telemóvel ou no portátil.
  */
 
 export const dynamic = 'force-dynamic';
 
 interface Props {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ formato?: string }>;
 }
 
-export default async function SitePdfPage({ params }: Props) {
+const FORMATOS = {
+  seccoes: {
+    label: 'Por secções',
+    explica: 'Uma folha por secção, A4 em pé. Bom para rever e anotar.',
+    // Margem estreita de propósito: a capa tem uma foto que sangra até ao
+    // limite e uma margem larga cortava-a com uma tira branca.
+    page: '@page { size: A4; margin: 10mm; }',
+    // Sem moldura: este formato quer mesmo a quebra por secção que o render
+    // faz no modo de impressão.
+    largura: null,
+  },
+  paisagem: {
+    label: 'Paisagem',
+    explica: 'Folha deitada e página a correr, como se abrisse o site num computador.',
+    page: '@page { size: A4 landscape; margin: 0; }',
+    // 1122 pontos é exatamente a largura de uma folha A4 deitada. Sendo igual,
+    // não é preciso encolher nada: o que se vê é tamanho real.
+    largura: 1122,
+  },
+  movel: {
+    label: 'Telemóvel',
+    explica: 'Folhas do tamanho de um telemóvel — é assim que os clientes dele vão ver.',
+    // 390 x 844 pontos é o ecrã de um telemóvel comum, convertido em
+    // milímetros para o tamanho da folha bater certo com a moldura.
+    page: '@page { size: 103.19mm 223.31mm; margin: 0; }',
+    largura: 390,
+  },
+} as const;
+
+type FormatoId = keyof typeof FORMATOS;
+
+function lerFormato(valor: string | undefined): FormatoId {
+  return valor === 'paisagem' || valor === 'movel' || valor === 'seccoes' ? valor : 'seccoes';
+}
+
+export default async function SitePdfPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const formato = lerFormato((await searchParams).formato);
+  const escolhido = FORMATOS[formato];
 
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
@@ -43,12 +101,11 @@ export default async function SitePdfPage({ params }: Props) {
     <>
       {/*
         As regras de impressão vivem aqui e não no globals.css porque só dizem
-        respeito a esta página. A margem é estreita de propósito: a capa tem uma
-        foto que sangra até ao limite da folha e uma margem larga cortava-a com
-        uma tira branca.
+        respeito a esta página — e porque mudam com o formato escolhido, que só
+        se sabe no servidor.
       */}
       <style>{`
-        @page { size: A4; margin: 10mm; }
+        ${escolhido.page}
 
         @media print {
           /* O fundo colorido do tema não sai na impressão sem isto. Sem ele o
@@ -71,26 +128,65 @@ export default async function SitePdfPage({ params }: Props) {
             <PrintButton />
           </div>
         </div>
+
+        {/* A escolha do formato. São ligações e não botões de cliente porque
+            o que muda é a regra `@page`, que tem de vir já escrita do
+            servidor — não se pode trocar depois de a janela de impressão
+            abrir. */}
+        <div className="mx-auto flex max-w-5xl flex-wrap gap-2 px-6 pb-3">
+          {(Object.keys(FORMATOS) as FormatoId[]).map((id_formato) => (
+            <Link
+              key={id_formato}
+              href={`/painel/site/${id}/pdf?formato=${id_formato}` as Route}
+              className={`rounded-full border px-4 py-1.5 text-sm font-medium ${
+                id_formato === formato
+                  ? 'border-brand-500 bg-brand-500/10 text-brand-600 dark:text-brand-400'
+                  : 'border-black/15 opacity-70 dark:border-white/20'
+              }`}
+            >
+              {FORMATOS[id_formato].label}
+            </Link>
+          ))}
+        </div>
+
         <div className="mx-auto max-w-5xl px-6 pb-4 text-sm opacity-60">
-          Carrega em <strong>Guardar como PDF</strong> e, na janela que abre, escolhe{' '}
-          <strong>Destino &rsaquo; Guardar como PDF</strong>. Cada secção do site sai numa folha.
+          {escolhido.explica} Carrega em <strong>Guardar como PDF</strong> e, na janela que abre,
+          escolhe <strong>Destino &rsaquo; Guardar como PDF</strong>.
+          {formato !== 'seccoes' && (
+            <>
+              {' '}
+              Confirma que <strong>Margens</strong> está em <em>Nenhuma</em> e que{' '}
+              <strong>Gráficos de fundo</strong> está ligado — sem isso o browser corta a
+              fotografia e deita fora as cores.
+            </>
+          )}{' '}
           Depois é só mandar o ficheiro ao dono por WhatsApp ou email.
         </div>
+
+
       </div>
 
-      {site.custom_html ? (
-        <CustomHtmlSite html={site.custom_html} forPrint />
+      {escolhido.largura === null ? (
+        site.custom_html ? (
+          <CustomHtmlSite html={site.custom_html} forPrint />
+        ) : (
+          <SiteRender
+            mode="print"
+            semente={site.public_code}
+            content={content}
+            theme={theme}
+            menu={menu}
+            isFoodService={isFoodService}
+            whatsappNumber={site.whatsapp_number_e164}
+            whatsappGreeting={site.whatsapp_greeting}
+          />
+        )
       ) : (
-      <SiteRender
-        mode="print"
-        semente={site.public_code}
-        content={content}
-        theme={theme}
-        menu={menu}
-        isFoodService={isFoodService}
-        whatsappNumber={site.whatsapp_number_e164}
-        whatsappGreeting={site.whatsapp_greeting}
-      />
+        <MolduraImpressao
+          src={`/painel/site/${id}/moldura`}
+          largura={escolhido.largura}
+          titulo={`Pré-visualização da página — ${escolhido.label.toLowerCase()}`}
+        />
       )}
     </>
   );
