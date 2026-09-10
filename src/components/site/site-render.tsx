@@ -235,6 +235,47 @@ export function SiteRender({
         </Sheet>
       )}
 
+      {/* ---------------- O que dizem os clientes ----------------
+          Avaliações verdadeiras, do Google, com o nome de quem as escreveu e
+          a ligação ao perfil. Nada aqui é escrito por nós nem pela IA: a
+          página é mostrada ao dono do comércio, que conhece os clientes pelo
+          nome. Uma frase inventada acabava a conversa. */}
+      {content.reviews.length > 0 && (
+        <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
+          <div className="mx-auto max-w-4xl px-6 pb-16">
+            <h2 className="mb-2 text-center text-2xl font-semibold tracking-tight">
+              O que dizem os clientes
+            </h2>
+            <p className="mb-8 text-center text-sm opacity-55">
+              Avaliações publicadas no Google
+            </p>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {content.reviews.map((review) => (
+                <figure
+                  key={`${review.autor}-${review.texto.slice(0, 24)}`}
+                  className="flex break-inside-avoid flex-col gap-3 rounded-xl bg-[var(--site-surface)] p-5"
+                >
+                  {review.nota !== null && (
+                    <p className="text-sm tracking-wide text-[var(--site-accent)]">
+                      {'★'.repeat(Math.round(review.nota))}
+                      <span className="opacity-30">{'★'.repeat(5 - Math.round(review.nota))}</span>
+                    </p>
+                  )}
+                  <blockquote className="text-[0.9375rem] leading-relaxed">
+                    {review.texto}
+                  </blockquote>
+                  <figcaption className="mt-auto text-sm opacity-60">
+                    {review.autor}
+                    {review.quando && ` · ${review.quando}`}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </Sheet>
+      )}
+
       {/* ---------------- Cardápio ---------------- */}
       {isFoodService && sections.size > 0 && (
         <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>

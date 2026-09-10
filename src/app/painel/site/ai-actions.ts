@@ -13,6 +13,8 @@ import type { AiActionState } from '@/lib/ai/action-state';
 import { getServerEnv } from '@/lib/env';
 import { escolherImagens } from '@/lib/sites/imagens/escolher';
 import { PlacesClient } from '@/lib/places/client';
+import { avaliacoesDoComercio } from '@/lib/places/avaliacoes';
+import { FONTE_IMAGEM_PADRAO, isFonteImagem } from '@/lib/sites/imagens/fonte';
 
 /**
  * Geração de páginas por IA, a partir do ecrã.
@@ -55,6 +57,13 @@ export async function generateWithAi(
   const model = isModelId(rawModel) ? rawModel : DEFAULT_MODEL;
   const mode = isGenerationMode(rawMode) ? rawMode : 'fields';
 
+  // De onde vêm as imagens e se se vão buscar as avaliações escritas. As duas
+  // podem custar dinheiro, e por isso vêm de escolhas explícitas no ecrã em
+  // vez de acontecerem por omissão.
+  const rawFonte = formData.get('fonteImagens');
+  const fonte = isFonteImagem(rawFonte) ? rawFonte : FONTE_IMAGEM_PADRAO;
+  const querAvaliacoes = formData.get('avaliacoes') === 'sim';
+
   if (!siteId) return { ok: false, message: 'Falta a página a gerar.' };
 
   const loaded = await loadSite(supabase, siteId);
@@ -81,13 +90,25 @@ export async function generateWithAi(
         nome: business.name,
         chaveApi: getServerEnv().PEXELS_API_KEY,
         quantasGaleria: 5,
+        fonte,
+        podeGastar: true,
       });
 
       const imagens = [escolhidas.capa, ...escolhidas.galeria]
         .filter((foto): foto is NonNullable<typeof foto> => foto !== null)
         .map((foto) => ({ url: foto.url, alt: foto.alt, credito: foto.credito ?? '' }));
 
-      const result = await generateHtml(business, brief, model, imagens);
+      const avaliacoes = querAvaliacoes
+        ? await avaliacoesDoComercio(supabase, clientePlaces(business.country_code), business.id)
+        : null;
+
+      const result = await generateHtml(
+        business,
+        brief,
+        model,
+        imagens,
+        (avaliacoes?.avaliacoes ?? []).slice(0, 6),
+      );
 
       await saveAiGeneration(supabase, siteId, {
         // O conteúdo em campos fica como está: se mais tarde se deitar fora o
@@ -118,8 +139,18 @@ export async function generateWithAi(
               semente: loaded.site.public_code,
               nome: business.name,
               chaveApi: getServerEnv().PEXELS_API_KEY,
+              fonte,
+              podeGastar: true,
             })
           : null;
+
+      // As avaliações escritas do Google. NÃO passam pelo modelo: entram na
+      // página tal como as pessoas as escreveram. Uma avaliação reescrita
+      // deixa de provar seja o que for, e quem vai ler esta página é o dono do
+      // comércio, que conhece os clientes pelo nome.
+      const avaliacoes = querAvaliacoes
+        ? await avaliacoesDoComercio(supabase, clientePlaces(business.country_code), business.id)
+        : null;
 
       const content: SiteContent = {
         ...loaded.content,
@@ -132,6 +163,15 @@ export async function generateWithAi(
         cover: loaded.content.cover ?? fotos?.capa ?? null,
         gallery:
           loaded.content.gallery.length > 0 ? loaded.content.gallery : (fotos?.galeria ?? []),
+        reviews: avaliacoes
+          ? avaliacoes.avaliacoes.slice(0, 6).map((a) => ({
+              texto: a.texto,
+              autor: a.autor,
+              nota: a.nota,
+              quando: a.quando,
+              autorUrl: a.autorUrl,
+            }))
+          : loaded.content.reviews,
       };
 
       await saveAiGeneration(supabase, siteId, {

@@ -4,6 +4,7 @@ import type {
   SearchNearbyResponse,
   SearchTextResponse,
   PlacePhoto,
+  PlaceReview,
 } from './types';
 
 /**
@@ -240,6 +241,44 @@ export class PlacesClient {
       return {
         ok: false,
         photos: [],
+        errorMessage: `Falha de rede: ${cause instanceof Error ? cause.message : String(cause)}`,
+      };
+    }
+  }
+
+  /**
+   * As avaliações escritas de UM comércio.
+   *
+   * Máscara de dois campos, mas ao contrário das fotos esta é cara: `reviews`
+   * é de um escalão acima do que o varrimento paga. É por isso que não entra
+   * na máscara geral e se pede aqui, comércio a comércio — pagar isto por 976
+   * comércios para usar em meia dúzia não faz sentido nenhum.
+   */
+  async fetchReviews(placeId: string): Promise<{ ok: boolean; reviews: PlaceReview[]; errorMessage: string | null }> {
+    const url = `${BASE_URL}/places/${encodeURIComponent(placeId)}`;
+
+    try {
+      const response = await this.fetchImpl(url, {
+        method: 'GET',
+        headers: {
+          'X-Goog-Api-Key': this.apiKey,
+          'X-Goog-FieldMask': 'id,reviews',
+          // A Google devolve a avaliação traduzida para este idioma quando
+          // existe tradução, e o original quando não existe.
+          'X-Goog-LanguageCode': this.languageCode,
+        },
+      });
+
+      if (!response.ok) {
+        return { ok: false, reviews: [], errorMessage: `A Google respondeu ${response.status}.` };
+      }
+
+      const payload = (await response.json()) as { reviews?: PlaceReview[] };
+      return { ok: true, reviews: payload.reviews ?? [], errorMessage: null };
+    } catch (cause) {
+      return {
+        ok: false,
+        reviews: [],
         errorMessage: `Falha de rede: ${cause instanceof Error ? cause.message : String(cause)}`,
       };
     }

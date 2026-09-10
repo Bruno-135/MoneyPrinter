@@ -59,6 +59,22 @@ export interface PlacePhoto {
   authorAttributions?: PlacePhotoAttribution[];
 }
 
+/**
+ * Uma avaliação escrita, tal como a Google a dá.
+ *
+ * O texto nunca se altera — não é permitido, e uma avaliação reescrita
+ * deixaria de provar o que quer que fosse.
+ */
+export interface PlaceReview {
+  name?: string;
+  relativePublishTimeDescription?: string;
+  rating?: number;
+  text?: { text?: string; languageCode?: string };
+  originalText?: { text?: string; languageCode?: string };
+  authorAttribution?: PlacePhotoAttribution;
+  publishTime?: string;
+}
+
 export interface AddressComponent {
   longText?: string;
   shortText?: string;

@@ -5,7 +5,8 @@ import { numeroDaSemente } from './arte';
 import { consultasParaRamo } from './consultas';
 import { creditoDe, procurarFotosGratis, type FotoStock } from './stock';
 import type { PlacesClient } from '@/lib/places/client';
-import { lerFotosGuardadas, resolverUri } from '@/lib/places/fotos';
+import { fotosDoComercio, lerFotosGuardadas, resolverUri } from '@/lib/places/fotos';
+import type { FonteImagem } from './fonte';
 
 /**
  * Escolher fotografias grátis sozinho, sem ninguém carregar em nada.
@@ -124,9 +125,44 @@ export async function escolherImagens(
     nome: string;
     chaveApi?: string;
     quantasGaleria?: number;
+    /**
+     * Qual das origens usar. Omitir mantém a ordem de preferência antiga:
+     * fotos do comércio se já estiverem guardadas, banco grátis se não.
+     */
+    fonte?: FonteImagem;
+    /**
+     * Autoriza ir buscar as fotos ao Google se ainda não tiverem sido pedidas.
+     * É uma consulta paga, por isso só vem a `true` quando alguém escolheu
+     * essa origem sabendo o que custa.
+     */
+    podeGastar?: boolean;
   },
 ): Promise<FotosEscolhidas & { origem: 'google' | 'banco' | 'nenhuma' }> {
   const quantasGaleria = Math.min(Math.max(opcoes.quantasGaleria ?? 3, 0), 6);
+  const fonte = opcoes.fonte;
+
+  // Escolheu imagens geradas: não se vai buscar fotografia nenhuma. Deixar a
+  // capa vazia é o que faz a página cair na imagem desenhada do ramo.
+  if (fonte === 'geradas') {
+    return { capa: null, galeria: [], chamadas: 0, erro: null, origem: 'nenhuma' };
+  }
+
+  if (fonte === 'pexels') {
+    const so = await escolherFotosGratis(db, {
+      categorySlug: opcoes.categorySlug,
+      semente: opcoes.semente,
+      nome: opcoes.nome,
+      chaveApi: opcoes.chaveApi,
+      quantasGaleria,
+    });
+    return { ...so, origem: so.capa ? 'banco' : 'nenhuma' };
+  }
+
+  // Pediu as do comércio e ainda não foram pedidas ao Google: vai buscá-las
+  // agora, mas só porque quem carregou no botão sabia que isso custa.
+  if (fonte === 'google' && opcoes.podeGastar) {
+    await fotosDoComercio(db, places, opcoes.businessId);
+  }
 
   const { data: comercio } = await db
     .from('businesses')

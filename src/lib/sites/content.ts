@@ -56,6 +56,22 @@ export interface SitePhoto {
   creditoUrl?: string | null;
 }
 
+/**
+ * Uma avaliação escrita, tal como está no Google.
+ *
+ * Vive no conteúdo do site e não é lida do comércio a cada visita por uma
+ * razão de acesso: a página pública é aberta por gente sem sessão, que a base
+ * de dados não deixa chegar à tabela dos comércios. O que está aqui é uma
+ * cópia do que a Google deu, sem uma palavra mudada.
+ */
+export interface SiteReview {
+  texto: string;
+  autor: string;
+  nota: number | null;
+  quando: string | null;
+  autorUrl: string | null;
+}
+
 export interface SiteContent {
   hero: {
     headline: string;
@@ -69,6 +85,8 @@ export interface SiteContent {
   cover: SitePhoto | null;
   /** Galeria, por baixo do texto. Vazia até o comerciante dar fotos. */
   gallery: SitePhoto[];
+  /** Avaliações escritas, vindas do Google. Vazia até alguém as ir buscar. */
+  reviews: SiteReview[];
   contact: {
     phone: string | null;
     phoneLabel: string | null;
@@ -182,6 +200,7 @@ export function buildContent(business: Business, template: SiteTemplate): SiteCo
     // ficheiro) e as do comerciante ainda não existem. O editor enche isto.
     cover: null,
     gallery: [],
+    reviews: [],
     contact: {
       phone: business.phone_e164,
       phoneLabel: business.phone_raw ?? business.phone_e164,
@@ -254,6 +273,38 @@ function parsePhoto(raw: unknown): SitePhoto | null {
   };
 }
 
+/**
+ * Lê uma avaliação do JSON.
+ *
+ * O texto é o que ela tem de ter; sem ele não há avaliação nenhuma. O endereço
+ * do autor vai para um `href` numa página pública, por isso passa pela mesma
+ * verificação que tudo o resto: `http(s)` e mais nada.
+ */
+function parseReview(raw: unknown): SiteReview | null {
+  if (!raw || typeof raw !== 'object') return null;
+
+  const review = raw as Partial<SiteReview>;
+  if (typeof review.texto !== 'string' || review.texto.trim() === '') return null;
+
+  let autorUrl: string | null = null;
+  if (typeof review.autorUrl === 'string') {
+    try {
+      const { protocol } = new URL(review.autorUrl);
+      if (protocol === 'https:' || protocol === 'http:') autorUrl = review.autorUrl;
+    } catch {
+      autorUrl = null;
+    }
+  }
+
+  return {
+    texto: review.texto.trim(),
+    autor: typeof review.autor === 'string' && review.autor.trim() !== '' ? review.autor : 'Cliente do Google',
+    nota: typeof review.nota === 'number' ? review.nota : null,
+    quando: typeof review.quando === 'string' ? review.quando : null,
+    autorUrl,
+  };
+}
+
 /** Lê conteúdo vindo da base de dados com valores seguros para o que faltar. */
 export function parseContent(raw: unknown): SiteContent | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -273,6 +324,9 @@ export function parseContent(raw: unknown): SiteContent | null {
     cover: parsePhoto(content.cover),
     gallery: Array.isArray(content.gallery)
       ? content.gallery.map(parsePhoto).filter((photo): photo is SitePhoto => photo !== null)
+      : [],
+    reviews: Array.isArray(content.reviews)
+      ? content.reviews.map(parseReview).filter((r): r is SiteReview => r !== null).slice(0, 6)
       : [],
     contact: {
       phone: content.contact?.phone ?? null,

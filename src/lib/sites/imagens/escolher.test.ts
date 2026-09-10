@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
-import { escolherFotosGratis } from './escolher';
+import { escolherFotosGratis, escolherImagens } from './escolher';
 import { chaveConsulta, type FotoStock } from './stock';
 import { consultasParaRamo } from './consultas';
 
@@ -117,5 +117,74 @@ describe('escolherFotosGratis', () => {
       semente: 'xyz',
     });
     expect(r.capa).not.toBeNull();
+  });
+});
+
+/**
+ * Para a escolha de origem, o que interessa é o que ela NÃO faz: não pode ir
+ * buscar fotos ao Google sem autorização, nem trocar de origem por sua conta.
+ */
+function comercioSemFotos() {
+  return {
+    from(tabela: string) {
+      if (tabela === 'businesses') {
+        const q = {
+          select: () => q,
+          eq: () => q,
+          maybeSingle: async () => ({
+            data: { google_photos: [], photos_fetched_at: null },
+            error: null,
+          }),
+        };
+        return q;
+      }
+      return (fakeDb(cache) as unknown as { from: (t: string) => unknown }).from(tabela);
+    },
+  } as unknown as Parameters<typeof escolherImagens>[0];
+}
+
+const placesQueRebenta = {
+  fetchPhotos: () => {
+    throw new Error('não podia ter sido chamado');
+  },
+  fetchPhotoUri: () => {
+    throw new Error('não podia ter sido chamado');
+  },
+} as unknown as Parameters<typeof escolherImagens>[1];
+
+describe('escolherImagens — a origem manda', () => {
+  const comuns = {
+    businessId: 'b1',
+    categorySlug: 'padaria',
+    semente: 'abc123',
+    nome: 'Padaria Jamor',
+  };
+
+  it('"geradas" não vai buscar fotografia nenhuma', async () => {
+    const r = await escolherImagens(comercioSemFotos(), placesQueRebenta, {
+      ...comuns,
+      fonte: 'geradas',
+    });
+    expect(r.capa).toBeNull();
+    expect(r.galeria).toEqual([]);
+    expect(r.origem).toBe('nenhuma');
+  });
+
+  it('"pexels" usa o banco mesmo que houvesse fotos do comércio', async () => {
+    const r = await escolherImagens(comercioSemFotos(), placesQueRebenta, {
+      ...comuns,
+      fonte: 'pexels',
+    });
+    expect(r.origem).toBe('banco');
+    expect(r.capa?.url).toContain('images.pexels.com');
+  });
+
+  it('"google" sem autorização para gastar não chama a Google — cai no banco', async () => {
+    const r = await escolherImagens(comercioSemFotos(), placesQueRebenta, {
+      ...comuns,
+      fonte: 'google',
+      podeGastar: false,
+    });
+    expect(r.origem).toBe('banco');
   });
 });

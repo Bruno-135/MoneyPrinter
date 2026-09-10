@@ -51,6 +51,14 @@ export default async function GerarPage({ params }: Props) {
   const { site, content } = loaded;
   const isCustomHtml = site.custom_html !== null;
 
+  // Se as fotos e as avaliações já foram pedidas, escolhê-las não custa nada.
+  // O ecrã diz-o, para a decisão ser tomada com o preço à vista.
+  const { data: comercio } = await supabase
+    .from('businesses')
+    .select('photos_fetched_at, reviews_fetched_at')
+    .eq('id', site.business_id)
+    .maybeSingle();
+
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-12">
       <div>
@@ -107,6 +115,8 @@ export default async function GerarPage({ params }: Props) {
         businessName={content.hero.headline}
         hasKey={hasApiKey()}
         previousBrief={site.ai_brief ?? ''}
+        jaTemFotos={comercio?.photos_fetched_at != null}
+        jaTemAvaliacoes={comercio?.reviews_fetched_at != null}
       />
     </main>
   );

@@ -11,6 +11,12 @@ import {
   type ModelId,
 } from '@/lib/ai/models';
 import { AI_IDLE } from '@/lib/ai/action-state';
+import {
+  FONTES_IMAGEM,
+  FONTES_IMAGEM_IDS,
+  FONTE_IMAGEM_PADRAO,
+  type FonteImagem,
+} from '@/lib/sites/imagens/fonte';
 import { generateWithAi } from '../../ai-actions';
 
 /**
@@ -35,6 +41,10 @@ interface Props {
   hasKey: boolean;
   /** O pedido da última geração, para se ajustar em vez de reescrever. */
   previousBrief: string;
+  /** true quando as fotos deste comércio já foram pedidas ao Google. */
+  jaTemFotos: boolean;
+  /** true quando as avaliações escritas já foram pedidas. */
+  jaTemAvaliacoes: boolean;
 }
 
 const PLACEHOLDER: Record<GenerationMode, string> = {
@@ -63,11 +73,20 @@ function SubmitButton({ mode }: { mode: GenerationMode }) {
   );
 }
 
-export function GenerateForm({ siteId, businessName, hasKey, previousBrief }: Props) {
+export function GenerateForm({
+  siteId,
+  businessName,
+  hasKey,
+  previousBrief,
+  jaTemFotos,
+  jaTemAvaliacoes,
+}: Props) {
   const [state, action] = useActionState(generateWithAi, AI_IDLE);
   const [mode, setMode] = useState<GenerationMode>('fields');
   const [model, setModel] = useState<ModelId>(DEFAULT_MODEL);
   const [brief, setBrief] = useState(previousBrief);
+  const [fonte, setFonte] = useState<FonteImagem>(FONTE_IMAGEM_PADRAO);
+  const [avaliacoes, setAvaliacoes] = useState(true);
 
   return (
     <form action={action} className="flex flex-col gap-6">
@@ -126,6 +145,55 @@ export function GenerateForm({ siteId, businessName, hasKey, previousBrief }: Pr
         <span className="text-xs opacity-55">
           Podes deixar vazio — a IA usa os dados do Google e o bom senso para o ramo. O telefone,
           a morada e a avaliação nunca são inventados: vêm sempre do Google.
+        </span>
+      </label>
+
+      <fieldset className="flex flex-col gap-2.5">
+        <legend className="mb-2 text-sm font-medium">Que imagens usar</legend>
+
+        {FONTES_IMAGEM_IDS.map((id) => (
+          <label key={id} className={choice}>
+            <input
+              type="radio"
+              name="fonteImagens"
+              value={id}
+              checked={fonte === id}
+              onChange={() => setFonte(id)}
+              className="mt-1"
+            />
+            <span className="min-w-0 flex-1">
+              <span className="flex flex-wrap items-baseline gap-x-2">
+                <span className="font-medium">{FONTES_IMAGEM[id].label}</span>
+                {id === 'google' && !jaTemFotos && (
+                  <span className="text-sm opacity-55">+1 consulta ao Google</span>
+                )}
+              </span>
+              <span className="mt-0.5 block text-sm opacity-65">{FONTES_IMAGEM[id].explica}</span>
+            </span>
+          </label>
+        ))}
+      </fieldset>
+
+      <label className={choice}>
+        <input
+          type="checkbox"
+          name="avaliacoes"
+          value="sim"
+          checked={avaliacoes}
+          onChange={(e) => setAvaliacoes(e.target.checked)}
+          className="mt-1"
+        />
+        <span className="min-w-0 flex-1">
+          <span className="flex flex-wrap items-baseline gap-x-2">
+            <span className="font-medium">Pôr as avaliações escritas do Google</span>
+            {!jaTemAvaliacoes && (
+              <span className="text-sm opacity-55">+1 consulta ao Google, das caras</span>
+            )}
+          </span>
+          <span className="mt-0.5 block text-sm opacity-65">
+            O que os clientes escreveram, palavra por palavra e com o nome deles. Nada é
+            reescrito — uma avaliação arranjada deixava de provar o que quer que fosse.
+          </span>
         </span>
       </label>
 

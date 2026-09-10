@@ -68,6 +68,8 @@ export type Database = {
           score_calculated_at: string | null
           google_raw: Json
           google_photos: Json
+          google_reviews: Json
+          reviews_fetched_at: string | null
           photos_fetched_at: string | null
           google_fetched_at: string
           details_fetched_at: string | null
@@ -117,6 +119,8 @@ export type Database = {
           score_calculated_at?: string | null
           google_raw?: Json
           google_photos?: Json
+          google_reviews?: Json
+          reviews_fetched_at?: string | null
           photos_fetched_at?: string | null
           google_fetched_at?: string
           details_fetched_at?: string | null
@@ -166,6 +170,8 @@ export type Database = {
           score_calculated_at?: string | null
           google_raw?: Json
           google_photos?: Json
+          google_reviews?: Json
+          reviews_fetched_at?: string | null
           photos_fetched_at?: string | null
           google_fetched_at?: string
           details_fetched_at?: string | null

@@ -209,11 +209,49 @@ ${lista}
   ${imagens.map((imagem) => imagem.credito).filter((c, i, todos) => todos.indexOf(c) === i).join(' · ')}`;
 }
 
+/** Uma avaliação verdadeira, para o modelo citar sem lhe tocar. */
+export interface AvaliacaoDisponivel {
+  texto: string;
+  autor: string;
+  nota: number | null;
+  quando: string | null;
+}
+
+/**
+ * As regras das avaliações.
+ *
+ * Copiadas à letra ou não usadas — não há meio-termo. Corrigir a ortografia,
+ * cortar a parte menos boa ou juntar duas numa só transforma uma prova numa
+ * invenção, e a página vai ser lida pelo dono do comércio, que conhece os
+ * clientes pelo nome.
+ */
+function avaliacoesRegras(avaliacoes: readonly AvaliacaoDisponivel[]): string {
+  if (avaliacoes.length === 0) {
+    return `- NÃO inventes depoimentos de clientes. Não há nenhum disponível, e uma
+  frase inventada na página do comerciante acaba com a venda.`;
+  }
+
+  const lista = avaliacoes
+    .map(
+      (a) =>
+        `  - ${a.nota !== null ? `${a.nota}★ ` : ''}${a.autor}${a.quando ? ` (${a.quando})` : ''}: ` +
+        `"${a.texto.replace(/"/g, "'")}"`,
+    )
+    .join('\n');
+
+  return `- Avaliações: podes usar as que estão aqui em baixo, numa secção do
+  género "O que dizem os clientes". Copia o texto À LETRA, com o nome de quem
+  escreveu. Não corrijas, não cortes ao meio, não juntes duas numa só e não
+  inventes nenhuma — são verdadeiras e é isso que as faz valer alguma coisa.
+${lista}`;
+}
+
 export async function generateHtml(
   business: Business,
   brief: string,
   model: ModelId,
   imagens: readonly ImagemDisponivel[] = [],
+  avaliacoes: readonly AvaliacaoDisponivel[] = [],
 ): Promise<GenerationResult<string>> {
   const client = createAiClient();
 
@@ -239,7 +277,8 @@ Formato da resposta:
   <a href="https://wa.me/...">.
 - Escolhe as cores a partir do pedido. Garante contraste: texto escuro sobre
   fundo claro, ou o contrário. Nada de cinzento sobre bege.
-${imagensRegras(imagens)}`,
+${imagensRegras(imagens)}
+${avaliacoesRegras(avaliacoes)}`,
       messages: [
         {
           role: 'user',
