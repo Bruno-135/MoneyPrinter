@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Route } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getDeal, getStageHistory } from '@/lib/deals/repository';
@@ -146,6 +147,14 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
               {business.website_host ?? business.website_url}
             </a>
           )}
+          {/* "O seu domínio ainda está livre" é das melhores primeiras frases
+              que há para começar uma conversa com quem não tem site. */}
+          <Link
+            href={`/painel/comercio/${id}/dominios` as Route}
+            className="mt-2 block text-sm underline underline-offset-4 opacity-70"
+          >
+            Ver domínios livres &rarr;
+          </Link>
         </div>
 
         <div className="rounded-lg border border-black/10 p-4 dark:border-white/10">
