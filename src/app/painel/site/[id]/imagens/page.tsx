@@ -181,29 +181,49 @@ export default async function ImagensPage({ params, searchParams }: Props) {
             <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               {resultado.fotos.map((foto) => (
                 <li key={foto.id} className="flex flex-col gap-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={foto.miniatura}
-                    alt={foto.alt || 'Fotografia de banco'}
-                    style={{ backgroundColor: foto.cor }}
-                    className="aspect-4/3 w-full rounded-md object-cover"
-                    loading="lazy"
-                  />
+                  {/*
+                    A própria fotografia é o botão de pôr na capa. Ao telemóvel,
+                    um link de texto sublinhado por baixo de uma imagem é
+                    pequeno de mais para se acertar nele — e quem não acerta
+                    conclui, com razão, que aquilo não funciona.
+                  */}
+                  <form action={usarFotoGratis}>
+                    <input type="hidden" name="siteId" value={id} />
+                    <input type="hidden" name="url" value={foto.url} />
+                    <input type="hidden" name="chave" value={chave} />
+                    <input type="hidden" name="alt" value={foto.alt} />
+                    <input type="hidden" name="slot" value="cover" />
+                    <button
+                      type="submit"
+                      className="group relative block w-full overflow-hidden rounded-md"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={foto.miniatura}
+                        alt={foto.alt || 'Fotografia de banco'}
+                        style={{ backgroundColor: foto.cor }}
+                        className="aspect-4/3 w-full object-cover"
+                        loading="lazy"
+                      />
+                      <span className="absolute inset-x-0 bottom-0 bg-black/65 py-2 text-center text-sm font-semibold text-white">
+                        Pôr na capa
+                      </span>
+                    </button>
+                  </form>
+                  <form action={usarFotoGratis}>
+                    <input type="hidden" name="siteId" value={id} />
+                    <input type="hidden" name="url" value={foto.url} />
+                    <input type="hidden" name="chave" value={chave} />
+                    <input type="hidden" name="alt" value={foto.alt} />
+                    <input type="hidden" name="slot" value="gallery" />
+                    <button
+                      type="submit"
+                      className="w-full rounded-md border border-black/15 py-2 text-sm font-medium dark:border-white/20"
+                    >
+                      Juntar à galeria
+                    </button>
+                  </form>
                   <p className="text-xs opacity-55">{foto.autor}</p>
-                  <div className="flex gap-3 text-sm">
-                    {(['cover', 'gallery'] as const).map((slot) => (
-                      <form key={slot} action={usarFotoGratis}>
-                        <input type="hidden" name="siteId" value={id} />
-                        <input type="hidden" name="url" value={foto.url} />
-                        <input type="hidden" name="chave" value={chave} />
-                        <input type="hidden" name="alt" value={foto.alt} />
-                        <input type="hidden" name="slot" value={slot} />
-                        <button type="submit" className="underline underline-offset-4">
-                          {slot === 'cover' ? 'Pôr na capa' : 'Juntar à galeria'}
-                        </button>
-                      </form>
-                    ))}
-                  </div>
                 </li>
               ))}
             </ul>
