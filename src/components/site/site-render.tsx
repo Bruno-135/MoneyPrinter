@@ -169,11 +169,24 @@ export function SiteRender({
     'rounded-lg border border-white/45 bg-white/10 px-5 py-3 text-base font-semibold text-white';
 
   // Um crédito por fotógrafo, mesmo que a mesma pessoa apareça em três fotos.
+  // Só os que NÃO aparecem já por baixo da própria fotografia — repetir aqui
+  // o que está ali em cima é ruído, não é cumprir a licença duas vezes.
   const creditos = [...new Map(
-    [content.cover, ...content.gallery]
+    [content.cover]
       .filter((foto): foto is SitePhoto => foto?.credito != null)
       .map((foto) => [foto.credito!, { texto: foto.credito!, url: foto.creditoUrl ?? null }]),
   ).values()];
+
+  /**
+   * As fotografias do Google são, na sua maioria, tiradas por clientes — é
+   * isso que as torna prova e não decoração. Quando é esse o caso, a secção
+   * diz-o; quando as fotos são de banco, chamar-lhes fotografias de clientes
+   * seria mentira.
+   */
+  const galeriaDeClientes =
+    content.gallery.length > 0 &&
+    content.gallery.every((foto) => foto.credito?.endsWith('Google') === true);
+  const tituloGaleria = galeriaDeClientes ? 'Fotografias de quem cá esteve' : 'Conheça o espaço';
 
   const capa: SitePhoto = content.cover ?? {
     url: arteUrl(theme.imagem, semente),
@@ -380,18 +393,25 @@ export function SiteRender({
         </Sheet>
       )}
 
-      {/* ---------------- O espaço ---------------- */}
+      {/* ---------------- O espaço ----------------
+          O nome de quem tirou cada fotografia vai POR BAIXO dela, e não
+          escondido no rodapé. Duas razões, e a segunda é a que interessa:
+          é condição de uso mostrar o crédito, e uma fotografia com o nome de
+          uma pessoa por baixo lê-se como uma fotografia de um cliente — que é
+          o que ela é. Sem o nome, as mesmas fotos parecem tiradas pela loja, e
+          uma montra fotografada pelo dono não prova nada a ninguém. */}
       {content.gallery.length > 0 && (
         <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
           <div className="mx-auto max-w-5xl px-6 py-16">
-            <TituloSeccao>Conheça o espaço</TituloSeccao>
-            <div className="grid grid-cols-2 gap-3 @xl:grid-cols-3">
+            <TituloSeccao>{tituloGaleria}</TituloSeccao>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-5 @xl:grid-cols-3">
               {content.gallery.map((photo) => (
-                <Photo
-                  key={photo.url}
-                  photo={photo}
-                  className="aspect-4/3 w-full rounded-xl object-cover"
-                />
+                <figure key={photo.url} className="flex break-inside-avoid flex-col gap-1.5">
+                  <Photo photo={photo} className="aspect-4/3 w-full rounded-xl object-cover" />
+                  {photo.credito && (
+                    <figcaption className="px-0.5 text-xs opacity-55">{photo.credito}</figcaption>
+                  )}
+                </figure>
               ))}
             </div>
           </div>

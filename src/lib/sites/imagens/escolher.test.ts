@@ -59,7 +59,7 @@ describe('escolherFotosGratis', () => {
     const r = await escolherFotosGratis(fakeDb(cache), { ...base, semente: 'abc123' });
 
     expect(r.capa).not.toBeNull();
-    expect(r.galeria).toHaveLength(3);
+    expect(r.galeria).toHaveLength(6);
 
     const enderecos = [r.capa!.url, ...r.galeria.map((f) => f.url)];
     expect(new Set(enderecos).size).toBe(enderecos.length);

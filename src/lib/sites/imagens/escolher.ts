@@ -63,7 +63,10 @@ export async function escolherFotosGratis(
     quantasGaleria?: number;
   },
 ): Promise<FotosEscolhidas> {
-  const quantasGaleria = Math.min(Math.max(opcoes.quantasGaleria ?? 3, 0), 6);
+  // Seis por omissão e não três: a grelha é de três colunas, portanto seis
+  // enchem duas linhas certas. E uma galeria de três fotografias parece o que
+  // sobrou; uma de seis parece uma escolha.
+  const quantasGaleria = Math.min(Math.max(opcoes.quantasGaleria ?? 6, 0), 8);
   const consultas = consultasParaRamo(opcoes.categorySlug);
 
   // Três perguntas diferentes, porque uma página não quer três vezes a mesma
@@ -138,7 +141,7 @@ export async function escolherImagens(
     podeGastar?: boolean;
   },
 ): Promise<FotosEscolhidas & { origem: 'google' | 'banco' | 'nenhuma' }> {
-  const quantasGaleria = Math.min(Math.max(opcoes.quantasGaleria ?? 3, 0), 6);
+  const quantasGaleria = Math.min(Math.max(opcoes.quantasGaleria ?? 6, 0), 8);
   const fonte = opcoes.fonte;
 
   // Escolheu imagens geradas: não se vai buscar fotografia nenhuma. Deixar a
