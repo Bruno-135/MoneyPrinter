@@ -237,11 +237,23 @@ npm run list -- --id <uuid>          # explica a nota de um comércio
   Um visitante anónimo não tem acesso aos comércios — essa é a lista de
   prospeção. Tudo o que a página mostra tem de estar no JSON no momento da
   geração.
-- **Não se usam fotografias do Google.** As imagens do Places têm licença própria
-  e condições de atribuição; pô-las numa página comercial vendida a terceiros
-  seria um problema legal à espera de acontecer. A página assenta em tipografia
-  e no que o comércio tem de concreto. As fotografias vêm do comerciante depois
-  de fechar negócio.
+- **As imagens têm três origens, e escolhe-se qual ao gerar.** Por esta ordem
+  de qualidade: as fotografias do próprio comércio (Google), as de banco
+  grátis (Pexels), e as imagens geradas em SVG (`lib/sites/imagens/arte.ts`),
+  que não são fotografias e não fingem ser. A escolha é obedecida à letra.
+
+  Esta regra dizia o contrário até setembro de 2026 — "não se usam fotografias
+  do Google" — e foi mudada por decisão do dono do projeto. As condições que a
+  tornavam arriscada continuam a valer e são cumpridas no código: o crédito de
+  quem tirou a foto viaja agarrado à imagem desde que ela entra e aparece no
+  rodapé da página; a imagem é servida pelo endereço temporário que a Google
+  dá, nunca copiada para o nosso armazenamento.
+- **As avaliações escritas do Google entram tal e qual.** Não passam pelo
+  modelo, não se corrigem, não se cortam ao meio e não se escolhe só a parte
+  boa. Uma avaliação arranjada deixa de provar seja o que for — e quem lê a
+  página é o dono do comércio, que conhece os clientes pelo nome. O campo
+  `reviews` é de um escalão de preço acima do resto, por isso pede-se comércio
+  a comércio e nunca no varrimento.
 - **O texto gerado só afirma o que os dados sustentam.** Um comércio sem
   avaliações não recebe uma frase sobre a sua reputação. Inventar aqui seria pôr
   o comerciante a apresentar-se com uma mentira.
@@ -251,8 +263,14 @@ npm run list -- --id <uuid>          # explica a nota de um comércio
 
 ### O PDF de apresentação
 
-Gera-se pelo **navegador**, com `@media print` numa página A4, e não por um
-Chromium no servidor. Levar um Chromium para dentro de uma função serverless
+Gera-se pelo **navegador**, com `@media print`, e não por um
+Chromium no servidor. Três formatos: uma folha por secção (A4 em pé), paisagem
+(como o site num computador) e telemóvel.
+
+Os dois últimos desenham a página dentro de uma **moldura** com largura fixa, e
+isso não é enfeite: ao imprimir, o Chrome mede as regras de "ecrã estreito"
+contra a JANELA e não contra a folha — medido, não suposto. Uma folha do
+tamanho de um telemóvel, sozinha, saía com a página larga espremida. Levar um Chromium para dentro de uma função serverless
 custa dezenas de MB, arranques lentos e um limite de tempo que se atinge com
 facilidade — para produzir o mesmo ficheiro que o "Guardar como PDF" do sistema
 já faz, com texto selecionável e sem instalar nada.
@@ -331,6 +349,8 @@ limitada à "Places API (New)", mais uma quota diária de pedidos.
 | `SCAN_API_SECRET` | **Só servidor** | Sim | Cabeçalho `x-scan-secret` da rota que gasta dinheiro |
 | `PUBLIC_SITE_DEFAULT_TTL_DAYS` | Só servidor | Não (30) | Validade por omissão das landing pages |
 | `REGION_SEARCH_CACHE_DAYS` | Só servidor | Não (30) | Dias até uma região pesquisada ser considerada velha |
+| `ANTHROPIC_API_KEY` | **Só servidor** | Não | Geração de páginas por IA. Sem ela, só esse botão avisa que falta |
+| `PEXELS_API_KEY` | **Só servidor** | Não | Fotografias de banco grátis. Sem ela, as páginas usam as imagens geradas |
 
 Na Vercel, as mesmas variáveis são definidas em **Project Settings → Environment Variables**
 para Production, Preview e Development.
