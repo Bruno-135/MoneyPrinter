@@ -6,7 +6,6 @@ import { loadSite } from '@/lib/sites/load';
 import { SiteRender } from '@/components/site/site-render';
 import { CustomHtmlSite } from '@/components/site/custom-html';
 import { PrintButton } from './print-button';
-import { MolduraImpressao } from './moldura-impressao';
 
 /**
  * O site inteiro em PDF, uma secção por folha, num ficheiro só.
@@ -32,13 +31,17 @@ import { MolduraImpressao } from './moldura-impressao';
  *              com as regras do telemóvel — tal como o cliente do
  *              comerciante a vai ver.
  *
- * Os dois últimos são desenhados dentro de uma moldura (ver
- * `moldura-impressao.tsx`), e isso não é enfeite. Ao imprimir, o Chrome mede
- * as regras de "ecrã estreito" contra a JANELA e não contra a folha: uma folha
- * do tamanho de um telemóvel, sozinha, daria na mesma a página larga espremida.
- * Isto foi medido, não suposto. Dentro de uma moldura de 390 pontos as regras
- * medem-se contra a moldura, e o resultado é o mesmo quer se carregue em
- * imprimir no telemóvel ou no portátil.
+ * Nos dois últimos, a página é desenhada dentro de uma caixa de largura fixa —
+ * 1122 pontos para a folha deitada, 390 para o telemóvel. Funciona porque o
+ * desenho do site responde à largura do BLOCO onde está (`@container`) e não à
+ * da janela: pôr o site numa caixa de 390 pontos dá a mesma página que um
+ * telemóvel daria, seja qual for o aparelho onde se carrega em imprimir.
+ *
+ * Houve aqui um enquadramento (`<iframe>`) a fazer este trabalho, e teve de
+ * sair: o motor de impressão do telemóvel não desenha as imagens que estão
+ * dentro de um enquadramento, e o PDF saía com um retângulo preto no lugar da
+ * fotografia. O sintoma dizia-o com todas as letras — "por secções", que não
+ * usava enquadramento, era o único que saía bem.
  */
 
 export const dynamic = 'force-dynamic';
@@ -166,12 +169,23 @@ export default async function SitePdfPage({ params, searchParams }: Props) {
 
       </div>
 
-      {escolhido.largura === null ? (
-        site.custom_html ? (
-          <CustomHtmlSite html={site.custom_html} forPrint />
+      {/*
+        A caixa de largura fixa é o que dá o desenho certo a cada formato. Sem
+        largura (o formato por secções), a página ocupa a folha toda.
+      */}
+      <div
+        className="mx-auto"
+        style={escolhido.largura === null ? undefined : { width: escolhido.largura }}
+      >
+        {site.custom_html ? (
+          <CustomHtmlSite html={site.custom_html} forPrint={escolhido.largura === null} />
         ) : (
           <SiteRender
-            mode="print"
+            /* Nos formatos de largura fixa mostra-se a página como ela É, com
+               a fotografia em fundo e os botões — que é justamente o que se
+               quer mostrar ao comerciante. A quebra por secção só faz sentido
+               no formato A4 em pé. */
+            mode={escolhido.largura === null ? 'print' : 'preview'}
             semente={site.public_code}
             content={content}
             theme={theme}
@@ -180,14 +194,8 @@ export default async function SitePdfPage({ params, searchParams }: Props) {
             whatsappNumber={site.whatsapp_number_e164}
             whatsappGreeting={site.whatsapp_greeting}
           />
-        )
-      ) : (
-        <MolduraImpressao
-          src={`/painel/site/${id}/moldura`}
-          largura={escolhido.largura}
-          titulo={`Pré-visualização da página — ${escolhido.label.toLowerCase()}`}
-        />
-      )}
+        )}
+      </div>
     </>
   );
 }

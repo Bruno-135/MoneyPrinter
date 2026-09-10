@@ -88,7 +88,7 @@ function Sheet({
 function TituloSeccao({ children }: { children: ReactNode }) {
   return (
     <div className="mb-10 flex flex-col items-center gap-3 text-center">
-      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{children}</h2>
+      <h2 className="text-2xl font-semibold tracking-tight @xl:text-3xl">{children}</h2>
       <span className="h-0.5 w-10 rounded-full bg-[var(--site-accent)]" />
     </div>
   );
@@ -183,14 +183,14 @@ export function SiteRender({
   return (
     <div
       style={themeVars(theme, 'light')}
-      className="min-h-screen bg-[var(--site-bg)] text-[var(--site-fg)] [font-family:var(--site-font)] print:min-h-0"
+      className="@container min-h-screen bg-[var(--site-bg)] text-[var(--site-fg)] [font-family:var(--site-font)] print:min-h-0"
     >
       {/* ---------------- Barra de topo ----------------
           Nome à esquerda, telefone à direita. É a barra que faz a página
           parecer um site e não um folheto — e o telefone à vista no topo é o
           que o cliente do comerciante procura primeiro. */}
-      <div className="flex items-center justify-between gap-4 border-b border-[var(--site-line)] px-5 py-3.5 sm:px-8">
-        <span className="truncate text-sm font-semibold tracking-tight sm:text-base">
+      <div className="flex items-center justify-between gap-4 border-b border-[var(--site-line)] px-5 py-3.5 @xl:px-8">
+        <span className="truncate text-sm font-semibold tracking-tight @xl:text-base">
           {content.hero.headline}
         </span>
         {content.contact.phoneLabel &&
@@ -205,7 +205,7 @@ export function SiteRender({
               target: 'phone',
               targetValue: content.contact.phone,
               className:
-                'shrink-0 text-sm font-semibold tabular-nums text-[var(--site-accent)] sm:text-base',
+                'shrink-0 text-sm font-semibold tabular-nums text-[var(--site-accent)] @xl:text-base',
               children: content.contact.phoneLabel,
             })
           ))}
@@ -245,7 +245,7 @@ export function SiteRender({
           className={
             mode === 'print'
               ? ''
-              : 'relative h-[440px] overflow-hidden bg-[#141414] bg-cover bg-center sm:h-[560px]'
+              : 'relative h-[440px] overflow-hidden bg-[#141414] bg-cover bg-center @xl:h-[560px]'
           }
         >
           {/*
@@ -283,7 +283,7 @@ export function SiteRender({
             className={
               mode === 'print'
                 ? 'flex flex-col items-start gap-4 px-8 py-9'
-                : 'absolute inset-x-0 bottom-0 flex flex-col items-start gap-4 px-6 pb-10 text-white sm:px-10 sm:pb-14'
+                : 'absolute inset-x-0 bottom-0 flex flex-col items-start gap-4 px-6 pb-10 text-white @xl:px-10 @xl:pb-14'
             }
           >
             {content.hero.badge && (
@@ -297,14 +297,14 @@ export function SiteRender({
                 {content.hero.badge}
               </p>
             )}
-            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
+            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance @xl:text-5xl">
               {content.hero.headline}
             </h1>
             <p
               className={
                 mode === 'print'
-                  ? 'max-w-xl text-base opacity-75 sm:text-lg'
-                  : 'max-w-xl text-base text-white/85 sm:text-lg'
+                  ? 'max-w-xl text-base opacity-75 @xl:text-lg'
+                  : 'max-w-xl text-base text-white/85 @xl:text-lg'
               }
             >
               {content.hero.subheadline}
@@ -368,7 +368,7 @@ export function SiteRender({
           <div className="bg-[var(--site-surface)]">
             <div className="mx-auto max-w-5xl px-6 py-16">
               <TituloSeccao>Porquê aqui</TituloSeccao>
-              <div className="grid gap-8 sm:grid-cols-3">
+              <div className="grid gap-8 @xl:grid-cols-3">
                 {content.highlights.map((h, i) => (
                   <div key={h.title} className="flex flex-col items-center gap-2 text-center">
                     <span className="text-sm font-semibold tabular-nums text-[var(--site-accent)]">
@@ -389,7 +389,7 @@ export function SiteRender({
         <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
           <div className="mx-auto max-w-5xl px-6 py-16">
             <TituloSeccao>Conheça o espaço</TituloSeccao>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 @xl:grid-cols-3">
               {content.gallery.map((photo) => (
                 <Photo
                   key={photo.url}
@@ -415,7 +415,7 @@ export function SiteRender({
               Avaliações publicadas no Google
             </p>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 @xl:grid-cols-2">
               {content.reviews.map((review) => (
                 <figure
                   key={`${review.autor}-${review.texto.slice(0, 24)}`}
@@ -512,7 +512,7 @@ export function SiteRender({
         }`}
       >
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 py-14 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+          <h2 className="text-2xl font-semibold tracking-tight text-balance @xl:text-3xl">
             Fale connosco
           </h2>
           {content.contact.address && (
