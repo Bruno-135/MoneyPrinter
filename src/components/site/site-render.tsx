@@ -239,12 +239,31 @@ export function SiteRender({
           se perde quando alguma coisa corre mal.
         */}
         <header
+          role={mode === 'print' ? undefined : 'img'}
+          aria-label={mode === 'print' ? undefined : capa.alt}
+          style={mode === 'print' ? undefined : { backgroundImage: `url("${capa.url.replace(/"/g, '%22')}")` }}
           className={
             mode === 'print'
               ? ''
-              : 'relative h-[440px] overflow-hidden bg-[#141414] sm:h-[560px]'
+              : 'relative h-[440px] overflow-hidden bg-[#141414] bg-cover bg-center sm:h-[560px]'
           }
         >
+          {/*
+            A MESMA fotografia posta de duas maneiras ao mesmo tempo, e não é
+            desleixo: é o que faz isto imprimir em qualquer lado.
+
+            Vai como fundo da secção (acima, no `style`) e como `<img>` por
+            baixo do véu. Cada motor de impressão perde uma das duas: no PDF
+            em paisagem, feito de um iPhone, saiu um retângulo preto — a cor
+            de fundo imprimiu-se e a imagem não. Com as duas, o que um deita
+            fora o outro desenha, e o resultado é o mesmo em todo o lado.
+
+            Custa um download só: é o mesmo endereço, o browser não o pede
+            duas vezes.
+
+            Em papel, o herói é empilhado e a fotografia é uma `<img>` normal
+            em fluxo — que é o que nenhum motor de impressão deita fora.
+          */}
           <Photo
             photo={capa}
             eager
