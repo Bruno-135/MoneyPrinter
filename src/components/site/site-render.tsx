@@ -286,17 +286,13 @@ export function SiteRender({
                 : 'absolute inset-x-0 bottom-0 flex flex-col items-start gap-4 px-6 pb-10 text-white @xl:px-10 @xl:pb-14'
             }
           >
-            {content.hero.badge && (
-              <p
-                className={
-                  mode === 'print'
-                    ? 'rounded-full border border-[var(--site-line)] px-3.5 py-1.5 text-xs font-semibold tracking-wide'
-                    : 'rounded-full border border-white/30 bg-white/15 px-3.5 py-1.5 text-xs font-semibold tracking-wide'
-                }
-              >
-                {content.hero.badge}
-              </p>
-            )}
+            {/*
+              O selo das avaliações vivia aqui e mudou-se para o pé das
+              avaliações escritas. Na capa competia com o nome do comércio, que
+              é o que tem de se ler primeiro; ao lado do que os clientes
+              escreveram, a nota deixa de ser um número solto e passa a ser o
+              resumo daquilo que se está a ler.
+            */}
             <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance @xl:text-5xl">
               {content.hero.headline}
             </h1>
@@ -411,9 +407,14 @@ export function SiteRender({
         <Sheet mode={mode} className={mode === 'print' ? 'pt-16' : ''}>
           <div className="mx-auto max-w-4xl px-6 pb-16">
             <TituloSeccao>O que dizem os clientes</TituloSeccao>
-            <p className="-mt-6 mb-8 text-center text-sm opacity-55">
-              Avaliações publicadas no Google
-            </p>
+            <div className="-mt-6 mb-8 flex flex-col items-center gap-2">
+              {content.hero.badge && (
+                <p className="rounded-full bg-[var(--site-surface)] px-4 py-1.5 text-sm font-semibold">
+                  {content.hero.badge}
+                </p>
+              )}
+              <p className="text-sm opacity-55">Avaliações publicadas no Google</p>
+            </div>
 
             <div className="grid gap-4 @xl:grid-cols-2">
               {content.reviews.map((review) => (
@@ -430,9 +431,29 @@ export function SiteRender({
                   <blockquote className="text-[0.9375rem] leading-relaxed">
                     {review.texto}
                   </blockquote>
-                  <figcaption className="mt-auto text-sm opacity-60">
-                    {review.autor}
-                    {review.quando && ` · ${review.quando}`}
+                  {/* A cara de quem escreveu, quando o Google a dá. É o que
+                      separa um depoimento de uma frase numa caixa. */}
+                  <figcaption className="mt-auto flex items-center gap-2.5 text-sm opacity-70">
+                    {review.autorFoto ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={review.autorFoto}
+                        alt=""
+                        className="size-8 shrink-0 rounded-full bg-black/10 object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden
+                        className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--site-accent)] text-sm font-semibold text-[var(--site-on-accent)]"
+                      >
+                        {review.autor.trim().charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                    <span className="min-w-0">
+                      <span className="block truncate font-medium">{review.autor}</span>
+                      {review.quando && <span className="block text-xs opacity-70">{review.quando}</span>}
+                    </span>
                   </figcaption>
                 </figure>
               ))}
@@ -500,6 +521,21 @@ export function SiteRender({
             ))}
           </div>
         </Sheet>
+      )}
+
+      {/* ---------------- A nota, quando não há texto ----------------
+          Um comércio pode ter 4,8 estrelas e nenhuma avaliação escrita — ou
+          não se terem ido buscar. O número sozinho continua a valer, e sem
+          isto desaparecia da página inteira quando saiu da capa. */}
+      {content.reviews.length === 0 && content.hero.badge && (
+        <section
+          className={`border-t border-[var(--site-line)] ${mode === 'print' ? 'break-inside-avoid' : ''}`}
+        >
+          <div className="mx-auto flex max-w-2xl flex-col items-center gap-2 px-6 py-12 text-center">
+            <p className="text-xl font-semibold tracking-tight">{content.hero.badge}</p>
+            <p className="text-sm opacity-55">Avaliações publicadas no Google</p>
+          </div>
+        </section>
       )}
 
       {/* ---------------- Faixa de fecho ----------------

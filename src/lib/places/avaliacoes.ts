@@ -25,6 +25,13 @@ export interface AvaliacaoReal {
   autor: string;
   /** Perfil do autor no Google, quando existe. */
   autorUrl: string | null;
+  /**
+   * Foto de perfil de quem escreveu.
+   *
+   * É o que faz uma avaliação parecer de uma pessoa e não de uma caixa de
+   * texto. Vem no próprio endereço da imagem, sem custo nem chamada extra.
+   */
+  autorFoto: string | null;
   /** "há 2 meses", como a Google o escreve. */
   quando: string | null;
 }
@@ -46,6 +53,7 @@ export function lerAvaliacoes(bruto: unknown): AvaliacaoReal[] {
         nota: typeof avaliacao.rating === 'number' ? avaliacao.rating : null,
         autor: autor?.displayName?.trim() || 'Cliente do Google',
         autorUrl: typeof autor?.uri === 'string' ? autor.uri : null,
+        autorFoto: typeof autor?.photoUri === 'string' ? autor.photoUri : null,
         quando: avaliacao.relativePublishTimeDescription ?? null,
       },
     ];

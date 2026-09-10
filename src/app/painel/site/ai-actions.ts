@@ -13,7 +13,7 @@ import type { AiActionState } from '@/lib/ai/action-state';
 import { getServerEnv } from '@/lib/env';
 import { escolherImagens } from '@/lib/sites/imagens/escolher';
 import { PlacesClient } from '@/lib/places/client';
-import { avaliacoesDoComercio } from '@/lib/places/avaliacoes';
+import { avaliacoesDoComercio, type AvaliacaoReal } from '@/lib/places/avaliacoes';
 import { FONTE_IMAGEM_PADRAO, isFonteImagem } from '@/lib/sites/imagens/fonte';
 
 /**
@@ -24,6 +24,33 @@ import { FONTE_IMAGEM_PADRAO, isFonteImagem } from '@/lib/sites/imagens/fonte';
  * num ecrã de erro do Next que a manda recomeçar. Quem chama põe isto num
  * `useActionState`.
  */
+
+/**
+ * Só as boas.
+ *
+ * Uma landing page é material de venda do comerciante, e nenhum comerciante
+ * põe na montra a única pessoa que se queixou. Isto não é maquilhagem: as
+ * avaliações continuam a ser as verdadeiras, com o nome de quem as escreveu e
+ * sem uma palavra mudada — o que se faz é escolher quais mostrar, que é o que
+ * qualquer negócio faz com os seus depoimentos.
+ *
+ * Quatro estrelas é o corte. Uma de três estrelas costuma trazer um "mas" no
+ * meio, e um "mas" na página de vendas de alguém não ajuda ninguém.
+ */
+function boasAvaliacoes<T extends { nota: number | null }>(lista: readonly T[]): T[] {
+  return lista.filter((a) => a.nota === null || a.nota >= 4).slice(0, 6);
+}
+
+function paraSite(lista: readonly AvaliacaoReal[]) {
+  return boasAvaliacoes(lista).map((a) => ({
+    texto: a.texto,
+    autor: a.autor,
+    nota: a.nota,
+    quando: a.quando,
+    autorUrl: a.autorUrl,
+    autorFoto: a.autorFoto,
+  }));
+}
 
 /**
  * O cliente do Google para resolver endereços de fotos.
@@ -107,7 +134,7 @@ export async function generateWithAi(
         brief,
         model,
         imagens,
-        (avaliacoes?.avaliacoes ?? []).slice(0, 6),
+        boasAvaliacoes(avaliacoes?.avaliacoes ?? []),
       );
 
       await saveAiGeneration(supabase, siteId, {
@@ -163,15 +190,7 @@ export async function generateWithAi(
         cover: loaded.content.cover ?? fotos?.capa ?? null,
         gallery:
           loaded.content.gallery.length > 0 ? loaded.content.gallery : (fotos?.galeria ?? []),
-        reviews: avaliacoes
-          ? avaliacoes.avaliacoes.slice(0, 6).map((a) => ({
-              texto: a.texto,
-              autor: a.autor,
-              nota: a.nota,
-              quando: a.quando,
-              autorUrl: a.autorUrl,
-            }))
-          : loaded.content.reviews,
+        reviews: avaliacoes ? paraSite(avaliacoes.avaliacoes) : loaded.content.reviews,
       };
 
       await saveAiGeneration(supabase, siteId, {

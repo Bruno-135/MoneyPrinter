@@ -217,3 +217,61 @@ describe('parseContent — fotografias', () => {
     expect(mau?.cover?.creditoUrl).toBeNull();
   });
 });
+
+describe('parseContent — avaliações', () => {
+  const base = {
+    hero: { headline: 'Casa do Forno', subheadline: 'Pão', badge: null },
+    about: '',
+    highlights: [],
+    contact: {},
+  };
+
+  it('lê uma avaliação com a cara do autor', () => {
+    const content = parseContent({
+      ...base,
+      reviews: [
+        {
+          texto: '  Pão quente às sete.  ',
+          autor: 'Maria',
+          nota: 5,
+          quando: 'há 2 meses',
+          autorUrl: 'https://www.google.com/maps/contrib/1',
+          autorFoto: 'https://lh3.googleusercontent.com/a/maria',
+        },
+      ],
+    });
+
+    expect(content?.reviews[0]?.texto).toBe('Pão quente às sete.');
+    expect(content?.reviews[0]?.autorFoto).toBe('https://lh3.googleusercontent.com/a/maria');
+  });
+
+  it('recusa endereços perigosos na cara e no perfil', () => {
+    const content = parseContent({
+      ...base,
+      reviews: [
+        {
+          texto: 'Bom',
+          autor: 'X',
+          autorUrl: 'javascript:alert(1)',
+          autorFoto: 'javascript:alert(1)',
+        },
+      ],
+    });
+
+    expect(content?.reviews[0]?.autorUrl).toBeNull();
+    expect(content?.reviews[0]?.autorFoto).toBeNull();
+  });
+
+  it('deita fora avaliações sem texto — na página não dizem nada', () => {
+    const content = parseContent({
+      ...base,
+      reviews: [{ autor: 'X', nota: 5 }, { texto: '   ' }, { texto: 'Boa', autor: 'Y' }],
+    });
+    expect(content?.reviews).toHaveLength(1);
+  });
+
+  it('não deixa a secção crescer sem fim', () => {
+    const muitas = Array.from({ length: 20 }, (_, i) => ({ texto: `Avaliação ${i}`, autor: 'X' }));
+    expect(parseContent({ ...base, reviews: muitas })?.reviews).toHaveLength(6);
+  });
+});

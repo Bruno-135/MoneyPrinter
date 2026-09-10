@@ -10,6 +10,7 @@ describe('lerAvaliacoes', () => {
       authorAttribution: {
         displayName: 'Maria Costa',
         uri: 'https://www.google.com/maps/contrib/456/reviews',
+        photoUri: 'https://lh3.googleusercontent.com/a/maria',
       },
     },
   ];
@@ -34,6 +35,16 @@ describe('lerAvaliacoes', () => {
   it('usa o texto original quando não há tradução', () => {
     const [a] = lerAvaliacoes([{ originalText: { text: 'Muito bom' } }]);
     expect(a?.texto).toBe('Muito bom');
+  });
+
+  it('traz a cara de quem escreveu, que é o que faz parecer uma pessoa', () => {
+    const [a] = lerAvaliacoes(bruto);
+    expect(a?.autorFoto).toBe('https://lh3.googleusercontent.com/a/maria');
+  });
+
+  it('sem cara, fica nulo em vez de indefinido', () => {
+    const [a] = lerAvaliacoes([{ text: { text: 'Bom' } }]);
+    expect(a?.autorFoto).toBeNull();
   });
 
   it('aguenta lixo sem rebentar', () => {

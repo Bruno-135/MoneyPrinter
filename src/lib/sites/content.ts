@@ -70,6 +70,8 @@ export interface SiteReview {
   nota: number | null;
   quando: string | null;
   autorUrl: string | null;
+  /** Foto de perfil de quem escreveu, quando o Google a dá. */
+  autorFoto: string | null;
 }
 
 export interface SiteContent {
@@ -296,12 +298,23 @@ function parseReview(raw: unknown): SiteReview | null {
     }
   }
 
+  let autorFoto: string | null = null;
+  if (typeof review.autorFoto === 'string') {
+    try {
+      const { protocol } = new URL(review.autorFoto);
+      if (protocol === 'https:' || protocol === 'http:') autorFoto = review.autorFoto;
+    } catch {
+      autorFoto = null;
+    }
+  }
+
   return {
     texto: review.texto.trim(),
     autor: typeof review.autor === 'string' && review.autor.trim() !== '' ? review.autor : 'Cliente do Google',
     nota: typeof review.nota === 'number' ? review.nota : null,
     quando: typeof review.quando === 'string' ? review.quando : null,
     autorUrl,
+    autorFoto,
   };
 }
 
