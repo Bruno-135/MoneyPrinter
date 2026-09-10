@@ -89,8 +89,14 @@ export function ehFamilia(valor: string): valor is Familia {
 // O acaso determinado
 // ---------------------------------------------------------------------------
 
-/** FNV-1a de 32 bits. Espalha bem e cabe em cinco linhas. */
-function baralhar(texto: string): number {
+/**
+ * FNV-1a de 32 bits. Espalha bem e cabe em cinco linhas.
+ *
+ * Exportada porque a escolha das fotografias grátis precisa exatamente da
+ * mesma coisa: um número estável tirado de um texto, para duas padarias
+ * diferentes não ficarem com a mesma fotografia de pão.
+ */
+export function numeroDaSemente(texto: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < texto.length; i += 1) {
     h ^= texto.charCodeAt(i);
@@ -154,7 +160,7 @@ function mancha(rand: () => number, cor: string, indice: number): Mancha {
  */
 export function arteSvg(familia: Familia, semente: string): string {
   const paleta = PALETAS[familia];
-  const rand = gerador(baralhar(`${familia}:${semente}`));
+  const rand = gerador(numeroDaSemente(`${familia}:${semente}`));
   const manchas = paleta.camadas.map((cor, i) => mancha(rand, cor, i));
   const angulo = Math.round(120 + rand() * 90);
 
@@ -183,7 +189,7 @@ export function arteSvg(familia: Familia, semente: string): string {
     // O grão. É o que impede isto de parecer um botão de CSS: uma fotografia
     // tem ruído, um gradiente puro não tem.
     `<filter id="grao" x="0" y="0" width="100%" height="100%">` +
-    `<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="${baralhar(semente) % 1000}"/>` +
+    `<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="${numeroDaSemente(semente) % 1000}"/>` +
     `<feColorMatrix type="saturate" values="0"/>` +
     `</filter>` +
     `</defs>` +

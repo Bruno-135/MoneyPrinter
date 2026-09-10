@@ -173,10 +173,47 @@ ${brief.trim() || '(sem indicações — usa o bom senso para este ramo)'}`,
  * dentro do prompt, e a página resultante vai para um endereço público. Guardar
  * HTML por limpar seria guardar o que quer que tenha saído dali.
  */
+/** Uma imagem que o modelo pode usar. A lista é fechada — ver abaixo porquê. */
+export interface ImagemDisponivel {
+  url: string;
+  alt: string;
+  credito: string;
+}
+
+/**
+ * As regras das imagens, para o sistema.
+ *
+ * A lista é FECHADA e diz-se ao modelo que é. Um modelo a inventar endereços
+ * de imagens produz uma página cheia de quadrados partidos — e este HTML vai
+ * ser mostrado a um comerciante como proposta, não revisto por ninguém antes.
+ * Sem imagens nenhumas, diz-se para não pôr nenhuma, o que é melhor do que
+ * arriscar.
+ */
+function imagensRegras(imagens: readonly ImagemDisponivel[]): string {
+  if (imagens.length === 0) {
+    return `- NÃO uses imagens. Não há nenhuma disponível, e um endereço inventado
+  aparece como um quadrado partido na página.`;
+  }
+
+  const lista = imagens
+    .map((imagem, i) => `  ${i + 1}. ${imagem.url}\n     descrição: ${imagem.alt}`)
+    .join('\n');
+
+  return `- Imagens: usa SÓ os endereços desta lista, tal e qual, sem inventar
+  nenhum e sem mudar uma letra. Qualquer outro endereço aparece como um
+  quadrado partido. Podes usar todas, algumas, ou repetir; escolhe pelo que
+  a descrição diz. Põe sempre o atributo alt.
+${lista}
+- No rodapé, em letra pequena, escreve exatamente esta linha de créditos das
+  fotografias (é uma exigência da licença):
+  ${imagens.map((imagem) => imagem.credito).filter((c, i, todos) => todos.indexOf(c) === i).join(' · ')}`;
+}
+
 export async function generateHtml(
   business: Business,
   brief: string,
   model: ModelId,
+  imagens: readonly ImagemDisponivel[] = [],
 ): Promise<GenerationResult<string>> {
   const client = createAiClient();
 
@@ -194,14 +231,15 @@ Escreves a página inteira em HTML.
 Formato da resposta:
 - Devolves SÓ o HTML, começando em <section> ou <div>. Sem \`\`\`, sem
   explicações antes ou depois, sem <html>, <head> ou <body>.
-- O estilo vai num único <style> no início. Não uses ficheiros externos,
-  nem tipos de letra externos, nem imagens externas.
+- O estilo vai num único <style> no início. Não uses ficheiros externos
+  nem tipos de letra externos.
 - Nada de <script>. A página é estática.
 - Tem de ler-se bem no telemóvel: uma coluna, texto grande, botões grandes.
 - O telefone é um link <a href="tel:...">. Se houver WhatsApp, um link
   <a href="https://wa.me/...">.
 - Escolhe as cores a partir do pedido. Garante contraste: texto escuro sobre
-  fundo claro, ou o contrário. Nada de cinzento sobre bege.`,
+  fundo claro, ou o contrário. Nada de cinzento sobre bege.
+${imagensRegras(imagens)}`,
       messages: [
         {
           role: 'user',

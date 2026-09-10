@@ -7,7 +7,7 @@ import { getServerEnv } from '@/lib/env';
 import { arteUrl } from '@/lib/sites/imagens/arte';
 import { consultasParaRamo } from '@/lib/sites/imagens/consultas';
 import { chaveConsulta, procurarFotosGratis } from '@/lib/sites/imagens/stock';
-import { usarFotoGratis, usarImagemGerada } from '../../site-edit-actions';
+import { escolherFotosPorMim, usarFotoGratis, usarImagemGerada } from '../../site-edit-actions';
 
 /**
  * Imagens da página: a gerada, as do banco grátis, e a que lá está.
@@ -100,14 +100,29 @@ export default async function ImagensPage({ params, searchParams }: Props) {
                   ? `Fotografia de banco. Crédito: ${content.cover.credito}`
                   : 'Fotografia carregada por ti.'}
             </p>
-            {!usaGerada && (
-              <form action={usarImagemGerada}>
+            <div className="flex flex-wrap items-center gap-4">
+              <form action={escolherFotosPorMim}>
                 <input type="hidden" name="siteId" value={id} />
-                <button type="submit" className="underline underline-offset-4 opacity-70">
-                  Voltar à imagem gerada
+                <button
+                  type="submit"
+                  className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white"
+                >
+                  Escolher fotografias por mim
                 </button>
               </form>
-            )}
+              {!usaGerada && (
+                <form action={usarImagemGerada}>
+                  <input type="hidden" name="siteId" value={id} />
+                  <button type="submit" className="underline underline-offset-4 opacity-70">
+                    Voltar à imagem gerada
+                  </button>
+                </form>
+              )}
+            </div>
+            <p className="text-xs opacity-50">
+              Enche a capa e a galeria com fotografias do ramo, sem custo nenhum. Só mexe no que
+              estiver vazio.
+            </p>
           </div>
         </div>
       </section>

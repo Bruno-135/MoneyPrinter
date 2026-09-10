@@ -10,6 +10,8 @@ import { DEFAULT_MODEL, isGenerationMode, isModelId } from '@/lib/ai/models';
 import { generateFields, generateHtml } from '@/lib/ai/generate';
 import { describeAiError } from '@/lib/ai/client';
 import type { AiActionState } from '@/lib/ai/action-state';
+import { getServerEnv } from '@/lib/env';
+import { escolherFotosGratis } from '@/lib/sites/imagens/escolher';
 
 /**
  * Geração de páginas por IA, a partir do ecrã.
@@ -54,7 +56,23 @@ export async function generateWithAi(
 
   try {
     if (mode === 'html') {
-      const result = await generateHtml(business, brief, model);
+      // O modelo desenha a página, mas não inventa imagens: recebe uma lista
+      // fechada de endereços reais. Sem isto, ou a página sai sem fotografia
+      // nenhuma, ou sai com endereços inventados — quadrados partidos numa
+      // proposta que vai ser mostrada a um comerciante.
+      const escolhidas = await escolherFotosGratis(supabase, {
+        categorySlug: business.business_category,
+        semente: loaded.site.public_code,
+        nome: business.name,
+        chaveApi: getServerEnv().PEXELS_API_KEY,
+        quantasGaleria: 5,
+      });
+
+      const imagens = [escolhidas.capa, ...escolhidas.galeria]
+        .filter((foto): foto is NonNullable<typeof foto> => foto !== null)
+        .map((foto) => ({ url: foto.url, alt: foto.alt, credito: foto.credito ?? '' }));
+
+      const result = await generateHtml(business, brief, model, imagens);
 
       await saveAiGeneration(supabase, siteId, {
         // O conteúdo em campos fica como está: se mais tarde se deitar fora o
@@ -73,6 +91,20 @@ export async function generateWithAi(
       // O que o modelo escreveu entra nos campos; os FACTOS ficam como estavam.
       // O telefone, a morada, o selo da avaliação e o nome vêm do Google — não
       // se deixam reescrever por um modelo, por muito bem que escreva.
+      // Fotografias grátis, escolhidas sozinhas. Quem carrega em "Gerar com IA"
+      // quer a página pronta, e uma página sem imagens não se mostra a
+      // ninguém. Só se mexe no que está VAZIO: uma capa que já lá esteja é
+      // uma escolha de alguém, e uma geração não desfaz escolhas.
+      const fotos =
+        loaded.content.cover === null || loaded.content.gallery.length === 0
+          ? await escolherFotosGratis(supabase, {
+              categorySlug: business.business_category,
+              semente: loaded.site.public_code,
+              nome: business.name,
+              chaveApi: getServerEnv().PEXELS_API_KEY,
+            })
+          : null;
+
       const content: SiteContent = {
         ...loaded.content,
         hero: {
@@ -81,6 +113,9 @@ export async function generateWithAi(
         },
         about: result.value.about,
         highlights: result.value.highlights,
+        cover: loaded.content.cover ?? fotos?.capa ?? null,
+        gallery:
+          loaded.content.gallery.length > 0 ? loaded.content.gallery : (fotos?.galeria ?? []),
       };
 
       await saveAiGeneration(supabase, siteId, {

@@ -8,6 +8,8 @@ import { updateSiteContent } from '@/lib/sites/repository';
 import type { SiteContent, SiteHighlight, SitePhoto } from '@/lib/sites/content';
 import { isFontId, isPaletteId, type SiteTheme } from '@/lib/sites/theme';
 import { PHOTO_BUCKET } from '@/lib/sites/photos';
+import { getServerEnv } from '@/lib/env';
+import { escolherFotosGratis } from '@/lib/sites/imagens/escolher';
 
 /**
  * Gravação do editor.
@@ -266,6 +268,54 @@ export async function usarImagemGerada(formData: FormData): Promise<void> {
     loaded.theme,
     loaded.site.whatsapp_greeting,
   );
+
+  revalidatePath(`/painel/site/${siteId}/imagens`);
+  revalidatePath(`/painel/site/${siteId}/editar`);
+  revalidatePath(`/painel/site/${siteId}/previa`);
+}
+
+/**
+ * Enche a página de fotografias grátis sem perguntar mais nada.
+ *
+ * O mesmo que a geração por IA faz sozinha, mas à parte e de graça: não passa
+ * por modelo nenhum, e serve para as páginas que já foram geradas antes de
+ * isto existir. Carregar em "Gerar com IA" outra vez só para ter imagens seria
+ * pagar uma chamada por uma coisa que não custa nada.
+ *
+ * Só preenche o que está vazio. Uma capa escolhida à mão é uma decisão de
+ * alguém, e um botão não desfaz decisões.
+ */
+export async function escolherFotosPorMim(formData: FormData): Promise<void> {
+  const { supabase } = await requireSession();
+
+  const siteId = text(formData, 'siteId');
+  if (!siteId) return;
+
+  const loaded = await loadSite(supabase, siteId);
+  if (!loaded) return;
+
+  const { data: comercio } = await supabase
+    .from('businesses')
+    .select('name, business_category')
+    .eq('id', loaded.site.business_id)
+    .maybeSingle();
+
+  const escolhidas = await escolherFotosGratis(supabase, {
+    categorySlug: comercio?.business_category ?? null,
+    semente: loaded.site.public_code,
+    nome: comercio?.name ?? loaded.content.hero.headline,
+    chaveApi: getServerEnv().PEXELS_API_KEY,
+  });
+
+  if (!escolhidas.capa && escolhidas.galeria.length === 0) return;
+
+  const content: SiteContent = {
+    ...loaded.content,
+    cover: loaded.content.cover ?? escolhidas.capa,
+    gallery: loaded.content.gallery.length > 0 ? loaded.content.gallery : escolhidas.galeria,
+  };
+
+  await updateSiteContent(supabase, siteId, content, loaded.theme, loaded.site.whatsapp_greeting);
 
   revalidatePath(`/painel/site/${siteId}/imagens`);
   revalidatePath(`/painel/site/${siteId}/editar`);
