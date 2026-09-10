@@ -94,13 +94,35 @@ function TituloSeccao({ children }: { children: ReactNode }) {
   );
 }
 
-function Photo({ photo, className }: { photo: SitePhoto; className?: string }) {
+function Photo({
+  photo,
+  className,
+  eager = false,
+}: {
+  photo: SitePhoto;
+  className?: string;
+  /**
+   * A capa carrega-se já, as da galeria só quando chegam ao ecrã.
+   *
+   * Não é afinação: uma imagem adiada pode ainda não ter chegado quando o
+   * browser começa a imprimir, e a primeira página do PDF sai sem a
+   * fotografia. É exatamente o que acontecia.
+   */
+  eager?: boolean;
+}) {
   // <img> e não next/image: os ficheiros vêm do armazenamento do Supabase em
   // tempo de execução e o otimizador do Next teria de os re-servir a cada
   // visita — custo e latência sem retorno, numa foto que já foi redimensionada
   // no carregamento. Na impressão, o otimizador nem sequer corre.
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={photo.url} alt={photo.alt} className={className} loading="lazy" />;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={photo.url}
+      alt={photo.alt}
+      className={className}
+      loading={eager ? 'eager' : 'lazy'}
+    />
+  );
 }
 
 export function SiteRender({
@@ -199,22 +221,73 @@ export function SiteRender({
           uma moldura para o PDF, onde a altura do ecrã é a do conteúdo todo e
           um herói medido em `vh` ficaria com o tamanho de uma casa. */}
       <Sheet mode={mode}>
-        <header className="relative h-[440px] overflow-hidden sm:h-[560px]">
-          <Photo photo={capa} className="absolute inset-0 h-full w-full object-cover" />
+        {/*
+          Duas montagens do mesmo herói, e não é capricho.
+
+          No ecrã, a fotografia é o fundo e o texto vive por cima dela. Em
+          papel isso é frágil: uma imagem posicionada em absoluto e um véu
+          feito de gradiente são as duas primeiras coisas que um motor de
+          impressão deita fora — e o telemóvel, que é de onde isto costuma
+          ser impresso, não imprime com o mesmo motor que desenha o ecrã. O
+          resultado era uma primeira página em branco com o texto branco
+          invisível lá dentro.
+
+          Na impressão, portanto, empilha-se: a fotografia como imagem normal
+          e o texto por baixo, em tinta escura sobre o papel. Nem posicionamento
+          absoluto, nem gradientes, nem texto branco — porque texto branco só se
+          lê se o fundo escuro também for impresso, e é precisamente o fundo que
+          se perde quando alguma coisa corre mal.
+        */}
+        <header
+          className={
+            mode === 'print'
+              ? ''
+              : 'relative h-[440px] overflow-hidden bg-[#141414] sm:h-[560px]'
+          }
+        >
+          <Photo
+            photo={capa}
+            eager
+            className={
+              mode === 'print'
+                ? 'h-[70mm] w-full object-cover'
+                : 'absolute inset-0 h-full w-full object-cover'
+            }
+          />
           {/* O véu escuro garante que o texto branco se lê em CIMA de qualquer
               fotografia que o comerciante mande, clara ou escura. */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/55 to-black/80" />
+          {mode !== 'print' && (
+            <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/55 to-black/80" />
+          )}
 
-          <div className="absolute inset-x-0 bottom-0 flex flex-col items-start gap-4 px-6 pb-10 text-white sm:px-10 sm:pb-14">
+          <div
+            className={
+              mode === 'print'
+                ? 'flex flex-col items-start gap-4 px-8 py-9'
+                : 'absolute inset-x-0 bottom-0 flex flex-col items-start gap-4 px-6 pb-10 text-white sm:px-10 sm:pb-14'
+            }
+          >
             {content.hero.badge && (
-              <p className="rounded-full border border-white/30 bg-white/15 px-3.5 py-1.5 text-xs font-semibold tracking-wide">
+              <p
+                className={
+                  mode === 'print'
+                    ? 'rounded-full border border-[var(--site-line)] px-3.5 py-1.5 text-xs font-semibold tracking-wide'
+                    : 'rounded-full border border-white/30 bg-white/15 px-3.5 py-1.5 text-xs font-semibold tracking-wide'
+                }
+              >
                 {content.hero.badge}
               </p>
             )}
             <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
               {content.hero.headline}
             </h1>
-            <p className="max-w-xl text-base text-white/85 sm:text-lg">
+            <p
+              className={
+                mode === 'print'
+                  ? 'max-w-xl text-base opacity-75 sm:text-lg'
+                  : 'max-w-xl text-base text-white/85 sm:text-lg'
+              }
+            >
               {content.hero.subheadline}
             </p>
 
