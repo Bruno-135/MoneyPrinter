@@ -26,15 +26,23 @@ import { lerFotosGuardadas, LARGURA_FOTO } from '@/lib/places/fotos';
 
 type Db = SupabaseClient<Database>;
 
-interface FotoDeCartao {
+export interface FotoDeCartao {
   url: string;
   /** true quando é a loja a sério, e não o fundo desenhado. */
   real: boolean;
 }
 
+/**
+ * A fotografia de cada comércio, só do que já está pago e guardado.
+ *
+ * Pede-se apenas o `id` de propósito: além dos três cartões do painel, a
+ * ficha do comércio precisa exatamente do mesmo — a foto em cache ou nada — e
+ * duas funções a fazer isto seriam duas maneiras de gastar dinheiro sem dar
+ * por isso.
+ */
 export async function fotosDosDestaques(
   db: Db,
-  destaques: readonly RankedBusiness[],
+  destaques: readonly { id: string }[],
 ): Promise<Map<string, FotoDeCartao>> {
   const porComercio = new Map<string, FotoDeCartao>();
   if (destaques.length === 0) return porComercio;

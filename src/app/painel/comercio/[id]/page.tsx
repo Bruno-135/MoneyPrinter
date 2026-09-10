@@ -12,6 +12,8 @@ import { publicEnv } from '@/lib/env';
 import { createSite, publish, unpublish, removeSite } from '../../site-actions';
 import { StageSelect } from '../../stage-select';
 import { saveNotes } from '../../deal-actions';
+import { fotosDosDestaques } from '../../destaques';
+import { arteUrl, familiaParaRamo } from '@/lib/sites/imagens/arte';
 
 export const dynamic = 'force-dynamic';
 
@@ -52,11 +54,18 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
   if (!business) notFound();
 
-  const [deal, history, sites] = await Promise.all([
+  const [deal, history, sites, fotos] = await Promise.all([
     getDeal(supabase, id),
     getStageHistory(supabase, id),
     listSites(supabase, id),
+    // Só o que já está em cache. Abrir uma ficha não pode custar dinheiro:
+    // esta página abre-se dezenas de vezes por dia e é a mesma regra dos
+    // cartões do painel.
+    fotosDosDestaques(supabase, [{ id }]),
   ]);
+
+  const foto = fotos.get(id);
+  const capa = foto?.url ?? arteUrl(familiaParaRamo(business.business_category), id);
 
   const stage = deal?.stage ?? 'new';
   const whatsapp = whatsappUrl(business.phone_e164, firstContactMessage(business.name));
@@ -66,99 +75,143 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-12">
-      <div>
+      {/* ---------------- Cabeçalho da ficha ----------------
+          Uma caixa só, com a fotografia por cima: é o mesmo comércio que se
+          viu no cartão do painel, e ver a loja outra vez ao abrir a ficha
+          diz num instante que se está no sítio certo. A fotografia sai do
+          cache — nunca se vai à Google por causa de uma ficha aberta.
+
+          Os três factos que estavam em três caixas soltas (telefone,
+          presença online, avaliações) passaram para a tira do fundo desta.
+          Não se perdeu nada: eram três caixas a dizer uma linha cada. */}
+      <div className="flex flex-col gap-4">
         <Link href="/painel" className="text-sm underline underline-offset-4 opacity-60">
           &larr; Voltar à lista
         </Link>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight">{business.name}</h1>
-        <p className="mt-1 opacity-65">
-          {findCategory(business.business_category)?.label ?? business.business_category}
-          {business.formatted_address ? ` · ${business.formatted_address}` : ''}
-        </p>
 
-        <div className="mt-4 flex flex-wrap gap-2.5 text-sm">
-          <a
-            href={googleMapsUrl({
-              googlePlaceId: business.google_place_id,
-              name: business.name,
-              address: business.formatted_address,
-              latitude: business.latitude,
-              longitude: business.longitude,
-            })}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-md border border-black/15 px-3 py-2 font-medium hover:border-brand-500 dark:border-white/15"
-          >
-            Ver no Google Maps ↗
-          </a>
+        <section className="overflow-hidden rounded-2xl border border-black/10 dark:border-white/10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={capa}
+            alt={foto?.real ? `Fotografia de ${business.name}` : ''}
+            className="h-36 w-full bg-black/10 object-cover sm:h-48"
+          />
 
-          {business.phone_e164 && (
-            <a
-              href={`tel:${business.phone_e164}`}
-              className="rounded-md border border-black/15 px-3 py-2 font-medium hover:border-brand-500 dark:border-white/15"
-            >
-              Ligar {business.phone_e164}
-            </a>
-          )}
+          <div className="flex flex-col gap-4 p-5 sm:p-6">
+            {/* Sem `flex-wrap`: o score tem de ficar no canto em qualquer
+                largura. A embrulhar, caía para debaixo da morada e lia-se
+                como se fosse mais um dado dela. O nome encolhe (`min-w-0`)
+                e parte em linhas, que é o que deve ceder. */}
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{business.name}</h1>
+                <p className="mt-1 text-sm opacity-65">
+                  {findCategory(business.business_category)?.label ?? business.business_category}
+                  {business.formatted_address ? ` · ${business.formatted_address}` : ''}
+                </p>
+              </div>
 
-          {whatsapp && (
-            <a
-              href={whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-md bg-emerald-600 px-3 py-2 font-medium text-white hover:bg-emerald-700"
-            >
-              WhatsApp
-            </a>
-          )}
-        </div>
+              {/* O score encostado ao nome, e não numa secção lá em baixo: é
+                  o número que decide se vale a pena o telefonema, portanto
+                  tem de estar à vista antes de se carregar em nada. A conta
+                  detalhada continua no fim da página. */}
+              <div className="flex shrink-0 flex-col items-end">
+                <span className="text-3xl leading-none font-semibold tabular-nums">{business.score}</span>
+                <span className="text-xs opacity-55">{scoreLabel(business.score)}</span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2.5 text-sm">
+              <a
+                href={googleMapsUrl({
+                  googlePlaceId: business.google_place_id,
+                  name: business.name,
+                  address: business.formatted_address,
+                  latitude: business.latitude,
+                  longitude: business.longitude,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md border border-black/15 px-3 py-2 font-medium hover:border-brand-500 dark:border-white/15"
+              >
+                Ver no Google Maps ↗
+              </a>
+
+              {business.phone_e164 && (
+                <a
+                  href={`tel:${business.phone_e164}`}
+                  className="rounded-md border border-black/15 px-3 py-2 font-medium hover:border-brand-500 dark:border-white/15"
+                >
+                  Ligar {business.phone_e164}
+                </a>
+              )}
+
+              {whatsapp && (
+                <a
+                  href={whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-md bg-emerald-600 px-3 py-2 font-medium text-white hover:bg-emerald-700"
+                >
+                  WhatsApp
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Tira de factos. Divisórias em vez de caixas: é a mesma
+              informação com menos moldura à volta. */}
+          <dl className="grid grid-cols-1 border-t border-black/10 sm:grid-cols-3 dark:border-white/10">
+            <div className="border-b border-black/10 px-5 py-3.5 sm:border-r sm:border-b-0 dark:border-white/10">
+              <dt className="text-xs tracking-wide uppercase opacity-55">Telefone</dt>
+              {/* Um por linha. Lado a lado, o +351253612345 e o 253 612 345
+                  liam-se como dois telefones diferentes — e são o mesmo. */}
+              <dd className="mt-0.5">
+                {business.phone_e164 ? (
+                  <a
+                    href={`tel:${business.phone_e164}`}
+                    className="block font-semibold whitespace-nowrap text-brand-600"
+                  >
+                    {business.phone_e164}
+                  </a>
+                ) : (
+                  <span className="opacity-50">&mdash;</span>
+                )}
+                {business.phone_raw && business.phone_raw !== business.phone_e164 && (
+                  <span className="block text-sm opacity-55">{business.phone_raw}</span>
+                )}
+              </dd>
+            </div>
+
+            <div className="border-b border-black/10 px-5 py-3.5 sm:border-r sm:border-b-0 dark:border-white/10">
+              <dt className="text-xs tracking-wide uppercase opacity-55">Presença online</dt>
+              <dd className="mt-0.5 flex flex-wrap items-baseline gap-x-2">
+                <span className="font-semibold">{SITE_LABEL[business.website_kind ?? 'none']}</span>
+                {business.website_url && (
+                  <a
+                    href={business.website_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-w-0 truncate text-sm text-brand-600 underline underline-offset-4"
+                  >
+                    {business.website_host ?? business.website_url}
+                  </a>
+                )}
+              </dd>
+            </div>
+
+            <div className="px-5 py-3.5">
+              <dt className="text-xs tracking-wide uppercase opacity-55">Avaliações</dt>
+              <dd className="mt-0.5 font-semibold tabular-nums">
+                {business.rating !== null ? `${business.rating.toFixed(1).replace('.', ',')} ★` : '—'}
+                {business.reviews_count !== null && (
+                  <span className="ml-1.5 text-sm font-normal opacity-60">({business.reviews_count})</span>
+                )}
+              </dd>
+            </div>
+          </dl>
+        </section>
       </div>
-
-      {/* ---------------- Contacto e estado ---------------- */}
-      <section className="grid gap-6 sm:grid-cols-3">
-        <div className="rounded-lg border border-black/10 p-4 dark:border-white/10">
-          <p className="text-xs uppercase tracking-wide opacity-55">Telefone</p>
-          {business.phone_e164 ? (
-            <a href={`tel:${business.phone_e164}`} className="mt-1 block text-lg font-semibold text-brand-600">
-              {business.phone_e164}
-            </a>
-          ) : (
-            <p className="mt-1 text-lg opacity-50">—</p>
-          )}
-          {business.phone_raw && business.phone_raw !== business.phone_e164 && (
-            <p className="mt-0.5 text-sm opacity-55">{business.phone_raw}</p>
-          )}
-        </div>
-
-        <div className="rounded-lg border border-black/10 p-4 dark:border-white/10">
-          <p className="text-xs uppercase tracking-wide opacity-55">Presença online</p>
-          <p className="mt-1.5">
-            <span className="rounded bg-black/[0.06] px-2 py-1 text-sm font-medium dark:bg-white/10">
-              {SITE_LABEL[business.website_kind ?? 'none']}
-            </span>
-          </p>
-          {business.website_url && (
-            <a
-              href={business.website_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 block truncate text-sm text-brand-600 underline underline-offset-4"
-            >
-              {business.website_host ?? business.website_url}
-            </a>
-          )}
-        </div>
-
-        <div className="rounded-lg border border-black/10 p-4 dark:border-white/10">
-          <p className="text-xs uppercase tracking-wide opacity-55">Avaliações</p>
-          <p className="mt-1 text-lg font-semibold tabular-nums">
-            {business.rating !== null ? `${business.rating}★` : '—'}
-            {business.reviews_count !== null && (
-              <span className="ml-1.5 text-sm font-normal opacity-60">({business.reviews_count})</span>
-            )}
-          </p>
-        </div>
-      </section>
 
       {/* ---------------- Negociação ---------------- */}
       <section className="flex flex-col gap-4 rounded-lg border border-black/10 p-5 dark:border-white/10">
@@ -377,9 +430,10 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
       {/* ---------------- Score ---------------- */}
       <section className="flex flex-col gap-3">
+        {/* O número já está no cabeçalho. Aqui fica a conta de como se
+            chegou lá, que é o que responde a "porquê 74 e não 90". */}
         <h2 className="text-lg font-semibold tracking-tight">
-          Score {business.score}/100{' '}
-          <span className="text-base font-normal opacity-55">· {scoreLabel(business.score)}</span>
+          Como se chegou aos {business.score} pontos
         </h2>
         <ul className="flex flex-col gap-1.5">
           {Object.entries(breakdown).map(([factor, detail]) => (

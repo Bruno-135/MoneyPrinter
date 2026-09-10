@@ -421,7 +421,9 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                       </span>
                     </td>
                     <td className="px-4 py-3 tabular-nums opacity-70">
-                      {b.rating !== null ? `${b.rating}★ (${b.reviewsCount ?? 0})` : '—'}
+                      {b.rating !== null
+                        ? `${b.rating.toFixed(1).replace('.', ',')} ★ (${b.reviewsCount ?? 0})`
+                        : '—'}
                     </td>
                     <td className="px-4 py-3 tabular-nums opacity-70">
                       {b.phone ? (
