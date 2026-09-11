@@ -219,11 +219,31 @@ export function calculateScore(business: ScorableBusiness): ScoreResult {
   };
 }
 
-/** Rótulo curto para a lista. */
+/**
+ * Rótulo curto para a lista.
+ *
+ * Os cortes eram 75/55/35, escolhidos antes de haver dados nenhuns. Quando
+ * apareceram 1888 prospetos a sério, viu-se o que davam: 53% "muito quente",
+ * 39% "quente", 4% "morno" e zero "frio". Um rótulo que se aplica a metade da
+ * lista não separa nada — ler "muito quente" ao lado de mil comércios é o mesmo
+ * que não ler rótulo nenhum.
+ *
+ * A pontuação em si estava bem: espalha-se de 45 a 100 e distingue. O que
+ * estava mal era onde se punham as fronteiras.
+ *
+ * Com 90/75/60 a mesma lista dá 22% / 32% / 31% / 13%, que é o que se quer:
+ * "muito quente" passa a ser o quinto do topo, e há um fundo de lista a que se
+ * pode chamar frio sem mentir.
+ *
+ * Os números saem da distribuição real de Braga, Porto e do Brasil em setembro
+ * de 2026. Com outras cidades e outros ramos hão de deslizar, e nessa altura
+ * revê-se — é uma escala de trabalho, não uma lei da natureza. O rótulo
+ * calcula-se na leitura, portanto mudá-lo não obriga a repontuar nada.
+ */
 export function scoreLabel(score: number): string {
-  if (score >= 75) return 'muito quente';
-  if (score >= 55) return 'quente';
-  if (score >= 35) return 'morno';
+  if (score >= 90) return 'muito quente';
+  if (score >= 75) return 'quente';
+  if (score >= 60) return 'morno';
   if (score > 0) return 'frio';
   return 'sem interesse';
 }

@@ -158,11 +158,22 @@ describe('calculateScore — o caso ideal', () => {
 });
 
 describe('scoreLabel', () => {
-  it('atribui os rótulos por escalão', () => {
+  it('acerta nas fronteiras, que é onde um corte mal escrito se esconde', () => {
     expect(scoreLabel(90)).toBe('muito quente');
-    expect(scoreLabel(60)).toBe('quente');
-    expect(scoreLabel(40)).toBe('morno');
-    expect(scoreLabel(10)).toBe('frio');
+    expect(scoreLabel(89)).toBe('quente');
+    expect(scoreLabel(75)).toBe('quente');
+    expect(scoreLabel(74)).toBe('morno');
+    expect(scoreLabel(60)).toBe('morno');
+    expect(scoreLabel(59)).toBe('frio');
+    expect(scoreLabel(1)).toBe('frio');
+    expect(scoreLabel(0)).toBe('sem interesse');
+  });
+
+  it('atribui os rótulos por escalão', () => {
+    expect(scoreLabel(95)).toBe('muito quente');
+    expect(scoreLabel(80)).toBe('quente');
+    expect(scoreLabel(65)).toBe('morno');
+    expect(scoreLabel(40)).toBe('frio');
     expect(scoreLabel(0)).toBe('sem interesse');
   });
 });
