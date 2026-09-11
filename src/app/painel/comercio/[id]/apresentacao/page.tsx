@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { listSites } from '@/lib/sites/repository';
 import { publicEnv } from '@/lib/env';
 import { findCategory } from '@/lib/places/categories';
-import { PrintButton } from './print-button';
+import { BotaoImprimir } from '@/components/botao-imprimir';
 
 /**
  * Apresentação para levar à reunião, feita para ser guardada em PDF.
@@ -59,7 +59,7 @@ export default async function ApresentacaoPage({ params }: { params: Promise<{ i
         <a href={`/painel/comercio/${id}`} className="text-sm underline underline-offset-4 opacity-60">
           &larr; Voltar
         </a>
-        <PrintButton />
+        <BotaoImprimir label="Guardar em PDF" />
       </div>
 
       <main className="folha mx-auto my-8 max-w-3xl rounded-lg border border-black/10 bg-white p-12 text-[#17150f] shadow-sm dark:border-white/10">

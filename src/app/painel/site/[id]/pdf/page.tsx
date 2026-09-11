@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { loadSite } from '@/lib/sites/load';
 import { SiteRender } from '@/components/site/site-render';
 import { CustomHtmlSite } from '@/components/site/custom-html';
-import { PrintButton } from './print-button';
+import { BotaoImprimir } from '@/components/botao-imprimir';
 
 /**
  * O site inteiro em PDF, uma secção por folha, num ficheiro só.
@@ -128,7 +128,7 @@ export default async function SitePdfPage({ params, searchParams }: Props) {
             &larr; Voltar à pré-visualização
           </Link>
           <div className="ml-auto flex items-center gap-3">
-            <PrintButton />
+            <BotaoImprimir />
           </div>
         </div>
 
