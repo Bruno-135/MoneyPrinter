@@ -11,6 +11,8 @@
  * isso na `viewport`.
  */
 
+import { nomeDoPais } from './paises';
+
 export interface CityMatch {
   /** Identificador do sítio no Google, guardado para referência. */
   placeId: string;
@@ -100,6 +102,5 @@ export function normalizeCityQuery(query: string): string {
  * O que se quer aqui é sempre o sítio, nunca o negócio.
  */
 export function cityQueryText(query: string, countryCode: string): string {
-  const country = countryCode.toUpperCase() === 'BR' ? 'Brasil' : 'Portugal';
-  return `cidade de ${query.trim()}, ${country}`;
+  return `cidade de ${query.trim()}, ${nomeDoPais(countryCode)}`;
 }

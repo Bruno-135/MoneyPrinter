@@ -13,6 +13,7 @@ import {
 } from '@/lib/scoring/rank';
 import { listSearchBatches } from '@/lib/places/searches';
 import { CATEGORIES, findCategory } from '@/lib/places/categories';
+import { ehCodigoPais, nomeDoPais } from '@/lib/places/paises';
 import {
   DEFAULT_SORT,
   SORTS,
@@ -41,6 +42,8 @@ interface PainelProps {
     procura?: string;
     ordem?: string;
     ramo?: string;
+    pais?: string;
+    pagina?: string;
   }>;
 }
 
@@ -61,6 +64,10 @@ interface PainelFilters {
   estado: string[];
   /** Ramos marcados. Vazio = todos. */
   ramo: string[];
+  /** País escolhido ('PT', 'BR'). Vazio = todos. */
+  pais: string;
+  /** 'sim' = já tem landing page, 'nao' = ainda não. Vazio = todos. */
+  pagina: string;
   procura: string | null;
   ordem: string;
 }
@@ -78,11 +85,28 @@ function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Rou
   if (next.procura) params.set('procura', next.procura);
   if (next.ordem !== DEFAULT_SORT) params.set('ordem', next.ordem);
   if (next.ramo.length > 0) params.set('ramo', next.ramo.join(','));
+  if (next.pais) params.set('pais', next.pais);
+  if (next.pagina) params.set('pagina', next.pagina);
   if (next.estado.length > 0) params.set('estado', next.estado.join(','));
   if (next.site.length > 0) params.set('site', next.site.join(','));
 
   const query = params.toString();
   return (query ? `/painel?${query}` : '/painel') as Route;
+}
+
+/**
+ * Quantos há de um valor numa faceta.
+ *
+ * `has_site` chega da vista como booleano e o contador das facetas guarda tudo
+ * como texto, portanto os valores a procurar são 'true' e 'false' — o que é
+ * feio de ler e é a razão de isto ter nome em vez de estar escrito à mão em
+ * cada sítio.
+ */
+function quantosNaFaceta(
+  facet: readonly { value: string; count: number }[],
+  ...valores: string[]
+): number {
+  return facet.filter((f) => valores.includes(f.value)).reduce((soma, f) => soma + f.count, 0);
 }
 
 export default async function PainelPage({ searchParams }: PainelProps) {
@@ -114,29 +138,67 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   // escolha, e não há como voltar atrás lá de dentro.
   const ramos = readList(params.ramo, (v) => CATEGORIES.some((c) => c.slug === v));
 
-  const semRamo = { kinds, stages: estados, regionId: procura };
-  const semEstado = { kinds, categories: ramos, regionId: procura };
-  const semSite = { stages: estados, categories: ramos, regionId: procura };
+  // O país é uma escolha só, e não uma lista: trabalha-se um mercado de cada
+  // vez, e "Portugal e Brasil ao mesmo tempo" é o que já se vê sem filtro
+  // nenhum.
+  const pais = ehCodigoPais(params.pais) ? params.pais : '';
+  const paises = pais ? [pais] : [];
+
+  // 'sim' / 'nao' e não um booleano: um booleano teria de significar ao mesmo
+  // tempo "sem página" e "não filtrar por isto", e é nesse tipo de confusão que
+  // um filtro passa a mentir.
+  const pagina = params.pagina === 'sim' || params.pagina === 'nao' ? params.pagina : '';
+  const temPagina = pagina === '' ? null : pagina === 'sim';
+
+  // O país e a página entram em TODAS as facetas, inclusive nas suas próprias:
+  // não são funis de coluna a calcular-se uns aos outros, são o âmbito dentro
+  // do qual as colunas se contam.
+  const ambito = { countries: paises, hasSite: temPagina };
+
+  const semRamo = { ...ambito, kinds, stages: estados, regionId: procura };
+  const semEstado = { ...ambito, kinds, categories: ramos, regionId: procura };
+  const semSite = { ...ambito, stages: estados, categories: ramos, regionId: procura };
+
+  // A lista de países oferecida sai dos dados e não de uma constante: não vale
+  // a pena oferecer "Brasil" a quem só tem comércios portugueses guardados.
+  const semPais = { hasSite: temPagina, kinds, stages: estados, categories: ramos, regionId: procura };
+  const semPagina = { countries: paises, kinds, stages: estados, categories: ramos, regionId: procura };
 
   // As duas últimas são para a fila de números e não para os funis: contam
   // dentro da procura escolhida e fora dos filtros das colunas, para servirem
   // de ponto de referência estável enquanto se mexe na tabela.
-  const soProcura = { regionId: procura };
+  // O país entra aqui porque é âmbito, tal como a procura. O filtro da página
+  // não: esse é trabalho em curso, e os números têm de continuar a dizer o
+  // mesmo enquanto se mexe nele.
+  const soProcura = { regionId: procura, countries: paises };
 
-  const [ramosFacet, estadosFacet, sitesFacet, sitesTotal, estadosTotal] = await Promise.all([
-    listFacet(supabase, 'business_category', semRamo),
-    listFacet(supabase, 'stage', semEstado),
-    listFacet(supabase, 'website_kind', semSite),
-    listFacet(supabase, 'website_kind', soProcura),
-    listFacet(supabase, 'stage', soProcura),
-  ]);
+  const [ramosFacet, estadosFacet, sitesFacet, paisesFacet, paginaFacet, sitesTotal, estadosTotal] =
+    await Promise.all([
+      listFacet(supabase, 'business_category', semRamo),
+      listFacet(supabase, 'stage', semEstado),
+      listFacet(supabase, 'website_kind', semSite),
+      listFacet(supabase, 'country_code', semPais),
+      listFacet(supabase, 'has_site', semPagina),
+      listFacet(supabase, 'website_kind', soProcura),
+      listFacet(supabase, 'stage', soProcura),
+    ]);
 
-  const here: PainelFilters = { site: sites, estado: estados, ramo: ramos, procura, ordem };
+  const here: PainelFilters = {
+    site: sites,
+    estado: estados,
+    ramo: ramos,
+    pais,
+    pagina,
+    procura,
+    ordem,
+  };
 
   const { businesses, total } = await rankBusinesses(supabase, {
     kinds,
     stages: estados,
     categories: ramos,
+    countries: paises,
+    hasSite: temPagina,
     regionId: procura,
     sort: ordem,
     limit: 100,
@@ -149,9 +211,8 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     ordem === 'score' ? businesses.filter((b) => b.stage === 'new').slice(0, 3) : [];
   const fotosDestaques = await fotosDosDestaques(supabase, destaques);
 
-  /** Quantos há de um valor, na contagem que ignora os funis das colunas. */
-  const quantos = (facet: readonly { value: string; count: number }[], ...valores: string[]) =>
-    facet.filter((f) => valores.includes(f.value)).reduce((soma, f) => soma + f.count, 0);
+  /** Atalho para a contagem que ignora os funis das colunas. */
+  const quantos = quantosNaFaceta;
 
   // Os estados do meio do funil, num número só. Separá-los daria cinco cartões
   // com dois ou três cada, que é ruído: o que interessa saber de relance é
@@ -273,6 +334,26 @@ export default async function PainelPage({ searchParams }: PainelProps) {
         */}
         <FilterBar
           groups={[
+            // O país vem primeiro porque é o filtro mais largo de todos: muda
+            // o mercado, e tudo o resto se lê dentro dele. Só aparece se
+            // houver mais do que um país guardado — uma caixa com uma opção só
+            // é uma caixa a ocupar espaço.
+            ...(paisesFacet.length > 1
+              ? [
+                  {
+                    label: 'País',
+                    current: pais,
+                    options: [
+                      { value: '', label: 'Todos os países', href: painelHref(here, { pais: '' }) },
+                      ...paisesFacet.map((f) => ({
+                        value: f.value,
+                        label: `${nomeDoPais(f.value)} (${f.count})`,
+                        href: painelHref(here, { pais: f.value }),
+                      })),
+                    ],
+                  },
+                ]
+              : []),
             ...(batches.length > 0
               ? [
                   {
@@ -289,6 +370,23 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                   },
                 ]
               : []),
+            {
+              label: 'Landing page',
+              current: pagina,
+              options: [
+                { value: '', label: 'Com e sem página', href: painelHref(here, { pagina: '' }) },
+                {
+                  value: 'sim',
+                  label: `Já tem página (${quantosNaFaceta(paginaFacet, 'true')})`,
+                  href: painelHref(here, { pagina: 'sim' }),
+                },
+                {
+                  value: 'nao',
+                  label: `Ainda sem página (${quantosNaFaceta(paginaFacet, 'false')})`,
+                  href: painelHref(here, { pagina: 'nao' }),
+                },
+              ],
+            },
             {
               label: 'Ordem',
               current: ordem,
@@ -405,6 +503,13 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                         ↗
                       </a>
                       <span className="ml-2 text-xs opacity-50">{findCategory(b.category)?.label ?? b.category}</span>
+                      {/* Sem isto, o filtro "Já tem página" escolhia por uma
+                          coisa que não se via em lado nenhum da lista. */}
+                      {b.hasSite && (
+                        <span className="ml-2 rounded bg-brand-600/10 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-brand-600">
+                          com página
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap opacity-55">
                       {/* A data mostrada acompanha a ordem escolhida: ordenar

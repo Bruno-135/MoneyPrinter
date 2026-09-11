@@ -64,6 +64,11 @@ export function CartoesComercios({
             <Link href={`/painel/comercio/${b.id}`} className="font-medium underline-offset-4">
               {b.name}
             </Link>
+            {b.hasSite && (
+              <span className="shrink-0 rounded bg-brand-600/10 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-brand-600">
+                com página
+              </span>
+            )}
             <a
               href={googleMapsUrl({
                 googlePlaceId: b.googlePlaceId,

@@ -54,6 +54,16 @@ export interface RankOptions {
   stages?: readonly DealStage[];
   /** Ramos a mostrar, pelo slug da categoria. Vazio = todos. */
   categories?: readonly string[];
+  /** Países a mostrar, em ISO de duas letras ('PT', 'BR'). Vazio = todos. */
+  countries?: readonly string[];
+  /**
+   * Filtra por já ter landing page gerada.
+   *
+   * `true` mostra só quem já tem, `false` só quem ainda não tem, e `null` (ou
+   * ausente) não filtra. Um booleano simples não servia: `false` teria de
+   * significar ao mesmo tempo "sem página" e "não filtrar por isto".
+   */
+  hasSite?: boolean | null;
   locality?: string | null;
   /**
    * Mostra só os comércios que saíram de um varrimento.
@@ -99,6 +109,8 @@ export interface RankedBusiness {
   /** Um comércio sem linha em `deals` conta como 'new' — por contactar. */
   stage: DealStage;
   nextActionAt: string | null;
+  /** true se já se gerou alguma landing page para este comércio. */
+  hasSite: boolean;
 }
 
 export interface RankResult {
@@ -112,8 +124,9 @@ const SELECT = [
   'phone_e164', 'phone_raw', 'formatted_address', 'locality', 'latitude', 'longitude',
   'first_seen_at', 'last_synced_at',
   'country_code', 'is_food_service',
-  // Vêm da vista, já resolvidos: sem linha em `deals`, o estado é 'new'.
-  'stage', 'next_action_at',
+  // Vêm da vista, já resolvidos: sem linha em `deals`, o estado é 'new',
+  // e `has_site` poupa uma segunda consulta a `generated_sites`.
+  'stage', 'next_action_at', 'has_site',
 ].join(',');
 
 /**
@@ -131,13 +144,26 @@ interface Filterable {
 
 /** Aplica os filtros comuns à lista e às caixas, para não divergirem. */
 function applyFilters<T extends Filterable>(query: T, options: RankOptions): T {
-  const { kinds = [], stages = [], categories = [], locality = null, regionId = null } = options;
+  const {
+    kinds = [],
+    stages = [],
+    categories = [],
+    countries = [],
+    hasSite = null,
+    locality = null,
+    regionId = null,
+  } = options;
 
   let q = query;
 
   if (kinds.length > 0) q = q.in('website_kind', kinds);
   if (stages.length > 0) q = q.in('stage', stages);
   if (categories.length > 0) q = q.in('business_category', categories);
+  if (countries.length > 0) q = q.in('country_code', countries);
+  // `!== null` e não um `if (hasSite)`: com o segundo, filtrar por "ainda sem
+  // página" não filtrava nada, que é o pior tipo de erro num filtro — o
+  // resultado parece plausível e está errado.
+  if (hasSite !== null) q = q.eq('has_site', hasSite);
   if (regionId) q = q.eq('region_id', regionId);
   if (locality) q = q.ilike('locality', locality);
 
@@ -217,6 +243,7 @@ export async function rankBusinesses(db: Db, options: RankOptions = {}): Promise
       scoreBreakdown: row.score_breakdown ?? {},
       stage: (row.stage ?? 'new') as DealStage,
       nextActionAt: (row.next_action_at as string | null) ?? null,
+      hasSite: Boolean(row.has_site),
     })),
   };
 }
@@ -237,7 +264,7 @@ export interface FacetValue {
 
 export async function listFacet(
   db: Db,
-  field: 'stage' | 'website_kind' | 'business_category',
+  field: 'stage' | 'website_kind' | 'business_category' | 'country_code' | 'has_site',
   options: RankOptions,
 ): Promise<FacetValue[]> {
   const { data, error } = await applyFilters(
