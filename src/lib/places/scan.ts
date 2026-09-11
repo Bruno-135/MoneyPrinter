@@ -3,7 +3,12 @@ import type { Database } from '@/types/database.types';
 import { PlacesClient, MAX_RESULTS_PER_CALL } from './client';
 import { regionSearchKey } from './region-key';
 import { buildGrid, type GridCell } from './grid';
-import { findCategory, type CategoryDefinition } from './categories';
+import {
+  categoryTextQuery,
+  findCategory,
+  isTextOnly,
+  type CategoryDefinition,
+} from './categories';
 import { normalizePlace, type NormalizedBusiness } from './normalize';
 import { classifyWebsite, type WebsiteKind } from './website';
 import { calculateScore } from '@/lib/scoring/score';
@@ -173,12 +178,21 @@ export async function scanRegion(
   // 3. Percorrer as células
   // ---------------------------------------------------------------------
   const collected = new Map<string, PlaceResult>();
-  let useTextFallback = false;
+
+  // Há ramos que não têm tipo no Google — psicólogos, nutricionistas,
+  // harmonização facial. Nesses começa-se já na pesquisa por texto, em vez de
+  // gastar uma chamada a perguntar por um tipo que se sabe não existir.
+  let useTextFallback = isTextOnly(category);
+  if (useTextFallback) summary.api.usedTextFallback = true;
+
+  /** A consulta de texto deste ramo, na variante do país e com a zona posta. */
+  const consulta = () =>
+    categoryTextQuery(category, countryCode, request.locality ?? request.label);
 
   for (const cell of pending) {
     const result = useTextFallback
       ? await places.searchText({
-          textQuery: category.textQuery.replace('{zona}', request.locality ?? request.label),
+          textQuery: consulta(),
           latitude: cell.lat,
           longitude: cell.lng,
           radiusMeters: cell.radiusMeters,
@@ -204,7 +218,7 @@ export async function scanRegion(
       );
       await recordSearch(db, region.id, cell, result, null);
       const retry = await places.searchText({
-        textQuery: category.textQuery.replace('{zona}', request.locality ?? request.label),
+        textQuery: consulta(),
         latitude: cell.lat,
         longitude: cell.lng,
         radiusMeters: cell.radiusMeters,

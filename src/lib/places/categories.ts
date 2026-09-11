@@ -23,13 +23,30 @@ export interface CategoryDefinition {
   slug: string;
   /** Nome mostrado ao utilizador. */
   label: string;
-  /** Tipos do Places para a pesquisa por proximidade. */
+  /**
+   * Tipos do Places para a pesquisa por proximidade.
+   *
+   * VAZIO é um valor legítimo e quer dizer "este ramo não tem tipo no Google".
+   * Nutricionistas, psicólogos e harmonização facial não têm — e inventar-lhes
+   * um tipo parecido é pior do que não ter nenhum: um tipo ERRADO mas VÁLIDO
+   * não dá erro, devolve os comércios errados, e paga-se por eles. Com a lista
+   * vazia vai-se direto à pesquisa por texto, que é o que serve para estes.
+   */
   includedTypes: string[];
   /**
-   * Consulta de texto de recurso, usada quando o tipo não existe ou a Google o
-   * rejeita. O `{zona}` é substituído pelo nome da região.
+   * Consulta de texto, usada quando não há tipo ou quando a Google o rejeita.
+   * O `{zona}` é substituído pelo nome da região.
    */
   textQuery: string;
+  /**
+   * O mesmo, escrito como se diz no Brasil. Só quando difere mesmo.
+   *
+   * "Ginásio" em Braga é "academia" em Curitiba, e um canalizador é um
+   * encanador. A pesquisa por texto é literal: a palavra errada devolve meia
+   * dúzia de resultados e faz parecer que não há mercado, quando o que não há
+   * é a palavra.
+   */
+  textQueryBR?: string;
   /** Leva landing page com cardápio e pedido por WhatsApp. */
   foodService: boolean;
 }
@@ -75,6 +92,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
     label: 'Ginásio',
     includedTypes: ['gym', 'fitness_center'],
     textQuery: 'ginásios em {zona}',
+    textQueryBR: 'academias em {zona}',
     foodService: false,
   },
   {
@@ -136,9 +154,209 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
     textQuery: 'lojas de roupa em {zona}',
     foodService: false,
   },
+
+  // -------------------------------------------------------------------------
+  // Profissionais liberais e saúde
+  //
+  // Gente que trabalha por conta própria, que vive da reputação e que tem
+  // dinheiro. Um médico ou um advogado sem site é um prospeto melhor do que
+  // uma padaria sem site: o site vale-lhe mais e o orçamento dói-lhe menos.
+  // -------------------------------------------------------------------------
+  {
+    slug: 'imobiliaria',
+    label: 'Imobiliária',
+    includedTypes: ['real_estate_agency'],
+    textQuery: 'imobiliárias em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'medico',
+    label: 'Médico / consultório',
+    includedTypes: ['doctor'],
+    textQuery: 'consultórios médicos em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'clinica-estetica',
+    label: 'Clínica de estética',
+    includedTypes: ['skin_care_clinic'],
+    textQuery: 'clínicas de estética em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'veterinario',
+    label: 'Veterinário',
+    includedTypes: ['veterinary_care'],
+    textQuery: 'clínicas veterinárias em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'optica',
+    label: 'Óptica',
+    includedTypes: ['optician'],
+    textQuery: 'ópticas em {zona}',
+    textQueryBR: 'óticas em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'psicologo',
+    // Sem tipo no Google. Ver a nota em `includedTypes`: dar-lhe `doctor` para
+    // não ficar vazio devolvia clínica geral e cobrava-se por isso.
+    label: 'Psicólogo',
+    includedTypes: [],
+    textQuery: 'psicólogos em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'nutricionista',
+    label: 'Nutricionista',
+    includedTypes: [],
+    textQuery: 'nutricionistas em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'podologia',
+    label: 'Podologia',
+    includedTypes: [],
+    textQuery: 'podologistas em {zona}',
+    foodService: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Procedimentos de estética, um a um
+  //
+  // O Google não tem tipo para nenhum destes, e é por isso que valem a pena:
+  // quem procura "harmonização facial" procura pelo nome do procedimento, e
+  // quem o oferece costuma ter só Instagram. A pesquisa por texto é o
+  // instrumento certo — é literalmente assim que um cliente os procura.
+  // -------------------------------------------------------------------------
+  {
+    slug: 'harmonizacao-facial',
+    label: 'Harmonização facial',
+    includedTypes: [],
+    textQuery: 'harmonização facial em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'depilacao-laser',
+    label: 'Depilação a laser',
+    includedTypes: [],
+    textQuery: 'depilação a laser em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'micropigmentacao',
+    label: 'Micropigmentação',
+    includedTypes: [],
+    textQuery: 'micropigmentação e microblading em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'manicure',
+    label: 'Manicure / unhas',
+    includedTypes: ['nail_salon'],
+    textQuery: 'manicures e nail bars em {zona}',
+    textQueryBR: 'manicures e estúdios de unhas em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'massagem',
+    label: 'Massagem / terapias',
+    includedTypes: ['massage'],
+    textQuery: 'massagens e terapias em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'tatuagem',
+    label: 'Estúdio de tatuagem',
+    includedTypes: [],
+    textQuery: 'estúdios de tatuagem em {zona}',
+    foodService: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Serviços e ofícios
+  // -------------------------------------------------------------------------
+  {
+    slug: 'seguros',
+    label: 'Mediador de seguros',
+    includedTypes: ['insurance_agency'],
+    textQuery: 'mediadores de seguros em {zona}',
+    textQueryBR: 'corretores de seguros em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'escola-conducao',
+    label: 'Escola de condução',
+    includedTypes: ['driving_school'],
+    textQuery: 'escolas de condução em {zona}',
+    textQueryBR: 'autoescolas em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'agencia-viagens',
+    label: 'Agência de viagens',
+    includedTypes: ['travel_agency'],
+    textQuery: 'agências de viagens em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'arquiteto',
+    label: 'Arquitecto / decoração',
+    includedTypes: [],
+    textQuery: 'arquitectos e decoradores de interiores em {zona}',
+    textQueryBR: 'arquitetos e designers de interiores em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'fotografo',
+    label: 'Fotógrafo',
+    includedTypes: [],
+    textQuery: 'fotógrafos de casamentos e eventos em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'personal-trainer',
+    label: 'Personal trainer',
+    includedTypes: [],
+    textQuery: 'personal trainers em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'eletricista',
+    label: 'Electricista',
+    includedTypes: ['electrician'],
+    textQuery: 'electricistas em {zona}',
+    textQueryBR: 'eletricistas em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'canalizador',
+    label: 'Canalizador',
+    includedTypes: ['plumber'],
+    textQuery: 'canalizadores em {zona}',
+    textQueryBR: 'encanadores em {zona}',
+    foodService: false,
+  },
 ] as const;
 
 const BY_SLUG = new Map(CATEGORIES.map((c) => [c.slug, c]));
+
+/** A consulta de texto na variante do país, com a zona já lá dentro. */
+export function categoryTextQuery(
+  category: CategoryDefinition,
+  countryCode: string,
+  zona: string,
+): string {
+  const base =
+    countryCode.toUpperCase() === 'BR' ? (category.textQueryBR ?? category.textQuery) : category.textQuery;
+  return base.replace('{zona}', zona);
+}
+
+/** true quando o ramo não tem tipo no Google e só se procura por texto. */
+export function isTextOnly(category: CategoryDefinition): boolean {
+  return category.includedTypes.length === 0;
+}
 
 /** Aceita o slug ou o rótulo, sem distinguir maiúsculas nem acentos. */
 export function findCategory(input: string): CategoryDefinition | null {

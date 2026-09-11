@@ -337,6 +337,17 @@ Verificação rápida da ligação com a aplicação a correr: `GET /api/health`
    O mapa de ramos em `src/lib/places/categories.ts` **não foi confirmado contra
    a documentação da Google** — um tipo inválido devolve 400 (não faturado) e o
    varrimento passa sozinho à pesquisa por texto, avisando no resumo.
+
+   Há ramos com `includedTypes: []`, e isso é uma decisão e não um esquecimento:
+   psicólogos, nutricionistas e harmonização facial não têm tipo no Google.
+   Nesses vai-se direto à pesquisa por texto. **Nunca lhes dar um tipo parecido
+   só para não ficar vazio** — um tipo errado mas VÁLIDO não dá erro nenhum,
+   devolve os comércios errados, e paga-se por eles.
+
+   `textQueryBR` é a mesma pergunta escrita como se diz no Brasil, e só existe
+   onde difere mesmo: "ginásio"/"academia", "canalizador"/"encanador",
+   "escola de condução"/"autoescola". A pesquisa por texto é literal — a palavra
+   errada devolve meia dúzia de resultados e faz parecer que não há mercado.
 8. **Não inventar dados de comércios.** O que não vier da API fica `null`.
 9. **Commits**: mensagem descritiva no imperativo, em inglês, com prefixo de tipo
    (`feat:`, `fix:`, `docs:`, `chore:`).

@@ -1,25 +1,67 @@
 import { describe, expect, it } from 'vitest';
-import { CATEGORIES, categorySlugs, findCategory } from './categories';
+import { CATEGORIES, categorySlugs, categoryTextQuery, findCategory, isTextOnly } from './categories';
 
 describe('CATEGORIES', () => {
-  it('cobre os 14 ramos pedidos', () => {
-    expect(CATEGORIES).toHaveLength(14);
+  it('tem ramos que cheguem para haver por onde escolher', () => {
+    // Sem número fixo: a lista cresce à medida que se descobrem mercados, e um
+    // teste que conte os ramos só serve para ter de ser mudado a cada um.
+    expect(CATEGORIES.length).toBeGreaterThanOrEqual(30);
   });
 
   it('não tem slugs repetidos', () => {
     expect(new Set(categorySlugs()).size).toBe(CATEGORIES.length);
   });
 
-  it('todos têm pelo menos um tipo e uma consulta de recurso', () => {
+  it('todos sabem dizer onde procurar', () => {
+    // A consulta de texto é obrigatória em TODOS. Nos que não têm tipo é o
+    // único caminho, e nos outros é o que salva o varrimento quando a Google
+    // rejeita o tipo.
     for (const c of CATEGORIES) {
-      expect(c.includedTypes.length).toBeGreaterThan(0);
-      expect(c.textQuery).toContain('{zona}');
+      expect(c.textQuery, c.slug).toContain('{zona}');
+      if (c.textQueryBR !== undefined) expect(c.textQueryBR, c.slug).toContain('{zona}');
     }
+  });
+
+  it('os ramos sem tipo no Google são poucos e deliberados', () => {
+    // Uma lista de tipos vazia é uma decisão, não um esquecimento. Se um dia
+    // passar de metade da lista, é sinal de que se deixou de a preencher.
+    const semTipo = CATEGORIES.filter(isTextOnly);
+    expect(semTipo.length).toBeGreaterThan(0);
+    expect(semTipo.length).toBeLessThan(CATEGORIES.length / 2);
   });
 
   it('marca restaurantes e padarias como food_service, e mais nenhum', () => {
     const food = CATEGORIES.filter((c) => c.foodService).map((c) => c.slug);
     expect(food.sort()).toEqual(['padaria', 'restaurante']);
+  });
+});
+
+describe('categoryTextQuery', () => {
+  const ginasio = findCategory('ginasio')!;
+  const padaria = findCategory('padaria')!;
+
+  it('usa a palavra do Brasil quando o ramo tem uma', () => {
+    // "Ginásio" em Braga é "academia" em Curitiba. A pesquisa por texto é
+    // literal: a palavra errada devolve meia dúzia de resultados e faz parecer
+    // que não há mercado.
+    expect(categoryTextQuery(ginasio, 'PT', 'Braga')).toBe('ginásios em Braga');
+    expect(categoryTextQuery(ginasio, 'BR', 'Curitiba')).toBe('academias em Curitiba');
+  });
+
+  it('cai na de Portugal quando não há variante', () => {
+    expect(categoryTextQuery(padaria, 'BR', 'Curitiba')).toBe('padarias em Curitiba');
+  });
+
+  it('aceita o código em minúsculas', () => {
+    expect(categoryTextQuery(ginasio, 'br', 'Curitiba')).toBe('academias em Curitiba');
+  });
+
+  it('substitui a zona e não deixa a marca para trás', () => {
+    for (const c of CATEGORIES) {
+      for (const pais of ['PT', 'BR']) {
+        expect(categoryTextQuery(c, pais, 'Braga'), `${c.slug}/${pais}`).not.toContain('{zona}');
+      }
+    }
   });
 });
 
