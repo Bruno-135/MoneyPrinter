@@ -265,8 +265,12 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     ? `${batch.categoryLabel} sem site em ${batch.label}`
     : 'Comércios encontrados';
 
+  // `max-w-7xl` e não `5xl`: a tabela tem sete colunas e em 1024px o telefone
+  // ficava cortado à direita enquanto sobravam duzentos e cinquenta pixels de
+  // margem de cada lado. A caixa da procura e a fila de números têm largura
+  // própria lá dentro, portanto não incham com isto.
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-10">
+    <main className="mx-auto flex max-w-7xl flex-col gap-10 px-6 py-10">
       {/* ---------------- Barra de conta ----------------
           Fina e discreta, encostada ao topo. O que era um cabeçalho com o
           título da página passou a ser só isto: o título está agora dentro da
@@ -476,7 +480,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
               <tbody>
                 {businesses.map((b) => (
                   <tr key={b.id} className="border-t border-black/[0.07] dark:border-white/[0.07]">
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <span className="font-semibold tabular-nums">{b.score}</span>
                       <span className="ml-1.5 text-xs opacity-55">{b.label}</span>
                     </td>
@@ -523,7 +527,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                       <StageSelect businessId={b.id} stage={b.stage} />
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`rounded px-2 py-0.5 text-xs font-medium ${SITE_STYLE[b.websiteKind] ?? ''}`}>
+                      <span className={`rounded px-2 py-0.5 text-xs font-medium whitespace-nowrap ${SITE_STYLE[b.websiteKind] ?? ''}`}>
                         {SITE_LABEL[b.websiteKind] ?? b.websiteKind}
                       </span>
                     </td>
@@ -532,7 +536,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                         ? `${b.rating.toFixed(1).replace('.', ',')} ★ (${b.reviewsCount ?? 0})`
                         : '—'}
                     </td>
-                    <td className="px-4 py-3 tabular-nums opacity-70">
+                    <td className="px-4 py-3 whitespace-nowrap tabular-nums opacity-70">
                       {b.phone ? (
                         <a href={`tel:${b.phone}`} className="hover:text-brand-600">
                           {b.phone}
