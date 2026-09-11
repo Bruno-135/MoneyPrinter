@@ -210,7 +210,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           Fina e discreta, encostada ao topo. O que era um cabeçalho com o
           título da página passou a ser só isto: o título está agora dentro da
           caixa de procura, que é o que a pessoa vem cá fazer. */}
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.07] pb-4 text-sm dark:border-white/[0.07]">
+      <header className="flex items-center justify-between gap-3 border-b border-black/[0.07] pb-4 text-sm dark:border-white/[0.07]">
         <span className="font-semibold tracking-tight">Prospeção comercial</span>
         <div className="flex items-center gap-4">
           <Link href="/painel/relatorios" className="underline underline-offset-4 opacity-70">
@@ -218,7 +218,13 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           </Link>
           <form action={signOut}>
             <button type="submit" className="underline underline-offset-4 opacity-55">
-              Sair ({auth.user.email})
+              Sair
+              {/* O email só a partir de `sm`. Num telemóvel, um endereço
+                  comprido empurrava a barra para uma segunda linha e ficava a
+                  ocupá-la toda — e saber de que conta se está ligado não vale
+                  uma linha inteira do ecrã. Sem `flex-wrap`, agora não há
+                  segunda linha para onde cair. */}
+              <span className="hidden sm:inline"> ({auth.user.email})</span>
             </button>
           </form>
         </div>
