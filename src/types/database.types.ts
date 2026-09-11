@@ -908,6 +908,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      outreach_messages: {
+        Row: {
+          business_id: string;
+          created_at: string;
+          id: string;
+          input_tokens: number | null;
+          kind: string;
+          model: string | null;
+          output_tokens: number | null;
+          owner_id: string;
+          updated_at: string;
+          variants: Json;
+        };
+        Insert: {
+          business_id: string;
+          created_at?: string;
+          id?: string;
+          input_tokens?: number | null;
+          kind?: string;
+          model?: string | null;
+          output_tokens?: number | null;
+          owner_id?: string;
+          updated_at?: string;
+          variants?: Json;
+        };
+        Update: {
+          business_id?: string;
+          created_at?: string;
+          id?: string;
+          input_tokens?: number | null;
+          kind?: string;
+          model?: string | null;
+          output_tokens?: number | null;
+          owner_id?: string;
+          updated_at?: string;
+          variants?: Json;
+        };
+        Relationships: [];
+      };
       stock_photos: {
         Row: {
           created_at: string;
@@ -1020,6 +1059,8 @@ export type Database = {
           stage: Database["public"]["Enums"]["deal_stage"]
           next_action_at: string | null
           deal_notes: string | null
+          has_site: boolean | null
+          has_live_site: boolean | null
         };
         Relationships: [];
       };

@@ -156,7 +156,9 @@ exportada passou de `middleware` para `proxy`. É o mesmo mecanismo, outro nome.
 
 ## 4. Base de dados
 
-Nove tabelas, todas com `owner_id`, `created_at`, `updated_at` e RLS ativa.
+Dez tabelas de trabalho, todas com `owner_id`, `created_at`, `updated_at` e RLS
+ativa. (Há mais tabelas de cache — fotografias do Google e do Pexels — descritas
+em `supabase/README.md`.)
 
 | Tabela | Guarda |
 |--------|--------|
@@ -169,14 +171,21 @@ Nove tabelas, todas com `owner_id`, `created_at`, `updated_at` e RLS ativa.
 | `deal_stage_events` | Histórico de mudanças de estado (escrito por trigger, não à mão) |
 | `site_visits` | Visitas às landing pages |
 | `site_clicks` | Cliques (WhatsApp, telefone, etc.) |
+| `outreach_messages` | Mensagens de primeiro contacto escritas por IA, uma linha por (comércio, tipo) |
 
 Vista `monthly_site_report` agrega visitas e cliques por site e por mês
 (`security_invoker = on`, portanto respeita a RLS).
 
+Vista `businesses_with_stage` é a que o painel lê: comércios com o estado da
+negociação como coluna (sem linha em `deals`, o estado é `new`) e com `has_site`
+e `has_live_site` — se já se gerou uma landing page para aquele comércio e se
+ela está mesmo no ar. São colunas da vista e não contas feitas na aplicação
+porque é o que permite filtrar e contar por elas.
+
 Detalhe tabela a tabela, com o porquê de cada decisão, em `supabase/README.md`.
 
 O schema está aplicado no projeto Supabase `amjqibwoqfkbmtbyysgy`
-("Prospecção e criação de site", eu-west-3, Postgres 17) através de 9 migrações.
+("Prospecção e criação de site", eu-west-3, Postgres 17) através de 22 migrações.
 
 Duas notas que condicionam o código das etapas seguintes:
 
@@ -426,6 +435,29 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       Modelo por omissão: `claude-opus-5`. Baixar de modelo é decisão de quem
       paga, tomada no ecrã com o preço à frente dos olhos. O modelo usado, o
       pedido e os tokens ficam gravados com a página.
+
+- [x] **Mensagens de abordagem** — a IA escreve a primeira mensagem de WhatsApp
+      para cada comércio, em três versões com ângulos diferentes.
+
+      Havia aqui uma frase fixa em `firstContactMessage`, que servia para tudo e
+      por isso não servia para nada: mandada a trinta comércios seguidos lê-se
+      como o molde que é. O que substitui é o que já se sabe daquele comércio em
+      concreto — 214 avaliações e nenhuma página onde as mostrar, um Instagram
+      que não leva a lado nenhum, uma landing page já feita e à espera de ser
+      vista.
+
+      **O país decide o português.** `PT` e `BR` têm blocos de regras separados
+      em `src/lib/ai/abordagem-texto.ts`: tratamento, cumprimento e vocabulário
+      (telemóvel/celular, morada/endereço). Quem lê sabe em dois segundos se a
+      mensagem foi escrita para ele ou despejada de uma lista.
+
+      **Guardar é obrigatório**, pela mesma razão do cache do Google: cada
+      geração é uma chamada paga. Abrir a ficha lê de `outreach_messages`; só o
+      botão "Escrever outras" gasta dinheiro.
+
+      As três aparecem editáveis na ficha, com botão de copiar e de enviar no
+      WhatsApp — e o que vai no link é o texto depois de editado, não o que o
+      modelo escreveu.
 
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 

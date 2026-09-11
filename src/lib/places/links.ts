@@ -66,7 +66,10 @@ export function whatsappUrl(phoneE164: string | null, message?: string): string 
   return `https://wa.me/${digits}${query}`;
 }
 
-/** Mensagem inicial sugerida para o primeiro contacto. */
-export function firstContactMessage(businessName: string): string {
-  return `Olá! Falo da parte de um serviço de criação de sites. Reparei que a ${businessName} ainda não tem site próprio e preparei uma proposta à medida. Posso mostrar-lhe?`;
-}
+/*
+ * Houve aqui uma `firstContactMessage` — uma frase feita com o nome do comércio
+ * lá dentro, para o botão de WhatsApp. Saiu quando as mensagens passaram a ser
+ * escritas para cada comércio (`lib/ai/abordagem-texto.ts`, tabela
+ * `outreach_messages`). Servia para tudo e por isso não servia para nada: trinta
+ * comerciantes a receber a mesma frase reconhecem-na pelo que é.
+ */

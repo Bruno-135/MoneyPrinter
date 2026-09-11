@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { firstContactMessage, googleMapsUrl, whatsappUrl } from './links';
+import { googleMapsUrl, whatsappUrl } from './links';
 
 /**
  * O formato antigo — `/maps/place/?q=place_id:…` — funcionava no computador e
@@ -79,8 +79,3 @@ describe('whatsappUrl', () => {
   });
 });
 
-describe('firstContactMessage', () => {
-  it('inclui o nome do comércio', () => {
-    expect(firstContactMessage('Padaria do Bairro')).toContain('Padaria do Bairro');
-  });
-});

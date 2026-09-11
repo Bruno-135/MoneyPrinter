@@ -6,7 +6,7 @@ import { getDeal, getStageHistory } from '@/lib/deals/repository';
 import { STAGE_STYLE, stageDefinition, stageLabel } from '@/lib/deals/stages';
 import { scoreLabel } from '@/lib/scoring/score';
 import { findCategory } from '@/lib/places/categories';
-import { googleMapsUrl, whatsappUrl, firstContactMessage } from '@/lib/places/links';
+import { googleMapsUrl, whatsappUrl } from '@/lib/places/links';
 import { listSites } from '@/lib/sites/repository';
 import { publicEnv } from '@/lib/env';
 import { createSite, publish, unpublish, removeSite } from '../../site-actions';
@@ -14,6 +14,8 @@ import { StageSelect } from '../../stage-select';
 import { saveNotes } from '../../deal-actions';
 import { fotosDosDestaques } from '../../destaques';
 import { arteUrl, familiaParaRamo } from '@/lib/sites/imagens/arte';
+import { lerAbordagem } from '@/lib/outreach/repository';
+import { Abordagem } from '../abordagem';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,7 +56,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
   if (!business) notFound();
 
-  const [deal, history, sites, fotos] = await Promise.all([
+  const [deal, history, sites, fotos, abordagem] = await Promise.all([
     getDeal(supabase, id),
     getStageHistory(supabase, id),
     listSites(supabase, id),
@@ -62,13 +64,21 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
     // esta página abre-se dezenas de vezes por dia e é a mesma regra dos
     // cartões do painel.
     fotosDosDestaques(supabase, [{ id }]),
+    // Já escritas alguma vez. Nunca se gera ao abrir a ficha: cada geração
+    // é uma chamada paga, e abrir uma ficha não pode custar dinheiro.
+    lerAbordagem(supabase, id),
   ]);
 
   const foto = fotos.get(id);
   const capa = foto?.url ?? arteUrl(familiaParaRamo(business.business_category), id);
 
   const stage = deal?.stage ?? 'new';
-  const whatsapp = whatsappUrl(business.phone_e164, firstContactMessage(business.name));
+  // Sem mensagem escrita à frente. O botão aqui em cima serve para abrir a
+  // conversa; o que se diz vem da secção das mensagens de abordagem, que é
+  // escrita para este comércio. Havia aqui uma frase feita a dizer "reparei
+  // que ainda não tem site" — mandada do botão mais visível da página, era a
+  // que ia acabar por ser enviada.
+  const whatsapp = whatsappUrl(business.phone_e164);
   // `score_breakdown` é jsonb, portanto chega como Json. A forma é garantida
   // por quem o escreve (calculateScore), não pelo tipo.
   const breakdown = (business.score_breakdown ?? {}) as unknown as Record<string, Factor>;
@@ -261,6 +271,20 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
           </button>
         </form>
       </section>
+
+      {/* ---------------- Mensagem de abordagem ----------------
+          Entre a negociação e a landing page de propósito: escreve-se com o
+          estado do negócio à frente dos olhos, e é o passo imediatamente antes
+          de haver uma página para mostrar. */}
+      <Abordagem
+        businessId={id}
+        mensagens={abordagem?.mensagens ?? []}
+        /* Só a base do link, sem texto. A mensagem junta-se no cliente, para
+           ir o que está no campo depois de editado e não o que o modelo
+           escreveu. */
+        whatsapp={whatsapp}
+        atualizadaEm={abordagem?.atualizadaEm ?? null}
+      />
 
       {/* ---------------- Landing pages ---------------- */}
       <section className="flex flex-col gap-4">
