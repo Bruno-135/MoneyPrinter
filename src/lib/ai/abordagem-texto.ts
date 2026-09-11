@@ -114,6 +114,11 @@ export function gancho(business: Business): string {
   return 'Não tem site nenhum nem rede social. Quem o procura no Google encontra só a ficha do Maps, que ele não controla e onde não pode mostrar nada.';
 }
 
+/** A nota como se escreve em português: 4,6 e não 4.6. */
+export function notaEscrita(nota: number): string {
+  return nota.toFixed(1).replace('.', ',');
+}
+
 export function factos(business: Business, contexto: ContextoAbordagem): string {
   const linhas: string[] = [
     `Nome: ${business.name}`,
@@ -124,9 +129,14 @@ export function factos(business: Business, contexto: ContextoAbordagem): string 
 
   // A avaliação só entra com número de votos. "4,8 estrelas" de três pessoas é
   // verdade e não convence ninguém; "4,8 de 686 pessoas" é o argumento todo.
+  //
+  // A vírgula não é preciosismo. O modelo copia o número tal como o recebe, e
+  // um "4.6" no meio de uma mensagem em português é das coisas que mais
+  // depressa a denunciam como escrita por uma máquina — que é exatamente o que
+  // não pode acontecer na primeira frase que se diz a um cliente.
   if (business.rating !== null && business.reviews_count) {
     linhas.push(
-      `Avaliação no Google: ${business.rating} em 5, de ${business.reviews_count} pessoas`,
+      `Avaliação no Google: ${notaEscrita(business.rating)} em 5, de ${business.reviews_count} pessoas`,
     );
   }
 

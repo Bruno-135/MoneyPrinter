@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Database } from '@/types/database.types';
-import { factos, gancho, regrasDoPais } from './abordagem-texto';
+import { factos, gancho, notaEscrita, regrasDoPais } from './abordagem-texto';
 
 type Business = Database['public']['Tables']['businesses']['Row'];
 
@@ -52,10 +52,19 @@ describe('factos', () => {
   it('só usa a avaliação quando há votos que a sustentem', () => {
     // 4,8 de três pessoas é verdade e não convence; sem número de votos, fora.
     const sem = factos(comercio({ rating: 4.8, reviews_count: null }), semPagina);
-    expect(sem).not.toContain('4.8');
+    expect(sem).not.toContain('4,8');
 
     const com = factos(comercio({ rating: 4.8, reviews_count: 686 }), semPagina);
     expect(com).toContain('686');
+  });
+
+  it('manda a nota com vírgula e nunca com ponto', () => {
+    // O modelo copia o número tal como o recebe. Um "4.6" no meio de uma
+    // mensagem em português denuncia-a como escrita por uma máquina — e esta é
+    // a primeira frase que um cliente lê.
+    const texto = factos(comercio({ rating: 4.6, reviews_count: 1893 }), semPagina);
+    expect(texto).toContain('4,6');
+    expect(texto).not.toContain('4.6');
   });
 
   it('manda oferecer o link quando a página já está no ar', () => {
@@ -74,6 +83,14 @@ describe('factos', () => {
 
   it('deixa de fora a localidade que não existe', () => {
     expect(factos(comercio({ locality: null }), semPagina)).not.toContain('Localidade');
+  });
+});
+
+describe('notaEscrita', () => {
+  it('troca o ponto pela vírgula', () => {
+    expect(notaEscrita(4.6)).toBe('4,6');
+    expect(notaEscrita(5)).toBe('5,0');
+    expect(notaEscrita(4.25)).toBe('4,3');
   });
 });
 
