@@ -262,32 +262,66 @@ export interface FacetValue {
   count: number;
 }
 
+export type FacetField =
+  | 'stage'
+  | 'website_kind'
+  | 'business_category'
+  | 'country_code'
+  | 'has_site';
+
+/**
+ * A contagem faz-se na base de dados, e não aqui.
+ *
+ * Isto lia as linhas todas e contava-as em JavaScript, com um `.limit(5000)`
+ * que parecia de sobra. Não era: o PostgREST corta as respostas às mil linhas
+ * por omissão, e o limite pedido nem é considerado. Com 2603 comércios
+ * guardados, o painel dizia "Por contactar: 1000" e "Sem site: 623" quando
+ * eram 2603 e 1566.
+ *
+ * E o pior nem eram os números. Um ramo cujos comércios caíssem todos depois
+ * da milésima linha DESAPARECIA do funil, porque nunca chegava cá para ser
+ * contado — um filtro a esconder opções é pior do que um filtro a contar mal,
+ * porque não há como dar por isso a olhar para o ecrã.
+ *
+ * Um `group by` devolve cinco linhas em vez de 2603, é exato por construção, e
+ * não tem limite nenhum a atravessar-se à frente. A função está na migração
+ * 0023 e corre com os direitos de quem chama, portanto a RLS continua a
+ * decidir o que se conta.
+ */
 export async function listFacet(
   db: Db,
-  field: 'stage' | 'website_kind' | 'business_category' | 'country_code' | 'has_site',
+  field: FacetField,
   options: RankOptions,
 ): Promise<FacetValue[]> {
-  const { data, error } = await applyFilters(
-    db.from('businesses_with_stage').select(field).eq('is_archived', false),
-    options,
-  ).limit(5000);
+  const {
+    kinds = [],
+    stages = [],
+    categories = [],
+    countries = [],
+    hasSite = null,
+    regionId = null,
+  } = options;
+
+  const { data, error } = await db.rpc('facet_counts', {
+    p_field: field,
+    // Listas vazias passam como vazias e não como `null`: a função trata as
+    // duas da mesma maneira ("não filtrar"), e mandar o que se tem poupa uma
+    // conversão a mais de cada lado.
+    p_kinds: [...kinds],
+    p_stages: [...stages],
+    p_categories: [...categories],
+    p_countries: [...countries],
+    p_has_site: hasSite,
+    p_region_id: regionId,
+  });
 
   if (error) {
-    throw new Error(`Não foi possível ler os valores do filtro: ${error.message}`);
-  }
-
-  const rows = (data ?? []) as unknown as Array<Record<string, unknown>>;
-
-  const counts = new Map<string, number>();
-  for (const row of rows) {
-    const value = String(row[field] ?? '');
-    if (value === '') continue;
-    counts.set(value, (counts.get(value) ?? 0) + 1);
+    throw new Error(`Não foi possível contar os valores do filtro: ${error.message}`);
   }
 
   // Por ordem alfabética do valor. Quem procura um ramo numa lista procura-o
   // pelo nome, não pela quantidade.
-  return [...counts.entries()]
-    .map(([value, count]) => ({ value, label: value, count }))
+  return (data ?? [])
+    .map((linha) => ({ value: linha.value, label: linha.value, count: Number(linha.count) }))
     .sort((a, b) => a.label.localeCompare(b.label, 'pt'));
 }

@@ -176,6 +176,12 @@ em `supabase/README.md`.)
 Vista `monthly_site_report` agrega visitas e cliques por site e por mês
 (`security_invoker = on`, portanto respeita a RLS).
 
+Função `facet_counts(campo, filtros…)` conta quantos comércios há de cada
+valor de uma coluna, para as caixas de filtro. Contar na aplicação não servia:
+o PostgREST corta as respostas às mil linhas por omissão, portanto acima disso
+os números mentiam — e um ramo cujos comércios caíssem todos depois da milésima
+linha nem aparecia no funil.
+
 Vista `businesses_with_stage` é a que o painel lê: comércios com o estado da
 negociação como coluna (sem linha em `deals`, o estado é `new`) e com `has_site`
 e `has_live_site` — se já se gerou uma landing page para aquele comércio e se
@@ -185,7 +191,7 @@ porque é o que permite filtrar e contar por elas.
 Detalhe tabela a tabela, com o porquê de cada decisão, em `supabase/README.md`.
 
 O schema está aplicado no projeto Supabase `amjqibwoqfkbmtbyysgy`
-("Prospecção e criação de site", eu-west-3, Postgres 17) através de 22 migrações.
+("Prospecção e criação de site", eu-west-3, Postgres 17) através de 23 migrações.
 
 Duas notas que condicionam o código das etapas seguintes:
 

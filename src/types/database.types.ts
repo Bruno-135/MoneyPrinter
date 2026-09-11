@@ -1083,6 +1083,21 @@ export type Database = {
       };
     };
     Functions: {
+      facet_counts: {
+        Args: {
+          p_field: string;
+          p_kinds?: string[] | null;
+          p_stages?: string[] | null;
+          p_categories?: string[] | null;
+          p_countries?: string[] | null;
+          p_has_site?: boolean | null;
+          p_region_id?: string | null;
+        };
+        Returns: {
+          value: string;
+          count: number;
+        }[];
+      };
       current_owner_id: {
         Args: Record<string, never>;
         Returns: string;
