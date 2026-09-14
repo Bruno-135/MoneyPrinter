@@ -33,6 +33,8 @@ import { Destaques, fotosDosDestaques } from './destaques';
 import { Numeros, type Numero } from './numeros';
 import { CartoesComercios, SITE_LABEL, SITE_STYLE } from './cartoes-comercios';
 import { quantosPorContactar } from '@/lib/deals/fila';
+import { abriramAPagina } from '@/lib/sites/atividade';
+import { Abriram } from './abriram';
 
 export const dynamic = 'force-dynamic';
 
@@ -215,11 +217,17 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   // Quantos estão mesmo à espera: por contactar e não adiados para depois. É
   // diferente do cartão "Por contactar", que conta todos — e a diferença é
   // exatamente quem já se tentou e não atendeu.
-  const porContactar = await quantosPorContactar(supabase, {
-    regionId: procura,
-    categories: ramos,
-    countries: paises,
-  });
+  const [porContactar, abriram] = await Promise.all([
+    quantosPorContactar(supabase, {
+      regionId: procura,
+      categories: ramos,
+      countries: paises,
+    }),
+    // Quem abriu a página nos últimos dias. Sem filtros de propósito: uma
+    // pessoa que abriu a proposta interessa, esteja o painel filtrado como
+    // estiver.
+    abriramAPagina(supabase),
+  ]);
 
   const contactarParams = new URLSearchParams();
   if (procura) contactarParams.set('procura', procura);
@@ -339,6 +347,10 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           informação. Leva os filtros consigo: uma sessão de trinta chamadas a
           padeiros de Braga corre melhor do que trinta a ramos diferentes — o
           discurso apura-se à terceira. */}
+      {/* Antes da fila: quem já abriu a proposta vale mais do que quem ainda
+          não ouviu falar de ti. */}
+      <Abriram quem={abriram} />
+
       {porContactar > 0 && (
         <Link
           href={contactarHref}

@@ -18,6 +18,8 @@ import { lerAbordagem } from '@/lib/outreach/repository';
 import { Abordagem } from '../abordagem';
 import { Venda } from '../venda';
 import { moedaDoPais } from '@/lib/deals/dinheiro';
+import { atividadeDoComercio } from '@/lib/sites/atividade';
+import { AtividadeDaPagina } from '../atividade';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,7 +60,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
   if (!business) notFound();
 
-  const [deal, history, sites, fotos, abordagem] = await Promise.all([
+  const [deal, history, sites, fotos, abordagem, atividade] = await Promise.all([
     getDeal(supabase, id),
     getStageHistory(supabase, id),
     listSites(supabase, id),
@@ -69,6 +71,9 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
     // Já escritas alguma vez. Nunca se gera ao abrir a ficha: cada geração
     // é uma chamada paga, e abrir uma ficha não pode custar dinheiro.
     lerAbordagem(supabase, id),
+    // O que o comerciante fez com a página. Vem do que já se registava e
+    // nunca se mostrava.
+    atividadeDoComercio(supabase, id),
   ]);
 
   const foto = fotos.get(id);
@@ -224,6 +229,11 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
           </dl>
         </section>
       </div>
+
+      {/* Sinal de compra, e por isso em cima. Um comerciante que abriu a
+          proposta há duas horas é a melhor chamada do dia; o mesmo na semana
+          passada é só histórico. */}
+      <AtividadeDaPagina atividade={atividade} />
 
       {/* ---------------- Negociação ---------------- */}
       <section className="flex flex-col gap-4 rounded-lg border border-black/10 p-5 dark:border-white/10">
