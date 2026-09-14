@@ -239,6 +239,11 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   if (ramos.length > 0) contactarParams.set('ramo', ramos.join(','));
   if (pais) contactarParams.set('pais', pais);
   const contactarQuery = contactarParams.toString();
+  // O ficheiro leva exatamente o que está no ecrã. Reaproveita-se o construtor
+  // de endereços do painel e troca-se o caminho: assim não há duas listas de
+  // parâmetros a divergir com o tempo.
+  const csvHref = painelHref(here, {}).replace('/painel', '/painel/lista.csv');
+
   const contactarHref = (contactarQuery
     ? `/painel/contactar?${contactarQuery}`
     : '/painel/contactar') as Route;
@@ -389,6 +394,19 @@ export default async function PainelPage({ searchParams }: PainelProps) {
               {total} {total === 1 ? 'comércio' : 'comércios'} ·{' '}
               {(SORTS.find((s) => s.value === ordem)?.label ?? '').toLowerCase()}
             </span>
+          )}
+
+          {/* Descarregar leva os mesmos filtros que estão no ecrã, e por isso é
+              uma ligação normal e não um botão: o endereço já diz tudo o que a
+              rota precisa de saber. `download` não vai — quem serve o ficheiro
+              é que manda, no cabeçalho, e assim o nome traz a data. */}
+          {total > 0 && (
+            <a
+              href={csvHref}
+              className="ml-auto rounded-md border border-black/15 px-3 py-1.5 text-sm font-medium dark:border-white/15"
+            >
+              Descarregar para Excel
+            </a>
           )}
         </div>
 
