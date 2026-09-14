@@ -3,7 +3,14 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import { setStage, setDealFields, registarVenda, anularVenda } from '@/lib/deals/repository';
+import {
+  setStage,
+  setDealFields,
+  registarVenda,
+  anularVenda,
+  registarDesfecho,
+} from '@/lib/deals/repository';
+import { ehDesfecho } from '@/lib/deals/desfechos';
 import { lerValor, moedaDoPais } from '@/lib/deals/dinheiro';
 import { isValidStage } from '@/lib/deals/stages';
 
@@ -89,4 +96,24 @@ export async function desmarcarVenda(formData: FormData): Promise<void> {
 
   revalidatePath('/painel');
   revalidatePath(`/painel/comercio/${businessId}`);
+}
+
+/**
+ * O desfecho de um contacto feito na fila.
+ *
+ * Não revalida a ficha do comércio nem o painel de propósito. A fila avança no
+ * browser e o lote já está carregado; revalidar aqui punha o Next a redesenhar
+ * uma página que ninguém está a ver, a meio de uma sessão em que o que importa
+ * é o botão seguinte responder já. O painel refaz-se sozinho quando lá se
+ * voltar.
+ */
+export async function marcarDesfecho(formData: FormData): Promise<void> {
+  const supabase = await requireSession();
+
+  const businessId = String(formData.get('businessId') ?? '');
+  const desfecho = String(formData.get('desfecho') ?? '');
+
+  if (!businessId || !ehDesfecho(desfecho)) return;
+
+  await registarDesfecho(supabase, businessId, desfecho);
 }

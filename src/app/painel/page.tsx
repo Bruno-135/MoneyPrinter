@@ -32,6 +32,7 @@ import { signOut } from './actions';
 import { Destaques, fotosDosDestaques } from './destaques';
 import { Numeros, type Numero } from './numeros';
 import { CartoesComercios, SITE_LABEL, SITE_STYLE } from './cartoes-comercios';
+import { quantosPorContactar } from '@/lib/deals/fila';
 
 export const dynamic = 'force-dynamic';
 
@@ -211,6 +212,24 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     ordem === 'score' ? businesses.filter((b) => b.stage === 'new').slice(0, 3) : [];
   const fotosDestaques = await fotosDosDestaques(supabase, destaques);
 
+  // Quantos estão mesmo à espera: por contactar e não adiados para depois. É
+  // diferente do cartão "Por contactar", que conta todos — e a diferença é
+  // exatamente quem já se tentou e não atendeu.
+  const porContactar = await quantosPorContactar(supabase, {
+    regionId: procura,
+    categories: ramos,
+    countries: paises,
+  });
+
+  const contactarParams = new URLSearchParams();
+  if (procura) contactarParams.set('procura', procura);
+  if (ramos.length > 0) contactarParams.set('ramo', ramos.join(','));
+  if (pais) contactarParams.set('pais', pais);
+  const contactarQuery = contactarParams.toString();
+  const contactarHref = (contactarQuery
+    ? `/painel/contactar?${contactarQuery}`
+    : '/painel/contactar') as Route;
+
   /** Atalho para a contagem que ignora os funis das colunas. */
   const quantos = quantosNaFaceta;
 
@@ -314,6 +333,29 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           <ScanForm />
         </div>
       </section>
+
+      {/* ---------------- A porta da fila ----------------
+          Por cima dos números e da tabela, porque é a ação e o resto é
+          informação. Leva os filtros consigo: uma sessão de trinta chamadas a
+          padeiros de Braga corre melhor do que trinta a ramos diferentes — o
+          discurso apura-se à terceira. */}
+      {porContactar > 0 && (
+        <Link
+          href={contactarHref}
+          className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-brand-600 px-5 py-4 text-white sm:px-6"
+        >
+          <span>
+            <span className="block text-lg font-semibold">Contactar agora</span>
+            <span className="block text-sm opacity-80">
+              {porContactar} {porContactar === 1 ? 'comércio' : 'comércios'} à espera, um de cada
+              vez, com o telefone e a mensagem à mão.
+            </span>
+          </span>
+          <span aria-hidden className="text-2xl">
+            &rarr;
+          </span>
+        </Link>
+      )}
 
       <Numeros numeros={numeros} />
 

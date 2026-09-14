@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
 import type { DealStage } from './stages';
+import { DIAS_PARA_VOLTAR_A_TENTAR, type Desfecho } from './desfechos';
 
 /**
  * Leitura e escrita das negociações.
@@ -205,4 +206,64 @@ export async function anularVenda(db: Db, businessId: string): Promise<void> {
     .not('sold_at', 'is', null);
 
   if (erroSite) throw new Error(`Não foi possível devolver a validade à página: ${erroSite.message}`);
+}
+
+/**
+ * O desfecho de um contacto da fila.
+ *
+ * Três, e a diferença entre eles é toda a razão de a fila existir:
+ *
+ *   contactado    falou-se. Sai da fila e entra no funil.
+ *   adiado        não atendeu. CONTINUA por contactar — só não é hoje. Fica
+ *                 com data de novo contacto e a fila ignora-o até lá.
+ *   nao_interessa disse que não. Perdido, com a razão guardada.
+ *
+ * O do meio é o que se costuma fazer mal. Deixá-lo "por contactar" sem data
+ * devolve-o à cabeça da fila daí a um minuto; marcá-lo como perdido deita fora
+ * um prospeto que só não estava na loja. Nenhuma das duas é verdade, e a data
+ * é.
+ */
+export async function registarDesfecho(
+  db: Db,
+  businessId: string,
+  desfecho: Desfecho,
+  opcoes: { adiarDias?: number; razao?: string } = {},
+): Promise<void> {
+  const agora = new Date();
+
+  const campos =
+    desfecho === 'contactado'
+      ? {
+          stage: 'contacted' as DealStage,
+          last_contacted_at: agora.toISOString(),
+          next_action_at: null,
+        }
+      : desfecho === 'adiado'
+        ? {
+            // O estado NÃO muda: continua por contactar.
+            next_action: 'Voltar a tentar — não atendeu.',
+            next_action_at: new Date(
+              agora.getTime() + (opcoes.adiarDias ?? DIAS_PARA_VOLTAR_A_TENTAR) * 86_400_000,
+            ).toISOString(),
+            last_contacted_at: agora.toISOString(),
+          }
+        : {
+            stage: 'lost' as DealStage,
+            lost_reason: opcoes.razao?.trim() || 'Disse que não tem interesse.',
+            next_action_at: null,
+          };
+
+  const { data: existing, error: readError } = await db
+    .from('deals')
+    .select('id')
+    .eq('business_id', businessId)
+    .maybeSingle();
+
+  if (readError) throw new Error(`Não foi possível ler a negociação: ${readError.message}`);
+
+  const { error } = existing
+    ? await db.from('deals').update(campos).eq('id', existing.id)
+    : await db.from('deals').insert({ business_id: businessId, ...campos });
+
+  if (error) throw new Error(`Não foi possível registar o contacto: ${error.message}`);
 }
