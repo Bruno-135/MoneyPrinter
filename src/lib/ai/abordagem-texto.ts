@@ -30,6 +30,21 @@ type Business = Database['public']['Tables']['businesses']['Row'];
 
 export const VARIANTES = 3;
 
+/**
+ * Os dois momentos em que se escreve a um comércio.
+ *
+ * O segundo não é o primeiro outra vez. Quem não respondeu já recebeu a
+ * mensagem boa — repetir o mesmo argumento com outras palavras é a maneira mais
+ * rápida de ser bloqueado. O que muda é o peso: mais curta, sem repetir o que
+ * já se disse, e a dar-lhe uma saída fácil para dizer que não.
+ */
+export const TIPOS = ['first_contact', 'follow_up'] as const;
+export type TipoAbordagem = (typeof TIPOS)[number];
+
+export function ehTipoAbordagem(valor: unknown): valor is TipoAbordagem {
+  return typeof valor === 'string' && (TIPOS as readonly string[]).includes(valor);
+}
+
 export const AbordagemSchema = z.object({
   mensagens: z
     .array(
@@ -118,6 +133,29 @@ export function gancho(business: Business): string {
 export function notaEscrita(nota: number): string {
   return nota.toFixed(1).replace('.', ',');
 }
+
+/**
+ * O que muda quando é a segunda mensagem.
+ *
+ * Acrescenta-se às regras do primeiro contacto em vez de as substituir: tudo o
+ * que lá está — não inventar factos, nada de "solução personalizada", uma
+ * pergunta só no fim — continua a valer. O que muda é o tom de quem já falou
+ * uma vez e não quer chatear.
+ */
+export const REGRAS_SEGUIMENTO = `
+Esta é a SEGUNDA mensagem. A primeira foi enviada e não teve resposta.
+
+- Não repitas o argumento da primeira com outras palavras. Ele já o leu. Se o
+  melhor que tens é o mesmo dito de outra maneira, então é mais curto ainda.
+- Mais curta do que a primeira. Entre 120 e 250 caracteres.
+- Reconhece que já escreveste, sem pedir desculpa por existir. Nada de
+  "desculpe incomodar de novo" nem "venho reforçar o contacto".
+- Dá-lhe uma saída fácil: uma pergunta de sim ou não, ou a hipótese de dizer
+  que não tem interesse sem constrangimento. Quem não responde muitas vezes só
+  não sabe como dizer que não, e um "não" agora vale mais do que um silêncio
+  durante três semanas.
+- Não inventes que houve conversa nenhuma. Não houve.
+`.trim();
 
 export function factos(business: Business, contexto: ContextoAbordagem): string {
   const linhas: string[] = [

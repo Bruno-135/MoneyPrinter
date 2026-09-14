@@ -5,14 +5,16 @@ import type { ModelId } from './models';
 import {
   AbordagemSchema,
   REGRAS,
+  REGRAS_SEGUIMENTO,
   factos,
   regrasDoPais,
   type ContextoAbordagem,
   type MensagemAbordagem,
+  type TipoAbordagem,
 } from './abordagem-texto';
 
-export type { ContextoAbordagem, MensagemAbordagem } from './abordagem-texto';
-export { VARIANTES } from './abordagem-texto';
+export type { ContextoAbordagem, MensagemAbordagem, TipoAbordagem } from './abordagem-texto';
+export { VARIANTES, TIPOS, ehTipoAbordagem } from './abordagem-texto';
 
 /**
  * A chamada que escreve as mensagens de abordagem.
@@ -32,6 +34,7 @@ export async function gerarAbordagem(
   business: Business,
   contexto: ContextoAbordagem,
   model: ModelId,
+  tipo: TipoAbordagem = 'first_contact',
 ): Promise<ResultadoAbordagem> {
   const client = createAiClient();
 
@@ -44,7 +47,7 @@ export async function gerarAbordagem(
       output_config: { effort: 'medium', format: zodOutputFormat(AbordagemSchema) },
       system: `${REGRAS}
 
-${regrasDoPais(business.country_code)}`,
+${regrasDoPais(business.country_code)}${tipo === 'follow_up' ? `\n\n${REGRAS_SEGUIMENTO}` : ''}`,
       messages: [
         {
           role: 'user',

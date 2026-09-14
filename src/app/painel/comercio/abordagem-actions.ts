@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { listSites } from '@/lib/sites/repository';
 import { publicEnv } from '@/lib/env';
 import { DEFAULT_MODEL, isModelId } from '@/lib/ai/models';
-import { gerarAbordagem } from '@/lib/ai/abordagem';
+import { gerarAbordagem, ehTipoAbordagem } from '@/lib/ai/abordagem';
 import { describeAiError } from '@/lib/ai/client';
 import type { AiActionState } from '@/lib/ai/action-state';
 import { guardarAbordagem } from '@/lib/outreach/repository';
@@ -28,6 +28,11 @@ export async function escreverAbordagem(
   const model = isModelId(modelo) ? modelo : DEFAULT_MODEL;
   const assinatura = String(formData.get('assinatura') ?? '');
 
+  // O tipo decide o tom e a linha da tabela: uma insistência não substitui o
+  // primeiro contacto, fica ao lado dele.
+  const pedido = String(formData.get('tipo') ?? '');
+  const tipo = ehTipoAbordagem(pedido) ? pedido : 'first_contact';
+
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { ok: false, message: 'Sessão expirada. Entra outra vez.' };
@@ -48,19 +53,28 @@ export async function escreverAbordagem(
   const urlPagina = live ? `${publicEnv.NEXT_PUBLIC_SITE_URL}/s/${live.publicCode}` : null;
 
   try {
-    const resultado = await gerarAbordagem(business, { urlPagina, assinatura }, model);
+    const resultado = await gerarAbordagem(business, { urlPagina, assinatura }, model, tipo);
 
-    await guardarAbordagem(supabase, businessId, resultado.mensagens, {
-      model: resultado.model,
-      inputTokens: resultado.usage.inputTokens,
-      outputTokens: resultado.usage.outputTokens,
-    });
+    await guardarAbordagem(
+      supabase,
+      businessId,
+      resultado.mensagens,
+      {
+        model: resultado.model,
+        inputTokens: resultado.usage.inputTokens,
+        outputTokens: resultado.usage.outputTokens,
+      },
+      tipo,
+    );
 
     revalidatePath(`/painel/comercio/${businessId}`);
 
     return {
       ok: true,
-      message: `${resultado.mensagens.length} mensagens escritas. Escolhe uma e envia.`,
+      message:
+        tipo === 'follow_up'
+          ? `${resultado.mensagens.length} mensagens de insistência escritas.`
+          : `${resultado.mensagens.length} mensagens escritas. Escolhe uma e envia.`,
     };
   } catch (cause) {
     const erro = describeAiError(cause);

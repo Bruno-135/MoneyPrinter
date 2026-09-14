@@ -60,7 +60,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
   if (!business) notFound();
 
-  const [deal, history, sites, fotos, abordagem, atividade] = await Promise.all([
+  const [deal, history, sites, fotos, abordagem, seguimento, atividade] = await Promise.all([
     getDeal(supabase, id),
     getStageHistory(supabase, id),
     listSites(supabase, id),
@@ -71,6 +71,9 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
     // Já escritas alguma vez. Nunca se gera ao abrir a ficha: cada geração
     // é uma chamada paga, e abrir uma ficha não pode custar dinheiro.
     lerAbordagem(supabase, id),
+    // O seguimento só se lê; só aparece depois de o comércio ter sido
+    // contactado, que é quando faz sentido insistir.
+    lerAbordagem(supabase, id, 'follow_up'),
     // O que o comerciante fez com a página. Vem do que já se registava e
     // nunca se mostrava.
     atividadeDoComercio(supabase, id),
@@ -309,6 +312,21 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
         whatsapp={whatsapp}
         atualizadaEm={abordagem?.atualizadaEm ?? null}
       />
+
+      {/* A insistência só aparece depois de haver primeiro contacto: oferecer
+          uma segunda mensagem a quem ainda não recebeu a primeira seria uma
+          caixa a mais numa ficha já cheia. */}
+      {stage !== 'new' && (
+        <Abordagem
+          businessId={id}
+          tipo="follow_up"
+          titulo="Insistir, sem chatear"
+          mensagens={seguimento?.mensagens ?? []}
+          whatsapp={whatsapp}
+          atualizadaEm={seguimento?.atualizadaEm ?? null}
+          vazio="Para quem não respondeu ao primeiro contacto. Mais curta, sem repetir o argumento que ele já leu, e com uma saída fácil para dizer que não — um não agora vale mais do que três semanas de silêncio."
+        />
+      )}
 
       {/* ---------------- Landing pages ---------------- */}
       <section className="flex flex-col gap-4">

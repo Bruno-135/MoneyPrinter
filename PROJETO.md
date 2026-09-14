@@ -171,7 +171,7 @@ em `supabase/README.md`.)
 | `deal_stage_events` | Histórico de mudanças de estado (escrito por trigger, não à mão) |
 | `site_visits` | Visitas às landing pages |
 | `site_clicks` | Cliques (WhatsApp, telefone, etc.) |
-| `outreach_messages` | Mensagens de primeiro contacto escritas por IA, uma linha por (comércio, tipo) |
+| `outreach_messages` | Mensagens escritas por IA, uma linha por (comércio, tipo): primeiro contacto e insistência |
 
 Vista `monthly_site_report` agrega visitas e cliques por site e por mês
 (`security_invoker = on`, portanto respeita a RLS).
@@ -191,7 +191,7 @@ porque é o que permite filtrar e contar por elas.
 Detalhe tabela a tabela, com o porquê de cada decisão, em `supabase/README.md`.
 
 O schema está aplicado no projeto Supabase `amjqibwoqfkbmtbyysgy`
-("Prospecção e criação de site", eu-west-3, Postgres 17) através de 23 migrações.
+("Prospecção e criação de site", eu-west-3, Postgres 17) através de 24 migrações.
 
 Duas notas que condicionam o código das etapas seguintes:
 
@@ -475,6 +475,27 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       As três aparecem editáveis na ficha, com botão de copiar e de enviar no
       WhatsApp — e o que vai no link é o texto depois de editado, não o que o
       modelo escreveu.
+
+- [x] **Do prospeto à venda** — as quatro peças que faltavam entre ter a lista
+      e receber dinheiro.
+
+      **Fila de contacto** (`/painel/contactar`): um comércio de cada vez, com
+      o telefone como botão e a mensagem já escrita, e três desfechos. Contactar
+      custava sete passos e por isso não se contactava ninguém. "Não atende" não
+      é "não quer": o primeiro continua por contactar com data marcada, o
+      segundo é perdido. Carrega vinte e cinco de uma vez e avança no browser —
+      se cada botão esperasse pelo servidor, a pausa fazia desistir ao décimo.
+
+      **Registar venda**: valor, moeda do país, mensal ou único. E a página
+      vendida deixa de expirar — sem `sold_at`, o site de quem pagou desaparecia
+      sozinho no fim da validade, sem aviso.
+
+      **Abriram a tua página**: as visitas e cliques eram registados desde o
+      princípio e nunca se mostravam. É o melhor sinal de compra que há e perde
+      metade do valor em vinte e quatro horas.
+
+      **Para hoje**: o "próximo passo · quando" existia na ficha e não avisava
+      ninguém. O atrasado vem primeiro e vem marcado.
 
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 

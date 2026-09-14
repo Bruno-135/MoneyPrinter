@@ -34,6 +34,8 @@ import { Numeros, type Numero } from './numeros';
 import { CartoesComercios, SITE_LABEL, SITE_STYLE } from './cartoes-comercios';
 import { quantosPorContactar } from '@/lib/deals/fila';
 import { abriramAPagina } from '@/lib/sites/atividade';
+import { paraHoje } from '@/lib/deals/agenda';
+import { ParaHojeLista } from './para-hoje';
 import { Abriram } from './abriram';
 
 export const dynamic = 'force-dynamic';
@@ -217,7 +219,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   // Quantos estão mesmo à espera: por contactar e não adiados para depois. É
   // diferente do cartão "Por contactar", que conta todos — e a diferença é
   // exatamente quem já se tentou e não atendeu.
-  const [porContactar, abriram] = await Promise.all([
+  const [porContactar, abriram, hoje] = await Promise.all([
     quantosPorContactar(supabase, {
       regionId: procura,
       categories: ramos,
@@ -227,6 +229,9 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     // pessoa que abriu a proposta interessa, esteja o painel filtrado como
     // estiver.
     abriramAPagina(supabase),
+    // O que ficou marcado. Sem filtros: um seguimento combinado é para
+    // cumprir, esteja o painel filtrado como estiver.
+    paraHoje(supabase),
   ]);
 
   const contactarParams = new URLSearchParams();
@@ -347,8 +352,11 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           informação. Leva os filtros consigo: uma sessão de trinta chamadas a
           padeiros de Braga corre melhor do que trinta a ramos diferentes — o
           discurso apura-se à terceira. */}
-      {/* Antes da fila: quem já abriu a proposta vale mais do que quem ainda
-          não ouviu falar de ti. */}
+      {/* A ordem destes três é a ordem do dia: primeiro o que se prometeu
+          fazer, depois quem mostrou interesse sozinho, e só então a fila dos
+          que ainda não ouviram falar de ti. */}
+      <ParaHojeLista itens={hoje} />
+
       <Abriram quem={abriram} />
 
       {porContactar > 0 && (

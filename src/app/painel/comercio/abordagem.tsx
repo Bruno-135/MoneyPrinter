@@ -4,7 +4,7 @@ import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { MODELS, MODEL_IDS, DEFAULT_MODEL } from '@/lib/ai/models';
 import { AI_IDLE } from '@/lib/ai/action-state';
-import type { MensagemAbordagem } from '@/lib/ai/abordagem-texto';
+import type { MensagemAbordagem, TipoAbordagem } from '@/lib/ai/abordagem-texto';
 import { escreverAbordagem } from './abordagem-actions';
 
 /**
@@ -101,12 +101,18 @@ export function Abordagem({
   mensagens,
   whatsapp,
   atualizadaEm,
+  tipo = 'first_contact',
+  titulo = 'Mensagem de abordagem',
+  vazio = 'Ainda não há mensagens para este comércio. A IA escreve três versões com ângulos diferentes, a partir do que o Google sabe dele — as avaliações, a rede social, a página que já lhe fizeste.',
 }: {
   businessId: string;
   mensagens: readonly MensagemAbordagem[];
   /** Base do link do WhatsApp, sem texto. Null quando não há número. */
   whatsapp: string | null;
   atualizadaEm: string | null;
+  tipo?: TipoAbordagem;
+  titulo?: string;
+  vazio?: string;
 }) {
   const [estado, acao] = useActionState(escreverAbordagem, AI_IDLE);
 
@@ -114,7 +120,7 @@ export function Abordagem({
     <section className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight">Mensagem de abordagem</h2>
+          <h2 className="text-lg font-semibold tracking-tight">{titulo}</h2>
           {atualizadaEm && (
             <p className="text-xs opacity-45">
               Escritas a {new Date(atualizadaEm).toLocaleDateString('pt-PT')}. Ficam guardadas —
@@ -125,6 +131,7 @@ export function Abordagem({
 
         <form action={acao} className="flex flex-wrap items-end gap-2.5">
           <input type="hidden" name="businessId" value={businessId} />
+          <input type="hidden" name="tipo" value={tipo} />
 
           <label className="flex flex-col gap-1">
             <span className="text-xs opacity-55">Assinas como</span>
@@ -169,9 +176,7 @@ export function Abordagem({
 
       {mensagens.length === 0 ? (
         <p className="rounded-lg border border-dashed border-black/15 px-5 py-6 text-center text-sm opacity-60 dark:border-white/15">
-          Ainda não há mensagens para este comércio. A IA escreve três versões com ângulos
-          diferentes, a partir do que o Google sabe dele — as avaliações, a rede social, a página
-          que já lhe fizeste.
+          {vazio}
         </p>
       ) : (
         <ul className="flex flex-col gap-3">
