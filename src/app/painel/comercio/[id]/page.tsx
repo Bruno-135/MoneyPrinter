@@ -16,6 +16,8 @@ import { fotosDosDestaques } from '../../destaques';
 import { arteUrl, familiaParaRamo } from '@/lib/sites/imagens/arte';
 import { lerAbordagem } from '@/lib/outreach/repository';
 import { Abordagem } from '../abordagem';
+import { Venda } from '../venda';
+import { moedaDoPais } from '@/lib/deals/dinheiro';
 
 export const dynamic = 'force-dynamic';
 
@@ -230,6 +232,18 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
           <StageSelect businessId={id} stage={stage} />
         </div>
         <p className="text-sm opacity-60">{stageDefinition(stage).hint}</p>
+
+        {/* A venda vive dentro da negociação e não numa secção própria: é o
+            desfecho dela, e separá-las faria procurar em dois sítios o estado
+            de um negócio só. */}
+        <Venda
+          businessId={id}
+          valorCentimos={deal?.saleValueCents ?? null}
+          mensal={deal?.saleIsMonthly ?? false}
+          moeda={deal?.currency ?? moedaDoPais(business.country_code)}
+          wonAt={deal?.wonAt ?? null}
+          temPaginaPublicada={sites.some((s) => s.isLive)}
+        />
 
         <form action={saveNotes} className="flex flex-col gap-4 border-t border-black/10 pt-4 dark:border-white/10">
           <input type="hidden" name="businessId" value={id} />

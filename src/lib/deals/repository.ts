@@ -25,6 +25,12 @@ export interface DealState {
   nextAction: string | null;
   nextActionAt: string | null;
   lostReason: string | null;
+  /** O que o cliente paga mesmo, em cêntimos. null = ainda não se registou. */
+  saleValueCents: number | null;
+  /** true quando esse valor é mensal e não um pagamento único. */
+  saleIsMonthly: boolean;
+  currency: string;
+  wonAt: string | null;
 }
 
 export interface StageEvent {
@@ -90,7 +96,9 @@ export async function setDealFields(
 export async function getDeal(db: Db, businessId: string): Promise<DealState | null> {
   const { data } = await db
     .from('deals')
-    .select('id, stage, stage_changed_at, notes, next_action, next_action_at, lost_reason')
+    // Numa linha só: partida em duas com `+`, a inferência de tipos do
+    // PostgREST deixa de perceber a lista e devolve um erro genérico.
+    .select('id, stage, stage_changed_at, notes, next_action, next_action_at, lost_reason, sale_value_cents, sale_is_monthly, currency, won_at')
     .eq('business_id', businessId)
     .maybeSingle();
 
@@ -104,6 +112,10 @@ export async function getDeal(db: Db, businessId: string): Promise<DealState | n
     nextAction: data.next_action,
     nextActionAt: data.next_action_at,
     lostReason: data.lost_reason,
+    saleValueCents: data.sale_value_cents,
+    saleIsMonthly: data.sale_is_monthly,
+    currency: data.currency,
+    wonAt: data.won_at,
   };
 }
 
@@ -123,3 +135,74 @@ export async function getStageHistory(db: Db, businessId: string): Promise<Stage
 }
 
 /** Quantos comércios em cada estado. Alimenta os filtros do painel. */
+
+/**
+ * Fecha a venda: estado ganho, valor, moeda — e protege a página.
+ *
+ * As duas coisas andam juntas de propósito. Uma landing page publicada expira,
+ * e para uma demonstração é o que se quer; para o cliente que acabou de pagar
+ * é o site a desaparecer sozinho dali a um mês, sem ninguém ser avisado.
+ * Marcar a venda sem marcar a página seria deixar essa armadilha armada — ver
+ * a migração 0024.
+ *
+ * A data do ganho não se escreve aqui: há um gatilho (`sync_deal_stage_dates`)
+ * que a preenche. Escrevê-la também seria duas mãos no mesmo campo.
+ */
+export async function registarVenda(
+  db: Db,
+  businessId: string,
+  venda: { valorCentimos: number | null; mensal: boolean; moeda: string },
+): Promise<void> {
+  const campos = {
+    stage: 'won' as DealStage,
+    sale_value_cents: venda.valorCentimos,
+    sale_is_monthly: venda.mensal,
+    currency: venda.moeda,
+  };
+
+  const { data: existing, error: readError } = await db
+    .from('deals')
+    .select('id')
+    .eq('business_id', businessId)
+    .maybeSingle();
+
+  if (readError) throw new Error(`Não foi possível ler a negociação: ${readError.message}`);
+
+  const { error } = existing
+    ? await db.from('deals').update(campos).eq('id', existing.id)
+    : await db.from('deals').insert({ business_id: businessId, ...campos });
+
+  if (error) throw new Error(`Não foi possível registar a venda: ${error.message}`);
+
+  // Todas as páginas publicadas deste comércio passam a ser do cliente. São
+  // quase sempre uma só; se forem duas, marcar ambas é mais seguro do que
+  // escolher uma e deixar a outra a expirar.
+  const { error: erroSite } = await db
+    .from('generated_sites')
+    .update({ sold_at: new Date().toISOString() })
+    .eq('business_id', businessId)
+    .eq('status', 'published')
+    .is('sold_at', null);
+
+  if (erroSite) {
+    throw new Error(`A venda ficou registada, mas a página não: ${erroSite.message}`);
+  }
+}
+
+/** Desfaz o registo da venda. A página volta a ter validade. */
+export async function anularVenda(db: Db, businessId: string): Promise<void> {
+  const { error } = await db
+    .from('deals')
+    .update({ sale_value_cents: null, sale_is_monthly: false })
+    .eq('business_id', businessId);
+
+  if (error) throw new Error(`Não foi possível anular a venda: ${error.message}`);
+
+  const { error: erroSite } = await db
+    .from('generated_sites')
+    .update({ sold_at: null })
+    .eq('business_id', businessId)
+    .not('sold_at', 'is', null);
+
+  if (erroSite) throw new Error(`Não foi possível devolver a validade à página: ${erroSite.message}`);
+}
