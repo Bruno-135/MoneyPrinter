@@ -3,13 +3,9 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import {
-  setStage,
-  setDealFields,
-  registarVenda,
-  anularVenda,
-  registarDesfecho,
-} from '@/lib/deals/repository';
+import { setStage, setDealFields, registarDesfecho } from '@/lib/deals/repository';
+import { registarServico, cancelarServico, apagarServico } from '@/lib/servicos/vendidos';
+import { SERVICOS } from '@/lib/servicos/catalogo';
 import { ehDesfecho } from '@/lib/deals/desfechos';
 import { lerValor, moedaDoPais } from '@/lib/deals/dinheiro';
 import { isValidStage } from '@/lib/deals/stages';
@@ -53,50 +49,96 @@ export async function saveNotes(formData: FormData): Promise<void> {
 }
 
 /**
- * Fecha a venda.
+ * Regista um serviço vendido a um cliente.
  *
  * O valor vem escrito por uma pessoa que está a fechar negócio — "30", "30,00",
  * "R$ 1.500,00" — e é lido com tolerância (ver `dinheiro.ts`). Não ter escrito
  * valor nenhum NÃO impede o registo: a venda aconteceu à mesma, e recusá-la por
  * falta de um número seria perder o facto mais importante por causa do detalhe.
+ *
+ * A primeira venda a um comércio passa o negócio a ganho. As seguintes não
+ * mexem no funil — ele já é cliente, e voltar a marcar "ganho" não diz nada de
+ * novo.
  */
-export async function marcarVenda(formData: FormData): Promise<void> {
+export async function venderServico(formData: FormData): Promise<void> {
   const supabase = await requireSession();
 
   const businessId = String(formData.get('businessId') ?? '');
-  if (!businessId) return;
+  const slug = String(formData.get('servico') ?? '');
 
-  // A moeda sai do país do comércio e não de uma caixa a mais no formulário:
-  // uma padaria em Curitiba não recebe euros, e perguntá-lo seria perguntar o
-  // que já se sabe.
+  // O slug tem de existir no catálogo: sem isto, um valor inventado no
+  // formulário criava uma linha que nenhum ecrã sabe mostrar.
+  if (!businessId || !SERVICOS.some((s) => s.slug === slug)) return;
+
   const { data: business } = await supabase
     .from('businesses')
     .select('country_code')
     .eq('id', businessId)
     .maybeSingle();
 
-  await registarVenda(supabase, businessId, {
+  await registarServico(supabase, businessId, {
+    slug,
     valorCentimos: lerValor(String(formData.get('valor') ?? '')),
     mensal: formData.get('mensal') === 'on',
     moeda: moedaDoPais(business?.country_code ?? 'PT'),
   });
 
+  // A landing page vendida deixa de expirar. Sem isto, o site de quem pagou
+  // desaparecia sozinho no fim da validade — ver a migração 0024.
+  if (slug === 'site') {
+    await supabase
+      .from('generated_sites')
+      .update({ sold_at: new Date().toISOString() })
+      .eq('business_id', businessId)
+      .eq('status', 'published')
+      .is('sold_at', null);
+  }
+
+  const { data: deal } = await supabase
+    .from('deals')
+    .select('id, stage')
+    .eq('business_id', businessId)
+    .maybeSingle();
+
+  if (!deal) {
+    await supabase.from('deals').insert({ business_id: businessId, stage: 'won' });
+  } else if (deal.stage !== 'won') {
+    await supabase.from('deals').update({ stage: 'won' }).eq('id', deal.id);
+  }
+
   revalidatePath('/painel');
+  revalidatePath('/painel/clientes');
   revalidatePath(`/painel/comercio/${businessId}`);
 }
 
-/** Desfaz o registo. O estado do funil fica como está — só o valor sai. */
-export async function desmarcarVenda(formData: FormData): Promise<void> {
+/** O cliente deixou de pagar. A linha fica, marcada como cancelada. */
+export async function cancelarServicoVendido(formData: FormData): Promise<void> {
   const supabase = await requireSession();
 
+  const id = String(formData.get('id') ?? '');
   const businessId = String(formData.get('businessId') ?? '');
-  if (!businessId) return;
+  if (!id) return;
 
-  await anularVenda(supabase, businessId);
+  await cancelarServico(supabase, id);
 
-  revalidatePath('/painel');
-  revalidatePath(`/painel/comercio/${businessId}`);
+  revalidatePath('/painel/clientes');
+  if (businessId) revalidatePath(`/painel/comercio/${businessId}`);
 }
+
+/** Registou-se por engano. Apaga mesmo. */
+export async function apagarServicoVendido(formData: FormData): Promise<void> {
+  const supabase = await requireSession();
+
+  const id = String(formData.get('id') ?? '');
+  const businessId = String(formData.get('businessId') ?? '');
+  if (!id) return;
+
+  await apagarServico(supabase, id);
+
+  revalidatePath('/painel/clientes');
+  if (businessId) revalidatePath(`/painel/comercio/${businessId}`);
+}
+
 
 /**
  * O desfecho de um contacto feito na fila.

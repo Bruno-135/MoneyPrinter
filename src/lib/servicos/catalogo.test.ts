@@ -122,6 +122,13 @@ describe('catálogo', () => {
     expect(new Set(SERVICOS.map((s) => s.slug)).size).toBe(SERVICOS.length);
   });
 
+  it('os nomes curtos são distintos', () => {
+    // A carteira tem uma coluna por serviço com o nome curto no cabeçalho.
+    // Dois serviços começam por "Criação": cortar a primeira palavra do nome
+    // dava duas colunas iguais e a tabela ficava ilegível.
+    expect(new Set(SERVICOS.map((s) => s.curto)).size).toBe(SERVICOS.length);
+  });
+
   it('nenhum serviço fica sem razão escrita quando se aplica', () => {
     // Uma oportunidade sem frase é uma linha na ficha que não ajuda a vender.
     for (const o of oportunidades(comercio({ website_kind: 'none', reviews_count: 0 }))) {

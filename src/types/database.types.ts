@@ -325,8 +325,6 @@ export type Database = {
           notes: string | null
           created_at: string
           updated_at: string
-          sale_value_cents: number | null
-          sale_is_monthly: boolean
         };
         Insert: {
           id?: string
@@ -347,8 +345,6 @@ export type Database = {
           notes?: string | null
           created_at?: string
           updated_at?: string
-          sale_value_cents?: number | null
-          sale_is_monthly?: boolean
         };
         Update: {
           id?: string
@@ -369,8 +365,6 @@ export type Database = {
           notes?: string | null
           created_at?: string
           updated_at?: string
-          sale_value_cents?: number | null
-          sale_is_monthly?: boolean
         };
         Relationships: [
           {
@@ -385,6 +379,59 @@ export type Database = {
             columns: ["owner_id"];
             isOneToOne: false;
             referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      client_services: {
+        Row: {
+          business_id: string;
+          cancelled_at: string | null;
+          created_at: string;
+          currency: string;
+          id: string;
+          is_monthly: boolean;
+          notes: string | null;
+          owner_id: string;
+          service_slug: string;
+          sold_at: string;
+          updated_at: string;
+          value_cents: number | null;
+        };
+        Insert: {
+          business_id: string;
+          cancelled_at?: string | null;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          is_monthly?: boolean;
+          notes?: string | null;
+          owner_id?: string;
+          service_slug: string;
+          sold_at?: string;
+          updated_at?: string;
+          value_cents?: number | null;
+        };
+        Update: {
+          business_id?: string;
+          cancelled_at?: string | null;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          is_monthly?: boolean;
+          notes?: string | null;
+          owner_id?: string;
+          service_slug?: string;
+          sold_at?: string;
+          updated_at?: string;
+          value_cents?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "client_services_business_id_fkey";
+            columns: ["business_id"];
+            isOneToOne: false;
+            referencedRelation: "businesses";
             referencedColumns: ["id"];
           },
         ];

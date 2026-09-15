@@ -315,6 +315,9 @@ export default async function PainelPage({ searchParams }: PainelProps) {
       <header className="flex items-center justify-between gap-3 border-b border-black/[0.07] pb-4 text-sm dark:border-white/[0.07]">
         <span className="font-semibold tracking-tight">Prospeção comercial</span>
         <div className="flex items-center gap-4">
+          <Link href="/painel/clientes" className="underline underline-offset-4 opacity-70">
+            Clientes
+          </Link>
           <Link href="/painel/relatorios" className="underline underline-offset-4 opacity-70">
             Relatórios
           </Link>

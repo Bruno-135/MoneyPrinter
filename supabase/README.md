@@ -72,6 +72,15 @@ npm run db:types          # regenerar src/types/database.types.ts
   exceções deliberadas são `record_site_visit` e `record_site_click`, que existem
   precisamente para serem chamadas por visitantes anónimos.
 
+- **Os serviços vendidos são linhas, não colunas no `deals`.** Um cliente compra
+  o site em Março e o cardápio em Julho: um `sale_value_cents` único no `deals`
+  não guarda isso, e com ele nunca se saberia quem tem site mas ainda não tem
+  cardápio — que é onde está a venda seguinte mais barata. `client_services`
+  tem uma linha por (comércio, serviço), com índice único, valor, moeda e
+  `is_monthly` próprios. Cancelar escreve `cancelled_at` em vez de apagar: o
+  que já se faturou aconteceu, e uma carteira que esconde os cancelamentos não
+  ensina nada.
+
 ## Testar o schema localmente
 
 Não é preciso um projeto Supabase: um Postgres 15+ chega, com os stubs de

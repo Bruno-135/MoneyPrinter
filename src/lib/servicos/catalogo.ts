@@ -37,6 +37,11 @@ export interface Oportunidade {
 export interface Servico {
   slug: string;
   nome: string;
+  /**
+   * Uma palavra, para o cabeçalho da carteira. Escrita à mão e não cortada do
+   * nome: dois serviços começam por "Criação" e as colunas ficariam iguais.
+   */
+  curto: string;
   /** O que é, em uma linha, para quem nunca ouviu falar. */
   descricao: string;
   /** true quando rende todos os meses. Muda tudo no valor do cliente. */
@@ -62,6 +67,7 @@ export const SERVICOS: readonly Servico[] = [
   {
     slug: 'site',
     nome: 'Criação de site',
+    curto: 'Site',
     descricao: 'Uma página própria, com as fotos, os horários e o contacto.',
     recorrente: true,
     avaliar: (b) => {
@@ -90,6 +96,7 @@ export const SERVICOS: readonly Servico[] = [
   {
     slug: 'ficha-google',
     nome: 'Ficha do Google completa',
+    curto: 'Google',
     descricao: 'Horários, fotos, serviços e descrição na ficha que aparece no Maps.',
     recorrente: false,
     avaliar: (b) => {
@@ -110,6 +117,7 @@ export const SERVICOS: readonly Servico[] = [
   {
     slug: 'avaliacoes',
     nome: 'Campanha de avaliações',
+    curto: 'Avaliações',
     descricao: 'Pôr os clientes satisfeitos a avaliar no Google, de forma organizada.',
     recorrente: false,
     avaliar: (b) => {
@@ -142,6 +150,7 @@ export const SERVICOS: readonly Servico[] = [
   {
     slug: 'instagram',
     nome: 'Criação de Instagram',
+    curto: 'Instagram',
     descricao: 'Abrir e montar o perfil, com as primeiras publicações feitas.',
     recorrente: true,
     avaliar: (b) => {
@@ -159,6 +168,7 @@ export const SERVICOS: readonly Servico[] = [
   {
     slug: 'cardapio',
     nome: 'Cardápio digital com pedidos',
+    curto: 'Cardápio',
     descricao: 'Cardápio online e pedido directo por WhatsApp, sem comissões de plataforma.',
     recorrente: true,
     avaliar: (b) => {
@@ -173,6 +183,7 @@ export const SERVICOS: readonly Servico[] = [
   {
     slug: 'dominio',
     nome: 'Registo de domínio',
+    curto: 'Domínio',
     descricao: 'O endereço próprio do negócio, em vez de um link emprestado.',
     recorrente: true,
     avaliar: (b) => {
@@ -188,6 +199,7 @@ export const SERVICOS: readonly Servico[] = [
   {
     slug: 'fotografia',
     nome: 'Fotografia do negócio',
+    curto: 'Fotos',
     descricao: 'Fotos do espaço e dos produtos, para o site e para a ficha do Google.',
     recorrente: false,
     avaliar: (b) => {

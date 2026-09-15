@@ -172,6 +172,7 @@ em `supabase/README.md`.)
 | `site_visits` | Visitas às landing pages |
 | `site_clicks` | Cliques (WhatsApp, telefone, etc.) |
 | `outreach_messages` | Mensagens escritas por IA, uma linha por (comércio, tipo): primeiro contacto e insistência |
+| `client_services` | O que cada cliente já comprou: serviço, valor, mensal ou único, data da venda e do cancelamento |
 
 Vista `monthly_site_report` agrega visitas e cliques por site e por mês
 (`security_invoker = on`, portanto respeita a RLS).
@@ -191,7 +192,7 @@ porque é o que permite filtrar e contar por elas.
 Detalhe tabela a tabela, com o porquê de cada decisão, em `supabase/README.md`.
 
 O schema está aplicado no projeto Supabase `amjqibwoqfkbmtbyysgy`
-("Prospecção e criação de site", eu-west-3, Postgres 17) através de 24 migrações.
+("Prospecção e criação de site", eu-west-3, Postgres 17) através de 25 migrações.
 
 Duas notas que condicionam o código das etapas seguintes:
 
@@ -517,6 +518,24 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       só se preenche quando se gera um site, portanto "não temos fotos" quer
       dizer "não perguntámos" e não "ele não tem" — uma regra assente nisso
       mentia em 99% dos casos.
+
+- [x] **O que já lhe vendeste** — `client_services` e a carteira em
+      `/painel/clientes`.
+
+      O catálogo diz o que **podes** oferecer; isto regista o que **já**
+      vendeste. Uma linha por (comércio, serviço) em vez de um valor único no
+      `deals`: um cliente compra site em Março e cardápio em Julho, e um campo
+      só não guarda isso. As colunas `sale_value_cents` e `sale_is_monthly` do
+      `deals` foram removidas na migração 0025 — não havia nenhuma venda
+      registada, portanto não se perdeu nada.
+
+      A carteira é **uma coluna por serviço**, para se ler de cima a baixo à
+      procura de BURACOS: quem tem site e não tem cardápio, quem tem cardápio e
+      nunca fez a ficha do Google. É a venda mais barata que há — a prospeção
+      já foi paga e a conversa já existe.
+
+      **Os totais são por moeda, nunca um só.** Há clientes em Portugal e no
+      Brasil; somar cêntimos com centavos dava um número que não existe.
 
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 

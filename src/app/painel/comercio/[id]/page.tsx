@@ -16,7 +16,8 @@ import { fotosDosDestaques } from '../../destaques';
 import { arteUrl, familiaParaRamo } from '@/lib/sites/imagens/arte';
 import { lerAbordagem } from '@/lib/outreach/repository';
 import { Abordagem } from '../abordagem';
-import { Venda } from '../venda';
+import { ServicosVendidos } from '../servicos-vendidos';
+import { servicosDoCliente } from '@/lib/servicos/vendidos';
 import { moedaDoPais } from '@/lib/deals/dinheiro';
 import { atividadeDoComercio } from '@/lib/sites/atividade';
 import { oportunidades } from '@/lib/servicos/catalogo';
@@ -62,7 +63,8 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
   if (!business) notFound();
 
-  const [deal, history, sites, fotos, abordagem, seguimento, atividade] = await Promise.all([
+  const [deal, history, sites, fotos, abordagem, seguimento, atividade, vendidos] =
+    await Promise.all([
     getDeal(supabase, id),
     getStageHistory(supabase, id),
     listSites(supabase, id),
@@ -79,7 +81,14 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
     // O que o comerciante fez com a página. Vem do que já se registava e
     // nunca se mostrava.
     atividadeDoComercio(supabase, id),
+    // O que ele já comprou. Serve as duas caixas: a conta e o que falta.
+    servicosDoCliente(supabase, id),
   ]);
+
+  // O catálogo sem o que ele já tem. Oferecer o que já é dele seria convidar
+  // ao engano — e faz o vendedor parecer que não sabe com quem está a falar.
+  const jaTem = new Set(vendidos.filter((v) => v.canceladoEm === null).map((v) => v.slug));
+  const porVender = oportunidades(business).filter((o) => !jaTem.has(o.servico.slug));
 
   const foto = fotos.get(id);
   const capa = foto?.url ?? arteUrl(familiaParaRamo(business.business_category), id);
@@ -248,18 +257,6 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
         </div>
         <p className="text-sm opacity-60">{stageDefinition(stage).hint}</p>
 
-        {/* A venda vive dentro da negociação e não numa secção própria: é o
-            desfecho dela, e separá-las faria procurar em dois sítios o estado
-            de um negócio só. */}
-        <Venda
-          businessId={id}
-          valorCentimos={deal?.saleValueCents ?? null}
-          mensal={deal?.saleIsMonthly ?? false}
-          moeda={deal?.currency ?? moedaDoPais(business.country_code)}
-          wonAt={deal?.wonAt ?? null}
-          temPaginaPublicada={sites.some((s) => s.isLive)}
-        />
-
         <form action={saveNotes} className="flex flex-col gap-4 border-t border-black/10 pt-4 dark:border-white/10">
           <input type="hidden" name="businessId" value={id} />
 
@@ -304,7 +301,16 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
       {/* O que se lhe pode vender, antes da mensagem: a abordagem é melhor
           quando já se sabe o que se vai oferecer. Sai todo de regras sobre
           dados que já temos — não custa uma chamada nem um cêntimo. */}
-      <Oportunidades businessId={id} lista={oportunidades(business)} />
+      {/* O que já comprou e o que falta, lado a lado: separá-las era obrigar
+          a olhar para dois sítios para responder à mesma pergunta. */}
+      <ServicosVendidos
+        businessId={id}
+        vendidos={vendidos}
+        porVender={porVender}
+        moeda={deal?.currency ?? moedaDoPais(business.country_code)}
+      />
+
+      <Oportunidades businessId={id} lista={porVender} />
 
       {/* ---------------- Mensagem de abordagem ----------------
           Entre a negociação e a landing page de propósito: escreve-se com o
