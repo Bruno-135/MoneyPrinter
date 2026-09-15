@@ -19,6 +19,8 @@ import { Abordagem } from '../abordagem';
 import { Venda } from '../venda';
 import { moedaDoPais } from '@/lib/deals/dinheiro';
 import { atividadeDoComercio } from '@/lib/sites/atividade';
+import { oportunidades } from '@/lib/servicos/catalogo';
+import { Oportunidades } from '../oportunidades';
 import { AtividadeDaPagina } from '../atividade';
 
 export const dynamic = 'force-dynamic';
@@ -298,6 +300,11 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
           </button>
         </form>
       </section>
+
+      {/* O que se lhe pode vender, antes da mensagem: a abordagem é melhor
+          quando já se sabe o que se vai oferecer. Sai todo de regras sobre
+          dados que já temos — não custa uma chamada nem um cêntimo. */}
+      <Oportunidades businessId={id} lista={oportunidades(business)} />
 
       {/* ---------------- Mensagem de abordagem ----------------
           Entre a negociação e a landing page de propósito: escreve-se com o

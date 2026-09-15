@@ -497,6 +497,27 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       **Para hoje**: o "próximo passo · quando" existia na ficha e não avisava
       ninguém. O atrasado vem primeiro e vem marcado.
 
+- [x] **O que lhe podes vender** — catálogo de serviços com regras sobre os
+      dados que já temos.
+
+      A ficha do comércio passa a responder à pergunta que se faz ao abri-la:
+      "o que é que eu ofereço a este?". Site, ficha do Google, campanha de
+      avaliações, Instagram, cardápio digital, domínio, fotografia.
+
+      **Sem IA.** Os sinais já estão guardados e uma regra escrita à mão é mais
+      barata, instantânea e explicável — dá para dizer ao comerciante porque é
+      que se está a falar daquilo, o que é metade da venda.
+
+      Três níveis, e a diferença entre eles é honestidade: `forte` vê-se nos
+      dados e tem frase pronta ("a sua ficha não tem horário"); `possivel` é
+      uma pergunta a fazer; `nao` não se mostra. Um palpite vestido de facto é
+      o caminho mais rápido para dizer uma coisa errada a quem sabe a verdade.
+
+      Só se usam sinais FIÁVEIS. `google_photos` ficou de fora de propósito:
+      só se preenche quando se gera um site, portanto "não temos fotos" quer
+      dizer "não perguntámos" e não "ele não tem" — uma regra assente nisso
+      mentia em 99% dos casos.
+
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
 ---
