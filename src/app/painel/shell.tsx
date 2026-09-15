@@ -89,7 +89,13 @@ export function Shell({ children, sair }: { children: React.ReactNode; sair: Rea
                     <span
                       className={`h-1.5 w-1.5 shrink-0 rounded-full ${aceso ? 'bg-acc' : 'bg-line'}`}
                     />
-                    {item.label}
+                    <span className="flex-1">{item.label}</span>
+                    {/* O ponto de interrogação diz que o ecrã existe mas ainda
+                        não lê nada. Sem ele, um ecrã de exemplo passa por real
+                        até alguém reparar. */}
+                    {item.porLigar && (
+                      <span className="shrink-0 font-mono text-[10px] text-ink3">?</span>
+                    )}
                   </Link>
                 );
               })}

@@ -562,10 +562,24 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       trazem cabeçalho nem largura máxima próprios. O menu só lista páginas que
       existem — um item que abre um ecrã vazio é pior do que não existir.
 
-- [ ] **Os ecrãs que faltam do desenho** — ficha do comércio, carteira, funil,
-      varrimento e custos, landing pages, robô, instâncias de WhatsApp,
-      calendário de conteúdo, suporte, equipa, cobrança, perfil. Os quatro
-      primeiros têm dados; os outros esperam pela funcionalidade por trás.
+- [x] **Os quinze ecrãs do desenho, todos no menu.**
+
+      O painel passou a ser SÓ o painel: a tabela de comércios mudou-se para
+      `/painel/comercios` e o varrimento para `/painel/varrimento`. Responde a
+      uma pergunta — a quem ligo agora — e nada obriga a rolar antes disso.
+
+      Com dados a sério: painel, fila, comércios, ficha, carteira, funil,
+      varrimento e custos, landing pages, relatórios.
+
+      Ainda sem dados, e no menu na mesma: robô, instâncias de WhatsApp,
+      calendário de conteúdo, suporte, equipa, cobrança, perfil. Cada um traz
+      uma tira `PorLigar` a dizer o que falta, e no menu leva um `?`. Estarem lá
+      permite ver o caminho todo e discutir o desenho; a tira impede que um
+      número de exemplo passe por verdade.
+
+      O cartão "O teu dia" está no painel com os valores a `—` em vez dos
+      números do desenho. Um painel que serve para decidir a quem ligar não pode
+      ter nele um número inventado.
 
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
