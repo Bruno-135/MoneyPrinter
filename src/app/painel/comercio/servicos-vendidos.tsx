@@ -51,7 +51,7 @@ export function ServicosVendidos({
                 key={v.id}
                 className={`flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border px-4 py-2.5 text-sm ${
                   cancelado
-                    ? 'border-black/10 opacity-50 dark:border-white/10'
+                    ? 'border-line opacity-50 dark:border-line'
                     : 'border-emerald-600/30 bg-emerald-500/[0.06]'
                 }`}
               >
@@ -60,11 +60,11 @@ export function ServicosVendidos({
                 {v.valorCentimos !== null && (
                   <span className="tabular-nums">
                     {escreverValor(v.valorCentimos, v.moeda)}
-                    {v.mensal && <span className="opacity-60"> /mês</span>}
+                    {v.mensal && <span className="text-ink2 opacity-100"> /mês</span>}
                   </span>
                 )}
 
-                <span className="text-xs opacity-55">
+                <span className="text-xs text-ink3 opacity-100">
                   {cancelado
                     ? `cancelado a ${new Date(v.canceladoEm!).toLocaleDateString('pt-PT')}`
                     : `desde ${new Date(v.vendidoEm).toLocaleDateString('pt-PT')}`}
@@ -75,7 +75,7 @@ export function ServicosVendidos({
                     <form action={cancelarServicoVendido}>
                       <input type="hidden" name="id" value={v.id} />
                       <input type="hidden" name="businessId" value={businessId} />
-                      <button type="submit" className="text-xs underline underline-offset-4 opacity-55">
+                      <button type="submit" className="text-xs underline underline-offset-4 text-ink3 opacity-100">
                         Cancelou
                       </button>
                     </form>
@@ -100,15 +100,15 @@ export function ServicosVendidos({
       {porVender.length > 0 ? (
         <form
           action={venderServico}
-          className="flex flex-wrap items-end gap-3 rounded-lg border border-black/10 p-4 dark:border-white/10"
+          className="flex flex-wrap items-end gap-3 rounded-lg border border-line p-4 dark:border-line"
         >
           <input type="hidden" name="businessId" value={businessId} />
 
           <label className="flex flex-col gap-1">
-            <span className="text-xs opacity-55">Vendeu o quê</span>
+            <span className="text-xs text-ink3 opacity-100">Vendeu o quê</span>
             <select
               name="servico"
-              className="rounded-md border border-black/15 bg-white/60 px-2.5 py-1.5 text-sm outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5"
+              className="rounded-md border border-line bg-white/60 px-2.5 py-1.5 text-sm outline-none focus:border-brand-500 dark:border-line dark:bg-white/5"
             >
               {porVender.map((o) => (
                 <option key={o.servico.slug} value={o.servico.slug}>
@@ -119,12 +119,12 @@ export function ServicosVendidos({
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-xs opacity-55">Quanto</span>
+            <span className="text-xs text-ink3 opacity-100">Quanto</span>
             <input
               name="valor"
               inputMode="decimal"
               placeholder={moeda === 'BRL' ? 'R$ 150,00' : '30,00'}
-              className="w-28 rounded-md border border-black/15 bg-white/60 px-2.5 py-1.5 text-sm outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5"
+              className="w-28 rounded-md border border-line bg-white/60 px-2.5 py-1.5 text-sm outline-none focus:border-brand-500 dark:border-line dark:bg-white/5"
             />
           </label>
 
@@ -141,7 +141,7 @@ export function ServicosVendidos({
           </button>
 
           {vendidos.length === 0 && (
-            <p className="w-full text-xs opacity-55">
+            <p className="w-full text-xs text-ink3 opacity-100">
               A primeira venda passa o negócio a <strong>ganho</strong>. Se for o site, a landing
               page <strong>deixa de expirar</strong> — sem isso, o site do cliente desaparecia
               sozinho no fim da validade.
@@ -149,7 +149,7 @@ export function ServicosVendidos({
           )}
         </form>
       ) : (
-        <p className="rounded-lg border border-dashed border-black/15 px-4 py-3 text-center text-sm opacity-55 dark:border-white/15">
+        <p className="rounded-lg border border-dashed border-line px-4 py-3 text-center text-sm text-ink3 opacity-100 dark:border-line">
           Já lhe vendeste tudo o que há no catálogo.
         </p>
       )}

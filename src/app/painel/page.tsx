@@ -263,13 +263,13 @@ export default async function PainelPage({ searchParams }: PainelProps) {
       label: 'Sem site',
       valor: quantos(sitesTotal, 'none'),
       href: painelHref(here, { site: ['none'], estado: [], ramo: [] }),
-      tom: 'text-emerald-600 dark:text-emerald-400',
+      tom: 'ok',
     },
     {
       label: 'Só rede social',
       valor: quantos(sitesTotal, 'social_only'),
       href: painelHref(here, { site: ['social_only'], estado: [], ramo: [] }),
-      tom: 'text-sky-600 dark:text-sky-400',
+      tom: 'cool',
     },
     {
       label: 'Por contactar',
@@ -280,13 +280,13 @@ export default async function PainelPage({ searchParams }: PainelProps) {
       label: 'Em conversa',
       valor: quantos(estadosTotal, ...emConversa),
       href: painelHref(here, { estado: emConversa, site: [...WEBSITE_KINDS], ramo: [] }),
-      tom: 'text-amber-600 dark:text-amber-400',
+      tom: 'warm',
     },
     {
       label: 'Ganhos',
       valor: quantos(estadosTotal, 'won'),
       href: painelHref(here, { estado: ['won'], site: [...WEBSITE_KINDS], ramo: [] }),
-      tom: 'text-emerald-600 dark:text-emerald-400',
+      tom: 'ok',
     },
   ];
 
@@ -305,17 +305,46 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   // `layout.tsx` do painel. Esta página só põe o seu conteúdo lá dentro.
   return (
     <>
-      {/* ---------------- A procura, em destaque ----------------
-          É o que se vem cá fazer, e por isso ocupa o lugar de honra: caixa
-          própria, título grande e centrado, e o aviso do custo por baixo. */}
-      <section className="rounded-2xl border border-black/10 bg-black/[0.02] px-5 py-8 sm:px-10 dark:border-white/10 dark:bg-white/[0.02]">
-        <div className="mx-auto flex max-w-2xl flex-col gap-6">
-          <div className="flex flex-col items-center gap-2 text-center">
-            <span className="rounded-full bg-brand-600/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand-600 uppercase">
+      {/* A ordem é a do desenho, e é a ordem do dia: primeiro o sinal quente
+          (quem abriu a página sozinho), depois os números que dizem em que pé
+          está o trabalho, depois o que se prometeu fazer hoje. A procura e a
+          tabela vêm por baixo: são para quando se quer trabalho novo, não para
+          quando se abre o painel de manhã. */}
+      <Abriram quem={abriram} />
+
+      <Numeros numeros={numeros} />
+
+      {porContactar > 0 && (
+        <Link
+          href={contactarHref}
+          className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-acc bg-surf px-4 py-3.5"
+        >
+          <span>
+            <span className="block text-lg font-bold">Contactar agora</span>
+            <span className="block text-[13px] text-ink2">
+              {porContactar} {porContactar === 1 ? 'comércio' : 'comércios'} à espera, um de cada
+              vez, com o telefone e a mensagem à mão.
+            </span>
+          </span>
+          <span aria-hidden className="text-2xl text-acc">
+            &rarr;
+          </span>
+        </Link>
+      )}
+
+      <ParaHojeLista itens={hoje} />
+
+      {/* ---------------- A procura ----------------
+          Caixa própria, porque gasta dinheiro de verdade e isso merece um
+          limite visível à volta. */}
+      <section className="rounded-2xl border border-line bg-surf p-3.5 sm:p-6">
+        <div className="mx-auto flex max-w-2xl flex-col gap-5">
+          <div className="flex flex-col items-center gap-1.5 text-center">
+            <span className="font-mono text-[11px] font-bold tracking-[0.12em] text-acc uppercase">
               Encontrar comércios sem site
             </span>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Procurar comércios</h1>
-            <p className="text-sm opacity-60">
+            <h2 className="text-2xl font-bold tracking-tight">Procurar comércios</h2>
+            <p className="text-[13px] text-ink2">
               Escolhe a cidade e o ramo. Simula primeiro para ver quanto custa — a simulação não
               gasta nada.
             </p>
@@ -325,45 +354,13 @@ export default async function PainelPage({ searchParams }: PainelProps) {
         </div>
       </section>
 
-      {/* ---------------- A porta da fila ----------------
-          Por cima dos números e da tabela, porque é a ação e o resto é
-          informação. Leva os filtros consigo: uma sessão de trinta chamadas a
-          padeiros de Braga corre melhor do que trinta a ramos diferentes — o
-          discurso apura-se à terceira. */}
-      {/* A ordem destes três é a ordem do dia: primeiro o que se prometeu
-          fazer, depois quem mostrou interesse sozinho, e só então a fila dos
-          que ainda não ouviram falar de ti. */}
-      <ParaHojeLista itens={hoje} />
-
-      <Abriram quem={abriram} />
-
-      {porContactar > 0 && (
-        <Link
-          href={contactarHref}
-          className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-brand-600 px-5 py-4 text-white sm:px-6"
-        >
-          <span>
-            <span className="block text-lg font-semibold">Contactar agora</span>
-            <span className="block text-sm opacity-80">
-              {porContactar} {porContactar === 1 ? 'comércio' : 'comércios'} à espera, um de cada
-              vez, com o telefone e a mensagem à mão.
-            </span>
-          </span>
-          <span aria-hidden className="text-2xl">
-            &rarr;
-          </span>
-        </Link>
-      )}
-
-      <Numeros numeros={numeros} />
-
       <Destaques destaques={destaques} fotos={fotosDestaques} />
 
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h2 className="text-2xl font-semibold tracking-tight">{tituloResultados}</h2>
+          <h2 className="text-xl font-bold tracking-tight">{tituloResultados}</h2>
           {total > 0 && (
-            <span className="text-sm opacity-55">
+            <span className="font-mono text-[11px] text-ink3">
               {total} {total === 1 ? 'comércio' : 'comércios'} ·{' '}
               {(SORTS.find((s) => s.value === ordem)?.label ?? '').toLowerCase()}
             </span>
@@ -376,7 +373,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           {total > 0 && (
             <a
               href={csvHref}
-              className="ml-auto rounded-md border border-black/15 px-3 py-1.5 text-sm font-medium dark:border-white/15"
+              className="ml-auto rounded-lg border border-line bg-surf2 px-3 py-1.5 text-xs font-semibold"
             >
               Descarregar para Excel
             </a>
@@ -457,7 +454,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
         />
 
         {businesses.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-black/15 px-5 py-8 text-center text-sm opacity-60 dark:border-white/15">
+          <p className="rounded-lg border border-dashed border-line px-5 py-8 text-center text-sm text-ink2 opacity-100 dark:border-line">
             {ramos.length > 0 || estados.length > 0 || sites.length > 0
               ? 'Nenhum comércio com estes filtros. Limpa um dos funis no cabeçalho da tabela.'
               : batch
@@ -472,7 +469,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                 buscar. Ver `cartoes-comercios.tsx`. */}
             <CartoesComercios businesses={businesses} ordem={ordem} />
 
-            <div className="hidden overflow-x-auto rounded-lg border border-black/10 md:block dark:border-white/10">
+            <div className="hidden overflow-x-auto rounded-lg border border-line md:block dark:border-line">
             <table className="w-full text-sm">
 {/* Cor em vez de `opacity`: a opacidade aplica-se a tudo o que está
                   dentro do cabeçalho, e deixava o funil do filtro apagado. */}
@@ -532,10 +529,10 @@ export default async function PainelPage({ searchParams }: PainelProps) {
               </thead>
               <tbody>
                 {businesses.map((b) => (
-                  <tr key={b.id} className="border-t border-black/[0.07] dark:border-white/[0.07]">
+                  <tr key={b.id} className="border-t border-line">
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className="font-semibold tabular-nums">{b.score}</span>
-                      <span className="ml-1.5 text-xs opacity-55">{b.label}</span>
+                      <span className="ml-1.5 text-xs text-ink3 opacity-100">{b.label}</span>
                     </td>
                     <td className="px-4 py-3">
                       <Link
@@ -568,7 +565,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap opacity-55">
+                    <td className="px-4 py-3 whitespace-nowrap text-ink3 opacity-100">
                       {/* A data mostrada acompanha a ordem escolhida: ordenar
                           por "adicionados" e mostrar a data da última procura
                           daria números que não batem certo com a ordem. */}
@@ -584,12 +581,12 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                         {SITE_LABEL[b.websiteKind] ?? b.websiteKind}
                       </span>
                     </td>
-                    <td className="px-4 py-3 tabular-nums opacity-70">
+                    <td className="px-4 py-3 tabular-nums text-ink2 opacity-100">
                       {b.rating !== null
                         ? `${b.rating.toFixed(1).replace('.', ',')} ★ (${b.reviewsCount ?? 0})`
                         : '—'}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap tabular-nums opacity-70">
+                    <td className="px-4 py-3 whitespace-nowrap tabular-nums text-ink2 opacity-100">
                       {b.phone ? (
                         <a href={`tel:${b.phone}`} className="hover:text-brand-600">
                           {b.phone}

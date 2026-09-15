@@ -24,7 +24,7 @@ export function AtividadeDaPagina({ atividade }: { atividade: Atividade | null }
         {ultimaVisita ? `Abriu a página ${haQuantoTempo(ultimaVisita)}` : 'Abriu a página'}
         {fez && ` e ${O_QUE_FEZ[fez.alvo]}`}
       </p>
-      <p className="mt-0.5 text-xs opacity-65">
+      <p className="mt-0.5 text-xs text-ink2 opacity-100">
         {visitas} {visitas === 1 ? 'visita' : 'visitas'}
         {cliques.length > 0 &&
           ` · ${cliques.map((c) => `${O_QUE_FEZ[c.alvo]}${c.quantos > 1 ? ` (${c.quantos}×)` : ''}`).join(', ')}`}

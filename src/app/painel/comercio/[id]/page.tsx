@@ -116,11 +116,11 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
           presença online, avaliações) passaram para a tira do fundo desta.
           Não se perdeu nada: eram três caixas a dizer uma linha cada. */}
       <div className="flex flex-col gap-4">
-        <Link href="/painel" className="text-sm underline underline-offset-4 opacity-60">
+        <Link href="/painel" className="text-sm underline underline-offset-4 text-ink2 opacity-100">
           &larr; Voltar à lista
         </Link>
 
-        <section className="overflow-hidden rounded-2xl border border-black/10 dark:border-white/10">
+        <section className="overflow-hidden rounded-2xl border border-line">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={capa}
@@ -136,7 +136,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{business.name}</h1>
-                <p className="mt-1 text-sm opacity-65">
+                <p className="mt-1 text-sm text-ink2 opacity-100">
                   {findCategory(business.business_category)?.label ?? business.business_category}
                   {business.formatted_address ? ` · ${business.formatted_address}` : ''}
                 </p>
@@ -148,7 +148,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                   detalhada continua no fim da página. */}
               <div className="flex shrink-0 flex-col items-end">
                 <span className="text-3xl leading-none font-semibold tabular-nums">{business.score}</span>
-                <span className="text-xs opacity-55">{scoreLabel(business.score)}</span>
+                <span className="text-xs text-ink3 opacity-100">{scoreLabel(business.score)}</span>
               </div>
             </div>
 
@@ -163,7 +163,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                 })}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-md border border-black/15 px-3 py-2 font-medium hover:border-brand-500 dark:border-white/15"
+                className="rounded-md border border-line px-3 py-2 font-medium hover:border-brand-500 dark:border-line"
               >
                 Ver no Google Maps ↗
               </a>
@@ -171,7 +171,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
               {business.phone_e164 && (
                 <a
                   href={`tel:${business.phone_e164}`}
-                  className="rounded-md border border-black/15 px-3 py-2 font-medium hover:border-brand-500 dark:border-white/15"
+                  className="rounded-md border border-line px-3 py-2 font-medium hover:border-brand-500 dark:border-line"
                 >
                   Ligar {business.phone_e164}
                 </a>
@@ -192,9 +192,9 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
           {/* Tira de factos. Divisórias em vez de caixas: é a mesma
               informação com menos moldura à volta. */}
-          <dl className="grid grid-cols-1 border-t border-black/10 sm:grid-cols-3 dark:border-white/10">
-            <div className="border-b border-black/10 px-5 py-3.5 sm:border-r sm:border-b-0 dark:border-white/10">
-              <dt className="text-xs tracking-wide uppercase opacity-55">Telefone</dt>
+          <dl className="grid grid-cols-1 border-t border-line sm:grid-cols-3 dark:border-line">
+            <div className="border-b border-line px-5 py-3.5 sm:border-r sm:border-b-0 dark:border-line">
+              <dt className="text-xs tracking-wide uppercase text-ink3 opacity-100">Telefone</dt>
               {/* Um por linha. Lado a lado, o +351253612345 e o 253 612 345
                   liam-se como dois telefones diferentes — e são o mesmo. */}
               <dd className="mt-0.5">
@@ -209,13 +209,13 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                   <span className="opacity-50">&mdash;</span>
                 )}
                 {business.phone_raw && business.phone_raw !== business.phone_e164 && (
-                  <span className="block text-sm opacity-55">{business.phone_raw}</span>
+                  <span className="block text-sm text-ink3 opacity-100">{business.phone_raw}</span>
                 )}
               </dd>
             </div>
 
-            <div className="border-b border-black/10 px-5 py-3.5 sm:border-r sm:border-b-0 dark:border-white/10">
-              <dt className="text-xs tracking-wide uppercase opacity-55">Presença online</dt>
+            <div className="border-b border-line px-5 py-3.5 sm:border-r sm:border-b-0 dark:border-line">
+              <dt className="text-xs tracking-wide uppercase text-ink3 opacity-100">Presença online</dt>
               <dd className="mt-0.5 flex flex-wrap items-baseline gap-x-2">
                 <span className="font-semibold">{SITE_LABEL[business.website_kind ?? 'none']}</span>
                 {business.website_url && (
@@ -232,11 +232,11 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
             </div>
 
             <div className="px-5 py-3.5">
-              <dt className="text-xs tracking-wide uppercase opacity-55">Avaliações</dt>
+              <dt className="text-xs tracking-wide uppercase text-ink3 opacity-100">Avaliações</dt>
               <dd className="mt-0.5 font-semibold tabular-nums">
                 {business.rating !== null ? `${business.rating.toFixed(1).replace('.', ',')} ★` : '—'}
                 {business.reviews_count !== null && (
-                  <span className="ml-1.5 text-sm font-normal opacity-60">({business.reviews_count})</span>
+                  <span className="ml-1.5 text-sm font-normal text-ink2 opacity-100">({business.reviews_count})</span>
                 )}
               </dd>
             </div>
@@ -250,14 +250,14 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
       <AtividadeDaPagina atividade={atividade} />
 
       {/* ---------------- Negociação ---------------- */}
-      <section className="flex flex-col gap-4 rounded-lg border border-black/10 p-5 dark:border-white/10">
+      <section className="flex flex-col gap-4 rounded-lg border border-line p-5 dark:border-line">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold tracking-tight">Negociação</h2>
           <StageSelect businessId={id} stage={stage} />
         </div>
-        <p className="text-sm opacity-60">{stageDefinition(stage).hint}</p>
+        <p className="text-sm text-ink2 opacity-100">{stageDefinition(stage).hint}</p>
 
-        <form action={saveNotes} className="flex flex-col gap-4 border-t border-black/10 pt-4 dark:border-white/10">
+        <form action={saveNotes} className="flex flex-col gap-4 border-t border-line pt-4 dark:border-line">
           <input type="hidden" name="businessId" value={id} />
 
           <label className="flex flex-col gap-1.5">
@@ -267,7 +267,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
               rows={4}
               defaultValue={deal?.notes ?? ''}
               placeholder="O que foi dito, quem atendeu, o que ficou combinado…"
-              className="rounded-md border border-black/15 bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5"
+              className="rounded-md border border-line bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-line dark:bg-white/5"
             />
           </label>
 
@@ -278,7 +278,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                 name="nextAction"
                 defaultValue={deal?.nextAction ?? ''}
                 placeholder="Voltar a ligar, enviar proposta…"
-                className="rounded-md border border-black/15 bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5"
+                className="rounded-md border border-line bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-line dark:bg-white/5"
               />
             </label>
             <label className="flex flex-col gap-1.5">
@@ -287,7 +287,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                 name="nextActionAt"
                 type="date"
                 defaultValue={deal?.nextActionAt ? deal.nextActionAt.slice(0, 10) : ''}
-                className="rounded-md border border-black/15 bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5"
+                className="rounded-md border border-line bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-line dark:bg-white/5"
               />
             </label>
           </div>
@@ -352,13 +352,13 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                 melhores primeiras frases que há para essa conversa. */}
             <Link
               href={`/painel/comercio/${id}/dominios` as Route}
-              className="rounded-md border border-black/15 px-3 py-2 text-sm font-medium dark:border-white/15"
+              className="rounded-md border border-line px-3 py-2 text-sm font-medium dark:border-line"
             >
               Domínios livres
             </Link>
             <Link
               href={`/painel/comercio/${id}/apresentacao`}
-              className="rounded-md border border-black/15 px-3 py-2 text-sm font-medium dark:border-white/15"
+              className="rounded-md border border-line px-3 py-2 text-sm font-medium dark:border-line"
             >
               Apresentação em PDF
             </Link>
@@ -372,7 +372,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
         </div>
 
         {sites.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-black/15 px-5 py-6 text-center text-sm opacity-60 dark:border-white/15">
+          <p className="rounded-lg border border-dashed border-line px-5 py-6 text-center text-sm text-ink2 opacity-100 dark:border-line">
             Ainda não há nenhuma página para este comércio. &ldquo;Gerar página&rdquo; cria uma
             com os dados que já temos
             {business.is_food_service ? ', no modelo com cardápio e pedido por WhatsApp' : ''}.
@@ -382,18 +382,18 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
             {sites.map((site) => {
               const url = `${publicEnv.NEXT_PUBLIC_SITE_URL}/s/${site.publicCode}`;
               return (
-                <li key={site.id} className="rounded-lg border border-black/10 p-4 dark:border-white/10">
+                <li key={site.id} className="rounded-lg border border-line p-4 dark:border-line">
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                     <span
                       className={`rounded px-2 py-0.5 text-xs font-medium ${
                         site.isLive
                           ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                          : 'bg-black/[0.06] opacity-60 dark:bg-white/10'
+                          : 'bg-black/[0.06] text-ink2 opacity-100 dark:bg-white/10'
                       }`}
                     >
                       {site.isLive ? 'no ar' : site.status === 'published' ? 'expirada' : 'rascunho'}
                     </span>
-                    <span className="text-sm opacity-60">
+                    <span className="text-sm text-ink2 opacity-100">
                       {site.template === 'food_service' ? 'Com cardápio' : 'Modelo genérico'}
                       {site.template === 'food_service' && ` · ${site.menuItemCount} itens`}
                     </span>
@@ -430,20 +430,20 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                     </Link>
                     <Link
                       href={`/painel/site/${site.id}/editar`}
-                      className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
+                      className="rounded-md border border-line px-3 py-1.5 font-medium dark:border-line"
                     >
                       Editar
                     </Link>
                     <Link
                       href={`/painel/site/${site.id}/pdf`}
-                      className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
+                      className="rounded-md border border-line px-3 py-1.5 font-medium dark:border-line"
                     >
                       PDF do site
                     </Link>
                     {site.template === 'food_service' && (
                       <Link
                         href={`/painel/site/${site.id}/cardapio`}
-                        className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
+                        className="rounded-md border border-line px-3 py-1.5 font-medium dark:border-line"
                       >
                         Cardápio
                       </Link>
@@ -453,7 +453,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                       <input type="hidden" name="businessId" value={id} />
                       <button
                         type="submit"
-                        className="rounded-md border border-black/15 px-3 py-1.5 font-medium dark:border-white/15"
+                        className="rounded-md border border-line px-3 py-1.5 font-medium dark:border-line"
                       >
                         {site.isLive ? 'Despublicar' : 'Publicar'}
                       </button>
@@ -477,7 +477,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold tracking-tight">Histórico</h2>
         {history.length === 0 ? (
-          <p className="text-sm opacity-55">
+          <p className="text-sm text-ink3 opacity-100">
             Ainda não houve mudanças de estado. A primeira fica registada assim que mudares
             o estado acima.
           </p>
@@ -488,7 +488,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                 key={`${event.changedAt}-${event.toStage}`}
                 className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md bg-black/[0.03] px-4 py-2.5 text-sm dark:bg-white/[0.04]"
               >
-                <span className="tabular-nums opacity-55">{formatDate(event.changedAt)}</span>
+                <span className="tabular-nums text-ink3 opacity-100">{formatDate(event.changedAt)}</span>
                 {event.fromStage && (
                   <>
                     <span className="opacity-45">{stageLabel(event.fromStage)}</span>
@@ -521,10 +521,10 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
               className="flex flex-wrap items-baseline gap-x-3 rounded-md bg-black/[0.03] px-4 py-2.5 text-sm dark:bg-white/[0.04]"
             >
               <span className="w-40 font-medium capitalize">{factor.replace(/_/g, ' ')}</span>
-              <span className="tabular-nums opacity-60">
+              <span className="tabular-nums text-ink2 opacity-100">
                 {detail.points}/{detail.max}
               </span>
-              <span className="opacity-70">{detail.reason}</span>
+              <span className="text-ink2 opacity-100">{detail.reason}</span>
             </li>
           ))}
         </ul>

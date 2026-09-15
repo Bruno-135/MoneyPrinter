@@ -33,7 +33,7 @@ export const SITE_LABEL: Record<string, string> = {
 export const SITE_STYLE: Record<string, string> = {
   none: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
   social_only: 'bg-sky-500/15 text-sky-700 dark:text-sky-300',
-  real: 'bg-black/10 opacity-60 dark:bg-white/10',
+  real: 'bg-black/10 text-ink2 opacity-100 dark:bg-white/10',
 };
 
 export function CartoesComercios({
@@ -47,11 +47,11 @@ export function CartoesComercios({
   return (
     <ul className="flex flex-col gap-3 md:hidden">
       {businesses.map((b) => (
-        <li key={b.id} className="rounded-xl border border-black/10 p-4 dark:border-white/10">
+        <li key={b.id} className="rounded-xl border border-line p-4 dark:border-line">
           <div className="flex items-baseline justify-between gap-3">
             <span className="text-xl font-semibold tabular-nums">
               {b.score}
-              <span className="ml-1.5 text-xs font-normal opacity-55">{b.label}</span>
+              <span className="ml-1.5 text-xs font-normal text-ink3 opacity-100">{b.label}</span>
             </span>
             <span
               className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${SITE_STYLE[b.websiteKind] ?? ''}`}
@@ -86,7 +86,7 @@ export function CartoesComercios({
             </a>
           </div>
 
-          <p className="mt-0.5 text-sm opacity-60">
+          <p className="mt-0.5 text-sm text-ink2 opacity-100">
             {findCategory(b.category)?.label ?? b.category}
             {b.rating !== null &&
               ` · ${b.rating.toFixed(1).replace('.', ',')} ★ (${b.reviewsCount ?? 0})`}
@@ -100,7 +100,7 @@ export function CartoesComercios({
             {b.phone ? (
               <a
                 href={`tel:${b.phone}`}
-                className="rounded-md border border-black/15 px-3 py-1.5 text-sm font-medium tabular-nums dark:border-white/15"
+                className="rounded-md border border-line px-3 py-1.5 text-sm font-medium tabular-nums dark:border-line"
               >
                 Ligar {b.phone}
               </a>

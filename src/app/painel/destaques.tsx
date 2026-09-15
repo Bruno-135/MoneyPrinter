@@ -98,7 +98,7 @@ export function Destaques({
         <h2 className="text-sm font-semibold tracking-wide text-brand-600 uppercase">
           Comece por estes
         </h2>
-        <p className="text-sm opacity-55">
+        <p className="text-sm text-ink3 opacity-100">
           Melhor pontuação, ainda por contactar. Saem daqui assim que os contactares.
         </p>
       </div>
@@ -111,7 +111,7 @@ export function Destaques({
           return (
             <li
               key={b.id}
-              className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10"
+              className="overflow-hidden rounded-xl border border-line"
             >
               <Link href={`/painel/comercio/${b.id}`} className="block">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -125,14 +125,14 @@ export function Destaques({
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-lg font-semibold tabular-nums">{b.score}</span>
                     {b.rating !== null && (
-                      <span className="text-sm tabular-nums opacity-60">
+                      <span className="text-sm tabular-nums text-ink2 opacity-100">
                         {b.rating.toFixed(1).replace('.', ',')} ★
                         {b.reviewsCount !== null && ` · ${b.reviewsCount}`}
                       </span>
                     )}
                   </div>
                   <p className="font-medium">{b.name}</p>
-                  <p className="text-sm opacity-60">
+                  <p className="text-sm text-ink2 opacity-100">
                     {findCategory(b.category)?.label ?? b.category}
                     {b.locality && ` · ${b.locality}`}
                   </p>

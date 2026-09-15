@@ -21,7 +21,7 @@ export function TabelaCarteira({ clientes }: { clientes: readonly ClienteNaCarte
         Arrasta a tabela para o lado para ver todos os serviços.
       </p>
 
-      <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+      <div className="overflow-x-auto rounded-lg border border-line">
         <table className="w-full text-sm">
           <thead className="bg-black/[0.03] text-left text-xs tracking-wide text-black/55 uppercase dark:bg-white/[0.04] dark:text-white/55">
             <tr>
@@ -42,7 +42,7 @@ export function TabelaCarteira({ clientes }: { clientes: readonly ClienteNaCarte
               return (
                 <tr
                   key={c.businessId}
-                  className="border-t border-black/[0.07] dark:border-white/[0.07]"
+                  className="border-t border-line"
                 >
                   {/* Deixado a quebrar linha de propósito: com nowrap um nome
                       comprido empurra as sete colunas de serviços para fora do

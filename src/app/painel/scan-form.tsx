@@ -28,7 +28,7 @@ const SCAN_IDLE: ScanFormState = { summary: null, error: null };
 const CITY_IDLE: CityFormState = { cities: [], fromCache: false, query: '', error: null };
 
 const field =
-  'w-full rounded-md border border-black/15 bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5';
+  'w-full rounded-md border border-line bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-line dark:bg-white/5';
 
 function CityButton() {
   const { pending } = useFormStatus();
@@ -36,7 +36,7 @@ function CityButton() {
     <button
       type="submit"
       disabled={pending}
-      className="shrink-0 rounded-md border border-black/15 px-4 py-2 font-medium disabled:opacity-50 dark:border-white/15"
+      className="shrink-0 rounded-md border border-line px-4 py-2 font-medium disabled:opacity-50 dark:border-line"
     >
       {pending ? 'A procurar…' : 'Procurar cidade'}
     </button>
@@ -106,7 +106,7 @@ export function ScanForm() {
               name="pais"
               value={pais}
               onChange={(e) => setPais(e.target.value === 'BR' ? 'BR' : 'PT')}
-              className="shrink-0 rounded-md border border-black/15 bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-white/15 dark:bg-white/5"
+              className="shrink-0 rounded-md border border-line bg-white/60 px-3 py-2 text-base outline-none focus:border-brand-500 dark:border-line dark:bg-white/5"
             >
               <option value="PT">Portugal</option>
               <option value="BR">Brasil</option>
@@ -135,7 +135,7 @@ export function ScanForm() {
                   }`}
                 >
                   <span className="font-medium">{match.name}</span>
-                  {match.address && <span className="ml-2 opacity-60">{match.address}</span>}
+                  {match.address && <span className="ml-2 text-ink2 opacity-100">{match.address}</span>}
                   <span className="ml-2 opacity-45">
                     · raio {(match.radiusMeters / 1000).toFixed(1)} km
                   </span>
@@ -146,7 +146,7 @@ export function ScanForm() {
         )}
 
         {cityState.query !== '' && cityState.cities.length === 0 && !cityState.error && (
-          <p className="text-sm opacity-60">
+          <p className="text-sm text-ink2 opacity-100">
             Não encontrei nenhuma cidade para “{cityState.query}”. Tenta escrever de outra maneira,
             ou juntar o distrito — “Fafe, Braga”.
           </p>
@@ -206,7 +206,7 @@ export function ScanForm() {
           // botões. Um varrimento no ramo errado custa dinheiro e enche a lista
           // de comércios que não se queriam; a confirmação tem de estar onde os
           // olhos já estão antes de carregar.
-          <p className="-mt-1 text-sm opacity-70">
+          <p className="-mt-1 text-sm text-ink2 opacity-100">
             Vais procurar{' '}
             <strong className="font-semibold opacity-100">
               {CATEGORIES.find((c) => c.slug === ramo)?.label ?? ramo}
@@ -217,7 +217,7 @@ export function ScanForm() {
         )}
 
         <details className="text-sm">
-          <summary className="cursor-pointer opacity-60">Opções avançadas</summary>
+          <summary className="cursor-pointer text-ink2 opacity-100">Opções avançadas</summary>
           <div className="mt-3 flex flex-col gap-3">
             <label className="flex max-w-xs flex-col gap-1.5">
               <span className="text-sm font-medium">Raio de cada busca (m)</span>
@@ -232,7 +232,7 @@ export function ScanForm() {
                 <option value="1000">1000 — mais caro, apanha mais</option>
                 <option value="700">700 — para zonas muito densas</option>
               </select>
-              <span className="text-xs opacity-55">
+              <span className="text-xs text-ink3 opacity-100">
                 Um raio menor faz mais buscas — mais chamadas, mais custo, mas apanha comércios que
                 um raio grande deixa de fora quando a zona é densa.
               </span>
@@ -249,7 +249,7 @@ export function ScanForm() {
               />
               <span>
                 Ignorar cache
-                <span className="ml-1.5 opacity-55">
+                <span className="ml-1.5 text-ink3 opacity-100">
                   — procura outra vez mesmo que esta zona e ramo já tenham sido feitos. Gasta
                   dinheiro.
                 </span>
@@ -282,7 +282,7 @@ function Summary({ summary }: { summary: ScanFormState['summary'] }) {
   if (!summary) return null;
 
   return (
-    <div className="rounded-lg border border-black/10 bg-black/[0.02] p-5 dark:border-white/10 dark:bg-white/[0.03]">
+    <div className="rounded-lg border border-line bg-black/[0.02] p-5 dark:border-line dark:bg-white/[0.03]">
       <p className="text-sm font-semibold">
         {summary.region.label} · {summary.region.category}
         {summary.dryRun && (
@@ -312,7 +312,7 @@ function Summary({ summary }: { summary: ScanFormState['summary'] }) {
       </dl>
 
       {!summary.dryRun && (
-        <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 border-t border-black/10 pt-4 text-sm sm:grid-cols-4 dark:border-white/10">
+        <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 border-t border-line pt-4 text-sm sm:grid-cols-4 dark:border-line">
           <Stat label="Encontrados" value={`${summary.found.total} (${summary.found.created} novos)`} />
           <Stat label="Sem site" value={String(summary.websites.none)} />
           <Stat label="Só rede social" value={String(summary.websites.social_only)} />
@@ -321,7 +321,7 @@ function Summary({ summary }: { summary: ScanFormState['summary'] }) {
       )}
 
       {summary.warnings.length > 0 && (
-        <ul className="mt-4 flex flex-col gap-1.5 border-t border-black/10 pt-4 text-sm dark:border-white/10">
+        <ul className="mt-4 flex flex-col gap-1.5 border-t border-line pt-4 text-sm dark:border-line">
           {summary.warnings.map((w) => (
             <li key={w} className="text-amber-700 dark:text-amber-300">
               {w}
@@ -336,7 +336,7 @@ function Summary({ summary }: { summary: ScanFormState['summary'] }) {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs uppercase tracking-wide opacity-55">{label}</dt>
+      <dt className="text-xs uppercase tracking-wide text-ink3 opacity-100">{label}</dt>
       <dd className="mt-0.5 font-semibold tabular-nums">{value}</dd>
     </div>
   );

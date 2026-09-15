@@ -56,14 +56,14 @@ export default async function RelatoriosPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-      <p className="opacity-65">
+      <p className="text-ink2 opacity-100">
         Quantas pessoas abriram cada landing page e o que fizeram lá dentro.
       </p>
 
       {rows.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 px-6 py-10 text-center dark:border-white/15">
+        <div className="rounded-lg border border-dashed border-line px-6 py-10 text-center dark:border-line">
           <p className="font-medium">Ainda não há visitas registadas.</p>
-          <p className="mx-auto mt-2 max-w-md text-sm opacity-60">
+          <p className="mx-auto mt-2 max-w-md text-sm text-ink2 opacity-100">
             Os números aparecem aqui assim que alguém abrir uma página publicada. Uma página em
             rascunho não conta — a base de dados recusa registar visitas a páginas que não estão
             no ar.
@@ -85,16 +85,16 @@ export default async function RelatoriosPage() {
             <section key={month} className="flex flex-col gap-4">
               <h2 className="text-xl font-semibold tracking-tight">{monthLabel(month)}</h2>
 
-              <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-black/10 bg-black/10 sm:grid-cols-4 dark:border-white/10 dark:bg-white/10">
+              <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-black/10 sm:grid-cols-4 dark:border-line dark:bg-white/10">
                 <Total label="Visitas" value={totals.visits} />
                 <Total label="Visitantes distintos" value={totals.unique} />
                 <Total label="Cliques" value={totals.clicks} />
                 <Total label="Contactos por WhatsApp" value={totals.whatsapp} />
               </dl>
 
-              <div className="overflow-x-auto rounded-lg border border-black/10 dark:border-white/10">
+              <div className="overflow-x-auto rounded-lg border border-line">
                 <table className="w-full text-sm">
-                  <thead className="bg-black/[0.03] text-left text-xs uppercase tracking-wide opacity-60 dark:bg-white/[0.04]">
+                  <thead className="bg-black/[0.03] text-left text-xs uppercase tracking-wide text-ink2 opacity-100 dark:bg-white/[0.04]">
                     <tr>
                       <th className="px-4 py-3 font-medium">Comércio</th>
                       <th className="px-4 py-3 font-medium">Visitas</th>
@@ -110,15 +110,15 @@ export default async function RelatoriosPage() {
                     {monthRows.map((row) => (
                       <tr
                         key={`${row.site_id}-${row.month}`}
-                        className="border-t border-black/[0.07] dark:border-white/[0.07]"
+                        className="border-t border-line"
                       >
                         <td className="px-4 py-3 font-medium">{row.business_name ?? '—'}</td>
                         <td className="px-4 py-3 tabular-nums">{row.visits}</td>
-                        <td className="px-4 py-3 tabular-nums opacity-70">{row.unique_visitors}</td>
+                        <td className="px-4 py-3 tabular-nums text-ink2 opacity-100">{row.unique_visitors}</td>
                         <td className="px-4 py-3 tabular-nums">{row.clicks}</td>
-                        <td className="px-4 py-3 tabular-nums opacity-70">{row.whatsapp_clicks}</td>
-                        <td className="px-4 py-3 tabular-nums opacity-70">{row.phone_clicks}</td>
-                        <td className="px-4 py-3 tabular-nums opacity-70">{row.menu_item_clicks}</td>
+                        <td className="px-4 py-3 tabular-nums text-ink2 opacity-100">{row.whatsapp_clicks}</td>
+                        <td className="px-4 py-3 tabular-nums text-ink2 opacity-100">{row.phone_clicks}</td>
+                        <td className="px-4 py-3 tabular-nums text-ink2 opacity-100">{row.menu_item_clicks}</td>
                         <td className="px-4 py-3 tabular-nums">{row.click_through_rate}%</td>
                       </tr>
                     ))}
@@ -142,7 +142,7 @@ export default async function RelatoriosPage() {
 function Total({ label, value }: { label: string; value: number }) {
   return (
     <div className="bg-[--card] p-4 [--card:#fff] dark:[--card:#1a211e]">
-      <dt className="text-xs uppercase tracking-wide opacity-55">{label}</dt>
+      <dt className="text-xs uppercase tracking-wide text-ink3 opacity-100">{label}</dt>
       <dd className="mt-1 text-2xl font-semibold tabular-nums">{value}</dd>
     </div>
   );

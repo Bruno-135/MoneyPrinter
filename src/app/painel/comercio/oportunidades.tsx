@@ -31,7 +31,7 @@ export function Oportunidades({
     <section className="flex flex-col gap-4">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <h2 className="text-lg font-semibold tracking-tight">O que lhe podes vender</h2>
-        <p className="text-sm opacity-55">
+        <p className="text-sm text-ink3 opacity-100">
           {fortes.length > 0
             ? `${fortes.length} ${fortes.length === 1 ? 'coisa que se vê nos dados' : 'coisas que se veem nos dados'}${possiveis.length > 0 ? `, ${possiveis.length} a confirmar com ele` : ''}.`
             : 'Nada evidente nos dados — estas são perguntas a fazer.'}
@@ -48,7 +48,7 @@ export function Oportunidades({
               className={`flex flex-col gap-1.5 rounded-lg border p-4 ${
                 forte
                   ? 'border-brand-600/30 bg-brand-600/[0.05]'
-                  : 'border-black/10 dark:border-white/10'
+                  : 'border-line'
               }`}
             >
               <div className="flex flex-wrap items-center gap-2">
@@ -61,7 +61,7 @@ export function Oportunidades({
                 )}
 
                 {!forte && (
-                  <span className="rounded bg-black/[0.06] px-1.5 py-0.5 text-xs font-medium whitespace-nowrap opacity-60 dark:bg-white/10">
+                  <span className="rounded bg-black/[0.06] px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-ink2 opacity-100 dark:bg-white/10">
                     a confirmar
                   </span>
                 )}
@@ -71,14 +71,14 @@ export function Oportunidades({
 
               {/* A frase é o que se diz ao telefone. Por isso está destacada e
                   não escondida num tooltip. */}
-              <p className={`text-sm ${forte ? 'font-medium' : 'opacity-70'}`}>{o.porque}</p>
+              <p className={`text-sm ${forte ? 'font-medium' : 'text-ink2 opacity-100'}`}>{o.porque}</p>
 
               {/* Os dois serviços que já têm ferramenta construída levam-te
                   directamente a ela. */}
               {o.servico.slug === 'dominio' && (
                 <Link
                   href={`/painel/comercio/${businessId}/dominios` as Route}
-                  className="text-sm underline underline-offset-4 opacity-70"
+                  className="text-sm underline underline-offset-4 text-ink2 opacity-100"
                 >
                   Ver domínios livres &rarr;
                 </Link>

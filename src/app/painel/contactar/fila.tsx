@@ -32,13 +32,13 @@ const BOTOES: { desfecho: Desfecho; label: string; sub: string; estilo: string }
     desfecho: 'adiado',
     label: 'Não atende',
     sub: `volta daqui a ${DIAS_PARA_VOLTAR_A_TENTAR} dias`,
-    estilo: 'border border-black/15 dark:border-white/20',
+    estilo: 'border border-line',
   },
   {
     desfecho: 'nao_interessa',
     label: 'Não quer',
     sub: 'sai da lista',
-    estilo: 'border border-black/15 text-red-600 dark:border-white/20 dark:text-red-400',
+    estilo: 'border border-line text-red-600 dark:border-line dark:text-red-400',
   },
 ];
 
@@ -51,11 +51,11 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
 
   if (!item) {
     return (
-      <div className="rounded-2xl border border-black/10 px-6 py-16 text-center dark:border-white/10">
+      <div className="rounded-2xl border border-line px-6 py-16 text-center dark:border-line">
         <p className="text-lg font-semibold">
           {feitos > 0 ? `${feitos} contactos nesta sessão.` : 'Não há ninguém à espera.'}
         </p>
-        <p className="mx-auto mt-2 max-w-sm text-sm opacity-60">
+        <p className="mx-auto mt-2 max-w-sm text-sm text-ink2 opacity-100">
           {itens.length > 0
             ? 'Acabou o lote. Recarrega a página para trazer os seguintes.'
             : 'Ou já contactaste todos os prospetos, ou os que faltam estão adiados para depois. Faz uma procura nova para encher a lista.'}
@@ -95,14 +95,14 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
           {feitos} nesta sessão
           {feitos > 0 && <span className="ml-1.5 opacity-45">· continua</span>}
         </span>
-        <span className="opacity-55">{total} por contactar</span>
+        <span className="text-ink3 opacity-100">{total} por contactar</span>
       </div>
 
-      <article className="flex flex-col gap-5 rounded-2xl border border-black/10 p-5 sm:p-6 dark:border-white/10">
+      <article className="flex flex-col gap-5 rounded-2xl border border-line p-5 sm:p-6 dark:border-line">
         <header className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <h2 className="text-2xl font-semibold tracking-tight">{item.name}</h2>
-            <p className="mt-1 text-sm opacity-65">
+            <p className="mt-1 text-sm text-ink2 opacity-100">
               {ramo}
               {item.locality && ` · ${item.locality}`}
               {item.rating !== null &&
@@ -111,7 +111,7 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
           </div>
           <div className="flex shrink-0 flex-col items-end">
             <span className="text-3xl leading-none font-semibold tabular-nums">{item.score}</span>
-            <span className="text-xs opacity-55">{item.label}</span>
+            <span className="text-xs text-ink3 opacity-100">{item.label}</span>
           </div>
         </header>
 
@@ -125,7 +125,7 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
               Ligar {item.phone}
             </a>
           ) : (
-            <span className="rounded-md border border-dashed border-black/15 px-4 py-2.5 text-sm opacity-50 dark:border-white/20">
+            <span className="rounded-md border border-dashed border-line px-4 py-2.5 text-sm opacity-50 dark:border-line">
               Sem telefone
             </span>
           )}
@@ -151,14 +151,14 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
             })}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md border border-black/15 px-3 py-2.5 text-sm dark:border-white/20"
+            className="rounded-md border border-line px-3 py-2.5 text-sm dark:border-line"
           >
             Maps ↗
           </a>
 
           <Link
             href={`/painel/comercio/${item.id}`}
-            className="rounded-md border border-black/15 px-3 py-2.5 text-sm dark:border-white/20"
+            className="rounded-md border border-line px-3 py-2.5 text-sm dark:border-line"
           >
             Ficha
           </Link>
@@ -171,7 +171,7 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
             {mensagem}
           </p>
         ) : (
-          <p className="rounded-lg border border-dashed border-black/15 px-4 py-3 text-sm opacity-55 dark:border-white/15">
+          <p className="rounded-lg border border-dashed border-line px-4 py-3 text-sm text-ink3 opacity-100 dark:border-line">
             Ainda não há mensagem escrita para este.{' '}
             <Link href={`/painel/comercio/${item.id}`} className="underline underline-offset-4">
               Escrever na ficha
@@ -192,7 +192,7 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
             className={`flex flex-col items-center rounded-xl px-4 py-3.5 font-medium ${b.estilo}`}
           >
             {b.label}
-            <span className="text-xs font-normal opacity-70">{b.sub}</span>
+            <span className="text-xs font-normal text-ink2 opacity-100">{b.sub}</span>
           </button>
         ))}
       </div>

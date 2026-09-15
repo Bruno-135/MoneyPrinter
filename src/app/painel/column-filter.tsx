@@ -167,11 +167,11 @@ export function ColumnFilter({ label, values, selected, baseHref, param }: Props
           <div
             ref={painel}
             style={{ top: position.top, left: position.left, width: PANEL_WIDTH }}
-            className="fixed z-50 rounded-lg border border-black/15 bg-white p-3 text-left text-sm font-normal normal-case tracking-normal text-black shadow-xl dark:border-white/20 dark:bg-neutral-900 dark:text-white"
+            className="fixed z-50 rounded-lg border border-line bg-white p-3 text-left text-sm font-normal normal-case tracking-normal text-black shadow-xl dark:border-line dark:bg-neutral-900 dark:text-white"
           >
             <p className="mb-2 font-medium">{label}</p>
 
-            <label className="flex items-center gap-2 border-b border-black/10 pb-2 dark:border-white/15">
+            <label className="flex items-center gap-2 border-b border-line pb-2 dark:border-line">
               <input
                 type="checkbox"
                 checked={todos}
@@ -202,7 +202,7 @@ export function ColumnFilter({ label, values, selected, baseHref, param }: Props
               {values.length === 0 && <p className="py-2 opacity-50">Nada para filtrar aqui.</p>}
             </div>
 
-            <div className="flex items-center gap-2 border-t border-black/10 pt-2 dark:border-white/15">
+            <div className="flex items-center gap-2 border-t border-line pt-2 dark:border-line">
               <button
                 type="button"
                 onClick={() => aplicar(marcados)}
@@ -216,7 +216,7 @@ export function ColumnFilter({ label, values, selected, baseHref, param }: Props
               <button
                 type="button"
                 onClick={() => aplicar([])}
-                className="rounded-md px-3 py-1.5 underline underline-offset-4 opacity-60"
+                className="rounded-md px-3 py-1.5 underline underline-offset-4 text-ink2 opacity-100"
               >
                 Limpar
               </button>

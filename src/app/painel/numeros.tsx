@@ -19,28 +19,50 @@ import type { Route } from 'next';
  * ser mais um espelho da tabela.
  */
 
+/** Os tons do desenho. Nomes e não classes, para a cor viver num sítio só. */
+export type Tom = 'normal' | 'acc' | 'ok' | 'warm' | 'cool' | 'hot' | 'bad';
+
+const COR: Record<Tom, string> = {
+  normal: 'text-ink',
+  acc: 'text-acc',
+  ok: 'text-ok',
+  warm: 'text-warm',
+  cool: 'text-cool',
+  hot: 'text-hot',
+  bad: 'text-bad',
+};
+
 export interface Numero {
   label: string;
-  valor: number;
+  valor: number | string;
   href: Route;
-  /** Classes da cor do valor. Vazio = a cor normal do texto. */
-  tom?: string;
+  /** Uma linha pequena por baixo do valor. O que o número quer dizer. */
+  nota?: string;
+  tom?: Tom;
 }
 
 export function Numeros({ numeros }: { numeros: readonly Numero[] }) {
   if (numeros.every((n) => n.valor === 0)) return null;
 
   return (
-    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    // `auto-fit` com mínimo de 152px, como no desenho: os cartões enchem a
+    // linha no computador e caem para dois por linha no telemóvel sem
+    // precisarem de um ponto de quebra escrito à mão.
+    <ul className="grid gap-2.5 [grid-template-columns:repeat(auto-fit,minmax(152px,1fr))]">
       {numeros.map((n) => (
         <li key={n.label}>
           <Link
             href={n.href}
             scroll={false}
-            className="flex h-full flex-col gap-0.5 rounded-xl border border-black/10 px-4 py-3.5 transition-colors hover:border-brand-600/40 hover:bg-brand-600/[0.04] dark:border-white/10"
+            className="flex h-full flex-col gap-1.5 rounded-2xl border border-line bg-surf p-3 transition-colors hover:border-acc/50"
           >
-            <span className={`text-2xl font-semibold tabular-nums ${n.tom ?? ''}`}>{n.valor}</span>
-            <span className="text-xs opacity-55">{n.label}</span>
+            <span className="font-mono text-[11px] leading-snug tracking-[0.08em] text-ink3 uppercase">
+              {n.label}
+            </span>
+            <span className={`font-mono text-2xl font-bold tabular-nums ${COR[n.tom ?? 'normal']}`}>
+              {n.valor}
+            </span>
+            {n.nota && <span className="text-[11px] text-ink3">{n.nota}</span>}
           </Link>
         </li>
       ))}
