@@ -1,4 +1,4 @@
-import Link from 'next/link';
+
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { proximosContactos, quantosPorContactar } from '@/lib/deals/fila';
@@ -45,15 +45,10 @@ export default async function ContactarPage({ searchParams }: Props) {
   ]);
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-6 px-6 py-8">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.07] pb-4 text-sm dark:border-white/[0.07]">
-        <Link href="/painel" className="underline underline-offset-4 opacity-70">
-          &larr; Painel
-        </Link>
-        <span className="font-semibold tracking-tight">Contactar</span>
-      </header>
-
+    // Estreito de propósito: contacta-se um de cada vez, e uma coluna larga
+    // punha o texto da mensagem em linhas impossíveis de ler.
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <Fila itens={itens} total={total} />
-    </main>
+    </div>
   );
 }

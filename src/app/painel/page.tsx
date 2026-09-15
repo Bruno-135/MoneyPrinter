@@ -28,7 +28,6 @@ import { STAGES, isValidStage, type DealStage } from '@/lib/deals/stages';
 import { googleMapsUrl } from '@/lib/places/links';
 import { ScanForm } from './scan-form';
 import { StageSelect } from './stage-select';
-import { signOut } from './actions';
 import { Destaques, fotosDosDestaques } from './destaques';
 import { Numeros, type Numero } from './numeros';
 import { CartoesComercios, SITE_LABEL, SITE_STYLE } from './cartoes-comercios';
@@ -302,39 +301,10 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     ? `${batch.categoryLabel} sem site em ${batch.label}`
     : 'Comércios encontrados';
 
-  // `max-w-7xl` e não `5xl`: a tabela tem sete colunas e em 1024px o telefone
-  // ficava cortado à direita enquanto sobravam duzentos e cinquenta pixels de
-  // margem de cada lado. A caixa da procura e a fila de números têm largura
-  // própria lá dentro, portanto não incham com isto.
+  // A moldura (menu lateral, cabeçalho, largura máxima e margens) vive agora no
+  // `layout.tsx` do painel. Esta página só põe o seu conteúdo lá dentro.
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-10 px-6 py-10">
-      {/* ---------------- Barra de conta ----------------
-          Fina e discreta, encostada ao topo. O que era um cabeçalho com o
-          título da página passou a ser só isto: o título está agora dentro da
-          caixa de procura, que é o que a pessoa vem cá fazer. */}
-      <header className="flex items-center justify-between gap-3 border-b border-black/[0.07] pb-4 text-sm dark:border-white/[0.07]">
-        <span className="font-semibold tracking-tight">Prospeção comercial</span>
-        <div className="flex items-center gap-4">
-          <Link href="/painel/clientes" className="underline underline-offset-4 opacity-70">
-            Clientes
-          </Link>
-          <Link href="/painel/relatorios" className="underline underline-offset-4 opacity-70">
-            Relatórios
-          </Link>
-          <form action={signOut}>
-            <button type="submit" className="underline underline-offset-4 opacity-55">
-              Sair
-              {/* O email só a partir de `sm`. Num telemóvel, um endereço
-                  comprido empurrava a barra para uma segunda linha e ficava a
-                  ocupá-la toda — e saber de que conta se está ligado não vale
-                  uma linha inteira do ecrã. Sem `flex-wrap`, agora não há
-                  segunda linha para onde cair. */}
-              <span className="hidden sm:inline"> ({auth.user.email})</span>
-            </button>
-          </form>
-        </div>
-      </header>
-
+    <>
       {/* ---------------- A procura, em destaque ----------------
           É o que se vem cá fazer, e por isso ocupa o lugar de honra: caixa
           própria, título grande e centrado, e o aviso do custo por baixo. */}
@@ -636,7 +606,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           </>
         )}
       </section>
-    </main>
+    </>
   );
 }
 

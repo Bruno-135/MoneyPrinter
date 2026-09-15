@@ -39,14 +39,7 @@ export default async function ClientesPage() {
   const totais = [...porMoeda.entries()].sort((a, b) => b[1].mensal - a[1].mensal);
 
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-8">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.07] pb-4 text-sm dark:border-white/[0.07]">
-        <Link href="/painel" className="underline underline-offset-4 opacity-70">
-          &larr; Painel
-        </Link>
-        <span className="font-semibold tracking-tight">Clientes</span>
-      </header>
-
+    <div className="flex flex-col gap-8">
       {clientes.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-black/15 px-6 py-16 text-center dark:border-white/15">
           <p className="text-lg font-semibold">Ainda não há clientes.</p>
@@ -103,6 +96,6 @@ export default async function ClientesPage() {
           </p>
         </>
       )}
-    </main>
+    </div>
   );
 }

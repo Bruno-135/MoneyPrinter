@@ -1,4 +1,4 @@
-import Link from 'next/link';
+
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 
@@ -55,16 +55,10 @@ export default async function RelatoriosPage() {
   }
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-12">
-      <div>
-        <Link href="/painel" className="text-sm underline underline-offset-4 opacity-60">
-          &larr; Voltar ao painel
-        </Link>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Relatórios mensais</h1>
-        <p className="mt-1 opacity-65">
-          Quantas pessoas abriram cada landing page e o que fizeram lá dentro.
-        </p>
-      </div>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
+      <p className="opacity-65">
+        Quantas pessoas abriram cada landing page e o que fizeram lá dentro.
+      </p>
 
       {rows.length === 0 ? (
         <div className="rounded-lg border border-dashed border-black/15 px-6 py-10 text-center dark:border-white/15">
@@ -141,7 +135,7 @@ export default async function RelatoriosPage() {
         guarda o endereço IP de ninguém: cada visita leva um identificador de sessão que morre
         quando o separador fecha.
       </p>
-    </main>
+    </div>
   );
 }
 

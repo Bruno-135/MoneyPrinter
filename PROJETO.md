@@ -543,6 +543,30 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       **Os totais são por moeda, nunca um só.** Há clientes em Portugal e no
       Brasil; somar cêntimos com centavos dava um número que não existe.
 
+- [x] **O aspecto novo, vindo do desenho** — sistema de cores e tipos de letra
+      do "CRM Presença" (Claude Design), menu lateral retráctil e cabeçalho
+      fixo.
+
+      As cores estão em `src/app/globals.css` como tokens em oklch, com o tema
+      claro escrito à mão e não derivado do escuro — um claro calculado a partir
+      do escuro fica sempre cinzento. Escuro é o normal; a escolha à mão fica no
+      `localStorage` e é aplicada por um script antes do primeiro desenho, senão
+      quem escolheu claro vê o ecrã escuro a piscar em cada página.
+
+      O tema NÃO é estado do React. Quem manda é o `data-theme` no `<html>`, e
+      o ícone do botão é escolhido por CSS pelas mesmas regras que escolhem as
+      cores. Duas fontes de verdade davam um desenho no servidor que não sabia
+      qual era o tema.
+
+      A moldura vive em `src/app/painel/layout.tsx`: as páginas do painel já não
+      trazem cabeçalho nem largura máxima próprios. O menu só lista páginas que
+      existem — um item que abre um ecrã vazio é pior do que não existir.
+
+- [ ] **Os ecrãs que faltam do desenho** — ficha do comércio, carteira, funil,
+      varrimento e custos, landing pages, robô, instâncias de WhatsApp,
+      calendário de conteúdo, suporte, equipa, cobrança, perfil. Os quatro
+      primeiros têm dados; os outros esperam pela funcionalidade por trás.
+
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
 ---
