@@ -343,7 +343,13 @@ Verificação rápida da ligação com a aplicação a correr: `GET /api/health`
    psicólogos, nutricionistas e harmonização facial não têm tipo no Google.
    Nesses vai-se direto à pesquisa por texto. **Nunca lhes dar um tipo parecido
    só para não ficar vazio** — um tipo errado mas VÁLIDO não dá erro nenhum,
-   devolve os comércios errados, e paga-se por eles.
+   devolve os comércios errados, e paga-se por eles. As escolas de música,
+   dança, teatro e línguas são o exemplo mais claro: o Google tem `school`, mas
+   `school` é a escola primária da rua.
+
+   São 44 ramos, em seis secções (`grupo`), e a caixa de escolha do painel usa
+   essas secções. Numa lista corrida de 44 ninguém encontra nada, e escolher o
+   ramo errado gasta dinheiro.
 
    `textQueryBR` é a mesma pergunta escrita como se diz no Brasil, e só existe
    onde difere mesmo: "ginásio"/"academia", "canalizador"/"encanador",

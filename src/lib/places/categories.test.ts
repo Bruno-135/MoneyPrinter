@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { CATEGORIES, categorySlugs, categoryTextQuery, findCategory, isTextOnly } from './categories';
+import {
+  CATEGORIES,
+  categoriesByGroup,
+  categorySlugs,
+  categoryTextQuery,
+  findCategory,
+  GRUPOS,
+  isTextOnly,
+} from './categories';
 
 describe('CATEGORIES', () => {
   it('tem ramos que cheguem para haver por onde escolher', () => {
@@ -28,6 +36,19 @@ describe('CATEGORIES', () => {
     const semTipo = CATEGORIES.filter(isTextOnly);
     expect(semTipo.length).toBeGreaterThan(0);
     expect(semTipo.length).toBeLessThan(CATEGORIES.length / 2);
+  });
+
+  it('nenhum ramo fica fora das secções da caixa de escolha', () => {
+    // Um ramo com um grupo que não existe desaparecia da lista sem erro
+    // nenhum: ficava no código, e ninguém o conseguia escolher no painel.
+    const dentro = categoriesByGroup().flatMap((g) => g.ramos.map((c) => c.slug));
+    expect(dentro.sort()).toEqual(categorySlugs().sort());
+  });
+
+  it('as secções aparecem pela ordem declarada', () => {
+    expect(categoriesByGroup().map((g) => g.grupo)).toEqual(
+      GRUPOS.filter((g) => CATEGORIES.some((c) => c.grupo === g)),
+    );
   });
 
   it('marca restaurantes e padarias como food_service, e mais nenhum', () => {

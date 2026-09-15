@@ -3,7 +3,7 @@
 import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { findCity, runScan, type CityFormState, type ScanFormState } from './actions';
-import { CATEGORIES } from '@/lib/places/categories';
+import { CATEGORIES, categoriesByGroup } from '@/lib/places/categories';
 import type { CityMatch } from '@/lib/places/cities';
 
 /**
@@ -188,10 +188,14 @@ export function ScanForm() {
               onChange={(e) => setRamo(e.target.value)}
               className={field}
             >
-              {CATEGORIES.map((c) => (
-                <option key={c.slug} value={c.slug}>
-                  {c.label}
-                </option>
+              {categoriesByGroup().map(({ grupo, ramos }) => (
+                <optgroup key={grupo} label={grupo}>
+                  {ramos.map((c) => (
+                    <option key={c.slug} value={c.slug}>
+                      {c.label}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </label>

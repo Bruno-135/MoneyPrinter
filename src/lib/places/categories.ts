@@ -18,11 +18,28 @@
  * varrimento e corrige-se aqui, sem faturas nem código partido.
  */
 
+/** As secções da caixa de escolha, pela ordem por que aparecem. */
+export const GRUPOS = [
+  'Dia a dia',
+  'Profissionais e saúde',
+  'Estética',
+  'Serviços e ofícios',
+  'Construção e obras',
+  'Ensino',
+] as const;
+
+export type Grupo = (typeof GRUPOS)[number];
+
 export interface CategoryDefinition {
   /** Identificador estável usado na linha de comandos e na base de dados. */
   slug: string;
   /** Nome mostrado ao utilizador. */
   label: string;
+  /**
+   * Secção da caixa de escolha. São quarenta e quatro ramos: numa lista corrida
+   * ninguém encontra nada, e escolher o ramo errado custa dinheiro.
+   */
+  grupo: Grupo;
   /**
    * Tipos do Places para a pesquisa por proximidade.
    *
@@ -55,6 +72,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'restaurante',
     label: 'Restaurante',
+    grupo: 'Dia a dia',
     includedTypes: ['restaurant'],
     textQuery: 'restaurantes em {zona}',
     foodService: true,
@@ -62,6 +80,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'padaria',
     label: 'Padaria',
+    grupo: 'Dia a dia',
     includedTypes: ['bakery'],
     textQuery: 'padarias em {zona}',
     foodService: true,
@@ -69,6 +88,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'cabeleireiro',
     label: 'Cabeleireiro',
+    grupo: 'Dia a dia',
     includedTypes: ['hair_salon', 'hair_care'],
     textQuery: 'cabeleireiros em {zona}',
     foodService: false,
@@ -76,6 +96,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'barbearia',
     label: 'Barbearia',
+    grupo: 'Dia a dia',
     includedTypes: ['barber_shop'],
     textQuery: 'barbearias em {zona}',
     foodService: false,
@@ -83,6 +104,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'salao-beleza',
     label: 'Salão de beleza',
+    grupo: 'Dia a dia',
     includedTypes: ['beauty_salon'],
     textQuery: 'salões de beleza em {zona}',
     foodService: false,
@@ -90,6 +112,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'ginasio',
     label: 'Ginásio',
+    grupo: 'Dia a dia',
     includedTypes: ['gym', 'fitness_center'],
     textQuery: 'ginásios em {zona}',
     textQueryBR: 'academias em {zona}',
@@ -101,6 +124,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
     // cai na pesquisa por texto, que aqui funciona bem.
     slug: 'pilates-yoga',
     label: 'Estúdio de pilates/yoga',
+    grupo: 'Dia a dia',
     includedTypes: ['yoga_studio'],
     textQuery: 'estúdio de pilates ou yoga em {zona}',
     foodService: false,
@@ -108,6 +132,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'oficina',
     label: 'Oficina mecânica',
+    grupo: 'Dia a dia',
     includedTypes: ['car_repair'],
     textQuery: 'oficinas mecânicas em {zona}',
     foodService: false,
@@ -115,6 +140,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'pet-shop',
     label: 'Pet shop',
+    grupo: 'Dia a dia',
     includedTypes: ['pet_store'],
     textQuery: 'pet shops em {zona}',
     foodService: false,
@@ -122,6 +148,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'clinica-dentaria',
     label: 'Clínica dentária',
+    grupo: 'Dia a dia',
     includedTypes: ['dentist'],
     textQuery: 'clínicas dentárias em {zona}',
     foodService: false,
@@ -129,6 +156,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'fisioterapia',
     label: 'Clínica de fisioterapia',
+    grupo: 'Dia a dia',
     includedTypes: ['physiotherapist'],
     textQuery: 'clínicas de fisioterapia em {zona}',
     foodService: false,
@@ -136,6 +164,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'advogados',
     label: 'Escritório de advogados',
+    grupo: 'Dia a dia',
     includedTypes: ['lawyer'],
     textQuery: 'escritórios de advogados em {zona}',
     foodService: false,
@@ -143,6 +172,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'contabilidade',
     label: 'Contabilidade',
+    grupo: 'Dia a dia',
     includedTypes: ['accounting'],
     textQuery: 'contabilistas em {zona}',
     foodService: false,
@@ -150,6 +180,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'loja-roupa',
     label: 'Loja de roupa',
+    grupo: 'Dia a dia',
     includedTypes: ['clothing_store'],
     textQuery: 'lojas de roupa em {zona}',
     foodService: false,
@@ -165,6 +196,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'imobiliaria',
     label: 'Imobiliária',
+    grupo: 'Profissionais e saúde',
     includedTypes: ['real_estate_agency'],
     textQuery: 'imobiliárias em {zona}',
     foodService: false,
@@ -172,6 +204,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'medico',
     label: 'Médico / consultório',
+    grupo: 'Profissionais e saúde',
     includedTypes: ['doctor'],
     textQuery: 'consultórios médicos em {zona}',
     foodService: false,
@@ -179,6 +212,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'clinica-estetica',
     label: 'Clínica de estética',
+    grupo: 'Profissionais e saúde',
     includedTypes: ['skin_care_clinic'],
     textQuery: 'clínicas de estética em {zona}',
     foodService: false,
@@ -186,6 +220,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'veterinario',
     label: 'Veterinário',
+    grupo: 'Profissionais e saúde',
     includedTypes: ['veterinary_care'],
     textQuery: 'clínicas veterinárias em {zona}',
     foodService: false,
@@ -193,6 +228,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'optica',
     label: 'Óptica',
+    grupo: 'Profissionais e saúde',
     includedTypes: ['optician'],
     textQuery: 'ópticas em {zona}',
     textQueryBR: 'óticas em {zona}',
@@ -203,6 +239,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
     // Sem tipo no Google. Ver a nota em `includedTypes`: dar-lhe `doctor` para
     // não ficar vazio devolvia clínica geral e cobrava-se por isso.
     label: 'Psicólogo',
+    grupo: 'Profissionais e saúde',
     includedTypes: [],
     textQuery: 'psicólogos em {zona}',
     foodService: false,
@@ -210,6 +247,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'nutricionista',
     label: 'Nutricionista',
+    grupo: 'Profissionais e saúde',
     includedTypes: [],
     textQuery: 'nutricionistas em {zona}',
     foodService: false,
@@ -217,6 +255,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'podologia',
     label: 'Podologia',
+    grupo: 'Profissionais e saúde',
     includedTypes: [],
     textQuery: 'podologistas em {zona}',
     foodService: false,
@@ -233,6 +272,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'harmonizacao-facial',
     label: 'Harmonização facial',
+    grupo: 'Estética',
     includedTypes: [],
     textQuery: 'harmonização facial em {zona}',
     foodService: false,
@@ -240,6 +280,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'depilacao-laser',
     label: 'Depilação a laser',
+    grupo: 'Estética',
     includedTypes: [],
     textQuery: 'depilação a laser em {zona}',
     foodService: false,
@@ -247,6 +288,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'micropigmentacao',
     label: 'Micropigmentação',
+    grupo: 'Estética',
     includedTypes: [],
     textQuery: 'micropigmentação e microblading em {zona}',
     foodService: false,
@@ -254,6 +296,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'manicure',
     label: 'Manicure / unhas',
+    grupo: 'Estética',
     includedTypes: ['nail_salon'],
     textQuery: 'manicures e nail bars em {zona}',
     textQueryBR: 'manicures e estúdios de unhas em {zona}',
@@ -262,6 +305,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'massagem',
     label: 'Massagem / terapias',
+    grupo: 'Estética',
     includedTypes: ['massage'],
     textQuery: 'massagens e terapias em {zona}',
     foodService: false,
@@ -269,6 +313,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'tatuagem',
     label: 'Estúdio de tatuagem',
+    grupo: 'Estética',
     includedTypes: [],
     textQuery: 'estúdios de tatuagem em {zona}',
     foodService: false,
@@ -280,6 +325,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'seguros',
     label: 'Mediador de seguros',
+    grupo: 'Serviços e ofícios',
     includedTypes: ['insurance_agency'],
     textQuery: 'mediadores de seguros em {zona}',
     textQueryBR: 'corretores de seguros em {zona}',
@@ -288,6 +334,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'escola-conducao',
     label: 'Escola de condução',
+    grupo: 'Serviços e ofícios',
     includedTypes: ['driving_school'],
     textQuery: 'escolas de condução em {zona}',
     textQueryBR: 'autoescolas em {zona}',
@@ -296,6 +343,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'agencia-viagens',
     label: 'Agência de viagens',
+    grupo: 'Serviços e ofícios',
     includedTypes: ['travel_agency'],
     textQuery: 'agências de viagens em {zona}',
     foodService: false,
@@ -303,6 +351,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'arquiteto',
     label: 'Arquitecto / decoração',
+    grupo: 'Serviços e ofícios',
     includedTypes: [],
     textQuery: 'arquitectos e decoradores de interiores em {zona}',
     textQueryBR: 'arquitetos e designers de interiores em {zona}',
@@ -311,6 +360,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'fotografo',
     label: 'Fotógrafo',
+    grupo: 'Serviços e ofícios',
     includedTypes: [],
     textQuery: 'fotógrafos de casamentos e eventos em {zona}',
     foodService: false,
@@ -318,6 +368,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'personal-trainer',
     label: 'Personal trainer',
+    grupo: 'Serviços e ofícios',
     includedTypes: [],
     textQuery: 'personal trainers em {zona}',
     foodService: false,
@@ -325,6 +376,7 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'eletricista',
     label: 'Electricista',
+    grupo: 'Serviços e ofícios',
     includedTypes: ['electrician'],
     textQuery: 'electricistas em {zona}',
     textQueryBR: 'eletricistas em {zona}',
@@ -333,9 +385,100 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
   {
     slug: 'canalizador',
     label: 'Canalizador',
+    grupo: 'Serviços e ofícios',
     includedTypes: ['plumber'],
-    textQuery: 'canalizadores em {zona}',
+    textQuery: 'canalizadores e picheleiros em {zona}',
     textQueryBR: 'encanadores em {zona}',
+    foodService: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Construção e obras
+  //
+  // Gente que vive de orçamentos e de quem a encontra. Um empreiteiro sem site
+  // perde trabalho para quem tem um, e quase nenhum tem — é o ramo onde a
+  // presença online está mais atrasada dos dois lados do Atlântico.
+  // -------------------------------------------------------------------------
+  {
+    slug: 'materiais-construcao',
+    label: 'Materiais de construção',
+    grupo: 'Construção e obras',
+    includedTypes: ['hardware_store', 'home_improvement_store'],
+    textQuery: 'lojas de materiais de construção em {zona}',
+    textQueryBR: 'lojas de material de construção em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'construtora',
+    label: 'Construtora / empreiteiro',
+    grupo: 'Construção e obras',
+    includedTypes: ['general_contractor'],
+    textQuery: 'construtoras e empreiteiros de construção civil em {zona}',
+    textQueryBR: 'construtoras e empreiteiras em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'pintor',
+    label: 'Pintor / pinturas',
+    grupo: 'Construção e obras',
+    includedTypes: ['painter'],
+    textQuery: 'pintores e empresas de pintura em {zona}',
+    foodService: false,
+  },
+  {
+    // Sem tipo no Google, e é dos casos em que isso é uma sorte: quem vende
+    // extintores é procurado pelo nome do produto, não por um ramo.
+    slug: 'anti-incendio',
+    label: 'Segurança contra incêndio',
+    grupo: 'Construção e obras',
+    includedTypes: [],
+    textQuery: 'extintores e material de combate a incêndio em {zona}',
+    textQueryBR: 'extintores e equipamentos de combate a incêndio em {zona}',
+    foodService: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Ensino privado
+  //
+  // Todas sem tipo, e DE PROPÓSITO. O Google tem `school`, mas `school` é a
+  // escola primária da rua — o tipo é válido, não dá erro, devolve os
+  // estabelecimentos errados e paga-se por eles. Uma escola de dança procura-se
+  // pelo nome do que ensina, e é assim que se vai procurá-la.
+  //
+  // São bons prospetos por uma razão própria: vendem turmas que começam em
+  // datas certas, portanto a página tem sempre o que anunciar.
+  // -------------------------------------------------------------------------
+  {
+    slug: 'escola-musica',
+    label: 'Escola de música',
+    grupo: 'Ensino',
+    includedTypes: [],
+    textQuery: 'escolas de música em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'escola-danca',
+    label: 'Escola de dança',
+    grupo: 'Ensino',
+    includedTypes: [],
+    textQuery: 'escolas de dança em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'escola-teatro',
+    label: 'Escola de teatro',
+    grupo: 'Ensino',
+    includedTypes: [],
+    textQuery: 'escolas de teatro e de representação em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'escola-linguas',
+    label: 'Escola de línguas',
+    grupo: 'Ensino',
+    includedTypes: [],
+    textQuery: 'escolas de inglês e de línguas em {zona}',
+    textQueryBR: 'cursos de inglês e escolas de idiomas em {zona}',
     foodService: false,
   },
 ] as const;
@@ -380,6 +523,14 @@ function normalizeKey(value: string): string {
     .toLowerCase()
     .trim()
     .replace(/[\s/_]+/g, '-');
+}
+
+/** Os ramos agrupados, na ordem de `GRUPOS`, para a caixa de escolha. */
+export function categoriesByGroup(): { grupo: Grupo; ramos: CategoryDefinition[] }[] {
+  return GRUPOS.map((grupo) => ({
+    grupo,
+    ramos: CATEGORIES.filter((c) => c.grupo === grupo),
+  })).filter((g) => g.ramos.length > 0);
 }
 
 export function categorySlugs(): string[] {
