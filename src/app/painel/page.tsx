@@ -14,6 +14,7 @@ import { Numeros, type Numero } from './numeros';
 import { OTeuDia } from './o-teu-dia';
 import { progresso } from '@/lib/progresso/repository';
 import { contagens } from '@/lib/suporte/repository';
+import { resumoDoMes } from '@/lib/cobranca/repository';
 
 /**
  * O painel de hoje.
@@ -30,7 +31,7 @@ export default async function PainelPage() {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
 
-  const [abriram, hoje, porContactar, clientes, semSite, emConversa, ganhos, doDia, suporte] =
+  const [abriram, hoje, porContactar, clientes, semSite, emConversa, ganhos, doDia, suporte, cobranca] =
     await Promise.all([
       abriramAPagina(supabase),
       paraHoje(supabase),
@@ -49,6 +50,7 @@ export default async function PainelPage() {
       }),
       progresso(supabase),
       contagens(supabase),
+      resumoDoMes(supabase),
     ]);
 
   // Uma soma por moeda, nunca uma só: há clientes em Portugal e no Brasil, e
@@ -108,12 +110,25 @@ export default async function PainelPage() {
       nota: 'no funil',
       tom: 'warm',
     },
+    // O recorrente diz quanto ele VALE; o por receber diz quanto FALTA entrar.
+    // Os dois cabem, e é a diferença entre um número para mostrar e um número
+    // para trabalhar.
     ...mensais.map(([moeda, centimos], i): Numero => ({
       label: `Recorrente · ${moeda === 'BRL' ? 'BR' : 'PT'}`,
       valor: escreverValor(centimos, moeda),
       href: '/painel/clientes',
       nota: `${clientes.filter((c) => c.moeda === moeda).length} clientes /mês`,
       tom: i === 0 ? 'ok' : 'normal',
+    })),
+    ...cobranca.porReceber.map(([moeda, centimos]): Numero => ({
+      label: `Por receber · ${moeda === 'BRL' ? 'BR' : 'PT'}`,
+      valor: escreverValor(centimos, moeda),
+      href: '/painel/cobranca',
+      nota:
+        cobranca.quantosFalharam > 0
+          ? `${cobranca.quantosFalharam} falharam`
+          : 'este mês, por cobrar',
+      tom: cobranca.quantosFalharam > 0 ? 'bad' : 'warm',
     })),
     {
       label: 'Ganhos',

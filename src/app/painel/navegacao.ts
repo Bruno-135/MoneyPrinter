@@ -44,7 +44,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
       { href: '/painel/clientes', label: 'Carteira de clientes' },
       { href: '/painel/conteudo', label: 'Calendário de conteúdo', porLigar: true },
       { href: '/painel/suporte', label: 'Suporte' },
-      { href: '/painel/cobranca', label: 'Cobrança', porLigar: true },
+      { href: '/painel/cobranca', label: 'Cobrança' },
     ],
   },
   {

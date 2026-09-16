@@ -175,6 +175,7 @@ em `supabase/README.md`.)
 | `client_services` | O que cada cliente já comprou: serviço, valor, mensal ou único, data da venda e do cancelamento |
 | `contact_events` | Uma linha por contacto feito, com o desfecho e a hora. O histórico de esforço |
 | `support_requests` | Pedidos dos clientes que já pagam: o que pediram, a que serviço diz respeito, o prazo e quando ficou feito |
+| `client_payments` | O estado de pagamento de cada mês, por cliente: valor congelado, moeda e se está pago |
 
 Vista `monthly_site_report` agrega visitas e cliques por site e por mês
 (`security_invoker = on`, portanto respeita a RLS).
@@ -194,7 +195,7 @@ porque é o que permite filtrar e contar por elas.
 Detalhe tabela a tabela, com o porquê de cada decisão, em `supabase/README.md`.
 
 O schema está aplicado no projeto Supabase `amjqibwoqfkbmtbyysgy`
-("Prospecção e criação de site", eu-west-3, Postgres 17) através de 27 migrações.
+("Prospecção e criação de site", eu-west-3, Postgres 17) através de 28 migrações.
 
 Duas notas que condicionam o código das etapas seguintes:
 
@@ -634,6 +635,31 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       fechados no prazo. Está ao lado dos contactos de propósito: reter vale
       tanto como vender, e um painel que só mede vendas novas ensina a ignorar
       quem já paga.
+
+- [x] **Cobrança** — `client_payments` e `/painel/cobranca`.
+
+      O QUE cada cliente paga já estava em `client_services`. Faltava saber se o
+      mês está pago.
+
+      As mensalidades de um mês CALCULAM-SE a partir de `client_services` — quem
+      tinha serviço activo naquele mês — e a tabela guarda só o desfecho. Não há
+      geração mensal de linhas: um trabalho que corre uma vez por mês é um
+      trabalho que mais cedo ou mais tarde falha em silêncio, e o mês fica sem
+      cobranças sem ninguém dar por isso. Sem linha, o estado é `pendente`.
+
+      `amount_cents` é a excepção e fica CONGELADO ao marcar. Se em Janeiro ele
+      pagava 30 € e em Abril passou a 45, Janeiro tem de continuar a dizer 30
+      para sempre — um histórico que se recalcula com os preços de hoje não é um
+      histórico. A linha avisa quando o valor de hoje é outro.
+
+      Duas regras de mês, escritas e testadas: vendido durante o mês cobra-se
+      nesse mês (adiar era oferecer trabalho), e cancelado durante o mês cobra-se
+      nesse mês na mesma (o mês foi servido). Sem proporcionalidade: meio mês
+      custa um mês, dos dois lados.
+
+      É à mão de propósito. Ligar isto a um sistema de pagamentos é um projecto
+      inteiro, e o valor não está em automatizar a cobrança — está em SABER quem
+      não pagou. Isso resolve-se com três botões.
 
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 

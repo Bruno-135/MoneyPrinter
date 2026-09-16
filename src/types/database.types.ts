@@ -1137,6 +1137,56 @@ export type Database = {
           },
         ];
       };
+      client_payments: {
+        Row: {
+          amount_cents: number;
+          business_id: string;
+          created_at: string;
+          currency: string;
+          id: string;
+          note: string | null;
+          owner_id: string;
+          paid_at: string | null;
+          period: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          amount_cents: number;
+          business_id: string;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          note?: string | null;
+          owner_id?: string;
+          paid_at?: string | null;
+          period: string;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount_cents?: number;
+          business_id?: string;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          note?: string | null;
+          owner_id?: string;
+          paid_at?: string | null;
+          period?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "client_payments_business_id_fkey";
+            columns: ["business_id"];
+            isOneToOne: false;
+            referencedRelation: "businesses";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       monthly_site_report: {
