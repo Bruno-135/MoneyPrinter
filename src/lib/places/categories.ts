@@ -25,6 +25,7 @@ export const GRUPOS = [
   'Estética',
   'Serviços e ofícios',
   'Construção e obras',
+  'Transporte',
   'Ensino',
 ] as const;
 
@@ -434,6 +435,53 @@ export const CATEGORIES: readonly CategoryDefinition[] = [
     includedTypes: [],
     textQuery: 'extintores e material de combate a incêndio em {zona}',
     textQueryBR: 'extintores e equipamentos de combate a incêndio em {zona}',
+    foodService: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Transporte e entregas
+  //
+  // Vivem do telefone e quase nenhum tem site. A pergunta que o cliente faz é
+  // sempre a mesma — quanto custa e quando chega — e é a que nenhum deles
+  // responde online.
+  // -------------------------------------------------------------------------
+  {
+    slug: 'transportadora',
+    label: 'Transportadora',
+    grupo: 'Transporte',
+    includedTypes: ['moving_company'],
+    textQuery: 'transportadoras e empresas de transporte de mercadorias em {zona}',
+    textQueryBR: 'transportadoras em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'mudancas',
+    label: 'Mudanças',
+    grupo: 'Transporte',
+    includedTypes: ['moving_company'],
+    textQuery: 'empresas de mudanças em {zona}',
+    textQueryBR: 'empresas de mudança e carreto em {zona}',
+    foodService: false,
+  },
+  {
+    // Sem tipo no Google: quem faz entregas locais aparece pelo serviço, não
+    // por um ramo. Dar-lhe `moving_company` trazia empresas de mudanças, que
+    // são outro negócio — e pagava-se por elas.
+    slug: 'entregas',
+    label: 'Entregas / estafetas',
+    grupo: 'Transporte',
+    includedTypes: [],
+    textQuery: 'serviços de entregas e estafetas em {zona}',
+    textQueryBR: 'serviços de entrega e motoboy em {zona}',
+    foodService: false,
+  },
+  {
+    slug: 'aluguer-viaturas',
+    label: 'Aluguer de viaturas',
+    grupo: 'Transporte',
+    includedTypes: ['car_rental'],
+    textQuery: 'aluguer de carrinhas e viaturas em {zona}',
+    textQueryBR: 'locação de vans e caminhões em {zona}',
     foodService: false,
   },
 
