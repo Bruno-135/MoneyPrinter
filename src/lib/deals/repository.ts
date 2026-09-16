@@ -187,4 +187,19 @@ export async function registarDesfecho(
     : await db.from('deals').insert({ business_id: businessId, ...campos });
 
   if (error) throw new Error(`Não foi possível registar o contacto: ${error.message}`);
+
+  // O registo de esforço, à parte do estado. Os três desfechos contam: ligar a
+  // quem não atende é trabalho na mesma, e um contador que só conta os
+  // atendidos castiga precisamente os dias maus.
+  //
+  // Falhar aqui NÃO desfaz o contacto. O desfecho já ficou guardado, que é o
+  // que interessa; perder uma linha de estatística não vale rebentar o ecrã a
+  // meio de uma sessão de trinta chamadas.
+  const { error: erroEvento } = await db
+    .from('contact_events')
+    .insert({ business_id: businessId, outcome: desfecho });
+
+  if (erroEvento) {
+    console.error('Contacto registado, mas não entrou no histórico:', erroEvento.message);
+  }
 }

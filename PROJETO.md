@@ -173,6 +173,7 @@ em `supabase/README.md`.)
 | `site_clicks` | Cliques (WhatsApp, telefone, etc.) |
 | `outreach_messages` | Mensagens escritas por IA, uma linha por (comércio, tipo): primeiro contacto e insistência |
 | `client_services` | O que cada cliente já comprou: serviço, valor, mensal ou único, data da venda e do cancelamento |
+| `contact_events` | Uma linha por contacto feito, com o desfecho e a hora. O histórico de esforço |
 
 Vista `monthly_site_report` agrega visitas e cliques por site e por mês
 (`security_invoker = on`, portanto respeita a RLS).
@@ -192,7 +193,7 @@ porque é o que permite filtrar e contar por elas.
 Detalhe tabela a tabela, com o porquê de cada decisão, em `supabase/README.md`.
 
 O schema está aplicado no projeto Supabase `amjqibwoqfkbmtbyysgy`
-("Prospecção e criação de site", eu-west-3, Postgres 17) através de 25 migrações.
+("Prospecção e criação de site", eu-west-3, Postgres 17) através de 26 migrações.
 
 Duas notas que condicionam o código das etapas seguintes:
 
@@ -577,9 +578,35 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       permite ver o caminho todo e discutir o desenho; a tira impede que um
       número de exemplo passe por verdade.
 
-      O cartão "O teu dia" está no painel com os valores a `—` em vez dos
-      números do desenho. Um painel que serve para decidir a quem ligar não pode
-      ter nele um número inventado.
+      O cartão "O teu dia" ficou primeiro com os valores a `—`, e passou a ler
+      dados a sério na migração 0026.
+
+- [x] **Progresso a sério** — `contact_events` e `/painel/perfil`.
+
+      O que existia não chegava, e a razão é subtil: `deal_stage_events` guarda
+      MUDANÇAS DE ETAPA, e dos três desfechos da fila só dois mudam a etapa.
+      "Adiado" não muda nada de propósito — quem não atendeu continua por
+      contactar — portanto ligar a quem não atende não deixava rasto. Contar por
+      aí dava um número abaixo da verdade exactamente nos dias maus, em que
+      ninguém atende. Um contador de esforço que castiga os dias difíceis é pior
+      do que não ter contador.
+
+      `deals.last_contacted_at` também não servia: guarda só o ÚLTIMO contacto
+      de cada comércio.
+
+      Agora `registarDesfecho` escreve uma linha em `contact_events` por cada
+      desfecho, os três. Falhar essa escrita não desfaz o contacto — perder uma
+      linha de estatística não vale rebentar o ecrã a meio de trinta chamadas.
+
+      As contas vivem em `src/lib/progresso/calculo.ts`, sem base de dados pelo
+      meio e com 18 testes. Tudo em dias LOCAIS: um contacto às 23:30 em Lisboa
+      pertence a esse dia, e em UTC já era o seguinte — o que partia a sequência
+      de quem trabalha à noite. A sequência actual aceita começar ONTEM, senão
+      às nove da manhã uma sequência de catorze dias aparecia a zero. E de zero
+      para alguma coisa não é "+100%", é "os primeiros": uma percentagem
+      calculada sobre zero é uma mentira com ar de exactidão.
+
+      Sem retroactivos. O que se fez antes não foi registado e não se inventa.
 
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 

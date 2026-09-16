@@ -52,7 +52,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
     itens: [
       { href: '/painel/relatorios', label: 'Relatórios' },
       { href: '/painel/equipa', label: 'Equipa e permissões', porLigar: true },
-      { href: '/painel/perfil', label: 'Perfil e progresso', porLigar: true },
+      { href: '/painel/perfil', label: 'Perfil e progresso' },
     ],
   },
 ];

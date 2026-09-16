@@ -11,6 +11,7 @@ import { Abriram } from './abriram';
 import { ParaHojeLista } from './para-hoje';
 import { Numeros, type Numero } from './numeros';
 import { OTeuDia } from './o-teu-dia';
+import { progresso } from '@/lib/progresso/repository';
 
 /**
  * O painel de hoje.
@@ -27,19 +28,25 @@ export default async function PainelPage() {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
 
-  const [abriram, hoje, porContactar, clientes, semSite, emConversa, ganhos] = await Promise.all([
-    abriramAPagina(supabase),
-    paraHoje(supabase),
-    quantosPorContactar(supabase, {}),
-    carteira(supabase),
-    rankBusinesses(supabase, { kinds: ['none', 'social_only'], limit: 1 }),
-    rankBusinesses(supabase, {
-      kinds: ['none', 'social_only', 'real'],
-      stages: ['contacted', 'meeting_scheduled', 'proposal_sent', 'negotiating'],
-      limit: 1,
-    }),
-    rankBusinesses(supabase, { kinds: ['none', 'social_only', 'real'], stages: ['won'], limit: 1 }),
-  ]);
+  const [abriram, hoje, porContactar, clientes, semSite, emConversa, ganhos, doDia] =
+    await Promise.all([
+      abriramAPagina(supabase),
+      paraHoje(supabase),
+      quantosPorContactar(supabase, {}),
+      carteira(supabase),
+      rankBusinesses(supabase, { kinds: ['none', 'social_only'], limit: 1 }),
+      rankBusinesses(supabase, {
+        kinds: ['none', 'social_only', 'real'],
+        stages: ['contacted', 'meeting_scheduled', 'proposal_sent', 'negotiating'],
+        limit: 1,
+      }),
+      rankBusinesses(supabase, {
+        kinds: ['none', 'social_only', 'real'],
+        stages: ['won'],
+        limit: 1,
+      }),
+      progresso(supabase),
+    ]);
 
   // Uma soma por moeda, nunca uma só: há clientes em Portugal e no Brasil, e
   // somar cêntimos com centavos dá um número que não existe.
@@ -125,7 +132,7 @@ export default async function PainelPage() {
       {/* Duas colunas no computador, uma no telemóvel, como no desenho. */}
       <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(290px,1fr))]">
         <ParaHojeLista itens={hoje} />
-        <OTeuDia />
+        <OTeuDia progresso={doDia} />
       </div>
     </>
   );

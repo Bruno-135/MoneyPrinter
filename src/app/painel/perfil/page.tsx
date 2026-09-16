@@ -1,113 +1,177 @@
-import { PorLigar } from '../por-ligar';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { progresso } from '@/lib/progresso/repository';
+import { carteira } from '@/lib/servicos/vendidos';
+import { escreverValor } from '@/lib/deals/dinheiro';
+import { Marcos, type Marco } from './marcos';
 
 /**
  * Perfil e progresso.
  *
- * A progressão é contra o PRÓPRIO histórico, e não contra outras pessoas. Com
- * uma pessoa só na agência, um quadro de líderes com um nome é ridículo — e
- * mesmo com cinco, o número que faz trabalhar é "melhor do que no mês passado".
+ * Tudo aqui sai do que ficou mesmo registado — `contact_events` para o esforço,
+ * `client_services` para as vendas, `generated_sites` para as páginas. Nenhum
+ * número é derivado de outro, e por isso nenhum mente por arrasto quando outro
+ * estiver incompleto.
+ *
+ * A progressão é contra o PRÓPRIO histórico e não contra outras pessoas. Com
+ * uma pessoa na agência, um quadro de líderes com um nome é ridículo; e mesmo
+ * com cinco, o número que faz trabalhar é "melhor do que no mês passado".
  */
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
-const ESTATISTICAS = [
-  { rotulo: 'Sequência actual', valor: '14 dias', delta: 'melhor de sempre: 17', tom: 'text-ink3' },
-  { rotulo: 'Contactos este mês', valor: '246', delta: '+19% vs Agosto', tom: 'text-ok' },
-  { rotulo: 'Vendas este mês', valor: '6', delta: 'média pessoal: 4,2', tom: 'text-ok' },
-  { rotulo: 'Suporte no prazo', valor: '86%', delta: '−4 pts vs Agosto', tom: 'text-bad' },
-];
+export default async function PerfilPage() {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) redirect('/entrar');
 
-const HISTORICO = [42, 51, 38, 60, 55, 68, 64, 73];
+  const [p, clientes] = await Promise.all([progresso(supabase), carteira(supabase)]);
 
-const DESAFIOS = [
-  { nome: 'Fechar 3 cardápios digitais', prog: '2/3', pct: 67, cor: 'bg-acc' },
-  { nome: '20 contactos por dia, 5 dias', prog: '4/5', pct: 80, cor: 'bg-acc2' },
-  { nome: 'Zero pedidos fora de prazo', prog: '2 falhas', pct: 35, cor: 'bg-bad' },
-];
+  // O recorrente, por moeda. Somar euros com reais dá um número que não existe.
+  const porMoeda = new Map<string, number>();
+  for (const c of clientes) {
+    porMoeda.set(c.moeda, (porMoeda.get(c.moeda) ?? 0) + c.mensalCentimos);
+  }
+  const recorrente = [...porMoeda.entries()].sort((a, b) => b[1] - a[1]);
+  const emEuros = porMoeda.get('EUR') ?? 0;
 
-const MARCOS = [
-  { nome: 'Primeiro cliente', estado: 'Maio 2025', tom: 'border-ok text-ok' },
-  { nome: 'Primeiros 500 €/mês recorrentes', estado: 'Julho 2025', tom: 'border-ok text-ok' },
-  { nome: 'Dez páginas abertas numa semana', estado: '7 de 10', tom: 'border-warm text-warm' },
-  { nome: 'Primeiros 2 000 €/mês recorrentes', estado: '1 240 € de 2 000 €', tom: 'border-warm text-warm' },
-  { nome: '30 dias seguidos com a meta feita', estado: '14 de 30', tom: 'border-warm text-warm' },
-];
+  const estatisticas = [
+    {
+      rotulo: 'Sequência actual',
+      valor: p.sequenciaAtual === 1 ? '1 dia' : `${p.sequenciaAtual} dias`,
+      nota:
+        p.sequenciaMelhor > 0
+          ? `melhor de sempre: ${p.sequenciaMelhor}`
+          : 'ainda sem histórico',
+      tom: 'text-ink3',
+    },
+    {
+      rotulo: 'Contactos este mês',
+      valor: String(p.contactosMes),
+      nota: p.contactosVariacao,
+      tom: p.contactosMes > 0 ? 'text-ok' : 'text-ink3',
+    },
+    {
+      rotulo: 'Vendas este mês',
+      valor: String(p.vendasMes),
+      nota: p.vendasVariacao,
+      tom: p.vendasMes > 0 ? 'text-ok' : 'text-ink3',
+    },
+    {
+      rotulo: 'Páginas geradas este mês',
+      valor: String(p.paginasMes),
+      nota: p.paginasVariacao,
+      tom: 'text-ink3',
+    },
+  ];
 
-export default function PerfilPage() {
-  const maximo = Math.max(...HISTORICO);
+  const maximo = Math.max(...p.semanas.map((s) => s.quantos), 1);
+
+  const marcos: Marco[] = [
+    {
+      nome: 'Primeiro contacto registado',
+      feito: p.sequenciaMelhor > 0,
+      estado: p.sequenciaMelhor > 0 ? 'feito' : 'ainda nenhum',
+    },
+    {
+      nome: 'Primeiro cliente',
+      feito: clientes.length > 0,
+      estado: clientes.length > 0 ? `${clientes.length} na carteira` : 'ainda nenhum',
+    },
+    {
+      nome: 'Primeiros 500 €/mês recorrentes',
+      feito: emEuros >= 50_000,
+      estado: `${escreverValor(emEuros, 'EUR')} de 500,00 €`,
+    },
+    {
+      nome: 'Primeiros 2 000 €/mês recorrentes',
+      feito: emEuros >= 200_000,
+      estado: `${escreverValor(emEuros, 'EUR')} de 2 000,00 €`,
+    },
+    {
+      nome: '30 dias seguidos com trabalho feito',
+      feito: p.sequenciaMelhor >= 30,
+      estado: `${p.sequenciaMelhor} de 30`,
+    },
+  ];
 
   return (
     <>
-      <PorLigar falta="registar cada contacto com a data, para haver histórico a contar" />
+      {p.vazio && (
+        <div className="rounded-2xl border border-dashed border-line px-4 py-3 text-[13px] text-ink2">
+          Ainda não há nenhum contacto registado. A partir de agora, cada desfecho que marcares na
+          fila — contactado, adiado ou não interessa — entra aqui. O histórico começa hoje: não há
+          retroactivos porque não havia onde os guardar.
+        </div>
+      )}
 
       <div className="grid gap-2.5 [grid-template-columns:repeat(auto-fit,minmax(152px,1fr))]">
-        {ESTATISTICAS.map((e) => (
-          <div key={e.rotulo} className="flex flex-col gap-1.5 rounded-2xl border border-line bg-surf p-3">
+        {estatisticas.map((e) => (
+          <div
+            key={e.rotulo}
+            className="flex flex-col gap-1.5 rounded-2xl border border-line bg-surf p-3"
+          >
             <span className="font-mono text-[11px] tracking-[0.08em] text-ink3 uppercase">
               {e.rotulo}
             </span>
             <span className="font-mono text-2xl font-bold tabular-nums">{e.valor}</span>
-            <span className={`font-mono text-[11px] ${e.tom}`}>{e.delta}</span>
+            <span className={`font-mono text-[11px] ${e.tom}`}>{e.nota}</span>
+          </div>
+        ))}
+
+        {recorrente.map(([moeda, centimos]) => (
+          <div
+            key={moeda}
+            className="flex flex-col gap-1.5 rounded-2xl border border-line bg-surf p-3"
+          >
+            <span className="font-mono text-[11px] tracking-[0.08em] text-ink3 uppercase">
+              Recorrente · {moeda === 'BRL' ? 'BR' : 'PT'}
+            </span>
+            <span className="font-mono text-2xl font-bold tabular-nums text-ok">
+              {escreverValor(centimos, moeda)}
+            </span>
+            <span className="font-mono text-[11px] text-ink3">
+              {clientes.filter((c) => c.moeda === moeda).length} clientes /mês
+            </span>
           </div>
         ))}
       </div>
 
       <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(290px,1fr))]">
         <section className="rounded-2xl border border-line bg-surf p-3.5">
-          <h2 className="mb-3 text-sm font-bold">Contactos por semana</h2>
+          <div className="mb-3 flex items-baseline justify-between gap-3">
+            <h2 className="text-sm font-bold">Contactos por semana</h2>
+            <span className="font-mono text-[11px] text-ink3">últimas 8</span>
+          </div>
           <div className="flex h-28 items-end gap-1.5">
-            {HISTORICO.map((v, i) => (
-              <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
+            {p.semanas.map((s, i) => (
+              // `h-full` na coluna, senão a altura em percentagem da barra não
+              // tem contra o que ser medida e a barra não aparece de todo.
+              <div
+                key={s.rotulo}
+                className="flex h-full flex-1 flex-col items-center justify-end gap-1.5"
+              >
+                <span className="font-mono text-[10px] tabular-nums text-ink3">
+                  {s.quantos > 0 ? s.quantos : ''}
+                </span>
                 <div
                   className={`w-full rounded-t-md ${
-                    i === HISTORICO.length - 1
+                    i === p.semanas.length - 1
                       ? 'bg-linear-to-b from-acc to-acc2'
                       : 'border border-line bg-surf2'
                   }`}
-                  style={{ height: `${Math.round((v / maximo) * 88)}%` }}
+                  // Mínimo de 2% para a barra vazia se ver como barra vazia e
+                  // não como coluna em falta.
+                  style={{ height: `${Math.max(Math.round((s.quantos / maximo) * 88), 2)}%` }}
                 />
-                <span className="font-mono text-[10px] text-ink3">S{i + 1}</span>
+                <span className="font-mono text-[10px] text-ink3">{s.rotulo}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="rounded-2xl border border-line bg-surf p-3.5">
-          <h2 className="mb-3 text-sm font-bold">Desafios da semana</h2>
-          <div className="flex flex-col gap-3">
-            {DESAFIOS.map((d) => (
-              <div key={d.nome}>
-                <div className="mb-1.5 flex justify-between text-xs text-ink2">
-                  <span>{d.nome}</span>
-                  <span className="font-mono tabular-nums text-ink">{d.prog}</span>
-                </div>
-                <div className="h-2.5 overflow-hidden rounded-md bg-surf2">
-                  <div className={`h-full ${d.cor}`} style={{ width: `${d.pct}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <Marcos marcos={marcos} />
       </div>
-
-      <section className="rounded-2xl border border-line bg-surf p-3.5">
-        <h2 className="mb-3 text-sm font-bold">Marcos</h2>
-        <ul className="flex flex-col gap-2">
-          {MARCOS.map((m) => (
-            <li
-              key={m.nome}
-              className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-line bg-surf2 p-2.5"
-            >
-              <span className="flex-1 text-[13px]">{m.nome}</span>
-              <span
-                className={`rounded-full border px-2.5 py-1 font-mono text-[11px] font-bold ${m.tom}`}
-              >
-                {m.estado}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
     </>
   );
 }

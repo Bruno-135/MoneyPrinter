@@ -237,6 +237,51 @@ export type Database = {
         };
         Relationships: [];
       };
+      contact_events: {
+        Row: {
+          business_id: string
+          channel: string
+          created_at: string
+          id: string
+          note: string | null
+          outcome: string
+          owner_id: string
+        }
+        Insert: {
+          business_id: string
+          channel?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          outcome: string
+          owner_id?: string
+        }
+        Update: {
+          business_id?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          outcome?: string
+          owner_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_events_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_events_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_with_stage"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_stage_events: {
         Row: {
           id: string
