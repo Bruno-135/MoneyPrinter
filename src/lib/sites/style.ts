@@ -239,6 +239,7 @@ export function styleVars(site: SiteStyle, mode: 'light' | 'dark'): Record<strin
     '--site-on-accent': palette.onAccent,
     '--site-line': palette.line,
     '--site-font': FONTS[site.font].stack,
+    '--site-font-display': FONTS[site.font].display ?? FONTS[site.font].stack,
 
     '--site-section-y': t.sectionY,
     '--site-container': t.container,

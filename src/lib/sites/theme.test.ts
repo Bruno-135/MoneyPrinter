@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_THEME,
+  fontHref,
   FONTS,
   FONT_IDS,
   PALETTES,
@@ -96,7 +97,7 @@ describe('suggestPalette', () => {
 });
 
 describe('themeVars', () => {
-  it('devolve as sete variáveis que a página usa', () => {
+  it('devolve as oito variáveis que a página usa', () => {
     const vars = themeVars({ palette: 'fresh', font: 'serif', imagem: 'neutro' }, 'light');
 
     expect(Object.keys(vars).sort()).toEqual([
@@ -104,6 +105,7 @@ describe('themeVars', () => {
       '--site-bg',
       '--site-fg',
       '--site-font',
+      '--site-font-display',
       '--site-line',
       '--site-on-accent',
       '--site-surface',
@@ -112,12 +114,42 @@ describe('themeVars', () => {
     expect(vars['--site-font']).toBe(FONTS.serif.stack);
   });
 
+  it('uma letra sem par usa a mesma nos títulos e no texto', () => {
+    // É o que mantém os temas antigos exactamente como eram: sem `display`, a
+    // variável dos títulos não pode ficar vazia nem cair noutra letra.
+    const vars = themeVars({ palette: 'warm', font: 'sans', imagem: 'neutro' }, 'light');
+    expect(vars['--site-font-display']).toBe(FONTS.sans.stack);
+  });
+
+  it('um par usa a letra de display nos títulos', () => {
+    const vars = themeVars({ palette: 'forno', font: 'editorial', imagem: 'neutro' }, 'light');
+    expect(vars['--site-font-display']).toBe(FONTS.editorial.display);
+    expect(vars['--site-font']).toBe(FONTS.editorial.stack);
+    expect(vars['--site-font-display']).not.toBe(vars['--site-font']);
+  });
+
   it('cada tipo de letra tem alternativas, não uma família só', () => {
     // Uma família sozinha que o dispositivo não tenha cai numa letra qualquer
     // decidida pelo browser, e a página deixa de ser a que se aprovou.
     for (const id of FONT_IDS) {
       expect(FONTS[id].stack.split(',').length).toBeGreaterThan(1);
+      if (FONTS[id].display) {
+        expect(FONTS[id].display!.split(',').length).toBeGreaterThan(1);
+      }
     }
+  });
+
+  it('as letras que não são do sistema trazem o endereço do Google Fonts', () => {
+    // Sem isto, um par escolhido com cuidado cai em Times New Roman no
+    // telemóvel do comerciante e o desenho todo se desfaz.
+    for (const id of FONT_IDS) {
+      const temPar = FONTS[id].display !== undefined;
+      expect(FONTS[id].webfont !== undefined, id).toBe(temPar);
+    }
+    expect(fontHref({ palette: 'forno', font: 'editorial', imagem: 'neutro' })).toContain(
+      'fonts.googleapis.com',
+    );
+    expect(fontHref({ palette: 'warm', font: 'sans', imagem: 'neutro' })).toBeNull();
   });
 });
 

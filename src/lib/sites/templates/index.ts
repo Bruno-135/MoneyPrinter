@@ -4,6 +4,7 @@ import { padariaPremium, padariaSimples } from './padaria';
 import { restaurantePremium, restauranteInterativo } from './restaurante';
 import { barbeariaInterativo, salaoMinimal } from './beleza';
 import { servicosMinimal, servicosPremium, servicosSimples } from './servicos';
+import { alimentacaoDesenhado, saudeDesenhado } from './desenhados';
 
 /**
  * A biblioteca de temas.
@@ -16,6 +17,10 @@ import { servicosMinimal, servicosPremium, servicosSimples } from './servicos';
  * fim, porque é essa a ordem por que se procura.
  */
 const ALL: readonly SiteTemplate[] = [
+  // Os desenhados à mão vêm primeiro: são os melhores que há, e a ordem desta
+  // lista é a ordem por que aparecem na biblioteca.
+  alimentacaoDesenhado,
+  saudeDesenhado,
   padariaPremium,
   restaurantePremium,
   barbeariaInterativo,

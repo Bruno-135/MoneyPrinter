@@ -45,10 +45,19 @@ export interface PaletteDefinition {
   dark: PaletteTokens;
 }
 
-export const PALETTE_IDS = ['warm', 'fresh', 'ocean', 'bold', 'calm', 'night'] as const;
+export const PALETTE_IDS = [
+  'warm',
+  'fresh',
+  'ocean',
+  'bold',
+  'calm',
+  'night',
+  'forno',
+  'clinica',
+] as const;
 export type PaletteId = (typeof PALETTE_IDS)[number];
 
-export const FONT_IDS = ['sans', 'serif', 'rounded'] as const;
+export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno'] as const;
 export type FontId = (typeof FONT_IDS)[number];
 
 export interface SiteTheme {
@@ -208,9 +217,88 @@ export const PALETTES: Record<PaletteId, PaletteDefinition> = {
       line: '#2E3038',
     },
   },
+
+  /*
+   * As duas seguintes vêm de desenhos feitos à mão no Claude Design, e os
+   * valores são os de lá — não aproximações. Uma paleta "parecida" desfaz o
+   * trabalho todo: o que faz uma página parecer desenhada é precisamente a
+   * relação exacta entre o fundo, o texto e o acento.
+   */
+
+  forno: {
+    id: 'forno',
+    label: 'Forno',
+    suits: 'padarias, restaurantes, casas de comida com história — creme e brasa',
+    light: {
+      bg: '#F2EDE4',
+      fg: '#1A1613',
+      surface: '#F9F5EE',
+      accent: '#C4491F',
+      onAccent: '#FFF7EF',
+      line: '#DCD4C7',
+    },
+    dark: {
+      bg: '#14100D',
+      fg: '#F2EDE4',
+      // O acento clareia no escuro. O #C4491F do modo claro sobre este fundo
+      // fica a 2,4:1 e desaparece — inverter uma paleta mecanicamente é como
+      // se perdem os botões.
+      surface: '#1C1510',
+      accent: '#E0602F',
+      onAccent: '#14100D',
+      line: '#3A322C',
+    },
+  },
+
+  clinica: {
+    id: 'clinica',
+    label: 'Clínica',
+    suits: 'clínicas, consultórios, estética — verde sóbrio e muito branco',
+    light: {
+      bg: '#F6F4EF',
+      fg: '#1A1814',
+      surface: '#FFFFFF',
+      accent: '#2E5842',
+      onAccent: '#FFFFFF',
+      line: '#DCD7CC',
+    },
+    dark: {
+      bg: '#1A1814',
+      fg: '#F6F4EF',
+      surface: '#2E2B27',
+      accent: '#7FA890',
+      onAccent: '#14120F',
+      line: '#46423B',
+    },
+  },
 };
 
-export const FONTS: Record<FontId, { label: string; stack: string; suits: string }> = {
+export interface FontDefinition {
+  label: string;
+  /** A letra do texto corrido. */
+  stack: string;
+  /**
+   * A letra dos títulos, quando é diferente da do texto.
+   *
+   * Existe porque é metade do que faz uma página parecer desenhada: uma serifa
+   * de carácter nos títulos com um sans neutro no corpo. Quando falta, os
+   * títulos usam a mesma do texto, e as três letras antigas continuam a
+   * funcionar como sempre funcionaram.
+   */
+  display?: string;
+  /**
+   * A consulta do Google Fonts, quando a letra não vive no computador de quem
+   * abre a página.
+   *
+   * Sem isto, um par escolhido com cuidado cai em Times New Roman no telemóvel
+   * do comerciante e todo o desenho se desfaz. As três primeiras não têm nada
+   * aqui de propósito: são letras do sistema e carregam instantaneamente.
+   */
+  webfont?: string;
+  suits: string;
+}
+
+export const FONTS: Record<FontId, FontDefinition> = {
   sans: {
     label: 'Direito',
     stack: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
@@ -226,7 +314,35 @@ export const FONTS: Record<FontId, { label: string; stack: string; suits: string
     stack: '"Avenir Next Rounded", "SF Pro Rounded", "Nunito", system-ui, sans-serif',
     suits: 'pastelarias, gelatarias, lojas de criança — passa ideia de simpatia',
   },
+  editorial: {
+    label: 'Editorial',
+    stack: 'Archivo, "Helvetica Neue", Helvetica, Arial, sans-serif',
+    display: 'Newsreader, Georgia, "Times New Roman", serif',
+    webfont:
+      'family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Archivo:wght@400;500;600;700',
+    suits: 'padarias, restaurantes, casas com história — serifa de revista nos títulos',
+  },
+  sereno: {
+    label: 'Sereno',
+    stack: '"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif',
+    display: '"Cormorant Garamond", Georgia, "Times New Roman", serif',
+    webfont:
+      'family=Cormorant+Garamond:wght@300;400&family=IBM+Plex+Sans:wght@400;500;600',
+    suits: 'clínicas, estética, consultórios — serifa fina e muito ar',
+  },
 };
+
+/**
+ * O endereço do Google Fonts para um tema, ou null quando não é preciso.
+ *
+ * Uma função e não um `<link>` escrito à mão em cada página: o site público, a
+ * pré-visualização e o PDF têm de carregar exactamente a mesma letra, senão o
+ * PDF sai com outra e ninguém percebe porquê.
+ */
+export function fontHref(theme: SiteTheme): string | null {
+  const { webfont } = FONTS[theme.font];
+  return webfont ? `https://fonts.googleapis.com/css2?${webfont}&display=swap` : null;
+}
 
 /** Lê o tema vindo da base de dados, caindo no predefinido para o que faltar. */
 export function parseTheme(raw: unknown): SiteTheme {
@@ -293,6 +409,9 @@ export function themeVars(theme: SiteTheme, mode: 'light' | 'dark'): Record<stri
     '--site-on-accent': tokens.onAccent,
     '--site-line': tokens.line,
     '--site-font': FONTS[theme.font].stack,
+    // Cai na letra do texto quando o par não tem display próprio, para os
+    // temas antigos continuarem exactamente como eram.
+    '--site-font-display': FONTS[theme.font].display ?? FONTS[theme.font].stack,
   };
 }
 

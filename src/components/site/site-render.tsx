@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { Database } from '@/types/database.types';
 import type { SiteContent, SitePhoto } from '@/lib/sites/content';
-import { type SiteTheme, themeVars } from '@/lib/sites/theme';
+import { fontHref, themeVars, type SiteTheme } from '@/lib/sites/theme';
 import { formatPrice } from '@/lib/sites/repository';
 import { whatsappUrl } from '@/lib/places/links';
 import { arteUrl } from '@/lib/sites/imagens/arte';
@@ -89,7 +89,9 @@ function Sheet({
 function TituloSeccao({ children }: { children: ReactNode }) {
   return (
     <div className="mb-10 flex flex-col items-center gap-3 text-center">
-      <h2 className="text-2xl font-semibold tracking-tight @xl:text-3xl">{children}</h2>
+      <h2 className="text-2xl font-semibold tracking-tight [font-family:var(--site-font-display)] @xl:text-3xl">
+        {children}
+      </h2>
       <span className="h-0.5 w-10 rounded-full bg-[var(--site-accent)]" />
     </div>
   );
@@ -189,6 +191,8 @@ export function SiteRender({
     content.gallery.every((foto) => foto.credito?.endsWith('Google') === true);
   const tituloGaleria = galeriaDeClientes ? 'Fotografias de quem cá esteve' : 'Conheça o espaço';
 
+  const letra = fontHref(theme);
+
   const capa: SitePhoto = content.cover ?? {
     url: arteUrl(theme.imagem, semente),
     alt: `Imagem ilustrativa — ${content.hero.headline}`,
@@ -199,6 +203,12 @@ export function SiteRender({
       style={themeVars(theme, 'light')}
       className="@container min-h-screen bg-[var(--site-bg)] text-[var(--site-fg)] [font-family:var(--site-font)] print:min-h-0"
     >
+      {/* A letra carrega-se AQUI e não na página, porque este componente serve
+          os três sítios: o site público, a pré-visualização e o PDF. Num
+          `<link>` por página, mais cedo ou mais tarde um deles ficava para
+          trás e o PDF saía com outra letra sem ninguém perceber porquê.
+          O Next leva isto para o `<head>` sozinho. */}
+      {letra && <link rel="stylesheet" href={letra} />}
       {/* ---------------- Barra de topo ----------------
           Nome à esquerda, telefone à direita. É a barra que faz a página
           parecer um site e não um folheto — e o telefone à vista no topo é o
@@ -307,7 +317,7 @@ export function SiteRender({
               escreveram, a nota deixa de ser um número solto e passa a ser o
               resumo daquilo que se está a ler.
             */}
-            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance @xl:text-5xl">
+            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance [font-family:var(--site-font-display)] @xl:text-5xl">
               {content.hero.headline}
             </h1>
             <p
@@ -576,7 +586,7 @@ export function SiteRender({
         }`}
       >
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 py-14 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-balance @xl:text-3xl">
+          <h2 className="text-2xl font-semibold tracking-tight text-balance [font-family:var(--site-font-display)] @xl:text-3xl">
             Fale connosco
           </h2>
           {content.contact.address && (

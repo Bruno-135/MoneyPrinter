@@ -661,6 +661,34 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       inteiro, e o valor não está em automatizar a cobrança — está em SABER quem
       não pagou. Isso resolve-se com três botões.
 
+- [x] **Modelos desenhados à mão** — os dois primeiros vindos do Claude Design.
+
+      Alimentação (Forno & Brasa) e Saúde (Clínica Vale), desenhados artboard a
+      artboard com folha de sistema própria: escala tipográfica, grelha,
+      espaçamento e contraste medido (13,9:1 e 15,8:1 — é lido ao sol).
+
+      Para ficarem IGUAIS e não parecidos, o tema ganhou duas coisas:
+
+      **Pares de letra.** `FontDefinition` passou a ter `display` e `webfont`:
+      uma serifa de carácter nos títulos com um sans neutro no corpo é metade
+      do que faz uma página parecer desenhada. Sem `display`, os títulos usam a
+      letra do texto — as três letras antigas ficam exactamente como eram. O
+      `webfont` existe porque, sem ele, um par escolhido com cuidado cai em
+      Times New Roman no telemóvel do comerciante e o desenho desfaz-se.
+
+      O `<link>` do Google Fonts vive dentro do `SiteRender`, que serve o site
+      público, a pré-visualização e o PDF. Num link por página, mais cedo ou
+      mais tarde um deles ficava para trás e o PDF saía com outra letra.
+
+      **Paletas com os hex exactos** dos desenhos (`forno` e `clinica`), não
+      aproximações: o que faz uma página parecer desenhada é precisamente a
+      relação entre o fundo, o texto e o acento. O modo escuro é escolhido tom a
+      tom — o `#C4491F` do claro sobre o fundo escuro fica a 2,4:1 e desaparece.
+
+      O conteúdo de demonstração é o dos desenhos e fica assim: foi escrito como
+      quem fala. "Trato de três pessoas por manhã. Não trato de mais para poder
+      trabalhar assim." vende; "excelência no atendimento" não.
+
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
 ---
