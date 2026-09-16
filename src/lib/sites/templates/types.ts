@@ -1,3 +1,4 @@
+import type { Familia } from '../imagens/arte';
 import type { FontId, PaletteId } from '../theme';
 import type { StyleId } from '../style';
 import type { SectionType, SiteDocument } from '../sections';
@@ -31,6 +32,14 @@ export interface SiteTemplate {
 
   palette: PaletteId;
   font: FontId;
+  /**
+   * A família de cor das imagens geradas.
+   *
+   * Existe porque a família do RAMO e a paleta do MODELO podem discordar: uma
+   * clínica dentária cai na família azul, e num modelo de acento verde as
+   * imagens ficavam a lutar com a página. Em falta, usa-se a do ramo.
+   */
+  imagem?: Familia;
 
   /** A estrutura proposta. A IA pode tirar secções, mas não inventar ordem. */
   sections: SectionType[];
@@ -52,6 +61,14 @@ export interface TemplateSummary {
   tags: string[];
   palette: PaletteId;
   font: FontId;
+  /**
+   * A família de cor das imagens geradas.
+   *
+   * Existe porque a família do RAMO e a paleta do MODELO podem discordar: uma
+   * clínica dentária cai na família azul, e num modelo de acento verde as
+   * imagens ficavam a lutar com a página. Em falta, usa-se a do ramo.
+   */
+  imagem?: Familia;
   sections: SectionType[];
 }
 

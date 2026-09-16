@@ -689,6 +689,31 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       quem fala. "Trato de três pessoas por manhã. Não trato de mais para poder
       trabalhar assim." vende; "excelência no atendimento" não.
 
+- [x] **A biblioteca de modelos** — `/painel/modelos`, e o render que faltava.
+
+      O `demo` de cada modelo nunca tinha sido desenhado em lado nenhum, e a
+      razão era estrutural: o `SiteRender` desenha sempre a mesma estrutura pela
+      mesma ordem, e a lista `sections` de cada modelo — que é metade do que
+      distingue um modelo do outro — nunca chegava ao ecrã. Dois modelos com
+      ordens diferentes saíam iguais.
+
+      `DocumentoRender` desenha as secções PELA ORDEM QUE O MODELO TRAZ. Um
+      modelo que põe a reputação logo a seguir à abertura (numa clínica, os
+      números são o que tira o medo de marcar) fica mesmo assim.
+
+      A biblioteca mostra as cores em amostra, na proporção em que aparecem na
+      página, e abrir um modelo dá a página inteira — é essa que se vira para o
+      comerciante antes de dizer o preço. Um cliente que escolhe entre três
+      desenhos já decidiu comprar; está só a decidir qual.
+
+      Um modelo passou a poder escolher a família de cor das imagens
+      (`imagem`): a do RAMO e a paleta do MODELO podem discordar, e uma clínica
+      dentária caía na família azul a lutar com um acento verde.
+
+      A secção `localizacao` não escreve morada nenhuma. Um exemplo com uma
+      morada a sério era o caminho para a morada da padaria aparecer na página
+      de uma clínica.
+
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
 ---

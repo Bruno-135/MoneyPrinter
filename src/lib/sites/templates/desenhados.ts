@@ -31,6 +31,7 @@ const sementeForno: DemoSeed = {
     'O meu avô acendia-o às quatro da manhã com lenha de eucalipto. Agora sou eu que o acendo, e a minha filha faz os bolos de arroz.',
     'É o mesmo forno desde 1978. Nunca o mudámos porque nunca houve razão.',
   ],
+  sobreTitulo: 'O forno é o mesmo desde 1978',
   itensTitulo: 'Preços de hoje · balcão',
   itens: [
     { title: 'Pão de massa lêveda', text: 'Cozido em forno de lenha. 2,40 € o quilo.' },
@@ -73,6 +74,7 @@ export const alimentacaoDesenhado: SiteTemplate = {
   tags: ['comida', 'desenhado', 'preços à vista'],
   palette: 'forno',
   font: 'editorial',
+  imagem: 'loja',
   sections: [...SECCOES_FORNO],
   demo: buildDemo(sementeForno, SECCOES_FORNO, 'padaria'),
   active: true,
@@ -97,6 +99,7 @@ const sementeClinica: DemoSeed = {
     'Trato de três pessoas por manhã. Não trato de mais para poder trabalhar assim.',
     'Mestrado Integrado em Medicina Dentária pela Universidade do Porto. Pós-graduação em Implantologia Oral em Barcelona, e certificação Invisalign desde 2020 — 340 casos tratados.',
   ],
+  sobreTitulo: 'Quem trata',
   itensTitulo: 'Tratamentos e preços',
   itens: [
     { title: 'Consulta de avaliação', text: 'Gratuita. Saímos de lá com o plano e o preço no papel.' },
@@ -151,6 +154,9 @@ export const saudeDesenhado: SiteTemplate = {
   tags: ['saúde', 'desenhado', 'sereno'],
   palette: 'clinica',
   font: 'sereno',
+  // Neutro escuro, como o marcador de fotografia do desenho. A família
+  // 'clinica' é azul e lutava com o verde do acento.
+  imagem: 'neutro',
   sections: [...SECCOES_CLINICA],
   demo: buildDemo(sementeClinica, SECCOES_CLINICA, 'clinica'),
   active: true,

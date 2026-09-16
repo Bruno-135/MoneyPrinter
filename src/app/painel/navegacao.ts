@@ -29,6 +29,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
       { href: '/painel/funil', label: 'Funil' },
       { href: '/painel/varrimento', label: 'Varrimento e custos' },
       { href: '/painel/paginas', label: 'Landing pages' },
+      { href: '/painel/modelos', label: 'Modelos de site' },
     ],
   },
   {
@@ -65,6 +66,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/funil': ['Funil de vendas', '8 etapas'],
   '/painel/varrimento': ['Varrimento e custos', 'Google Places · dinheiro real'],
   '/painel/paginas': ['Landing pages', 'geradas, no ar e vendidas'],
+  '/painel/modelos': ['Modelos de site', 'o que se mostra antes de dizer o preço'],
   '/painel/robo': ['Conversas do robô', 'Instagram → WhatsApp'],
   '/painel/whatsapp': ['Instâncias WhatsApp', 'oficiais e não oficiais'],
   '/painel/clientes': ['Carteira de clientes', 'quem já comprou, e o quê'],
@@ -81,6 +83,7 @@ export function tituloDoEcra(caminho: string): [string, string] {
   if (caminho.startsWith('/painel/comercio/')) {
     return ['Ficha do comércio', 'tudo o que decide a chamada'];
   }
+  if (caminho.startsWith('/painel/modelos/')) return ['Modelo de site', 'como o comerciante o vai ver'];
   if (caminho.startsWith('/painel/site/')) return ['Landing page', 'a página de demonstração'];
   return ['Painel', ''];
 }

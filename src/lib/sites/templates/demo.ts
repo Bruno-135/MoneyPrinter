@@ -21,6 +21,14 @@ export interface DemoSeed {
   /** Serviços OU produtos, conforme o ramo vende trabalho ou coisas. */
   itens: Array<{ title: string; text: string }>;
   itensTitulo: string;
+  /**
+   * O título da secção "sobre". Em falta, fica "A casa".
+   *
+   * Existe porque "A casa" serve uma padaria e soa estranho numa clínica — e
+   * nesta é precisamente o oposto do que se quer dizer: quem compra ali compra
+   * o médico, não o consultório.
+   */
+  sobreTitulo?: string;
   diferenciais: Array<{ title: string; text: string }>;
   faq?: Array<{ question: string; answer: string }>;
   ctaHeadline: string;
@@ -64,7 +72,7 @@ export function buildDemo(
     sobre: {
       type: 'sobre',
       variant: 'texto-imagem',
-      title: 'A casa',
+      title: seed.sobreTitulo ?? 'A casa',
       paragraphs: seed.sobre,
       photo: demoPhoto(familia, `${seed.nome}-espaco`, 'Imagem de demonstração — o espaço'),
     },
