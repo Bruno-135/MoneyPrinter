@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Progresso } from '@/lib/progresso/repository';
+import type { Contagens } from '@/lib/suporte/repository';
 
 /**
  * "O teu dia" — o cartão de progresso do painel.
@@ -11,8 +12,18 @@ import type { Progresso } from '@/lib/progresso/repository';
  *
  * A meta diária ainda é uma constante — não há ecrã onde se escolha. O
  * PROGRESSO contra ela é verdadeiro; só o alvo é que é um valor por omissão.
+ *
+ * A segunda barra é o atendimento, e está aqui de propósito ao lado da
+ * primeira: numa agência de mensalidades, reter vale tanto como vender, e um
+ * painel que só mede vendas novas ensina a ignorar quem já paga.
  */
-export function OTeuDia({ progresso }: { progresso: Progresso }) {
+export function OTeuDia({
+  progresso,
+  suporte,
+}: {
+  progresso: Progresso;
+  suporte: Contagens;
+}) {
   const pct = Math.min(Math.round((progresso.hoje / progresso.meta) * 100), 100);
   const feita = progresso.hoje >= progresso.meta;
 
@@ -39,6 +50,25 @@ export function OTeuDia({ progresso }: { progresso: Progresso }) {
             <div className={feita ? 'h-full bg-ok' : 'h-full bg-acc'} style={{ width: `${pct}%` }} />
           </div>
         </div>
+
+        {suporte.fechadosEsteMes > 0 && (
+          <div>
+            <div className="mb-1.5 flex justify-between text-xs text-ink2">
+              <span>Pedidos fechados no prazo</span>
+              <span className="font-mono tabular-nums text-ink">
+                {suporte.noPrazoEsteMes}/{suporte.fechadosEsteMes}
+              </span>
+            </div>
+            <div className="h-2.5 overflow-hidden rounded-md bg-surf2">
+              <div
+                className="h-full bg-ok"
+                style={{
+                  width: `${Math.round((suporte.noPrazoEsteMes / suporte.fechadosEsteMes) * 100)}%`,
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-wrap gap-2.5">
           <Quadrado

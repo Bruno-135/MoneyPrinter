@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { abriramAPagina } from '@/lib/sites/atividade';
@@ -12,6 +13,7 @@ import { ParaHojeLista } from './para-hoje';
 import { Numeros, type Numero } from './numeros';
 import { OTeuDia } from './o-teu-dia';
 import { progresso } from '@/lib/progresso/repository';
+import { contagens } from '@/lib/suporte/repository';
 
 /**
  * O painel de hoje.
@@ -28,7 +30,7 @@ export default async function PainelPage() {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
 
-  const [abriram, hoje, porContactar, clientes, semSite, emConversa, ganhos, doDia] =
+  const [abriram, hoje, porContactar, clientes, semSite, emConversa, ganhos, doDia, suporte] =
     await Promise.all([
       abriramAPagina(supabase),
       paraHoje(supabase),
@@ -46,6 +48,7 @@ export default async function PainelPage() {
         limit: 1,
       }),
       progresso(supabase),
+      contagens(supabase),
     ]);
 
   // Uma soma por moeda, nunca uma só: há clientes em Portugal e no Brasil, e
@@ -75,6 +78,22 @@ export default async function PainelPage() {
       nota: abriram.length === 1 ? 'sinal de compra' : 'sinais de compra',
       tom: abriram.length > 0 ? 'hot' : 'normal',
     },
+    // Só aparece quando há pedidos: um cartão a zero num painel de vendas é
+    // ruído, e a caixa de suporte está a um clique no menu.
+    ...(suporte.abertos > 0
+      ? [
+          {
+            label: 'Pedidos de clientes',
+            valor: suporte.abertos,
+            href: '/painel/suporte' as Route,
+            nota:
+              suporte.atrasados > 0
+                ? `${suporte.atrasados} para hoje ou atrasados`
+                : 'nenhum atrasado',
+            tom: suporte.atrasados > 0 ? ('bad' as const) : ('normal' as const),
+          },
+        ]
+      : []),
     {
       label: 'Sem site em base',
       valor: semSite.total,
@@ -132,7 +151,7 @@ export default async function PainelPage() {
       {/* Duas colunas no computador, uma no telemóvel, como no desenho. */}
       <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(290px,1fr))]">
         <ParaHojeLista itens={hoje} />
-        <OTeuDia progresso={doDia} />
+        <OTeuDia progresso={doDia} suporte={suporte} />
       </div>
     </>
   );

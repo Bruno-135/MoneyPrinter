@@ -1,49 +1,94 @@
-import { PorLigar } from '../por-ligar';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { caixaDeEntrada, contagens } from '@/lib/suporte/repository';
+import { carteira } from '@/lib/servicos/vendidos';
+import { Lista } from './lista';
+import { NovoPedido } from './novo';
 
 /**
  * A caixa de entrada do suporte.
  *
- * Os pedidos dos clientes que já pagam: trocar uma foto, mudar um horário,
- * publicar uma promoção. Numa agência de mensalidades, um pedido esquecido é
- * uma mensalidade cancelada — por isso o que está fora de prazo vem primeiro e
- * vem marcado a vermelho, e não escondido atrás de um filtro.
+ * Numa agência de mensalidades, o dinheiro não se perde na venda — perde-se
+ * depois. Um pedido esquecido numa conversa de WhatsApp é uma mensalidade
+ * cancelada três meses mais tarde, sem ninguém perceber porquê.
+ *
+ * Por isso o que está fora de prazo vem primeiro e vem a vermelho, e não
+ * escondido atrás de um filtro que é preciso lembrar de carregar.
  */
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
-const PEDIDOS = [
-  { titulo: 'Publicar promoção de Setembro no site', cliente: 'Churrasqueira Brasa Velha', servico: 'Criação de site', dono: 'Sofia Carvalho', prazo: 'fora de prazo · 2 dias', tom: 'bad' },
-  { titulo: 'Mudar horário de Domingo na ficha do Google', cliente: 'Doceria Açúcar & Canela', servico: 'Ficha do Google', dono: 'Rui Mendes', prazo: 'fora de prazo · 1 dia', tom: 'bad' },
-  { titulo: 'Trocar foto do prato do dia', cliente: 'Churrasqueira Brasa Velha', servico: 'Criação de site', dono: 'Sofia Carvalho', prazo: 'hoje', tom: 'warm' },
-  { titulo: 'Acrescentar 3 pizas novas ao cardápio', cliente: 'Pizzaria Forno di Pietra', servico: 'Cardápio digital', dono: 'Sofia Carvalho', prazo: 'amanhã', tom: 'ink' },
-  { titulo: 'Pedir avaliação às clientes de Agosto', cliente: 'Salão Beleza Real', servico: 'Campanha de avaliações', dono: 'sem responsável', prazo: '2 dias', tom: 'ink' },
-] as const;
+export default async function SuportePage() {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) redirect('/entrar');
 
-const BORDA = { bad: 'border-bad', warm: 'border-warm', ink: 'border-line' };
-const COR = { bad: 'border-bad text-bad', warm: 'border-warm text-warm', ink: 'border-line text-ink3' };
+  const [pedidos, contas, clientes] = await Promise.all([
+    caixaDeEntrada(supabase),
+    contagens(supabase),
+    carteira(supabase),
+  ]);
 
-export default function SuportePage() {
+  const porFazer = contas.fechadosEsteMes - contas.noPrazoEsteMes;
+
   return (
     <>
-      <PorLigar falta="os clientes poderem abrir pedidos e alguém os fechar" />
+      <div className="grid gap-2.5 [grid-template-columns:repeat(auto-fit,minmax(152px,1fr))]">
+        <Cartao
+          rotulo="Abertos"
+          valor={String(contas.abertos)}
+          nota={contas.abertos === 1 ? 'pedido por fazer' : 'pedidos por fazer'}
+        />
+        <Cartao
+          rotulo="Para hoje ou atrasados"
+          valor={String(contas.atrasados)}
+          nota="precisam de atenção hoje"
+          tom={contas.atrasados > 0 ? 'text-bad' : 'text-ink'}
+        />
+        <Cartao
+          rotulo="Fechados este mês"
+          valor={String(contas.fechadosEsteMes)}
+          nota={porFazer > 0 ? `${porFazer} fora do prazo` : 'todos no prazo'}
+          tom={contas.fechadosEsteMes > 0 ? 'text-ok' : 'text-ink'}
+        />
+      </div>
 
-      <ul className="flex flex-col gap-2.5">
-        {PEDIDOS.map((p) => (
-          <li key={p.titulo} className={`rounded-2xl border bg-surf p-3 ${BORDA[p.tom]}`}>
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="text-[13px] font-semibold">{p.titulo}</span>
-              <span
-                className={`ml-auto rounded-full border px-2.5 py-1 font-mono text-[11px] font-bold ${COR[p.tom]}`}
-              >
-                {p.prazo}
-              </span>
-            </div>
-            <p className="mt-1.5 text-[12px] text-ink2">
-              {p.cliente} · {p.servico} · <span className="text-ink3">{p.dono}</span>
-            </p>
-          </li>
-        ))}
-      </ul>
+      <NovoPedido
+        clientes={clientes.map((c) => ({
+          id: c.businessId,
+          nome: c.nome,
+          localidade: c.locality,
+        }))}
+      />
+
+      <Lista pedidos={pedidos} />
+
+      {pedidos.length > 0 && (
+        <p className="text-[13px] text-ink2">
+          Os fechados dos últimos catorze dias ficam à vista, esbatidos. Sem eles não havia como
+          desfazer um engano, nem como ver o trabalho do dia.
+        </p>
+      )}
     </>
+  );
+}
+
+function Cartao({
+  rotulo,
+  valor,
+  nota,
+  tom,
+}: {
+  rotulo: string;
+  valor: string;
+  nota: string;
+  tom?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5 rounded-2xl border border-line bg-surf p-3">
+      <span className="font-mono text-[11px] tracking-[0.08em] text-ink3 uppercase">{rotulo}</span>
+      <span className={`font-mono text-2xl font-bold tabular-nums ${tom ?? ''}`}>{valor}</span>
+      <span className="text-[11px] text-ink3">{nota}</span>
+    </div>
   );
 }

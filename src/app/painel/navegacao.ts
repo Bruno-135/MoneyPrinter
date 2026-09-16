@@ -43,7 +43,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
     itens: [
       { href: '/painel/clientes', label: 'Carteira de clientes' },
       { href: '/painel/conteudo', label: 'Calendário de conteúdo', porLigar: true },
-      { href: '/painel/suporte', label: 'Suporte', porLigar: true },
+      { href: '/painel/suporte', label: 'Suporte' },
       { href: '/painel/cobranca', label: 'Cobrança', porLigar: true },
     ],
   },

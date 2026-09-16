@@ -18,6 +18,8 @@ import { lerAbordagem } from '@/lib/outreach/repository';
 import { Abordagem } from '../abordagem';
 import { ServicosVendidos } from '../servicos-vendidos';
 import { servicosDoCliente } from '@/lib/servicos/vendidos';
+import { pedidosDoCliente } from '@/lib/suporte/repository';
+import { PedidosDoCliente } from '../pedidos';
 import { moedaDoPais } from '@/lib/deals/dinheiro';
 import { atividadeDoComercio } from '@/lib/sites/atividade';
 import { oportunidades } from '@/lib/servicos/catalogo';
@@ -63,9 +65,9 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
   if (!business) notFound();
 
-  const [deal, history, sites, fotos, abordagem, seguimento, atividade, vendidos] =
+  const [deal, history, sites, fotos, abordagem, seguimento, atividade, vendidos, pedidos] =
     await Promise.all([
-    getDeal(supabase, id),
+      getDeal(supabase, id),
     getStageHistory(supabase, id),
     listSites(supabase, id),
     // Só o que já está em cache. Abrir uma ficha não pode custar dinheiro:
@@ -83,6 +85,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
     atividadeDoComercio(supabase, id),
     // O que ele já comprou. Serve as duas caixas: a conta e o que falta.
     servicosDoCliente(supabase, id),
+    pedidosDoCliente(supabase, id),
   ]);
 
   // O catálogo sem o que ele já tem. Oferecer o que já é dele seria convidar
@@ -309,6 +312,8 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
         porVender={porVender}
         moeda={deal?.currency ?? moedaDoPais(business.country_code)}
       />
+
+      <PedidosDoCliente pedidos={pedidos} />
 
       <Oportunidades businessId={id} lista={porVender} />
 

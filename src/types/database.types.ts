@@ -1087,6 +1087,56 @@ export type Database = {
         };
         Relationships: [];
       };
+      support_requests: {
+        Row: {
+          business_id: string;
+          closed_at: string | null;
+          created_at: string;
+          details: string | null;
+          due_at: string;
+          id: string;
+          origin: string;
+          owner_id: string;
+          service_slug: string | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          business_id: string;
+          closed_at?: string | null;
+          created_at?: string;
+          details?: string | null;
+          due_at: string;
+          id?: string;
+          origin?: string;
+          owner_id?: string;
+          service_slug?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          business_id?: string;
+          closed_at?: string | null;
+          created_at?: string;
+          details?: string | null;
+          due_at?: string;
+          id?: string;
+          origin?: string;
+          owner_id?: string;
+          service_slug?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "support_requests_business_id_fkey";
+            columns: ["business_id"];
+            isOneToOne: false;
+            referencedRelation: "businesses";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       monthly_site_report: {

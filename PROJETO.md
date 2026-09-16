@@ -174,6 +174,7 @@ em `supabase/README.md`.)
 | `outreach_messages` | Mensagens escritas por IA, uma linha por (comércio, tipo): primeiro contacto e insistência |
 | `client_services` | O que cada cliente já comprou: serviço, valor, mensal ou único, data da venda e do cancelamento |
 | `contact_events` | Uma linha por contacto feito, com o desfecho e a hora. O histórico de esforço |
+| `support_requests` | Pedidos dos clientes que já pagam: o que pediram, a que serviço diz respeito, o prazo e quando ficou feito |
 
 Vista `monthly_site_report` agrega visitas e cliques por site e por mês
 (`security_invoker = on`, portanto respeita a RLS).
@@ -193,7 +194,7 @@ porque é o que permite filtrar e contar por elas.
 Detalhe tabela a tabela, com o porquê de cada decisão, em `supabase/README.md`.
 
 O schema está aplicado no projeto Supabase `amjqibwoqfkbmtbyysgy`
-("Prospecção e criação de site", eu-west-3, Postgres 17) através de 26 migrações.
+("Prospecção e criação de site", eu-west-3, Postgres 17) através de 27 migrações.
 
 Duas notas que condicionam o código das etapas seguintes:
 
@@ -607,6 +608,32 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       calculada sobre zero é uma mentira com ar de exactidão.
 
       Sem retroactivos. O que se fez antes não foi registado e não se inventa.
+
+- [x] **Suporte** — `support_requests` e `/painel/suporte`.
+
+      Numa agência de mensalidades o dinheiro não se perde na venda, perde-se
+      depois: um pedido esquecido numa conversa de WhatsApp é uma mensalidade
+      cancelada três meses mais tarde, sem ninguém perceber porquê.
+
+      `due_at` é o compromisso e `closed_at` é quando ficou feito. Com os dois há
+      a única pergunta que importa — fechou-se a tempo? — e não se guarda um
+      terceiro campo calculado, que mais cedo ou mais tarde discordava dos
+      outros dois.
+
+      O prazo é OBRIGATÓRIO e escolhe-se em quatro botões, não num calendário:
+      um pedido sem prazo fica para depois para sempre, e escolher uma data num
+      telemóvel entre duas chamadas é trabalho a mais.
+
+      "No prazo" julga-se pelo DIA e não pela hora. Prometer quinta e entregar
+      quinta às 18h é ter cumprido, mesmo que o prazo tenha sido criado às 9h.
+
+      Sem responsável por enquanto: a equipa é uma pessoa, e uma coluna que só
+      pode ter um valor não é informação. Entra com os papéis.
+
+      O painel ganhou o cartão dos pedidos e a segunda barra do "O teu dia" —
+      fechados no prazo. Está ao lado dos contactos de propósito: reter vale
+      tanto como vender, e um painel que só mede vendas novas ensina a ignorar
+      quem já paga.
 
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
