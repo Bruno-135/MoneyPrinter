@@ -47,6 +47,19 @@ export interface SiteTemplate {
   /** Conteúdo de demonstração, para a biblioteca e para a pré-visualização. */
   demo: SiteDocument;
 
+  /**
+   * A folha de sistema do desenho, escrita para a IA.
+   *
+   * É o que separa a IA acertar no desenho de acertar só nas cores. A paleta e
+   * a letra já vão nos campos acima, mas a escala tipográfica, a grelha, o
+   * ritmo do espaçamento e as regras de composição não cabem em nenhum deles —
+   * e são precisamente o que faz uma página parecer desenhada.
+   *
+   * Sai das folhas de sistema dos desenhos feitos à mão. Os modelos antigos não
+   * têm, e para esses a IA recebe só as cores e a estrutura.
+   */
+  desenho?: string;
+
   /** Um template desligado deixa de ser oferecido, sem apagar os sites feitos com ele. */
   active: boolean;
 }

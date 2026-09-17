@@ -714,6 +714,38 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       morada a sério era o caminho para a morada da padaria aparecer na página
       de uma clínica.
 
+- [x] **Usar um modelo com IA, editar por conversa, e exportar.**
+
+      O caminho que liga a biblioteca ao dinheiro, e contorna a peça grande:
+      em vez de o site GERADO passar a ser um documento — que obrigaria a mexer
+      no editor, no PDF e na página pública, e a migrar os sites que já existem
+      — usa-se o modo `html` que já existia. A IA recebe o desenho do modelo
+      como briefing e escreve a página daquele cliente.
+
+      `briefDoModelo` escreve o modelo em português, não em JSON, e a diferença
+      é o resultado: "o acento aparece duas ou três vezes em toda a página" é
+      uma regra que um modelo segue; `accent: '#C4491F'` é uma cor que ele usa
+      onde lhe apetecer. As cores vão em hexadecimal — exactas, não
+      aproximações.
+
+      Cada modelo pode trazer uma `desenho`: a folha de sistema — escala
+      tipográfica, grelha, ritmo do espaçamento, o que NÃO fazer naquele ramo.
+      É o que separa a IA acertar no desenho de acertar só nas cores.
+
+      **Editar por conversa** (`editHtml`) é distinto de gerar outra vez, e a
+      diferença é tudo: gerar devolve uma página DIFERENTE, e um cliente que
+      pede para mudar uma palavra e recebe um site novo não volta a pedir nada.
+      A página actual vai inteira no pedido e a instrução é explícita — muda só
+      aquilo. O que volta passa pelo limpador na mesma: a instrução é escrita
+      por uma pessoa e vai inteira para dentro do pedido.
+
+      **Exportar** dá o HTML como ficheiro completo, com as cores e a letra lá
+      dentro. Só em páginas feitas em modo `html`: uma página por campos é
+      desenhada com classes do Tailwind e sairia sem estilo nenhum, o que é pior
+      do que não exportar. Um cliente que paga por um site tem direito a
+      levá-lo, e uma ferramenta que prende o trabalho lá dentro perde a
+      confiança de quem a usa.
+
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
 
 ---

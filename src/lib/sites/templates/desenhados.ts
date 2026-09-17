@@ -75,6 +75,35 @@ export const alimentacaoDesenhado: SiteTemplate = {
   palette: 'forno',
   font: 'editorial',
   imagem: 'loja',
+  desenho: `Escala tipográfica:
+- Display: 88px / entrelinha 0.90 / espaçamento entre letras −0.04em
+- Título: 36px / 1.10 / −0.025em
+- Texto: 17px / 1.58 / 0, com a linha a 62 caracteres
+- Legenda: 12px, MAIÚSCULAS, espaçamento 0.12em
+- Números (preços, horas, avaliações): tipo tabular, para a vírgula alinhar
+  em coluna
+
+Grelha:
+- Computador: 12 colunas, goteira 24, margem 96. Blocos de 5, 6 e 7 colunas.
+- Telemóvel: 4 colunas, margem 20.
+
+Espaçamento, base 8: 8 dentro de um par · 24 entre linhas de uma lista ·
+40 entre um bloco e a sua legenda · 72 dentro da secção · 128 antes de uma
+secção importante. GENEROSO e DESIGUAL.
+
+Fotografia: duas proporções só — 16:9 na abertura, 3:2 no corpo (4:5 no
+telemóvel). Ponta a ponta, sem cantos redondos nem sombra.
+
+A ideia do desenho: a comida ocupa o ecrã inteiro. A abertura é a fotografia a
+toda a largura e altura, com o nome por cima em letra enorme e o texto POR CIMA
+da imagem — nunca numa caixa branca por baixo. O horário é a segunda coisa que
+se lê, porque "às 6h30 já há pão" é o argumento de venda. Os preços estão à
+vista. As avaliações aparecem como um número enorme, não como estrelinhas.
+
+O que NÃO fazer neste ramo: fundo de madeira, quadro de giz, trigo desenhado,
+"tradição desde", bandeirinhas italianas, chapéu de cozinheiro.
+
+Movimento: uma entrada suave de 620ms e mais nada.`,
   sections: [...SECCOES_FORNO],
   demo: buildDemo(sementeForno, SECCOES_FORNO, 'padaria'),
   active: true,
@@ -157,6 +186,37 @@ export const saudeDesenhado: SiteTemplate = {
   // Neutro escuro, como o marcador de fotografia do desenho. A família
   // 'clinica' é azul e lutava com o verde do acento.
   imagem: 'neutro',
+  desenho: `Escala tipográfica:
+- Display: 88px / entrelinha 1.0 / espaçamento −0.035em (62px no telemóvel)
+- Título: 34px / 1.08 / −0.02em
+- Texto: 17px / 1.6, com a linha fixada em 62 caracteres
+- Números grandes (nota, contagens, anos): 112px / 0.88, tipo tabular
+- Legenda: 12px, MAIÚSCULAS, espaçamento 0.14em
+
+Grelha:
+- Computador: 12 colunas, goteira 24, margem 96 a 120. Os blocos de texto
+  ocupam 7 COLUNAS ENCOSTADAS À ESQUERDA e as 5 restantes ficam VAZIAS. A
+  assimetria é o desenho — não centres nada.
+- Telemóvel: 4 colunas, goteira 16, margem 24.
+
+Espaçamento, base 8: 8 · 16 · 24 · 32 · 48 · 72 · 120 · 176.
+
+A ideia do desenho: o espaço vazio e a luz. Muito ar, poucas palavras,
+tipografia grande e serena — quem abre tem de sentir que entrou num sítio calmo
+e caro. A abertura é a fotografia do espaço VAZIO e bem iluminado, não uma
+pessoa a sorrir.
+
+Os números são a prova e vêm cedo: anos de exercício, número de avaliações e a
+média, em três blocos com os algarismos enormes. Numa clínica, é isso que tira
+o medo de marcar.
+
+Os preços aparecem como um menu de restaurante caro: nome à esquerda, filete a
+pontilhado, valor à direita. As perguntas frequentes são as incómodas — dói,
+quanto tempo demora, posso pagar a prestações — com respostas concretas.
+
+O que NÃO fazer neste ramo: azul-clínico com branco, o símbolo do dente, o
+sorriso de banco de imagens, a cruz médica, "cuidamos do seu sorriso". Em
+estética: cor-de-rosa, dourado, flores, mármore falso.`,
   sections: [...SECCOES_CLINICA],
   demo: buildDemo(sementeClinica, SECCOES_CLINICA, 'clinica'),
   active: true,

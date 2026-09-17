@@ -7,7 +7,9 @@ import { loadSite } from '@/lib/sites/load';
 import { saveAiGeneration, discardCustomHtml } from '@/lib/sites/repository';
 import { socialFrom, type SiteContent } from '@/lib/sites/content';
 import { DEFAULT_MODEL, isGenerationMode, isModelId } from '@/lib/ai/models';
-import { generateFields, generateHtml } from '@/lib/ai/generate';
+import { editHtml, generateFields, generateHtml } from '@/lib/ai/generate';
+import { findTemplate } from '@/lib/sites/templates';
+import { briefDoModelo } from '@/lib/sites/templates/brief';
 import { describeAiError } from '@/lib/ai/client';
 import type { AiActionState } from '@/lib/ai/action-state';
 import { getServerEnv } from '@/lib/env';
@@ -130,9 +132,14 @@ export async function generateWithAi(
         ? await avaliacoesDoComercio(supabase, clientePlaces(business.country_code), business.id)
         : null;
 
+      // O modelo escolhido entra ANTES do que foi escrito à mão: são as regras
+      // do desenho, e o que a pessoa escreve por cima são ajustes a elas.
+      const escolhido = findTemplate(String(formData.get('modelo') ?? ''));
+      const pedido = escolhido ? `${briefDoModelo(escolhido)}\n\n---\n\n${brief}` : brief;
+
       const result = await generateHtml(
         business,
-        brief,
+        pedido,
         model,
         imagens,
         boasAvaliacoes(avaliacoes?.avaliacoes ?? []),
@@ -252,4 +259,76 @@ export async function revertToTemplate(formData: FormData): Promise<void> {
 
   revalidatePath(`/painel/site/${siteId}/previa`);
   revalidatePath(`/painel/site/${siteId}/gerar`);
+}
+
+/**
+ * Editar a página por conversa.
+ *
+ * O caminho normal depois de a página estar feita: o comerciante pede para
+ * trocar uma frase ou uma cor, escreve-se aqui o que ele disse, e a página sai
+ * com essa alteração e mais nenhuma.
+ *
+ * Só serve páginas feitas em modo `html`. Uma página por campos edita-se no
+ * editor, que é instantâneo e não custa uma chamada paga.
+ */
+export async function editarComIa(
+  _anterior: AiActionState,
+  form: FormData,
+): Promise<AiActionState> {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { ok: false, message: 'A sessão expirou. Entra outra vez.' };
+
+  const siteId = String(form.get('siteId') ?? '');
+  const instrucao = String(form.get('instrucao') ?? '').trim();
+  const modelo = String(form.get('model') ?? '');
+  const model = isModelId(modelo) ? modelo : DEFAULT_MODEL;
+
+  if (!siteId) return { ok: false, message: 'Falta a página a editar.' };
+  if (instrucao.length < 3) {
+    return { ok: false, message: 'Escreve o que é para mudar.' };
+  }
+
+  const loaded = await loadSite(supabase, siteId);
+  if (!loaded) return { ok: false, message: 'Página não encontrada.' };
+
+  if (!loaded.site.custom_html) {
+    return {
+      ok: false,
+      message: 'Esta página é por campos. Muda-a no editor, que é instantâneo e não custa nada.',
+    };
+  }
+
+  const { data: business } = await supabase
+    .from('businesses')
+    .select('*')
+    .eq('id', loaded.site.business_id)
+    .maybeSingle();
+
+  if (!business) return { ok: false, message: 'Comércio não encontrado.' };
+
+  try {
+    const result = await editHtml(business, loaded.site.custom_html, instrucao, model);
+
+    await saveAiGeneration(supabase, siteId, {
+      content: loaded.content,
+      theme: loaded.theme,
+      customHtml: result.value,
+      model: result.model,
+      // Guarda-se o que foi PEDIDO, não o pedido original: é o histórico do que
+      // se andou a mudar, e é o que ajuda a perceber como a página chegou aqui.
+      brief: instrucao,
+      inputTokens: result.usage.inputTokens,
+      outputTokens: result.usage.outputTokens,
+    });
+  } catch (cause) {
+    // Como na geração: o construtor de `AiError` limpa segredos da mensagem, e
+    // nada sai daqui em cru.
+    const error = describeAiError(cause);
+    return { ok: false, message: error.message, hint: error.hint };
+  }
+
+  revalidatePath(`/painel/site/${siteId}/previa`);
+  revalidatePath(`/painel/site/${siteId}/gerar`);
+  return { ok: true, message: 'Alteração feita.' };
 }

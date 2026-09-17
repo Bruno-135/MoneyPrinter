@@ -317,3 +317,90 @@ ${brief.trim() || '(sem indicações — usa o bom senso para este ramo)'}`,
     throw describeAiError(cause);
   }
 }
+
+/**
+ * Modo `editar`: muda o que lhe for pedido na página que já existe.
+ *
+ * Distinto de gerar outra vez, e a diferença é tudo. Quando o comerciante pede
+ * para trocar uma frase, gerar de novo devolve uma página DIFERENTE — outras
+ * cores, outra ordem, outro texto — e perde-se o que ele já tinha aprovado. Um
+ * cliente que pede para mudar uma palavra e recebe um site novo não volta a
+ * pedir nada.
+ *
+ * Por isso a página actual vai inteira no pedido, e a instrução é explícita:
+ * muda só aquilo, devolve o resto exactamente como está.
+ *
+ * O HTML que chega aqui já passou pelo limpador quando foi gravado, e o que sai
+ * volta a passar. Não se confia no que volta só porque o que foi era limpo: a
+ * instrução é escrita por uma pessoa e vai inteira para dentro do pedido.
+ */
+export async function editHtml(
+  business: Business,
+  htmlAtual: string,
+  instrucao: string,
+  model: ModelId,
+): Promise<GenerationResult<string>> {
+  const client = createAiClient();
+
+  try {
+    const stream = client.messages.stream({
+      model,
+      max_tokens: 32000,
+      system: `${SHARED_RULES}
+
+Recebes uma página que já existe e um pedido de alteração.
+
+A REGRA que manda em todas as outras: muda SÓ o que te for pedido. Tudo o resto
+— as cores, a letra, a ordem das secções, os textos que não foram mencionados,
+as imagens — volta exactamente como está. Não "melhores" nada pelo caminho.
+
+Formato da resposta:
+- Devolves a página INTEIRA, já com a alteração feita, começando em <section>
+  ou <div>. Sem cercas de código, sem explicações antes ou depois, sem <html>,
+  <head> ou <body>.
+- Mantém o <style> que lá está, com as mesmas cores e a mesma letra. Se a
+  alteração pedir uma cor nova, muda só essa.
+- Nada de <script>.
+- Se o pedido for impossível ou não fizer sentido nesta página, devolve-a como
+  está, sem tocar em nada.`,
+      messages: [
+        {
+          role: 'user',
+          content: `Dados do comércio, vindos do Google:
+${businessFacts(business)}
+
+A página como está agora:
+${htmlAtual}
+
+O que é para mudar:
+${instrucao.trim()}`,
+        },
+      ],
+    });
+
+    const response = await stream.finalMessage();
+
+    const raw = response.content
+      .filter((block) => block.type === 'text')
+      .map((block) => block.text)
+      .join('')
+      .trim();
+
+    const html = sanitizeGeneratedHtml(raw);
+
+    if (html.trim() === '') {
+      throw new Error('O modelo não devolveu HTML utilizável.');
+    }
+
+    return {
+      value: html,
+      model,
+      usage: {
+        inputTokens: response.usage.input_tokens,
+        outputTokens: response.usage.output_tokens,
+      },
+    };
+  } finally {
+    // Nada a fechar: o cliente é criado por chamada.
+  }
+}

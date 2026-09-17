@@ -19,6 +19,12 @@ import {
 } from '@/lib/sites/imagens/fonte';
 import { generateWithAi } from '../../ai-actions';
 
+export interface ModeloDisponivel {
+  id: string;
+  nome: string;
+  descricao: string;
+}
+
 /**
  * A caixa de pedido, com escolha de modo e de modelo.
  *
@@ -45,6 +51,8 @@ interface Props {
   jaTemFotos: boolean;
   /** true quando as avaliações escritas já foram pedidas. */
   jaTemAvaliacoes: boolean;
+  /** Os modelos da biblioteca, para o desenho de raiz partir de um deles. */
+  modelos: readonly ModeloDisponivel[];
 }
 
 const PLACEHOLDER: Record<GenerationMode, string> = {
@@ -80,6 +88,7 @@ export function GenerateForm({
   previousBrief,
   jaTemFotos,
   jaTemAvaliacoes,
+  modelos,
 }: Props) {
   const [state, action] = useActionState(generateWithAi, AI_IDLE);
   const [mode, setMode] = useState<GenerationMode>('fields');
@@ -87,6 +96,7 @@ export function GenerateForm({
   const [brief, setBrief] = useState(previousBrief);
   const [fonte, setFonte] = useState<FonteImagem>(FONTE_IMAGEM_PADRAO);
   const [avaliacoes, setAvaliacoes] = useState(true);
+  const [modelo, setModelo] = useState('');
 
   return (
     <form action={action} className="flex flex-col gap-6">
@@ -130,6 +140,32 @@ export function GenerateForm({
           </span>
         </label>
       </fieldset>
+
+      {/* Só no desenho de raiz: no modo por campos a aparência sai da paleta e
+          da letra, e um modelo escolhido aqui não teria por onde entrar. */}
+      {mode === 'html' && (
+        <label className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium">Partir de um modelo</span>
+          <select
+            name="modelo"
+            value={modelo}
+            onChange={(e) => setModelo(e.target.value)}
+            className="h-11 rounded-md border border-black/12 px-3 dark:border-white/12"
+          >
+            <option value="">Sem modelo — a IA desenha à sua maneira</option>
+            {modelos.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome}
+              </option>
+            ))}
+          </select>
+          <span className="text-sm opacity-65">
+            {modelo
+              ? (modelos.find((m) => m.id === modelo)?.descricao ?? '')
+              : 'Com um modelo, a IA recebe as cores em hexadecimal, o par de letras, a escala tipográfica e a ordem das secções — e a página do cliente sai igual ao que ele escolheu ver.'}
+          </span>
+        </label>
+      )}
 
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">O que dizer sobre {businessName}</span>

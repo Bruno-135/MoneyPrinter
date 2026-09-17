@@ -6,6 +6,7 @@ import { SiteRender } from '@/components/site/site-render';
 import { CustomHtmlSite } from '@/components/site/custom-html';
 import { publicEnv } from '@/lib/env';
 import { publish, unpublish } from '../../../site-actions';
+import { EditarComIa } from './editar-com-ia';
 
 /**
  * Pré-visualização: a página exatamente como o cliente a verá.
@@ -103,6 +104,23 @@ export default async function PreviaPage({ params }: Props) {
             </form>
           </div>
         </div>
+
+        {/* Só para as páginas desenhadas de raiz. Uma página por campos
+            edita-se no editor, que é instantâneo e não custa uma chamada. */}
+        {site.custom_html && (
+          <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-6 pb-3">
+            <EditarComIa siteId={site.id} />
+            <a
+              href={`/painel/site/${site.id}/exportar`}
+              className="rounded-md border border-black/15 px-3 py-1.5 text-sm font-medium dark:border-white/20"
+            >
+              Descarregar HTML
+            </a>
+            <span className="text-sm opacity-55">
+              O ficheiro abre em qualquer lado e leva as cores e a letra consigo.
+            </span>
+          </div>
+        )}
 
         {isLive && (
           <div className="mx-auto max-w-5xl px-6 pb-3">

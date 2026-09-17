@@ -5,6 +5,7 @@ import { loadSite } from '@/lib/sites/load';
 import { hasApiKey } from '@/lib/ai/client';
 import { MODELS, isModelId } from '@/lib/ai/models';
 import { GenerateForm } from './generate-form';
+import { TEMPLATES } from '@/lib/sites/templates';
 import { revertToTemplate } from '../../ai-actions';
 
 /**
@@ -117,6 +118,7 @@ export default async function GerarPage({ params }: Props) {
         previousBrief={site.ai_brief ?? ''}
         jaTemFotos={comercio?.photos_fetched_at != null}
         jaTemAvaliacoes={comercio?.reviews_fetched_at != null}
+        modelos={TEMPLATES.map((t) => ({ id: t.id, nome: t.name, descricao: t.description }))}
       />
     </main>
   );
