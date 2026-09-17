@@ -15,10 +15,16 @@ describe('briefDoModelo', () => {
     expect(brief).toContain(PALETTES.forno.light.fg);
   });
 
-  it('diz que o acento se usa duas ou três vezes', () => {
-    // A regra que impede a IA de espalhar a cor pela página toda, que é o que
-    // separa um desenho de um cartaz.
-    expect(briefDoModelo(forno)).toMatch(/DUAS OU TRÊS VEZES/);
+  it('manda a folha de sistema decidir o uso do acento', () => {
+    // A regra genérica — "duas ou três vezes" — impede a IA de espalhar a cor
+    // pela página toda, que é o que separa um desenho de um cartaz. Mas um
+    // modelo com folha de sistema traz a sua própria regra, e nem sempre é
+    // essa: numa loja o acento marca cada peça ligável. Duas regras contrárias
+    // no mesmo pedido são piores do que uma só, portanto a folha ganha.
+    const brief = briefDoModelo(forno);
+    expect(brief).not.toMatch(/DUAS OU TRÊS VEZES/);
+    expect(brief).toContain('está dito na folha de sistema');
+    expect(brief).toContain('Não acrescentes nenhuma cor que não esteja nesta lista');
   });
 
   it('leva as duas letras e o endereço de onde as carregar', () => {

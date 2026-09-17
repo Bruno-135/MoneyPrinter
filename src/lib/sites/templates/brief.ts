@@ -34,8 +34,15 @@ export function briefDoModelo(modelo: SiteTemplate): string {
     `- Texto por cima do acento: ${paleta.light.onAccent}`,
     `- Filetes e separadores: ${paleta.light.line}`,
     '',
-    'O acento aparece DUAS OU TRÊS VEZES em toda a página. Mais do que isso e',
-    'deixa de destacar. Não acrescentes nenhuma cor que não esteja nesta lista.',
+    // Os modelos com folha de sistema trazem a sua própria regra de uso do
+    // acento, e às vezes não é esta: numa loja o ciano marca cada peça
+    // ligável, e "duas ou três vezes" mandava a IA apagar metade dos links.
+    // Duas regras contrárias no mesmo pedido são piores do que uma só.
+    ...(modelo.desenho
+      ? ['Não acrescentes nenhuma cor que não esteja nesta lista. Onde e quantas',
+         'vezes usar o acento está dito na folha de sistema, mais abaixo.']
+      : ['O acento aparece DUAS OU TRÊS VEZES em toda a página. Mais do que isso e',
+         'deixa de destacar. Não acrescentes nenhuma cor que não esteja nesta lista.']),
     '',
     'LETRA:',
     `- Títulos: ${letra.display ?? letra.stack}`,
@@ -54,7 +61,12 @@ export function briefDoModelo(modelo: SiteTemplate): string {
 
   partes.push(
     '',
-    `FAMÍLIA DE ESTILO: ${estilo.label} — ${estilo.tagline}`,
+    // Sem a frase de apresentação quando há folha de sistema. A do
+    // `minimal` é "muito branco, pouca cor" — dita a uma loja de fundo quase
+    // preto, é o contrário do desenho, no mesmo pedido que manda segui-lo.
+    modelo.desenho
+      ? `FAMÍLIA DE ESTILO: ${estilo.label}`
+      : `FAMÍLIA DE ESTILO: ${estilo.label} — ${estilo.tagline}`,
     '',
     'SECÇÕES, por esta ordem e só estas:',
     modelo.sections.map((s, i) => `${i + 1}. ${SECTION_LABELS[s]}`).join('\n'),

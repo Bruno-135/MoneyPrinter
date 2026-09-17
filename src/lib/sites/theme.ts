@@ -58,10 +58,11 @@ export const PALETTE_IDS = [
   'retrato',
   'oficina',
   'estrada',
+  'neon',
 ] as const;
 export type PaletteId = (typeof PALETTE_IDS)[number];
 
-export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno', 'registo', 'instrumento', 'oficio', 'estrada'] as const;
+export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno', 'registo', 'instrumento', 'oficio', 'estrada', 'grotesco'] as const;
 export type FontId = (typeof FONT_IDS)[number];
 
 export interface SiteTheme {
@@ -372,6 +373,36 @@ export const PALETTES: Record<PaletteId, PaletteDefinition> = {
       line: '#3A3733',
     },
   },
+
+  neon: {
+    id: 'neon',
+    label: 'Neon',
+    suits: 'lojas de roupa, catálogos, marcas jovens — quase preto com ciano elétrico',
+    // A ÚNICA paleta escura das oito, e de propósito: as outras sete são papel
+    // claro, e uma biblioteca em que tudo é bege parece um modelo repetido.
+    //
+    // As duas metades são IGUAIS, e não é esquecimento. Este desenho não tem
+    // versão clara: o #63E6FF sobre branco mede 1,47:1 — invertê-lo apagava os
+    // links, os botões e a marca da página actual de uma vez só. A aplicação
+    // só rende a metade `light`, portanto é aí que o desenho tem de estar; a
+    // outra existe para ninguém tropeçar num `undefined`.
+    light: {
+      bg: '#0B0E12',
+      fg: '#E8ECF2',
+      surface: '#141920',
+      accent: '#63E6FF',
+      onAccent: '#0B0E12',
+      line: '#232A34',
+    },
+    dark: {
+      bg: '#0B0E12',
+      fg: '#E8ECF2',
+      surface: '#141920',
+      accent: '#63E6FF',
+      onAccent: '#0B0E12',
+      line: '#232A34',
+    },
+  },
 };
 
 export interface FontDefinition {
@@ -422,6 +453,16 @@ export const FONTS: Record<FontId, FontDefinition> = {
     webfont:
       'family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Archivo:wght@400;500;600;700',
     suits: 'padarias, restaurantes, casas com história — serifa de revista nos títulos',
+  },
+  grotesco: {
+    label: 'Grotesco',
+    stack: '"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif',
+    display: '"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif',
+    // Duas famílias no mesmo pedido, como no `estrada`: a Hanken faz títulos,
+    // nomes de peça e preços; a Martian Mono faz só rótulos em maiúsculas e
+    // nunca acima de 13px. A hierarquia é de peso — 400 contra 700.
+    webfont: 'family=Hanken+Grotesk:wght@400;500;700&family=Martian+Mono:wght@400;500',
+    suits: 'lojas, catálogos, marcas jovens — sem serifa, com rótulos monoespaçados',
   },
   oficio: {
     label: 'Ofício',

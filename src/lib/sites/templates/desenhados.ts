@@ -722,3 +722,175 @@ Movimento: uma subida de 14px à entrada, e mais nada.`,
   demo: buildDemo(sementeTransporte, SECCOES_TRANSPORTE, 'oficina'),
   active: true,
 };
+
+// ---------------------------------------------------------------------------
+// Loja — Volta & Meia
+//
+// O primeiro desenhado para um SITE e não para uma página: seis páginas, cada
+// uma gerada à parte, com menu e rodapé iguais em todas. É por isso que a
+// folha de sistema abaixo descreve o menu como componente — sem isso, seis
+// gerações independentes davam seis páginas sem saída umas para as outras.
+//
+// A ideia do desenho: nenhuma superfície tem cor própria. O site é quase preto
+// e a cor entra toda pelas fotografias da roupa. O ciano existe onde há uma
+// acção ou onde estamos, e mais nada.
+//
+// A parte que fecha a venda: escolher o tamanho não é um selector — é uma fila
+// de links, um por tamanho, cada um com a mensagem de WhatsApp já composta. Um
+// selector precisava de JavaScript, que o sanitizador apaga; a fila de links
+// sobrevive e num telemóvel é melhor, porque é um toque só.
+// ---------------------------------------------------------------------------
+
+const sementeLoja: DemoSeed = {
+  nome: 'Volta & Meia',
+  tagline: 'Roupa nova e em segunda mão, escolhida peça a peça. Rua de Cedofeita, Porto.',
+  sobre: [
+    'Uma loja pequena em Cedofeita. O que está no site é o que está na arara — quando uma peça sai, sai daqui também.',
+    'Não há carrinho. Escolhe o tamanho, a mensagem abre já escrita, e responde uma pessoa das 10h às 19h30.',
+  ],
+  sobreTitulo: 'A loja',
+  itensTitulo: 'Destaques',
+  itens: [
+    {
+      title: 'Casaco de lã cinza',
+      text: '80% lã. Usada, pequena marca na bainha — ver 3.ª foto. Peça única, ref VM-1042.',
+      preco: '48 €',
+    },
+    {
+      title: 'Camisa de algodão cru',
+      text: 'Nova, com etiqueta. S, M e L.',
+      preco: '32 €',
+    },
+    {
+      title: 'Calças de ganga direitas',
+      text: 'Segunda mão, como novas. 38, 40 e 42.',
+      preco: '26 €',
+    },
+    {
+      title: 'Malha de gola alta',
+      text: 'Nova. Preto e verde-musgo. M e L.',
+      preco: '39 €',
+    },
+  ],
+  diferenciais: [
+    { title: 'Entrega', text: '3 € no Porto, 4,50 € no resto do país. Recolha na loja sem custo.' },
+    { title: 'Prazo', text: '24 h no Porto, 48 h no resto do país, dias úteis. Na loja, pronta em duas horas.' },
+    { title: 'Trocas', text: '14 dias nas peças novas. Segunda mão troca-se na loja, em 8 dias.' },
+  ],
+  ctaHeadline: 'Viu uma peça? Mande mensagem com a referência.',
+};
+
+const SECCOES_LOJA = [
+  'hero',
+  'produtos',
+  'diferenciais',
+  'localizacao',
+  'cta',
+] as const;
+
+export const lojaDesenhado: SiteTemplate = {
+  id: 'loja-neon',
+  name: 'Loja · Neon',
+  style: 'minimal',
+  category: 'loja-roupa',
+  description:
+    'Quase preto com ciano elétrico, grelha de peças com preço e estado, e o tamanho a abrir o WhatsApp com a mensagem já escrita.',
+  suits:
+    'lojas de roupa, brechós, sapatarias, joalharias e qualquer loja com catálogo — serve dos 30 ' +
+    'artigos aos 800, mudando a quantidade e não o cartão. É o único modelo escuro da biblioteca, ' +
+    'e o que mostrar a quem acha os outros demasiado sérios.',
+  tags: ['loja', 'desenhado', 'escuro', 'preços à vista'],
+  palette: 'neon',
+  font: 'grotesco',
+  // `loja` é neutro QUENTE e desfazia o azul. `neutro` é cinzento-azulado e é
+  // a única que fica em paz com este fundo.
+  imagem: 'neutro',
+  desenho: `Escala tipográfica (da folha de sistema do desenho, computador / telemóvel):
+- D1  Hanken Grotesk 700 — 52/1.04/−1.6px  ·  30/1.08/−0.9  — frase de abertura
+- D2  Hanken Grotesk 700 — 44/1.05/−1.2px  ·  32/1.05/−0.9  — título de página
+- T1  Hanken Grotesk 700 — 28/1.10/−0.6px  ·  20/1.10/−0.4  — números da faixa
+- Corpo   Hanken Grotesk 400 — 16/1.55/0   ·  15/1.5/0
+- Peça    Hanken Grotesk 500 — 16/1.30, preço 15/1.2  ·  14/1.3
+- Rótulo  Martian Mono 500 MAIÚSCULAS — 11/1.00/+0.16em · 10/+0.16em
+- Etiqueta Martian Mono 500 MAIÚSCULAS — 10/1.00/+0.10em · 9/+0.10em
+
+A Martian Mono aparece SÓ em maiúsculas e NUNCA acima de 13px. Rótulos de
+secção, etiquetas de estado e nada mais. Tudo o resto é Hanken Grotesk.
+
+Cor — proporção de uso e contraste medido sobre o fundo:
+- #0B0E12  70%  fundo de todas as páginas
+- #141920  15%  1,1:1 — só separa, nunca leva texto. Faixas e notas.
+- #232A34   2%  1,3:1 — linha de 1px, nunca texto. Bordas e filtro por escolher.
+- #E8ECF2   8%  16,3:1 — títulos, nomes de peça, preços
+- #98A4B3   4%  7,6:1 — texto secundário, tamanhos, "esgotado"
+- #63E6FF   1%  13,2:1 — página actual, links, botão de WhatsApp, filtro escolhido
+- #FF7A66  <1%  7,6:1 — SÓ saldo: etiqueta e preço novo
+
+Regra do acento: só existe onde há uma ACÇÃO ou onde ESTAMOS. Não decora. Se
+numa página houver mais de meia dúzia de sítios em ciano, está errado.
+
+Grelha:
+- 1440: 12 colunas, goteira 24, margens 80, conteúdo 1280. Peças a 4 por linha.
+- 390: 4 colunas, goteira 16, margens 20. Peças SEMPRE a 2 por linha, nunca a
+  1 — a uma coluna a página fica quilométrica e ninguém chega ao fim.
+
+Espaçamento, base 8: 8 (etiqueta à foto, botões entre si) · 16 (goteira do
+telemóvel) · 24 (goteira do computador) · 32 (título ao bloco) · 48 (secções
+no telemóvel) · 80 (margem do computador) · 96 (secções do Início entre si).
+
+Fotografia:
+- 16:9 — faixa de abertura, UMA por página. Interior da loja ou rua, com
+  pessoas de costas ou de lado.
+- 4:5 — cartão de peça, em todas as grelhas. A peça ocupa 80% da altura, luz
+  igual em todas, fundo de parede da loja.
+- 3:2 — só as duas portas MULHER e HOMEM.
+- NUNCA 1:1, círculos, cortes na diagonal, foto dentro de foto.
+- Todo o alt diz peça, cor e tamanho: "casaco de lã cinza, tamanho M".
+
+Regras fixas:
+- Cantos: 0 em fotos, cartões e portas. 2px em etiquetas, filtros e botões.
+- Sombras: NENHUMA. Separa-se com linha de 1px #232A34 ou com o fundo #141920.
+  Num fundo escuro uma sombra não se vê e só suja.
+
+ESTE É UM SITE DE SEIS PÁGINAS, cada uma gerada à parte:
+  Início · Mulher · Homem · Ficha da peça · Como comprar · Contacto
+O menu e o rodapé são COMPONENTES e têm de sair iguais em todas, letra por
+letra. O menu leva a entrada da página actual em ciano; as outras em #E8ECF2.
+
+O que fecha a venda, e tem de estar tal e qual:
+1. ESCOLHER O TAMANHO NÃO É UM SELECTOR. É uma fila de links, um por tamanho.
+   Cada um abre o WhatsApp com a mensagem já composta:
+       Olá! Queria esta peça:
+       Casaco de lã cinza · ref VM-1042
+       Tamanho M · cor cinza-chumbo · 48 €
+       [link da fotografia]
+       Entrega: ( ) recolher na loja ( ) entregar em ____
+   Um tamanho esgotado fica riscado e SEM link.
+2. A ficha da peça leva QUATRO fotografias: frente, costas, um pormenor do
+   tecido, e a peça vestida. No telemóvel em carrossel com scroll-snap de CSS.
+3. O ESTADO da peça dito à frente, com o defeito nomeado e a foto onde se vê:
+   "usada, pequena marca na bainha — ver 3.ª foto. Cerca de 1 cm, não
+   atravessa o tecido."
+4. FICHA TÉCNICA em tabela: tecido, cor, peito, cintura, comprimento, tamanho
+   equivalente, como lavar. Medidas REAIS da peça, não do corpo.
+5. MEIOS DE PAGAMENTO — transferência, MB WAY, cartão e Klarna — abrem por
+   :target e dizem em texto o que a loja vai pedir na conversa. NÃO cobram
+   nada e têm de o dizer: "combina-se por mensagem, não se paga nada nesta
+   página". Uma loja que finge cobrar e depois pede transferência perde o
+   cliente na hora.
+6. Uma peça ESGOTADA aparece a cinzento com "esgotado" por cima da foto e não
+   desaparece da grelha: mostra que a loja tem movimento.
+
+De 800 peças para 30: tira-se a secção "mais vistos", os filtros por tipo, e a
+página Homem se a loja só vender mulher. A grelha e o cartão não mudam.
+
+O que NÃO fazer neste ramo: modelo em fundo branco de catálogo de
+hipermercado, cabide desenhado, saco de compras com asas, "moda que te
+define", "expressa o teu estilo", carrossel de logótipos de marcas, contagem
+decrescente falsa, "restam 2 unidades" a piscar.
+
+Movimento: nenhum, tirando o carrossel de fotografias que o dedo arrasta.`,
+  sections: [...SECCOES_LOJA],
+  demo: buildDemo(sementeLoja, SECCOES_LOJA, 'neutro'),
+  active: true,
+};

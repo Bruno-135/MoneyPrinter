@@ -52,3 +52,25 @@ describe('modelos desenhados', () => {
     }
   });
 });
+
+describe('o brief não se contradiz', () => {
+  it('um desenho com folha não leva a regra genérica do acento', () => {
+    for (const t of DESENHADOS) {
+      const b = briefDoModelo(t);
+      // A folha de cada desenho traz a sua própria regra. A genérica diria o
+      // contrário numa loja, onde o acento marca cada peça ligável.
+      expect(b, t.id).not.toContain('DUAS OU TRÊS VEZES');
+    }
+  });
+
+  it('um desenho escuro não leva "muito branco" na família de estilo', () => {
+    const loja = TEMPLATES.find((t) => t.id === 'loja-neon')!;
+    expect(briefDoModelo(loja)).not.toContain('Muito branco');
+  });
+
+  it('um modelo SEM folha continua a levar as duas regras genéricas', () => {
+    const semFolha = TEMPLATES.find((t) => !t.desenho);
+    expect(semFolha).toBeDefined();
+    expect(briefDoModelo(semFolha!)).toContain('DUAS OU TRÊS VEZES');
+  });
+});
