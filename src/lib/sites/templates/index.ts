@@ -4,7 +4,7 @@ import { padariaPremium, padariaSimples } from './padaria';
 import { restaurantePremium, restauranteInterativo } from './restaurante';
 import { barbeariaInterativo, salaoMinimal } from './beleza';
 import { servicosMinimal, servicosPremium, servicosSimples } from './servicos';
-import { alimentacaoDesenhado, saudeDesenhado } from './desenhados';
+import { alimentacaoDesenhado, imobiliariaDesenhado, saudeDesenhado } from './desenhados';
 
 /**
  * A biblioteca de temas.
@@ -21,6 +21,7 @@ const ALL: readonly SiteTemplate[] = [
   // lista é a ordem por que aparecem na biblioteca.
   alimentacaoDesenhado,
   saudeDesenhado,
+  imobiliariaDesenhado,
   padariaPremium,
   restaurantePremium,
   barbeariaInterativo,

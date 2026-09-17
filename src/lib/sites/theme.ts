@@ -54,10 +54,11 @@ export const PALETTE_IDS = [
   'night',
   'forno',
   'clinica',
+  'predial',
 ] as const;
 export type PaletteId = (typeof PALETTE_IDS)[number];
 
-export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno'] as const;
+export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno', 'registo'] as const;
 export type FontId = (typeof FONT_IDS)[number];
 
 export interface SiteTheme {
@@ -271,6 +272,32 @@ export const PALETTES: Record<PaletteId, PaletteDefinition> = {
       line: '#46423B',
     },
   },
+
+  predial: {
+    id: 'predial',
+    label: 'Predial',
+    suits: 'imobiliárias, advogados, contabilistas — papel quente e tijolo do Porto',
+    light: {
+      // Os hexadecimais são os do desenho, lidos do ficheiro e não aproximados.
+      bg: '#F4F1EC',
+      fg: '#14110E',
+      surface: '#E9E5DE',
+      accent: '#A63A20',
+      onAccent: '#FFFFFF',
+      line: '#D5CFC4',
+    },
+    dark: {
+      bg: '#14110E',
+      fg: '#F4F1EC',
+      surface: '#1C1916',
+      // O #A63A20 sobre este fundo fica a 2,9:1 — abaixo de 4,5, um botão que
+      // não se lê. O tijolo abre para o lado do barro cozido, que é a mesma
+      // cor com luz, e sobe a 5,2:1.
+      accent: '#D4674A',
+      onAccent: '#14110E',
+      line: '#3A342D',
+    },
+  },
 };
 
 export interface FontDefinition {
@@ -321,6 +348,14 @@ export const FONTS: Record<FontId, FontDefinition> = {
     webfont:
       'family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Archivo:wght@400;500;600;700',
     suits: 'padarias, restaurantes, casas com história — serifa de revista nos títulos',
+  },
+  registo: {
+    label: 'Registo',
+    stack: '"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif',
+    display: 'Newsreader, Georgia, "Times New Roman", serif',
+    webfont:
+      'family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600;700',
+    suits: 'imobiliárias, advogados, contabilistas — serifa de jornal e um sans de documento',
   },
   sereno: {
     label: 'Sereno',

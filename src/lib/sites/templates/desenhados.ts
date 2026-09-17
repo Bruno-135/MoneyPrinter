@@ -221,3 +221,137 @@ estética: cor-de-rosa, dourado, flores, mármore falso.`,
   demo: buildDemo(sementeClinica, SECCOES_CLINICA, 'clinica'),
   active: true,
 };
+
+// ---------------------------------------------------------------------------
+// Imobiliário — Pereira & Costa
+//
+// A ideia do desenho: a rua. Não o logótipo, não a equipa a sorrir de braços
+// cruzados — a RUA, com o azulejo e as varandas, e três imóveis com preço à
+// vista logo a seguir aos números.
+//
+// A licença AMI está no cabeçalho, ao lado do nome, e não escondida no rodapé:
+// num ramo onde toda a gente desconfia, a credencial é o primeiro argumento.
+// Pela mesma razão os números vêm antes de tudo o resto — "60 imóveis, 41 dias
+// até à escritura" diz mais do que qualquer adjectivo.
+//
+// A oferta tem PRAZO ("marcações até 31 de Outubro"). Uma avaliação gratuita
+// sem data é um convite para adiar.
+// ---------------------------------------------------------------------------
+
+const sementeImobiliaria: DemoSeed = {
+  nome: 'Pereira & Costa',
+  tagline:
+    'Três consultores, um escritório na Rua de Santa Catarina. Vendemos 60 imóveis nos últimos doze meses — 41 dias de média até à escritura.',
+  sobre: [
+    'Conhecemos estas ruas casa a casa, há doze anos. Bonfim, Marquês e Campanhã — não trabalhamos fora daqui de propósito.',
+    'A Helena cresceu na Rua do Heroísmo. Quando ela diz quanto vale um terceiro andar sem elevador na Rua de São Victor, sabe do que fala.',
+  ],
+  sobreTitulo: 'Conhecemos estas ruas casa a casa',
+  itensTitulo: 'À venda agora',
+  itens: [
+    {
+      title: 'T2 renovado, Bonfim',
+      text: '78 m² · 3.º andar · Rua de São Victor',
+      preco: '235 000 €',
+    },
+    {
+      title: 'T3 com varanda, Marquês',
+      text: '112 m² · 2.º andar · Rua Álvares Cabral',
+      preco: '310 000 €',
+    },
+    {
+      title: 'T1 + escritório, Bonfim',
+      text: '54 m² · r/c · Rua do Barão de São Cosme',
+      preco: '168 000 €',
+    },
+  ],
+  diferenciais: [
+    {
+      title: 'Helena Pereira',
+      text: 'Sócia. Cresceu na Rua do Heroísmo, trata do Bonfim há doze anos.',
+    },
+    {
+      title: 'Rui Costa',
+      text: 'Sócio. Marquês e Constituição. Faz as avaliações e negocia com a banca.',
+    },
+    {
+      title: 'Sofia Antunes',
+      text: 'Consultora. Arrendamento e primeira compra. Fala inglês e francês.',
+    },
+  ],
+  ctaHeadline: 'Quanto vale a sua casa no Bonfim?',
+};
+
+// A oferta fica no fim, depois da morada. No desenho a avaliação gratuita vem
+// antes do rodapé, mas aqui `localizacao` é um cartão com a morada e não o
+// rodapé — esse é escrito pela aplicação a seguir, em qualquer página. Manda a
+// regra da biblioteca: uma página acaba numa acção, nunca num endereço.
+const SECCOES_IMOBILIARIA = [
+  'hero',
+  'reputacao',
+  'produtos',
+  'diferenciais',
+  'localizacao',
+  'cta',
+] as const;
+
+export const imobiliariaDesenhado: SiteTemplate = {
+  id: 'imobiliaria-predial',
+  name: 'Imobiliário · Predial',
+  style: 'premium',
+  category: 'imobiliaria',
+  description:
+    'Papel quente e tijolo do Porto, serifa de jornal, imóveis com preço à vista e a licença ao lado do nome.',
+  suits:
+    'imobiliárias, mediadores, avaliadores e afins — e serve também advogados e contabilistas, ' +
+    'que vendem a mesma coisa: confiança provada por números. Feito para quem trabalha UMA zona ' +
+    'e quer dizê-lo.',
+  tags: ['imobiliário', 'desenhado', 'preços à vista'],
+  palette: 'predial',
+  font: 'registo',
+  // A família `escritorio` é azul-acinzentada e luta com o tijolo. `loja` é
+  // neutro quente e é a que fica em paz com esta paleta.
+  imagem: 'loja',
+  desenho: `Escala tipográfica:
+- Display: 44px no telemóvel, 76px no computador / entrelinha 1.02 /
+  espaçamento entre letras −0.03em / peso 500, nunca bold
+- Título de secção: 30px / 1.12 / −0.02em
+- Texto: 17px / 1.55 / 0, com a linha a 33 caracteres no telemóvel
+- Sobretítulo e legenda: 11px, MAIÚSCULAS, espaçamento 0.14em
+- Preços e metragens: tipo tabular, para os algarismos alinharem em coluna
+
+Grelha:
+- Computador: 12 colunas, goteira 24, margem 64. Os imóveis em 3 colunas.
+- Telemóvel: margem 20, imóveis empilhados.
+
+Espaçamento, base 8: 8 dentro de um par · 14 entre a foto e a legenda ·
+28 no topo de um bloco · 56 entre secções · 96 antes da oferta.
+
+Linhas: 1px sólido na cor do texto (#14110E), não cinzento. As secções
+separam-se por régua a toda a largura, com borda em cima E em baixo na faixa
+dos números. É o desenho de um documento, não de um cartão.
+
+Fotografia: 3:2 na abertura, 4:5 em cada imóvel. Ponta a ponta, sem cantos
+redondos nem sombra. A foto de abertura é a RUA — fachadas, azulejo,
+varandas — e nunca uma sala de reuniões nem um aperto de mão.
+
+A ideia do desenho: prova antes de promessa. A licença AMI fica no cabeçalho
+ao lado do nome, não no rodapé. Os números (anos na zona, imóveis vendidos,
+avaliações) vêm logo a seguir à abertura, em três colunas com régua. Os
+imóveis têm preço à vista, em euros e por extenso — um imóvel sem preço não é
+um imóvel, é uma fotografia. A equipa aparece com o que cada um faz e uma
+frase que prova que conhece a zona, não com cargos.
+
+A oferta tem PRAZO e é concreta: "avaliação gratuita, marcações até 31 de
+Outubro, visita em 48 horas, relatório escrito com valores de venda reais da
+rua, sem compromisso". Uma avaliação gratuita sem data é um convite a adiar.
+
+O que NÃO fazer neste ramo: aperto de mão, chaves ao alto, casinha desenhada,
+gráfico a subir, "o seu sonho começa aqui", "excelência e confiança", fotos de
+prédios de vidro que não são da zona, mapa decorativo sem morada.
+
+Movimento: uma subida de 14px com 500ms à entrada, e mais nada.`,
+  sections: [...SECCOES_IMOBILIARIA],
+  demo: buildDemo(sementeImobiliaria, SECCOES_IMOBILIARIA, 'loja'),
+  active: true,
+};

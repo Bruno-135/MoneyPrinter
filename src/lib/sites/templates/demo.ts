@@ -18,8 +18,14 @@ export interface DemoSeed {
   nome: string;
   tagline: string;
   sobre: string[];
-  /** Serviços OU produtos, conforme o ramo vende trabalho ou coisas. */
-  itens: Array<{ title: string; text: string }>;
+  /**
+   * Serviços OU produtos, conforme o ramo vende trabalho ou coisas.
+   *
+   * O `preco` só é usado na secção `produtos`, e existe por causa dos ramos
+   * onde o preço É o anúncio — um imóvel sem preço não é um imóvel, é uma
+   * fotografia. Nos serviços, onde o valor depende do caso, fica de fora.
+   */
+  itens: Array<{ title: string; text: string; preco?: string }>;
   itensTitulo: string;
   /**
    * O título da secção "sobre". Em falta, fica "A casa".
@@ -91,7 +97,7 @@ export function buildDemo(
       items: seed.itens.map((i) => ({
         name: i.title,
         description: i.text,
-        price: null,
+        price: i.preco ?? null,
         photo: null,
       })),
     },
