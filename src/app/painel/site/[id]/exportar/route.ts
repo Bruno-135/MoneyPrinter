@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { loadSite } from '@/lib/sites/load';
-import { themeVars } from '@/lib/sites/theme';
+import { fontHref, themeVars } from '@/lib/sites/theme';
 
 /**
  * A página como um ficheiro HTML solto, para descarregar.
@@ -36,7 +36,7 @@ function escapar(texto: string): string {
 function nomeDoFicheiro(titulo: string): string {
   const limpo = titulo
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-zA-Z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .toLowerCase();
@@ -70,13 +70,24 @@ export async function GET(_pedido: Request, { params }: { params: Promise<{ id: 
 
   const titulo = site.title ?? 'Site';
 
+  // Sem isto o ficheiro saía com a letra do sistema. As cores iam no `:root`
+  // mas o par tipográfico ficava para trás, e o que o cliente escolheu ver
+  // deixava de ser o que ele abria — logo na parte que mais se nota.
+  const letra = fontHref(theme);
+  const linkDaLetra = letra
+    ? `<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="${escapar(letra)}">
+`
+    : '';
+
   const documento = `<!doctype html>
 <html lang="pt">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapar(titulo)}</title>
-<style>
+${linkDaLetra}<style>
   :root {
 ${variaveis}
   }
