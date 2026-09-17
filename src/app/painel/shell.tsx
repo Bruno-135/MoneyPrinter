@@ -122,6 +122,18 @@ export function Shell({ children, sair }: { children: React.ReactNode; sair: Rea
             <div className="font-mono text-[11px] text-ink3">{subtitulo}</div>
           </div>
 
+          {/* Em todos os ecrãs, ao lado do tema. Uma lupa no cabeçalho é onde
+              toda a gente a procura, e a caixa vive no ecrã próprio: num
+              telemóvel de 390 não cabe um campo de texto aqui sem espremer o
+              título. */}
+          <Link
+            href="/painel/procurar"
+            aria-label="Procurar"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surf2 text-sm"
+          >
+            ⌕
+          </Link>
+
           <button
             type="button"
             onClick={trocarTema}

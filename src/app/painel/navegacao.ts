@@ -76,6 +76,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/relatorios': ['Relatórios', 'visitas e cliques por mês'],
   '/painel/equipa': ['Equipa e permissões', 'quem pode fazer o quê'],
   '/painel/perfil': ['Perfil e progresso', 'contra o teu próprio histórico'],
+  '/painel/procurar': ['Procurar', 'nome, telefone ou referência'],
 };
 
 export function tituloDoEcra(caminho: string): [string, string] {

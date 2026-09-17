@@ -275,6 +275,23 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   // `layout.tsx` do painel. Esta página só põe o seu conteúdo lá dentro.
   return (
     <>
+      {/* Os filtros abaixo respondem a "quem é que tem X". Isto responde a
+          "onde está o Y", que é outra pergunta e não se faz com filtros: quem
+          recebe uma mensagem com um nome quer escrevê-lo, não descobrir em que
+          região ele caiu. */}
+      <form action="/painel/procurar" method="get" className="flex gap-2.5">
+        <input
+          type="search"
+          name="q"
+          placeholder="Procurar por nome, telefone ou CLI-0001"
+          aria-label="Procurar um comércio"
+          className="h-11 min-w-0 flex-1 rounded-xl border border-line bg-surf px-4 text-base outline-none focus:border-brand-500"
+        />
+        <button type="submit" className="h-11 shrink-0 rounded-xl border border-line px-4 text-sm font-medium">
+          Procurar
+        </button>
+      </form>
+
       {/* Os números ficam aqui e não no painel: são atalhos para filtros
           DESTA tabela, e um atalho longe daquilo que filtra não se percebe. */}
       <Numeros numeros={numeros} />

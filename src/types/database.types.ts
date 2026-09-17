@@ -38,6 +38,7 @@ export type Database = {
           google_place_id: string
           name: string
           client_code: string | null
+          procura_texto: string | null
           business_category: string
           google_types: string[]
           is_food_service: boolean | null
@@ -90,6 +91,7 @@ export type Database = {
           google_place_id: string
           name: string
           client_code?: string | null
+          procura_texto?: never
           business_category: string
           google_types?: string[]
           is_food_service?: never
@@ -142,6 +144,7 @@ export type Database = {
           google_place_id?: string
           name?: string
           client_code?: string | null
+          procura_texto?: never
           business_category?: string
           google_types?: string[]
           is_food_service?: never
