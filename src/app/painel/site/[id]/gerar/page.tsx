@@ -20,11 +20,13 @@ import { revertToTemplate } from '../../ai-actions';
 export const dynamic = 'force-dynamic';
 
 /**
- * Uma geração em HTML ronda o minuto. O valor por omissão da Vercel cortaria
- * a meio, e o utilizador via um erro de rede em vez da página — depois de a
- * chamada já ter sido paga.
+ * Uma geração em HTML passa dos dois minutos: são 32 mil tokens de saída, e
+ * com um modelo escolhido a instrução ainda leva as cores, as letras e a ordem
+ * das secções. Esteve em 60 e cortava a meio — a Vercel devolvia 504 e o
+ * telemóvel mostrava "This page couldn't load", depois de a chamada à
+ * Anthropic já ter sido paga. O varrimento já corre em 300 neste plano.
  */
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 interface Props {
   params: Promise<{ id: string }>;

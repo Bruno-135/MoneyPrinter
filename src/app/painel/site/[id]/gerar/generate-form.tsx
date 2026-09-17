@@ -74,7 +74,7 @@ function SubmitButton({ mode }: { mode: GenerationMode }) {
     >
       {pending
         ? mode === 'html'
-          ? 'A desenhar a página… pode demorar um minuto'
+          ? 'A desenhar a página… dois a três minutos, não feches'
           : 'A escrever…'
         : 'Gerar'}
     </button>

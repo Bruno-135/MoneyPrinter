@@ -23,6 +23,13 @@ import { EditarComIa } from './editar-com-ia';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * Editar por conversa é outra chamada de página inteira, feita a partir deste
+ * ecrã. Sem isto seguia o valor por omissão e morria a meio, tal como a
+ * geração morria.
+ */
+export const maxDuration = 300;
+
 interface Props {
   params: Promise<{ id: string }>;
 }
