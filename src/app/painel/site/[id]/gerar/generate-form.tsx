@@ -102,6 +102,38 @@ export function GenerateForm({
     <form action={action} className="flex flex-col gap-6">
       <input type="hidden" name="siteId" value={siteId} />
 
+      {/* Primeiro de tudo, e sempre à vista. Esteve escondido atrás do segundo
+          botão de modo e ninguém o encontrava: a escolha mais interessante do
+          ecrã não pode depender de se carregar noutra coisa primeiro. Escolher
+          um modelo passa sozinho para o desenho de raiz, que é o único modo
+          onde um modelo tem por onde entrar. */}
+      {modelos.length > 0 && (
+        <label className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium">Partir de um modelo</span>
+          <select
+            name="modelo"
+            value={modelo}
+            onChange={(e) => {
+              setModelo(e.target.value);
+              if (e.target.value) setMode('html');
+            }}
+            className="h-11 rounded-md border border-black/12 px-3 dark:border-white/12"
+          >
+            <option value="">Sem modelo — a IA desenha à sua maneira</option>
+            {modelos.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome}
+              </option>
+            ))}
+          </select>
+          <span className="text-sm opacity-65">
+            {modelo
+              ? (modelos.find((m) => m.id === modelo)?.descricao ?? '')
+              : 'Com um modelo, a IA recebe as cores em hexadecimal, o par de letras, a escala tipográfica e a ordem das secções — e a página do cliente sai igual ao que ele escolheu ver.'}
+          </span>
+        </label>
+      )}
+
       <fieldset className="flex flex-col gap-2.5">
         <legend className="mb-2 text-sm font-medium">O que queres que a IA faça</legend>
 
@@ -117,7 +149,9 @@ export function GenerateForm({
           <span className="min-w-0 flex-1">
             <span className="font-medium">Escrever os textos e escolher as cores</span>
             <span className="mt-0.5 block text-sm opacity-65">
-              A página continua editável campo a campo no editor. É o que serve para a maioria.
+              {modelo
+                ? 'Neste modo o modelo escolhido acima é ignorado — a aparência sai da paleta e da letra do editor.'
+                : 'A página continua editável campo a campo no editor. É o que serve para a maioria.'}
             </span>
           </span>
         </label>
@@ -140,32 +174,6 @@ export function GenerateForm({
           </span>
         </label>
       </fieldset>
-
-      {/* Só no desenho de raiz: no modo por campos a aparência sai da paleta e
-          da letra, e um modelo escolhido aqui não teria por onde entrar. */}
-      {mode === 'html' && (
-        <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium">Partir de um modelo</span>
-          <select
-            name="modelo"
-            value={modelo}
-            onChange={(e) => setModelo(e.target.value)}
-            className="h-11 rounded-md border border-black/12 px-3 dark:border-white/12"
-          >
-            <option value="">Sem modelo — a IA desenha à sua maneira</option>
-            {modelos.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.nome}
-              </option>
-            ))}
-          </select>
-          <span className="text-sm opacity-65">
-            {modelo
-              ? (modelos.find((m) => m.id === modelo)?.descricao ?? '')
-              : 'Com um modelo, a IA recebe as cores em hexadecimal, o par de letras, a escala tipográfica e a ordem das secções — e a página do cliente sai igual ao que ele escolheu ver.'}
-          </span>
-        </label>
-      )}
 
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium">O que dizer sobre {businessName}</span>
