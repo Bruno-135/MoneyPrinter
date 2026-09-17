@@ -85,6 +85,9 @@ export function tituloDoEcra(caminho: string): [string, string] {
     return ['Ficha do comércio', 'tudo o que decide a chamada'];
   }
   if (caminho.startsWith('/painel/modelos/')) return ['Modelo de site', 'como o comerciante o vai ver'];
+  if (caminho.endsWith('/paginas') && caminho.startsWith('/painel/site/')) {
+    return ['Páginas do site', 'o menu e o que está em cada uma'];
+  }
   if (caminho.startsWith('/painel/site/')) return ['Landing page', 'a página de demonstração'];
   return ['Painel', ''];
 }

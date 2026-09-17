@@ -17,6 +17,7 @@ import { escolherImagens } from '@/lib/sites/imagens/escolher';
 import { PlacesClient } from '@/lib/places/client';
 import { avaliacoesDoComercio, type AvaliacaoReal } from '@/lib/places/avaliacoes';
 import { FONTE_IMAGEM_PADRAO, isFonteImagem } from '@/lib/sites/imagens/fonte';
+import { menuDoSite, paginasDoSite } from '@/lib/sites/paginas/repository';
 
 /**
  * Geração de páginas por IA, a partir do ecrã.
@@ -137,12 +138,18 @@ export async function generateWithAi(
       const escolhido = findTemplate(String(formData.get('modelo') ?? ''));
       const pedido = escolhido ? `${briefDoModelo(escolhido)}\n\n---\n\n${brief}` : brief;
 
+      // A inicial leva o mesmo menu que as outras. Sem isto o site tinha
+      // páginas interiores sem nada que lá levasse — existiam no endereço e
+      // mais nada.
+      const outras = await paginasDoSite(supabase, siteId);
+
       const result = await generateHtml(
         business,
         pedido,
         model,
         imagens,
         boasAvaliacoes(avaliacoes?.avaliacoes ?? []),
+        menuDoSite(loaded.site.public_code, outras, ''),
       );
 
       await saveAiGeneration(supabase, siteId, {

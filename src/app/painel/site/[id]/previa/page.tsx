@@ -118,6 +118,12 @@ export default async function PreviaPage({ params }: Props) {
           <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-6 pb-3">
             <EditarComIa siteId={site.id} />
             <a
+              href={`/painel/site/${site.id}/paginas`}
+              className="rounded-md border border-black/15 px-3 py-1.5 text-sm font-medium dark:border-white/20"
+            >
+              Páginas do site
+            </a>
+            <a
               href={`/painel/site/${site.id}/exportar`}
               className="rounded-md border border-black/15 px-3 py-1.5 text-sm font-medium dark:border-white/20"
             >

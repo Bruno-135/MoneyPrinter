@@ -840,6 +840,65 @@ export type Database = {
           },
         ];
       };
+      site_pages: {
+        Row: {
+          ai_brief: string | null;
+          ai_generated_at: string | null;
+          ai_input_tokens: number | null;
+          ai_model: string | null;
+          ai_output_tokens: number | null;
+          created_at: string;
+          custom_html: string | null;
+          id: string;
+          ordem: number;
+          owner_id: string;
+          site_id: string;
+          slug: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          ai_brief?: string | null;
+          ai_generated_at?: string | null;
+          ai_input_tokens?: number | null;
+          ai_model?: string | null;
+          ai_output_tokens?: number | null;
+          created_at?: string;
+          custom_html?: string | null;
+          id?: string;
+          ordem?: number;
+          owner_id?: string;
+          site_id: string;
+          slug: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          ai_brief?: string | null;
+          ai_generated_at?: string | null;
+          ai_input_tokens?: number | null;
+          ai_model?: string | null;
+          ai_output_tokens?: number | null;
+          created_at?: string;
+          custom_html?: string | null;
+          id?: string;
+          ordem?: number;
+          owner_id?: string;
+          site_id?: string;
+          slug?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "site_pages_site_id_fkey";
+            columns: ["site_id"];
+            isOneToOne: false;
+            referencedRelation: "generated_sites";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       site_clicks: {
         Row: {
           id: string

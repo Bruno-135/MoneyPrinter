@@ -448,6 +448,12 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
                       Editar
                     </Link>
                     <Link
+                      href={`/painel/site/${site.id}/paginas`}
+                      className="rounded-md border border-line px-3 py-1.5 font-medium dark:border-line"
+                    >
+                      Páginas
+                    </Link>
+                    <Link
                       href={`/painel/site/${site.id}/pdf`}
                       className="rounded-md border border-line px-3 py-1.5 font-medium dark:border-line"
                     >
