@@ -9,6 +9,8 @@ export type Estado = 'pago' | 'falhou' | 'pendente';
 export interface LinhaDeCobranca {
   businessId: string;
   nome: string;
+  /** A referência do cliente — é o que vai na fatura. */
+  codigo: string | null;
   localidade: string | null;
   telefone: string | null;
   /** O que ele devia pagar este mês, dos serviços activos. */
@@ -30,6 +32,7 @@ interface ServicoLinha {
   cancelled_at: string | null;
   businesses: {
     name: string;
+    client_code: string | null;
     locality: string | null;
     phone_e164: string | null;
     phone_raw: string | null;
@@ -54,7 +57,7 @@ export async function cobrancaDoMes(db: Db, ano: number, mes: number): Promise<L
   const [servicos, pagamentos] = await Promise.all([
     db
       .from('client_services')
-      .select('business_id, value_cents, currency, sold_at, cancelled_at, businesses(name, locality, phone_e164, phone_raw)')
+      .select('business_id, value_cents, currency, sold_at, cancelled_at, businesses(name, client_code, locality, phone_e164, phone_raw)')
       .eq('is_monthly', true)
       .limit(2000),
     db.from('client_payments').select('*').eq('period', chave).limit(2000),
@@ -94,6 +97,7 @@ export async function cobrancaDoMes(db: Db, ano: number, mes: number): Promise<L
       return {
         businessId: m.businessId,
         nome: negocio.name,
+        codigo: negocio.client_code,
         localidade: negocio.locality,
         telefone: negocio.phone_e164 ?? negocio.phone_raw ?? null,
         totalCentimos: m.totalCentimos,

@@ -54,7 +54,15 @@ export function TabelaCarteira({ clientes }: { clientes: readonly ClienteNaCarte
                     >
                       {c.nome}
                     </Link>
-                    {c.locality && <span className="ml-2 text-xs opacity-50">{c.locality}</span>}
+                    <span className="mt-0.5 block text-xs opacity-50">
+                      {/* Numa linha própria, e não ao lado do nome: sete
+                          colunas de serviços já disputam a largura de um
+                          telemóvel, e a referência é para se ler, não para
+                          competir. */}
+                      {c.codigo && <span className="font-mono tabular-nums">{c.codigo}</span>}
+                      {c.codigo && c.locality && ' · '}
+                      {c.locality}
+                    </span>
                   </td>
 
                   <td className="px-4 py-3 whitespace-nowrap tabular-nums">

@@ -83,6 +83,11 @@ function Linha({ linha, ano, mes }: { linha: LinhaDeCobranca; ano: number; mes: 
         >
           {linha.nome}
         </Link>
+        {linha.codigo && (
+          <span className="font-mono text-[11px] tracking-wide text-ink3 tabular-nums">
+            {linha.codigo}
+          </span>
+        )}
         {linha.localidade && <span className="text-[12px] text-ink3">{linha.localidade}</span>}
 
         <span className="ml-auto font-mono text-[15px] font-bold tabular-nums">

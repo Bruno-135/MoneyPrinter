@@ -139,6 +139,14 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{business.name}</h1>
+                {/* Só aparece depois da primeira venda, que é quando nasce.
+                    Num prospecto não há referência nenhuma para dar, e uma
+                    etiqueta vazia em 3745 fichas só ensinava a ignorá-la. */}
+                {business.client_code && (
+                  <p className="mt-1.5 inline-block rounded-md bg-black/[0.06] px-2 py-0.5 font-mono text-xs tracking-wide tabular-nums dark:bg-white/10">
+                    {business.client_code}
+                  </p>
+                )}
                 <p className="mt-1 text-sm text-ink2 opacity-100">
                   {findCategory(business.business_category)?.label ?? business.business_category}
                   {business.formatted_address ? ` · ${business.formatted_address}` : ''}

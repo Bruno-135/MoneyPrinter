@@ -104,6 +104,8 @@ export async function apagarServico(db: Db, id: string): Promise<void> {
 export interface ClienteNaCarteira {
   businessId: string;
   nome: string;
+  /** A referência curta — CLI-0042. Nula só em dados anteriores a 0029. */
+  codigo: string | null;
   locality: string | null;
   phone: string | null;
   /** Slugs activos, para a tabela pôr um visto em cada coluna. */
@@ -125,7 +127,7 @@ export interface ClienteNaCarteira {
 export async function carteira(db: Db): Promise<ClienteNaCarteira[]> {
   const { data, error } = await db
     .from('client_services')
-    .select('business_id, service_slug, value_cents, is_monthly, currency, cancelled_at, businesses(name, locality, phone_e164, phone_raw)')
+    .select('business_id, service_slug, value_cents, is_monthly, currency, cancelled_at, businesses(name, client_code, locality, phone_e164, phone_raw)')
     .order('sold_at', { ascending: false });
 
   if (error) throw new Error(`Não foi possível ler a carteira: ${error.message}`);
@@ -135,6 +137,7 @@ export async function carteira(db: Db): Promise<ClienteNaCarteira[]> {
   for (const linha of data ?? []) {
     const negocio = linha.businesses as {
       name: string;
+      client_code: string | null;
       locality: string | null;
       phone_e164: string | null;
       phone_raw: string | null;
@@ -146,6 +149,7 @@ export async function carteira(db: Db): Promise<ClienteNaCarteira[]> {
       cliente = {
         businessId: linha.business_id,
         nome: negocio.name,
+        codigo: negocio.client_code,
         locality: negocio.locality,
         phone: negocio.phone_e164 ?? negocio.phone_raw ?? null,
         ativos: [],

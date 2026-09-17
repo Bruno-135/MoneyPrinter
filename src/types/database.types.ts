@@ -37,6 +37,7 @@ export type Database = {
           region_id: string | null
           google_place_id: string
           name: string
+          client_code: string | null
           business_category: string
           google_types: string[]
           is_food_service: boolean | null
@@ -88,6 +89,7 @@ export type Database = {
           region_id?: string | null
           google_place_id: string
           name: string
+          client_code?: string | null
           business_category: string
           google_types?: string[]
           is_food_service?: never
@@ -139,6 +141,7 @@ export type Database = {
           region_id?: string | null
           google_place_id?: string
           name?: string
+          client_code?: string | null
           business_category?: string
           google_types?: string[]
           is_food_service?: never
@@ -427,6 +430,24 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      client_code_counters: {
+        Row: {
+          last_number: number;
+          owner_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          last_number?: number;
+          owner_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          last_number?: number;
+          owner_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       client_services: {
         Row: {
