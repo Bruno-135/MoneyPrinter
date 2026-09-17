@@ -481,3 +481,244 @@ Movimento: uma subida de 14px com 500ms à entrada, e mais nada.`,
   demo: buildDemo(sementePessoal, SECCOES_PESSOAL, 'escritorio'),
   active: true,
 };
+
+// ---------------------------------------------------------------------------
+// Institucional — Metalúrgica Sandim
+//
+// A ideia do desenho: capacidade, não simpatia. Quem compra corte a laser quer
+// saber a espessura máxima, a dimensão da chapa e o prazo de orçamento — e
+// quer isso em números, numa tabela, antes de qualquer frase sobre "parceria".
+//
+// A ordem do trabalho aparece em cinco passos numerados porque o cliente deste
+// ramo está a comparar fornecedores, e o que ele compara é o processo: quem
+// desenha, quem corta, quem solda, quem entrega e em quanto tempo.
+// ---------------------------------------------------------------------------
+
+const sementeInstitucional: DemoSeed = {
+  nome: 'Metalúrgica Sandim',
+  tagline:
+    'Serralharia industrial em Gondomar desde 1991. Corte a laser até 25 mm, quinagem até 4000 mm, soldadura MIG/TIG certificada.',
+  sobre: [
+    'Trinta e quatro pessoas, 4000 m² cobertos na EN 108. Fibra de 6 kW, prensa de 175 toneladas e camião próprio até 8 m de peça.',
+    'Orçamento em 48 horas úteis, com prazo de fabrico e preço fechado por peça. Se o desenho vier em papel, medimos e desenhamos nós.',
+  ],
+  sobreTitulo: 'A fábrica',
+  itensTitulo: 'A ordem do trabalho',
+  itens: [
+    {
+      title: '01 · Projecto',
+      text: 'O seu DWG entra no nesting. Se vier em papel, medimos e desenhamos nós.',
+    },
+    {
+      title: '02 · Corte a laser',
+      text: 'Fibra 6 kW. Aço macio até 25 mm, inox até 15 mm, alumínio até 12 mm.',
+    },
+    {
+      title: '03 · Quinagem',
+      text: 'Prensa de 175 toneladas, 4000 mm de comprimento. Tolerância de ±0,5 mm.',
+    },
+    {
+      title: '04 · Soldadura',
+      text: 'MIG e TIG. Soldadores qualificados EN ISO 9606-1. Ensaio visual em todas as juntas estruturais.',
+    },
+    {
+      title: '05 · Entrega',
+      text: 'Camião próprio até 8 m de peça. Grande Porto em 24 h a partir da conclusão.',
+    },
+  ],
+  diferenciais: [
+    { title: 'Espessura máxima de corte', text: '25 mm em aço macio, 15 em inox, 12 em alumínio.' },
+    { title: 'Dimensão máxima de chapa', text: '3000 × 1500 mm. Quinagem até 4000 mm, 175 toneladas.' },
+    { title: 'Prazo de orçamento', text: '48 horas úteis, com prazo de fabrico e preço fechado por peça.' },
+  ],
+  ctaHeadline: 'Tem um desenho? Mande-o hoje.',
+};
+
+const SECCOES_INSTITUCIONAL = [
+  'hero',
+  'diferenciais',
+  'servicos',
+  'produtos',
+  'reputacao',
+  'localizacao',
+  'cta',
+] as const;
+
+export const institucionalDesenhado: SiteTemplate = {
+  id: 'institucional-oficina',
+  name: 'Institucional · Oficina',
+  style: 'minimal',
+  category: 'construtora',
+  description:
+    'Capacidade em números antes de qualquer frase: espessuras, dimensões, prazos e a ordem do trabalho em cinco passos.',
+  suits:
+    'fábricas, serralharias, metalomecânica, carpintarias industriais, construtoras e qualquer ' +
+    'empresa que venda a outras empresas. Serve quando o cliente compara fornecedores por ' +
+    'capacidade e prazo, e não por simpatia.',
+  tags: ['institucional', 'desenhado', 'B2B'],
+  palette: 'oficina',
+  font: 'oficio',
+  imagem: 'oficina',
+  desenho: `Escala tipográfica:
+- Display: 46px no telemóvel, 80px no computador / entrelinha 1.00 /
+  espaçamento entre letras −0.035em / peso 700
+- Título de secção: 32px / 1.08 / −0.025em / peso 600
+- Texto: 17px / 1.55
+- Legenda e rótulo de tabela: 11px, MAIÚSCULAS, espaçamento 0.14em
+- Números de capacidade: 34px, peso 700, tipo tabular — são o argumento
+
+Grelha:
+- Computador: 12 colunas, goteira 24, margem 96.
+- Telemóvel: margem 24.
+
+Espaçamento, base 8: 8 · 16 · 24 · 40 · 64 · 96. Dentro de um bloco 8 a 24,
+antes de uma secção 96.
+
+Zero cantos redondos. Zero sombras. Filetes de 1px na cor do texto.
+
+Fotografia: 3:2 e 16:9, ponta a ponta. Corte PERTO e do trabalho a acontecer —
+soldadura com faíscas, a cabeça de corte a fumegar, mãos do operador na chapa.
+Nunca a fachada do edifício, nunca o gerente de gravata, nunca uma equipa
+alinhada a sorrir.
+
+A ideia do desenho: capacidade, não simpatia. Quem compra corte a laser quer
+a espessura máxima, a dimensão da chapa e o prazo de orçamento, em números,
+antes de qualquer frase sobre parceria.
+
+Três blocos obrigatórios:
+1. Tabela de CAPACIDADE, com rótulo à esquerda e número à direita: espessura
+   máxima, dimensão de chapa, tonelagem, área coberta, número de
+   trabalhadores, prazo de orçamento.
+2. A ORDEM DO TRABALHO em passos numerados 01 a 05 — é o que o cliente compara
+   entre fornecedores.
+3. QUEM COMPRA AQUI: os sectores servidos, cada um com o que se lhes fabrica e
+   um número real do ano passado.
+
+O certificado (ISO, número de alvará, NIF) vai no rodapé, escrito por extenso.
+Num ramo em que se assina contrato, a credencial é parte do produto.
+
+O que NÃO fazer neste ramo: aperto de mão, engrenagens desenhadas, planeta
+azul, "soluções integradas", "parceiro de confiança", "qualidade e
+compromisso", foto de equipa de capacete novo a apontar para um tablet.
+
+Movimento: nenhum. Esta página não anima.`,
+  sections: [...SECCOES_INSTITUCIONAL],
+  demo: buildDemo(sementeInstitucional, SECCOES_INSTITUCIONAL, 'oficina'),
+  active: true,
+};
+
+// ---------------------------------------------------------------------------
+// Transporte — Rota Curta
+//
+// A ideia do desenho: o relógio. Tudo nesta página responde à mesma pergunta —
+// "ainda dá para hoje?" — e a resposta está no topo, em números: recolha até
+// às 17h, Norte em 24 horas, 1200 kg por carrinha.
+//
+// Duas coisas que quase nenhum transportador põe no site e que são as que
+// fecham o negócio: a TABELA DE ZONAS com o prazo de cada uma, e a lista do
+// que NÃO se leva. A segunda poupa metade dos telefonemas.
+// ---------------------------------------------------------------------------
+
+const sementeTransporte: DemoSeed = {
+  nome: 'Rota Curta',
+  tagline:
+    'Grande Porto no mesmo dia. Norte em 24 horas. Cargas até 1200 kg, paletes e mudanças. Recolha até às 17h, entrega hoje.',
+  sobre: [
+    'Sete anos, quatro carrinhas, armazém na Zona Industrial da Maia. Recolha até às 17h sai no próprio dia; depois disso sai às 07h30 da manhã seguinte.',
+    'Manda a foto da carga e o código-postal de recolha. Respondemos com preço fechado, hora de recolha e a matrícula da carrinha.',
+  ],
+  sobreTitulo: 'Como trabalhamos',
+  itensTitulo: 'Preços de referência',
+  itens: [
+    { title: 'Volume até 100 kg, Grande Porto', text: 'Recolha e entrega no mesmo dia.', preco: '18 €' },
+    { title: 'Palete até 400 kg, Grande Porto', text: 'Mesmo dia, com fotografia da descarga.', preco: '45 €' },
+    { title: 'Palete para o Norte, 24 h', text: 'Braga, Guimarães, Viana, Vila Real, Aveiro.', preco: 'desde 62 €' },
+    { title: 'Mudança pequena, 3 h', text: 'Carrinha e dois homens. Hora extra a 22 €.', preco: '145 €' },
+  ],
+  diferenciais: [
+    { title: '17h', text: 'Limite de recolha para a entrega sair no próprio dia. Depois das 17h, sai às 07h30.' },
+    { title: '24h', text: 'Todo o Norte, porta a porta. Uma carrinha por dia para o Norte.' },
+    { title: '1200 kg', text: 'Por carrinha, até 3,2 m de comprimento. Acima disso dizemos logo e indicamos quem faz.' },
+  ],
+  ctaHeadline: 'Ainda dá para hoje? Manda a foto da carga.',
+};
+
+const SECCOES_TRANSPORTE = [
+  'hero',
+  'diferenciais',
+  'servicos',
+  'produtos',
+  'reputacao',
+  'galeria',
+  'localizacao',
+  'cta',
+] as const;
+
+export const transporteDesenhado: SiteTemplate = {
+  id: 'transporte-estrada',
+  name: 'Transporte · Estrada',
+  style: 'minimal',
+  category: 'transportadora',
+  description:
+    'Tudo responde a "ainda dá para hoje": hora limite de recolha, tabela de zonas com prazos e preços de referência.',
+  suits:
+    'transportadoras, empresas de entregas, mudanças e estafetas. Serve qualquer negócio em que ' +
+    'a pergunta do cliente seja QUANDO e não quanto — e em que responder com uma tabela em vez ' +
+    'de um formulário seja a vantagem.',
+  tags: ['transporte', 'desenhado', 'preços à vista'],
+  palette: 'estrada',
+  font: 'estrada',
+  imagem: 'oficina',
+  desenho: `Escala tipográfica (vinda da folha de sistema do desenho):
+- Display: 88px no computador, 56px no telemóvel / entrelinha 0.98 no grande e
+  1.02 no pequeno / espaçamento entre letras −0.04em / peso 700 a 800
+- Título de secção: 36px / 1.06 / −0.03em / peso 700
+- Texto: 17px / 1.55, linha de 45 a 70 caracteres
+- Legenda: 12px, MAIÚSCULAS, espaçamento +0.14em, em IBM Plex Mono — a
+  monoespaçada é só para legendas, números e matrículas
+- Preços e pesos: tipo tabular, alinhados à DIREITA
+
+Cor, na proporção 60/30/10: 60% papel (#F2EFE8), 30% tinta (#121110), 10%
+destaque (#D93A0B). O destaque aparece TRÊS vezes em toda a página e não mais.
+Há ainda um verde de sinal (#1E7A3C) num ponto de 8px, só para dizer "aberto
+agora" — não é uma cor da paleta, é um semáforo.
+
+ATENÇÃO ao laranja em texto pequeno: #D93A0B sobre #F2EFE8 mede 4,0:1, abaixo
+do mínimo de 4,5. Serve para fundos de botão, números grandes e títulos; NÃO
+serve para uma ligação de 14px no meio de um parágrafo.
+
+Grelha:
+- 1440: 12 colunas, goteira 24, margem ASSIMÉTRICA — 112 à esquerda, 96 à
+  direita. O conteúdo ocupa 7 colunas e as 5 restantes ficam vazias.
+- 390: 4 colunas, goteira 16, margem 24 à esquerda e 40 a 64 à direita.
+
+Espaçamento, base 8: 8 · 16 · 24 · 40 · 64 · 96 · 128. Dentro de um bloco 8 a
+24, antes de uma secção 96 a 128.
+
+Zero cantos redondos, excepto os pontos de 8 a 12px. Fotografia sempre de
+ponta a ponta, em 3:2, 16:9 ou 4:5.
+
+A ideia do desenho: o relógio. Tudo responde à mesma pergunta — "ainda dá para
+hoje?" — e a resposta está no topo em números: hora limite de recolha, prazo
+para o Norte, peso máximo por carrinha.
+
+Três blocos obrigatórios:
+1. TABELA DE ZONAS: cada zona com o seu prazo, contado a partir da hora de
+   recolha, e a regra do que acontece a quem recolhe depois da hora limite.
+2. PREÇOS DE REFERÊNCIA, com o valor à direita e a nota do que fica de fora
+   (IVA, escadas sem elevador).
+3. O QUE NÃO LEVAMOS: peso acima do limite, refrigerados, ADR, animais vivos,
+   pianos. Com a promessa de indicar quem faz. Poupa metade dos telefonemas e
+   é o que faz o resto parecer verdade.
+
+O orçamento pede UMA foto e um código-postal. Nunca um formulário com campos.
+
+O que NÃO fazer neste ramo: camião genérico a fugir no horizonte, mapa-múndi
+com linhas a ligar continentes, caixa de cartão com setas, "logística
+inteligente", "a sua encomenda em boas mãos", relógio desenhado.
+
+Movimento: uma subida de 14px à entrada, e mais nada.`,
+  sections: [...SECCOES_TRANSPORTE],
+  demo: buildDemo(sementeTransporte, SECCOES_TRANSPORTE, 'oficina'),
+  active: true,
+};

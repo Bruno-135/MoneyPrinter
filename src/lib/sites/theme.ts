@@ -56,10 +56,12 @@ export const PALETTE_IDS = [
   'clinica',
   'predial',
   'retrato',
+  'oficina',
+  'estrada',
 ] as const;
 export type PaletteId = (typeof PALETTE_IDS)[number];
 
-export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno', 'registo', 'instrumento'] as const;
+export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno', 'registo', 'instrumento', 'oficio', 'estrada'] as const;
 export type FontId = (typeof FONT_IDS)[number];
 
 export interface SiteTheme {
@@ -324,6 +326,52 @@ export const PALETTES: Record<PaletteId, PaletteDefinition> = {
       line: '#3D3830',
     },
   },
+
+  oficina: {
+    id: 'oficina',
+    label: 'Oficina',
+    suits: 'fábricas, serralharias, empresas B2B — papel de desenho e ferrugem',
+    light: {
+      bg: '#F2F1ED',
+      fg: '#14130F',
+      surface: '#DCDAD3',
+      accent: '#B83A10',
+      onAccent: '#FFFFFF',
+      line: '#D6D3CA',
+    },
+    dark: {
+      bg: '#14130F',
+      fg: '#F2F1ED',
+      surface: '#22201B',
+      accent: '#E06A3C',
+      onAccent: '#14130F',
+      line: '#302D26',
+    },
+  },
+
+  estrada: {
+    id: 'estrada',
+    label: 'Estrada',
+    suits: 'transportes, entregas, mudanças — laranja de sinalização em papel quente',
+    light: {
+      // O desenho declara a proporção: 60% papel, 30% tinta, 10% destaque, e
+      // o destaque aparece três vezes em toda a página.
+      bg: '#F2EFE8',
+      fg: '#121110',
+      surface: '#E9E4DA',
+      accent: '#D93A0B',
+      onAccent: '#FFFFFF',
+      line: '#DBD6CB',
+    },
+    dark: {
+      bg: '#121110',
+      fg: '#F2EFE8',
+      surface: '#22211E',
+      accent: '#F2622E',
+      onAccent: '#121110',
+      line: '#3A3733',
+    },
+  },
 };
 
 export interface FontDefinition {
@@ -374,6 +422,24 @@ export const FONTS: Record<FontId, FontDefinition> = {
     webfont:
       'family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Archivo:wght@400;500;600;700',
     suits: 'padarias, restaurantes, casas com história — serifa de revista nos títulos',
+  },
+  oficio: {
+    label: 'Ofício',
+    stack: '"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif',
+    display: 'Archivo, "Helvetica Neue", Helvetica, Arial, sans-serif',
+    webfont: 'family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600',
+    suits: 'fábricas, oficinas, empresas B2B — sem serifa nenhuma, tudo peso e medida',
+  },
+  estrada: {
+    label: 'Estrada',
+    stack: 'Archivo, "Helvetica Neue", Helvetica, Arial, sans-serif',
+    display: 'Archivo, "Helvetica Neue", Helvetica, Arial, sans-serif',
+    // Duas famílias no mesmo pedido: a Archivo faz o título e o texto, e a
+    // Plex Mono faz as legendas e os números. O `display` é a mesma que o
+    // `stack` de propósito — aqui a hierarquia faz-se com o PESO (400 contra
+    // 800), não com uma segunda letra.
+    webfont: 'family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500',
+    suits: 'transportes, entregas, mudanças — peso alto e legendas em monoespaçada',
   },
   instrumento: {
     label: 'Instrumento',

@@ -7,8 +7,10 @@ import { servicosMinimal, servicosPremium, servicosSimples } from './servicos';
 import {
   alimentacaoDesenhado,
   imobiliariaDesenhado,
+  institucionalDesenhado,
   pessoalDesenhado,
   saudeDesenhado,
+  transporteDesenhado,
 } from './desenhados';
 
 /**
@@ -28,6 +30,8 @@ const ALL: readonly SiteTemplate[] = [
   saudeDesenhado,
   imobiliariaDesenhado,
   pessoalDesenhado,
+  institucionalDesenhado,
+  transporteDesenhado,
   padariaPremium,
   restaurantePremium,
   barbeariaInterativo,
