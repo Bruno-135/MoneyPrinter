@@ -55,10 +55,11 @@ export const PALETTE_IDS = [
   'forno',
   'clinica',
   'predial',
+  'retrato',
 ] as const;
 export type PaletteId = (typeof PALETTE_IDS)[number];
 
-export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno', 'registo'] as const;
+export const FONT_IDS = ['sans', 'serif', 'rounded', 'editorial', 'sereno', 'registo', 'instrumento'] as const;
 export type FontId = (typeof FONT_IDS)[number];
 
 export interface SiteTheme {
@@ -298,6 +299,31 @@ export const PALETTES: Record<PaletteId, PaletteDefinition> = {
       line: '#3A342D',
     },
   },
+
+  retrato: {
+    id: 'retrato',
+    label: 'Retrato',
+    suits: 'advogados, contabilistas, psicólogos — uma pessoa só, papel quente',
+    light: {
+      // Fica a 1–7 unidades da `predial` em cada canal: à vista são a mesma
+      // cor. Separadas na mesma, porque são desenhos diferentes e mexer numa
+      // não deve mexer na outra.
+      bg: '#F7F4EE',
+      fg: '#1A1714',
+      surface: '#E7E1D6',
+      accent: '#A33B1F',
+      onAccent: '#FFFFFF',
+      line: '#DCD5C9',
+    },
+    dark: {
+      bg: '#1A1714',
+      fg: '#F7F4EE',
+      surface: '#2A2724',
+      accent: '#D26B4C',
+      onAccent: '#1A1714',
+      line: '#3D3830',
+    },
+  },
 };
 
 export interface FontDefinition {
@@ -348,6 +374,15 @@ export const FONTS: Record<FontId, FontDefinition> = {
     webfont:
       'family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Archivo:wght@400;500;600;700',
     suits: 'padarias, restaurantes, casas com história — serifa de revista nos títulos',
+  },
+  instrumento: {
+    label: 'Instrumento',
+    stack: '"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif',
+    display: '"Instrument Serif", Georgia, "Times New Roman", serif',
+    // A Instrument Serif só tem um peso. O itálico vem porque no desenho é ele
+    // que faz a ênfase — a página não tem negrito nenhum nos títulos.
+    webfont: 'family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600',
+    suits: 'profissionais a solo, perfis pessoais — serifa de contraste alto e um sans sóbrio',
   },
   registo: {
     label: 'Registo',

@@ -355,3 +355,129 @@ Movimento: uma subida de 14px com 500ms à entrada, e mais nada.`,
   demo: buildDemo(sementeImobiliaria, SECCOES_IMOBILIARIA, 'loja'),
   active: true,
 };
+
+// ---------------------------------------------------------------------------
+// Pessoal — Helena Braga
+//
+// A ideia do desenho: uma pessoa, não uma firma. O retrato é a primeira coisa
+// e olha para fora do ecrã. Não há "nós" em lado nenhum — é sempre "eu".
+//
+// Duas coisas que quase nenhuma página de profissional faz, e que são as que
+// mais vendem aqui: diz o que NÃO faz ("não faço penal, não faço laboral") e
+// põe os PREÇOS em tabela, incluindo o zero da primeira conversa. As duas
+// dizem a mesma coisa — que não há surpresa à espera — e é isso que faz uma
+// pessoa mandar a mensagem.
+// ---------------------------------------------------------------------------
+
+const sementePessoal: DemoSeed = {
+  nome: 'Helena Braga',
+  tagline:
+    'Trabalho sobretudo com famílias em processos de divórcio. Na primeira meia hora digo-lhe se tem caso. Isso não lhe custa nada.',
+  sobre: [
+    'Sou Helena Braga. Exerço há dezasseis anos e há onze que atendo nesta sala da Rua do Carmo.',
+    'Desde 2010 acompanhei mais de 300 divórcios e regulações parentais. Trabalho sozinha: quem lhe responde à mensagem sou eu, e quem vai ao tribunal também.',
+  ],
+  sobreTitulo: 'Quem sou',
+  itensTitulo: 'Três coisas que faço',
+  itens: [
+    {
+      title: 'Divórcio e responsabilidades parentais',
+      text: 'Mútuo consentimento ou litigioso, guarda, pensão de alimentos, alteração de acordos já feitos. Mútuo consentimento, 450 €.',
+    },
+    {
+      title: 'Arrendamento',
+      text: 'Rendas em atraso, despejos, denúncia do contrato, obras que o senhorio não faz. Consulta por vídeo, 60 € a hora.',
+    },
+    {
+      title: 'O resto do direito da família',
+      text: 'Uniões de facto, partilhas, inventários, alimentos entre ex-cônjuges. Regulação parental, desde 700 €.',
+    },
+  ],
+  diferenciais: [
+    {
+      title: 'Manda-me mensagem',
+      text: 'Duas linhas bastam: o que se passa e desde quando.',
+    },
+    {
+      title: 'Falamos meia hora',
+      text: 'Por WhatsApp, por vídeo ou aqui no escritório. À hora que lhe der. Não custa nada.',
+    },
+    {
+      title: 'Digo-lhe se tem caso',
+      text: 'E quanto custa, por escrito. Se não tiver caso, digo-lhe isso também.',
+    },
+  ],
+  ctaHeadline: 'Conte-me o que se passa. Meia hora, sem custo.',
+};
+
+// A ordem vem declarada no próprio desenho, na tela de entrega.
+const SECCOES_PESSOAL = [
+  'hero',
+  'sobre',
+  'servicos',
+  'diferenciais',
+  'reputacao',
+  'localizacao',
+  'cta',
+] as const;
+
+export const pessoalDesenhado: SiteTemplate = {
+  id: 'pessoal-retrato',
+  name: 'Pessoal · Retrato',
+  style: 'premium',
+  category: 'advogados',
+  description:
+    'Uma pessoa e não uma firma: retrato a olhar para fora, preços em tabela e o que ela não faz dito à frente.',
+  suits:
+    'quem trabalha sozinho e é o produto — advogados, contabilistas, psicólogos, nutricionistas, ' +
+    'personal trainers, consultores. Não serve equipas nem lojas: a página inteira está escrita ' +
+    'na primeira pessoa e cai se houver mais do que uma cara.',
+  tags: ['pessoal', 'desenhado', 'preços à vista'],
+  palette: 'retrato',
+  font: 'instrumento',
+  imagem: 'escritorio',
+  desenho: `Escala tipográfica:
+- Display: 40px no telemóvel, 68px no computador / entrelinha 1.08 /
+  espaçamento entre letras −0.02em / peso 400 — a Instrument Serif só tem um
+  peso, e é de propósito: a ênfase faz-se em ITÁLICO, nunca em negrito
+- Título de secção: 26px / 1.15 / −0.015em
+- Texto: 16px / 1.62 / 0
+- Sobretítulo e legenda: 11px, MAIÚSCULAS, espaçamento 0.14em
+- Preços: tipo tabular, alinhados à direita numa coluna própria
+
+Grelha:
+- Telemóvel: 390 de largura, margem 24.
+- Computador: duas colunas desiguais — o texto em 7, o retrato em 5.
+
+Espaçamento, base 8: 6 dentro de um par · 14 entre blocos irmãos ·
+32 no topo de uma secção · 64 entre secções.
+
+Fotografia: DUAS em toda a página e mais nenhuma. O retrato 4:5, corte
+apertado, de lado, a olhar para fora do ecrã — não de frente e não a sorrir
+para a câmara. E uma 3:2 do sítio (a porta, a rua, a entrada). Sem cantos
+redondos, sem sombra, sem moldura.
+
+A ideia do desenho: uma pessoa, não uma firma. Escreve tudo na PRIMEIRA
+PESSOA — "eu faço", "digo-lhe", "respondo no mesmo dia útil". Nunca "nós",
+nunca "a nossa equipa", nunca "o cliente". O nome dela é o cabeçalho e a
+profissão fica ao lado, em maiúsculas pequenas.
+
+Duas secções obrigatórias, e são as que fazem a diferença:
+1. "E o que não faço" — uma lista curta do que ela recusa, com a promessa de
+   indicar um colega. Dizer que não é o que prova que o sim é a sério.
+2. "O que custa" — tabela de preços com o valor à direita, incluindo o 0 € da
+   primeira conversa, e a nota de que o total vai por escrito antes de
+   começar.
+
+O testemunho é UM só, longo, com nome próprio, o desfecho e o ano. Três
+testemunhos curtos valem menos do que um que conta a história toda.
+
+O que NÃO fazer neste ramo: balança da justiça, martelo de juiz, aperto de
+mão, prateleira de livros de direito, fato e braços cruzados, "excelência",
+"soluções jurídicas", "ao seu dispor", latim.
+
+Movimento: uma subida de 14px com 500ms à entrada, e mais nada.`,
+  sections: [...SECCOES_PESSOAL],
+  demo: buildDemo(sementePessoal, SECCOES_PESSOAL, 'escritorio'),
+  active: true,
+};
