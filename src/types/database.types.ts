@@ -980,6 +980,89 @@ export type Database = {
           },
         ];
       };
+      site_products: {
+        Row: {
+          cor: string | null;
+          created_at: string;
+          currency: string;
+          description: string | null;
+          destaque: boolean;
+          esgotado: boolean;
+          estado: string;
+          familia: string | null;
+          ficha: Json;
+          fotos: Json;
+          id: string;
+          name: string;
+          nota_do_estado: string | null;
+          old_price_cents: number | null;
+          ordem: number;
+          owner_id: string;
+          price_cents: number | null;
+          ref: string;
+          site_id: string;
+          tamanhos: string[];
+          tipo: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          cor?: string | null;
+          created_at?: string;
+          currency?: string;
+          description?: string | null;
+          destaque?: boolean;
+          esgotado?: boolean;
+          estado?: string;
+          familia?: string | null;
+          ficha?: Json;
+          fotos?: Json;
+          id?: string;
+          name: string;
+          nota_do_estado?: string | null;
+          old_price_cents?: number | null;
+          ordem?: number;
+          owner_id?: string;
+          price_cents?: number | null;
+          ref: string;
+          site_id: string;
+          tamanhos?: string[];
+          tipo?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          cor?: string | null;
+          created_at?: string;
+          currency?: string;
+          description?: string | null;
+          destaque?: boolean;
+          esgotado?: boolean;
+          estado?: string;
+          familia?: string | null;
+          ficha?: Json;
+          fotos?: Json;
+          id?: string;
+          name?: string;
+          nota_do_estado?: string | null;
+          old_price_cents?: number | null;
+          ordem?: number;
+          owner_id?: string;
+          price_cents?: number | null;
+          ref?: string;
+          site_id?: string;
+          tamanhos?: string[];
+          tipo?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "site_products_site_id_fkey";
+            columns: ["site_id"];
+            isOneToOne: false;
+            referencedRelation: "generated_sites";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       site_visits: {
         Row: {
           id: string
