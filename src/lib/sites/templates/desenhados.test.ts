@@ -74,3 +74,34 @@ describe('o brief não se contradiz', () => {
     expect(briefDoModelo(semFolha!)).toContain('DUAS OU TRÊS VEZES');
   });
 });
+
+describe('a loja', () => {
+  const loja = TEMPLATES.find((t) => t.id === 'loja-neon')!;
+
+  it('pede fotografia de banco e não as do Google', () => {
+    // Uma loja pequena tem no Google duas fotos da montra tiradas de
+    // telemóvel, e este desenho é feito de fotografia a toda a largura.
+    expect(loja.fonteImagens).toBe('pexels');
+  });
+
+  it('a folha manda a capa ter o texto POR CIMA da fotografia', () => {
+    const b = briefDoModelo(loja);
+    expect(b).toContain('POR CIMA');
+    expect(b).toContain('véu escuro em');
+  });
+
+  it('a folha traz o menu de ecrã inteiro, e sem JavaScript', () => {
+    const b = briefDoModelo(loja);
+    expect(b).toContain('position: fixed');
+    expect(b).toContain('.menu:target');
+    expect(b).toContain('<a href="#menu">MENU</a>');
+  });
+
+  it('a folha proíbe inventar endereços de imagem', () => {
+    // Sem quebras de linha na asserção: a folha é texto formatado a 78
+    // colunas e a frase parte-se onde calhar.
+    expect(briefDoModelo(loja).replace(/\s+/g, ' ')).toContain(
+      'Nunca inventes um endereço de imagem',
+    );
+  });
+});

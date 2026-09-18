@@ -1,4 +1,5 @@
 import type { Familia } from '../imagens/arte';
+import type { FonteImagem } from '../imagens/fonte';
 import type { FontId, PaletteId } from '../theme';
 import type { StyleId } from '../style';
 import type { SectionType, SiteDocument } from '../sections';
@@ -40,6 +41,16 @@ export interface SiteTemplate {
    * imagens ficavam a lutar com a página. Em falta, usa-se a do ramo.
    */
   imagem?: Familia;
+
+  /**
+   * De onde o desenho quer as fotografias.
+   *
+   * Existe porque nem todos os desenhos querem o mesmo: uma padaria vive das
+   * fotos do próprio balcão, e uma loja de roupa com trinta peças precisa de
+   * fotografia de estúdio que ela não tem. Em falta, fica a escolha de quem
+   * está no ecrã.
+   */
+  fonteImagens?: FonteImagem;
 
   /** A estrutura proposta. A IA pode tirar secções, mas não inventar ordem. */
   sections: SectionType[];

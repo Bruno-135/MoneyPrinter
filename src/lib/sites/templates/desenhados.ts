@@ -805,6 +805,10 @@ export const lojaDesenhado: SiteTemplate = {
   // `loja` é neutro QUENTE e desfazia o azul. `neutro` é cinzento-azulado e é
   // a única que fica em paz com este fundo.
   imagem: 'neutro',
+  // Fotografia de banco, e não as do Google. Uma loja de roupa pequena tem no
+  // Google duas fotos da montra tiradas de telemóvel — e este desenho é feito
+  // de fotografia de estúdio a toda a largura. Além disso não custa consulta.
+  fonteImagens: 'pexels',
   desenho: `Escala tipográfica (da folha de sistema do desenho, computador / telemóvel):
 - D1  Hanken Grotesk 700 — 52/1.04/−1.6px  ·  30/1.08/−0.9  — frase de abertura
 - D2  Hanken Grotesk 700 — 44/1.05/−1.2px  ·  32/1.05/−0.9  — título de página
@@ -855,7 +859,61 @@ Regras fixas:
 ESTE É UM SITE DE SEIS PÁGINAS, cada uma gerada à parte:
   Início · Mulher · Homem · Ficha da peça · Como comprar · Contacto
 O menu e o rodapé são COMPONENTES e têm de sair iguais em todas, letra por
-letra. O menu leva a entrada da página actual em ciano; as outras em #E8ECF2.
+letra.
+
+A CAPA — fotografia a toda a largura, com o texto POR CIMA
+A abertura de cada página é uma fotografia que ocupa o ecrã todo em largura, e
+o texto vive EM CIMA dela. Nunca uma faixa de cor com o texto lá dentro, nunca
+uma caixa por baixo da imagem.
+- No telemóvel a fotografia é 4:5 e ocupa desde o fundo da barra até quase ao
+  fim do ecrã. No computador é 16:9.
+- Por cima, encostado ao canto inferior esquerdo, com 24px de margem no
+  telemóvel e 80px no computador, três coisas e mais nada:
+    1. um sobretítulo pequeno em Martian Mono MAIÚSCULAS — "MULHER", "HOMEM",
+       "SEGUNDA MÃO"
+    2. um título grande em Hanken Grotesk 700, duas ou três palavras
+    3. uma linha de texto que diz o que aquilo é, em menos de doze palavras
+- Um botão só, logo abaixo: rectangular, largo, fundo #E8ECF2 com texto
+  #0B0E12, ou ciano se for a acção principal da página. Um só — dois botões
+  numa capa é não ter decidido.
+- Para o texto se ler sempre, por cima da fotografia vai um véu escuro em
+  gradiente, do transparente em cima para rgba(11,14,18,.72) em baixo. Sem
+  isto, uma fotografia clara apaga o título e ninguém percebe porquê.
+- A fotografia é REAL e vem da lista de endereços que te é dada. Nunca
+  inventes um endereço de imagem.
+
+O MENU — de ecrã inteiro, e abre sem JavaScript
+Na barra de topo há só três coisas: o botão MENU à esquerda, o nome do
+comércio ao centro, e o WhatsApp à direita.
+Carregar em MENU abre um painel que TAPA O ECRÃ TODO, feito assim:
+    .menu { position: fixed; inset: 0; z-index: 90; background: #0B0E12;
+            overflow-y: auto; transform: translateX(-100%);
+            transition: transform .28s ease; }
+    .menu:target { transform: none; }
+E o botão é <a href="#menu">MENU</a>. Dentro do painel, um <a href="#"> com um
+× no canto superior esquerdo fecha-o. É CSS puro: não uses JavaScript, que é
+apagado na publicação.
+Dentro do painel, por esta ordem:
+  1. As famílias em cima, lado a lado e em maiúsculas — MULHER · HOMEM · e
+     CRIANÇAS só se a loja as tiver. A da página actual fica em ciano.
+  2. Por baixo, a lista de secções, UMA POR LINHA, em maiúsculas, separadas
+     por um filete de 1px #232A34 a toda a largura, com 18px de espaço acima e
+     abaixo de cada uma. Nada de ícones, nada de setas.
+  3. As secções saem do que a loja VENDE mesmo, e não de uma lista feita:
+     numa sapataria são sapatos e botas, num brechó é por década ou por
+     tamanho. Se não souberes o que a loja tem, usa o que o Google diz dela.
+  4. No fim da lista, separado por mais espaço: Como comprar, Contacto, e o
+     telefone como <a href="tel:...">.
+O menu tem de estar em TODAS as páginas, com as mesmas entradas e os mesmos
+endereços.
+
+Por baixo da capa, no Início: uma fila de cartões de categoria que se arrasta
+para o lado (scroll-snap em CSS), cada um com fotografia 4:5 e o nome por
+baixo em maiúsculas. Três e meio visíveis de cada vez no telemóvel — o meio
+cartão cortado é o que diz que há mais para o lado.
+
+A grelha de peças é de DUAS colunas no telemóvel, com o nome, o preço e o
+tamanho por baixo da fotografia, alinhados à esquerda e em texto pequeno.
 
 O que fecha a venda, e tem de estar tal e qual:
 1. ESCOLHER O TAMANHO NÃO É UM SELECTOR. É uma fila de links, um por tamanho.

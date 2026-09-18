@@ -120,7 +120,12 @@ export default async function GerarPage({ params }: Props) {
         previousBrief={site.ai_brief ?? ''}
         jaTemFotos={comercio?.photos_fetched_at != null}
         jaTemAvaliacoes={comercio?.reviews_fetched_at != null}
-        modelos={TEMPLATES.map((t) => ({ id: t.id, nome: t.name, descricao: t.description }))}
+        modelos={TEMPLATES.map((t) => ({
+          id: t.id,
+          nome: t.name,
+          descricao: t.description,
+          fonteImagens: t.fonteImagens,
+        }))}
       />
     </main>
   );

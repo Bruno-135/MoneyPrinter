@@ -23,6 +23,8 @@ export interface ModeloDisponivel {
   id: string;
   nome: string;
   descricao: string;
+  /** A fonte de imagens que o desenho quer, quando tem preferência. */
+  fonteImagens?: FonteImagem;
 }
 
 /**
@@ -116,6 +118,13 @@ export function GenerateForm({
             onChange={(e) => {
               setModelo(e.target.value);
               if (e.target.value) setMode('html');
+              // Um desenho pode querer uma fonte de imagens em concreto — a
+              // loja quer fotografia de banco, porque é feita de fotografia de
+              // estúdio que uma loja pequena não tem no Google. Fica escolhido
+              // aqui, à vista, e pode trocar-se a seguir: é uma sugestão do
+              // desenho, não uma imposição.
+              const escolhido = modelos.find((m) => m.id === e.target.value);
+              if (escolhido?.fonteImagens) setFonte(escolhido.fonteImagens);
             }}
             className="h-11 rounded-md border border-black/12 px-3 dark:border-white/12"
           >
