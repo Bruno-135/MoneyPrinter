@@ -93,6 +93,8 @@ function themeOptions(): string {
   return `Paletas:\n${palettes}\n\nTipos de letra:\n${fonts}`;
 }
 
+import { navegacaoRegras, type PaginaParaMenu } from './navegacao';
+
 const SHARED_RULES = `
 Escreves em português de Portugal, para o site de um pequeno comércio.
 
@@ -180,47 +182,6 @@ export interface ImagemDisponivel {
   credito: string;
 }
 
-/** Uma página do site, para o menu que a IA tem de escrever. */
-export interface PaginaParaMenu {
-  titulo: string;
-  endereco: string;
-  /** true na página que está a ser gerada agora. */
-  atual: boolean;
-}
-
-/**
- * As regras do menu, quando o site tem mais do que uma página.
- *
- * Existe porque um site de várias páginas em que cada página foi gerada
- * sozinha não é um site: é um conjunto de landing pages sem saída. O menu tem
- * de estar em TODAS e apontar para as mesmas moradas.
- *
- * Os endereços vão escritos por extenso e com a ordem de os não inventar. A IA
- * não tem como adivinhar o código público do site, e um menu com moradas
- * inventadas dá uma página cheia de links partidos — que é pior do que não ter
- * menu nenhum.
- */
-function navegacaoRegras(paginas: readonly PaginaParaMenu[]): string {
-  if (paginas.length < 2) return '';
-
-  const lista = paginas
-    .map((p) => `  - ${p.titulo} → ${p.endereco}${p.atual ? '   (É ESTA a página que estás a escrever)' : ''}`)
-    .join('\n');
-
-  return `
-ESTE SITE TEM VÁRIAS PÁGINAS. Escreve um menu no topo, igual em todas, com
-estas entradas e exactamente estes endereços:
-${lista}
-
-- Usa <a href="..."> com o endereço tal e qual está escrito acima. NÃO
-  inventes endereços, não acrescentes páginas que não estejam na lista e não
-  uses links relativos.
-- A entrada da página actual fica marcada (sublinhado, peso ou cor), sem link
-  ou com link para ela própria.
-- Repete o menu no rodapé, em texto simples.
-- Escreve SÓ o conteúdo desta página. As outras são geradas à parte — não
-  metas aqui o conteúdo delas.`;
-}
 
 /**
  * As regras das imagens, para o sistema.
