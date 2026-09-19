@@ -78,6 +78,8 @@ export default async function PaginaInterior({ params }: Props) {
         <VisitTracker publicCode={code} />
         <LojaDesenho
           pagina={nomeDaPagina}
+          raiz={`/s/${code}`}
+          whatsapp={site.whatsapp_number_e164}
           dados={{
             nome: site.title ?? negocio?.name ?? 'Loja',
             morada: negocio?.formatted_address ?? null,

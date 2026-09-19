@@ -66,6 +66,8 @@ export default async function PaginaPublica({ params }: Props) {
         <VisitTracker publicCode={code} />
         <LojaDesenho
           pagina="inicio"
+          raiz={`/s/${code}`}
+          whatsapp={site.whatsapp_number_e164}
         dados={{
           nome: site.title ?? negocio?.name ?? 'Loja',
           morada: negocio?.formatted_address ?? null,

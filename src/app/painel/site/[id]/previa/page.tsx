@@ -166,6 +166,8 @@ export default async function PreviaPage({ params }: Props) {
       {pecas.length > 0 ? (
         <LojaDesenho
           pagina="inicio"
+          raiz={`/s/${site.public_code}`}
+          whatsapp={site.whatsapp_number_e164}
           dados={{
             nome: site.title ?? negocio?.name ?? 'Loja',
             morada: negocio?.formatted_address ?? null,

@@ -1,6 +1,8 @@
 import { ARTBOARDS, type NomeDeArtboard } from '@/lib/loja/desenho/artboards';
 import { encher } from '@/lib/loja/desenho/motor';
 import { contextoDaLoja, type DadosDaLoja } from '@/lib/loja/desenho/contexto';
+import { reescreverLinks } from '@/lib/loja/desenho/links';
+import { substituirDemo } from '@/lib/loja/desenho/demo';
 
 /**
  * A loja como o Claude Design a desenhou.
@@ -44,9 +46,12 @@ interface Props {
   pagina: PaginaDaLoja;
   /** Os dados do cliente. Sem eles, fica o desenho com as caixas às riscas. */
   dados?: DadosDaLoja;
+  /** `/s/<código>` — onde esta loja vive. Os links do desenho apontam para aqui. */
+  raiz: string;
+  whatsapp?: string | null;
 }
 
-export function LojaDesenho({ pagina, dados }: Props) {
+export function LojaDesenho({ pagina, dados, raiz, whatsapp }: Props) {
   // O Homem só foi desenhado em 1440. Cair no de Mulher seria mostrar vestidos
   // na página de homem; cair no de 1440 num telemóvel obriga a arrastar, mas
   // mostra a página certa — e é o desenho, que é o que se pediu.
@@ -56,8 +61,25 @@ export function LojaDesenho({ pagina, dados }: Props) {
   // Sem dados o contexto vai vazio, e o motor desenha as cópias e as caixas
   // às riscas do desenho — que é o que se mostra a quem ainda não tem loja.
   const contexto = dados ? contextoDaLoja(dados) : {};
-  const telemovel = bruto390 ? encher(bruto390, contexto) : null;
-  const computador = bruto1440 ? encher(bruto1440, contexto) : null;
+  const destinos = {
+    raiz,
+    whatsapp: whatsapp ?? dados?.telefone ?? null,
+    telefone: dados?.telefone ?? null,
+    email: dados?.email ?? null,
+  };
+
+  const comerciante = {
+    nome: dados?.nome ?? '',
+    morada: dados?.morada ?? null,
+    telefone: dados?.telefone ?? null,
+    email: dados?.email ?? null,
+    horario: dados?.horario ?? null,
+  };
+
+  const preparar = (html: string) =>
+    substituirDemo(reescreverLinks(encher(html, contexto), destinos), comerciante);
+  const telemovel = bruto390 ? preparar(bruto390) : null;
+  const computador = bruto1440 ? preparar(bruto1440) : null;
 
   return (
     // A cor do texto e a letra estavam no <section> da TELA do desenho, que
