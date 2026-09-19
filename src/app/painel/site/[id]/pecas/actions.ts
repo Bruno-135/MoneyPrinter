@@ -13,6 +13,8 @@ import {
 } from '@/lib/loja/repository';
 import type { Estado } from '@/lib/loja/peca';
 import { lerPreco, lerTamanhos } from '@/lib/loja/campos';
+import { filtrarEnderecos } from '@/lib/loja/imagem';
+import { isFontId, isPaletteId, parseTheme } from '@/lib/sites/theme';
 
 /**
  * O cadastro das peças.
@@ -45,11 +47,8 @@ function lerCampos(formData: FormData): PecaParaGravar {
     notaDoEstado: opcional('notaDoEstado'),
     tamanhos: lerTamanhos(texto('tamanhos')),
     cor: opcional('cor'),
-    fotos: texto('fotos')
-      .split(/\n+/)
-      .map((url) => url.trim())
-      .filter((url) => /^https?:\/\//i.test(url))
-      .slice(0, 8)
+    fotos: filtrarEnderecos(texto('fotos').split(/\n+/))
+      .bons.slice(0, 8)
       .map((url) => ({ url, alt: texto('nome') })),
     esgotado: formData.get('esgotado') === 'sim',
     destaque: formData.get('destaque') === 'sim',
@@ -71,6 +70,13 @@ export async function gravarPeca(
   const peca = lerCampos(formData);
   if (!peca.ref) return { ok: false, message: 'A peça precisa de uma referência.' };
   if (!peca.nome) return { ok: false, message: 'A peça precisa de um nome.' };
+
+  // Um endereço que não carrega é pior do que nenhum: ao dono a peça parece
+  // cadastrada e ao cliente parece partida.
+  const { recusados } = filtrarEnderecos(String(formData.get('fotos') ?? '').split(/\n+/));
+  if (recusados.length > 0 && peca.fotos.length === 0) {
+    return { ok: false, message: 'Nenhuma fotografia serve.', hint: recusados[0] };
+  }
 
   try {
     if (pecaId) await actualizarPeca(supabase, pecaId, siteId, peca);
@@ -107,4 +113,46 @@ export async function alternarEsgotada(formData: FormData): Promise<void> {
 
   await marcarEsgotada(supabase, pecaId, formData.get('esgotada') !== 'sim');
   revalidatePath(`/painel/site/${siteId}/pecas`);
+}
+
+/**
+ * A paleta e a letra da loja, sem passar por uma geração.
+ *
+ * Existe por um caso real: gerou-se com o modelo "Loja · Neon" e o site ficou
+ * com a paleta pálida que já tinha, porque na altura escolher um modelo só
+ * mudava o HTML e não o tema. A geração já o corrige daqui para a frente, mas
+ * quem tem um site feito não tem de o pagar outra vez só para mudar a cor.
+ */
+export async function aparenciaDaLoja(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) redirect('/entrar');
+
+  const siteId = String(formData.get('siteId') ?? '');
+  if (!siteId) return;
+
+  const { data: site } = await supabase
+    .from('generated_sites')
+    .select('theme')
+    .eq('id', siteId)
+    .maybeSingle();
+  if (!site) return;
+
+  const actual = parseTheme(site.theme);
+  const palette = formData.get('palette');
+  const font = formData.get('font');
+
+  await supabase
+    .from('generated_sites')
+    .update({
+      theme: {
+        palette: isPaletteId(palette) ? palette : actual.palette,
+        font: isFontId(font) ? font : actual.font,
+        imagem: actual.imagem,
+      },
+    })
+    .eq('id', siteId);
+
+  revalidatePath(`/painel/site/${siteId}/pecas`);
+  revalidatePath(`/painel/site/${siteId}/previa`);
 }

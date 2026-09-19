@@ -156,7 +156,15 @@ export async function generateWithAi(
         // O conteúdo em campos fica como está: se mais tarde se deitar fora o
         // HTML, a página volta ao que era em vez de ficar vazia.
         content: loaded.content,
-        theme: loaded.theme,
+        // O TEMA passa a ser o do modelo escolhido. Antes não passava, e isso
+        // dava um site que dizia ser "Loja · Neon" e se desenhava com a paleta
+        // pálida que tinha antes — a loja saía branca onde o desenho é quase
+        // preto. O tema não é decoração: é o que a página da loja lê para se
+        // pintar, e é o que fica no PDF e na exportação.
+        theme: escolhido
+          ? { ...loaded.theme, palette: escolhido.palette, font: escolhido.font,
+              imagem: escolhido.imagem ?? loaded.theme.imagem }
+          : loaded.theme,
         customHtml: result.value,
         model: result.model,
         brief,

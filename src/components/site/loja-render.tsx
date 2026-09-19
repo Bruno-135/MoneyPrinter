@@ -164,6 +164,10 @@ export function LojaRender(props: LojaProps) {
   const letra = fontHref(theme);
 
   const disponiveis = pecas.filter((p) => !p.esgotado);
+  // A capa sai da primeira fotografia que houver no catálogo. Uma loja com
+  // peças mas sem foto nenhuma não leva capa — melhor sem do que com um
+  // quadrado cinzento gigante a fazer de fotografia.
+  const capa = pecas.find((p) => p.fotos.length > 0)?.fotos[0] ?? null;
   const destaques = disponiveis.filter((p) => p.destaque);
   const naGrelha = destaques.length >= 2 ? destaques : disponiveis;
 
@@ -228,20 +232,62 @@ export function LojaRender(props: LojaProps) {
       <main className="mx-auto w-full max-w-[1280px] px-5 py-8">
         {ecra.tipo === 'inicio' && (
           <div className="flex flex-col gap-10">
-            <div>
-              <Rotulo>{[nome, morada].filter(Boolean).join(' · ')}</Rotulo>
-              <h1
-                className="text-[30px] leading-[1.08] font-bold tracking-[-0.9px] sm:text-[52px] sm:tracking-[-1.6px]"
-                style={{ fontFamily: 'var(--site-font-display)' }}
-              >
-                {disponiveis.length > 0
-                  ? 'Peça a peça, escolhida à mão.'
-                  : 'A montra está a ser preparada.'}
-              </h1>
-            </div>
+            {/* A capa: fotografia a toda a largura com o texto POR CIMA, nunca
+                numa caixa por baixo. Sem fotografia nenhuma no catálogo, cai
+                num bloco de texto — que é honesto e não finge uma imagem. */}
+            {capa ? (
+              <div className="relative -mx-5 -mt-8 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={capa.url}
+                  alt={capa.alt || nome}
+                  className="h-full w-full object-cover"
+                  style={{ aspectRatio: '4 / 5', maxHeight: '78vh' }}
+                />
+                {/* Sem o véu, uma fotografia clara apaga o título e ninguém
+                    percebe porquê. */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      'linear-gradient(to bottom, transparent 35%, color-mix(in srgb, var(--site-bg) 82%, transparent) 100%)',
+                  }}
+                />
+                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-5 sm:p-10">
+                  <span className="text-[11px] tracking-[0.16em] uppercase" style={{ opacity: 0.85 }}>
+                    {[nome, morada].filter(Boolean).join(' · ')}
+                  </span>
+                  <h1
+                    className="max-w-[18ch] text-[30px] leading-[1.04] font-bold tracking-[-0.9px] sm:text-[52px] sm:tracking-[-1.6px]"
+                    style={{ fontFamily: 'var(--site-font-display)' }}
+                  >
+                    Peça a peça, escolhida à mão.
+                  </h1>
+                  <a
+                    href={`#montra`}
+                    className="self-start px-5 py-3 text-[14px] font-medium no-underline"
+                    style={{ background: 'var(--site-accent)', color: 'var(--site-on-accent)' }}
+                  >
+                    Ver o que há
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <Rotulo>{[nome, morada].filter(Boolean).join(' · ')}</Rotulo>
+                <h1
+                  className="text-[30px] leading-[1.08] font-bold tracking-[-0.9px] sm:text-[52px] sm:tracking-[-1.6px]"
+                  style={{ fontFamily: 'var(--site-font-display)' }}
+                >
+                  {disponiveis.length > 0
+                    ? 'Peça a peça, escolhida à mão.'
+                    : 'A montra está a ser preparada.'}
+                </h1>
+              </div>
+            )}
 
             {naGrelha.length > 0 ? (
-              <section>
+              <section id="montra">
                 <Rotulo>{destaques.length >= 2 ? 'Destaques' : 'Na loja agora'}</Rotulo>
                 <Grelha pecas={naGrelha} raiz={raiz} />
               </section>
