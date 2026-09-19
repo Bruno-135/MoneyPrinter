@@ -49,7 +49,12 @@ export default async function PecasDaLoja({ params }: Props) {
         </Link>
       </div>
 
-      <Pecas siteId={id} pecas={pecas} familias={familiasDoCatalogo(pecas)} />
+      <Pecas
+        siteId={id}
+        ownerId={auth.user.id}
+        pecas={pecas}
+        familias={familiasDoCatalogo(pecas)}
+      />
     </div>
   );
 }

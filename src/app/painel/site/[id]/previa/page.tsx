@@ -7,6 +7,8 @@ import { CustomHtmlSite } from '@/components/site/custom-html';
 import { publicEnv } from '@/lib/env';
 import { publish, unpublish } from '../../../site-actions';
 import { EditarComIa } from './editar-com-ia';
+import { catalogo } from '@/lib/loja/repository';
+import { LojaRender } from '@/components/site/loja-render';
 
 /**
  * Pré-visualização: a página exatamente como o cliente a verá.
@@ -45,6 +47,18 @@ export default async function PreviaPage({ params }: Props) {
   if (!loaded) notFound();
 
   const { site, content, theme, menu, isFoodService } = loaded;
+
+  // A loja manda, como manda na página pública: com catálogo, é isto que o
+  // cliente vai ver, e a pré-visualização tem de mostrar exactamente o mesmo.
+  const pecas = await catalogo(supabase, id);
+  const { data: negocio } =
+    pecas.length > 0
+      ? await supabase
+          .from('businesses')
+          .select('name, formatted_address, phone_e164, phone_raw')
+          .eq('id', site.business_id)
+          .maybeSingle()
+      : { data: null };
   const isLive = site.status === 'published' && new Date(site.expires_at) > new Date();
   const publicUrl = `${publicEnv.NEXT_PUBLIC_SITE_URL}/s/${site.public_code}`;
 
@@ -149,7 +163,19 @@ export default async function PreviaPage({ params }: Props) {
         )}
       </div>
 
-      {site.custom_html ? (
+      {pecas.length > 0 ? (
+        <LojaRender
+          ecra={{ tipo: 'inicio' }}
+          nome={site.title ?? negocio?.name ?? 'Loja'}
+          morada={negocio?.formatted_address ?? null}
+          telefone={negocio?.phone_e164 ?? negocio?.phone_raw ?? null}
+          whatsapp={site.whatsapp_number_e164 ?? negocio?.phone_e164 ?? null}
+          theme={theme}
+          pecas={pecas}
+          raiz={`/s/${site.public_code}`}
+          base={publicEnv.NEXT_PUBLIC_SITE_URL}
+        />
+      ) : site.custom_html ? (
         <CustomHtmlSite html={site.custom_html} />
       ) : (
       <SiteRender

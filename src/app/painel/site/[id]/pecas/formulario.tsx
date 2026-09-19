@@ -5,9 +5,11 @@ import { useFormStatus } from 'react-dom';
 import { AI_IDLE } from '@/lib/ai/action-state';
 import { escreverPreco, ETIQUETA_DO_ESTADO, type Peca } from '@/lib/loja/peca';
 import { alternarEsgotada, apagarPecaDaLoja, gravarPeca } from './actions';
+import { FotosDaPeca } from './fotos';
 
 interface Props {
   siteId: string;
+  ownerId: string;
   pecas: readonly Peca[];
   familias: readonly string[];
 }
@@ -29,7 +31,17 @@ function Gravar({ novo }: { novo: boolean }) {
 }
 
 /** Uma peça em edição, ou uma peça nova quando `peca` é null. */
-function Formulario({ siteId, peca, aoFechar }: { siteId: string; peca: Peca | null; aoFechar?: () => void }) {
+function Formulario({
+  siteId,
+  ownerId,
+  peca,
+  aoFechar,
+}: {
+  siteId: string;
+  ownerId: string;
+  peca: Peca | null;
+  aoFechar?: () => void;
+}) {
   const [estado, accao] = useActionState(gravarPeca, AI_IDLE);
 
   return (
@@ -135,19 +147,11 @@ function Formulario({ siteId, peca, aoFechar }: { siteId: string; peca: Peca | n
         />
       </label>
 
-      <label className={rotulo}>
-        <span className="font-medium">Fotografias</span>
-        <textarea
-          name="fotos"
-          rows={4}
-          defaultValue={peca?.fotos.map((f) => f.url).join('\n') ?? ''}
-          placeholder={'https://…/frente.jpg\nhttps://…/costas.jpg'}
-          className="rounded-md border border-line bg-surf px-3 py-2 font-mono text-sm"
-        />
-        <span className="text-xs text-ink3">
-          Um endereço por linha, até oito. A primeira é a que aparece na grelha.
-        </span>
-      </label>
+      <FotosDaPeca
+        siteId={siteId}
+        ownerId={ownerId}
+        iniciais={peca?.fotos.map((f) => f.url) ?? []}
+      />
 
       <div className="flex flex-wrap gap-4">
         <label className="flex items-center gap-2 text-sm">
@@ -178,7 +182,7 @@ function Formulario({ siteId, peca, aoFechar }: { siteId: string; peca: Peca | n
   );
 }
 
-export function Pecas({ siteId, pecas, familias }: Props) {
+export function Pecas({ siteId, ownerId, pecas, familias }: Props) {
   const [aEditar, setAEditar] = useState<string | null>(null);
   const [aCriar, setACriar] = useState(false);
 
@@ -203,7 +207,9 @@ export function Pecas({ siteId, pecas, familias }: Props) {
         )}
       </div>
 
-      {aCriar && <Formulario siteId={siteId} peca={null} aoFechar={() => setACriar(false)} />}
+      {aCriar && (
+        <Formulario siteId={siteId} ownerId={ownerId} peca={null} aoFechar={() => setACriar(false)} />
+      )}
 
       {pecas.length === 0 && !aCriar && (
         <div className="rounded-2xl border border-dashed border-line px-6 py-14 text-center">
@@ -219,7 +225,7 @@ export function Pecas({ siteId, pecas, familias }: Props) {
         {pecas.map((p) => (
           <li key={p.id} className="rounded-2xl border border-line bg-surf p-4">
             {aEditar === p.id ? (
-              <Formulario siteId={siteId} peca={p} aoFechar={() => setAEditar(null)} />
+              <Formulario siteId={siteId} ownerId={ownerId} peca={p} aoFechar={() => setAEditar(null)} />
             ) : (
               <div className="flex flex-wrap items-start gap-3">
                 <div className="min-w-0 flex-1">

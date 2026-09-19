@@ -7,6 +7,9 @@ import { parseTheme } from '@/lib/sites/theme';
 import { SiteRender } from '@/components/site/site-render';
 import { CustomHtmlSite } from '@/components/site/custom-html';
 import { VisitTracker, TrackedLink } from './tracking';
+import { catalogo } from '@/lib/loja/repository';
+import { LojaRender } from '@/components/site/loja-render';
+import { publicEnv } from '@/lib/env';
 
 /**
  * A landing page pública de um comércio.
@@ -48,6 +51,37 @@ export default async function PaginaPublica({ params }: Props) {
   if (!result) notFound();
 
   const { site, menu } = result;
+
+  // Uma loja COM catálogo manda em tudo o resto, incluindo num HTML que a IA
+  // tenha escrito antes. A razão é a que se viu: a página gerada não sabe que
+  // o catálogo existe, e por isso mostrava menus mortos e peças sem preço. Esta
+  // lê as peças, e é por isso que funciona.
+  const pecas = await catalogo(supabase, site.id);
+  if (pecas.length > 0) {
+    const { data: negocio } = await supabase
+      .from('businesses')
+      .select('name, formatted_address, phone_e164, phone_raw')
+      .eq('id', site.business_id)
+      .maybeSingle();
+
+    return (
+      <>
+        <VisitTracker publicCode={code} />
+        <LojaRender
+          ecra={{ tipo: 'inicio' }}
+          nome={site.title ?? negocio?.name ?? 'Loja'}
+          morada={negocio?.formatted_address ?? null}
+          telefone={negocio?.phone_e164 ?? negocio?.phone_raw ?? null}
+          whatsapp={site.whatsapp_number_e164 ?? negocio?.phone_e164 ?? null}
+          theme={parseTheme(site.theme)}
+          pecas={pecas}
+          raiz={`/s/${code}`}
+          base={publicEnv.NEXT_PUBLIC_SITE_URL}
+        />
+      </>
+    );
+  }
+
   const content = parseContent(site.content);
   if (!content) notFound();
 
