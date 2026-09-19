@@ -52,15 +52,32 @@ interface Props {
 }
 
 export function LojaDesenho({ pagina, dados, raiz, whatsapp }: Props) {
-  // O Homem só foi desenhado em 1440. Cair no de Mulher seria mostrar vestidos
-  // na página de homem; cair no de 1440 num telemóvel obriga a arrastar, mas
-  // mostra a página certa — e é o desenho, que é o que se pediu.
-  const bruto390 = artboard(pagina, 390) ?? artboard(pagina, 1440);
+  // O desenho não trouxe um artboard de Homem em 390. Mas 1B e 1C são o MESMO
+  // desenho com conteúdo diferente, e 1E é a versão de telemóvel desse desenho
+  // — portanto o Homem no telemóvel usa a marcação da Mulher, com os dados do
+  // Homem. Cair no de 1440 num telemóvel dava o que se viu: cabeçalho de
+  // computador, filtros numa linha e uma fotografia gigante.
+  const nomeEm390 = (pagina === 'homem' ? 'mulher-390' : `${pagina}-390`) as NomeDeArtboard;
+  const bruto390 = nomeEm390 in ARTBOARDS ? ARTBOARDS[nomeEm390] : artboard(pagina, 1440);
   const bruto1440 = artboard(pagina, 1440) ?? artboard(pagina, 390);
 
   // Sem dados o contexto vai vazio, e o motor desenha as cópias e as caixas
   // às riscas do desenho — que é o que se mostra a quem ainda não tem loja.
   const contexto = dados ? contextoDaLoja(dados) : {};
+
+  // A marcação da Mulher pergunta por `mulherTelemovel`, `nMulher` e afins. Na
+  // página do Homem essas chaves passam a responder com os dados do Homem —
+  // senão a página do Homem mostrava as peças de senhora.
+  const contexto390 =
+    pagina === 'homem'
+      ? {
+          ...contexto,
+          mulherTelemovel: contexto.homem,
+          nMulher: contexto.nHomem,
+          legendaFiltroMulher: contexto.legendaFiltroHomem,
+          rodapeMulher: contexto.rodapeHomem,
+        }
+      : contexto;
   const destinos = {
     raiz,
     whatsapp: whatsapp ?? dados?.telefone ?? null,
@@ -76,10 +93,11 @@ export function LojaDesenho({ pagina, dados, raiz, whatsapp }: Props) {
     horario: dados?.horario ?? null,
   };
 
-  const preparar = (html: string) =>
-    substituirDemo(reescreverLinks(encher(html, contexto), destinos), comerciante);
-  const telemovel = bruto390 ? preparar(bruto390) : null;
-  const computador = bruto1440 ? preparar(bruto1440) : null;
+  const preparar = (html: string, ctx: typeof contexto) =>
+    substituirDemo(reescreverLinks(encher(html, ctx), destinos), comerciante);
+
+  const telemovel = bruto390 ? preparar(bruto390, contexto390) : null;
+  const computador = bruto1440 ? preparar(bruto1440, contexto) : null;
 
   return (
     // A cor do texto e a letra estavam no <section> da TELA do desenho, que

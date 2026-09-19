@@ -1,5 +1,19 @@
 import type { Contexto, Item } from './motor';
 import { desconto, escreverPreco, ETIQUETA_DO_ESTADO, type Peca } from '../peca';
+import { julgarEndereco } from '../imagem';
+
+/**
+ * O endereço de uma fotografia, ou nada.
+ *
+ * Um endereço que não carrega é pior do que nenhum: o browser desenha o ícone
+ * partido e escreve o texto alternativo por cima do desenho — foi o que se viu
+ * com duas páginas do Pixabay gravadas como se fossem imagens. Com a caixa às
+ * riscas em vez disso, a página continua a ser a do desenho.
+ */
+function fotoValida(p: Peca, i = 0): string {
+  const url = p.fotos[i]?.url;
+  return url && julgarEndereco(url).serve ? url : '';
+}
 
 /**
  * O catálogo, traduzido para os nomes que o desenho usa.
@@ -39,7 +53,7 @@ function etiqueta(p: Peca): { texto: string; fundo: string; frente: string } | n
  */
 export function pecaParaDesenho(p: Peca): Item {
   const et = etiqueta(p);
-  const foto = p.fotos[0]?.url;
+  const foto = fotoValida(p);
 
   return {
     name: p.nome,
@@ -54,7 +68,7 @@ export function pecaParaDesenho(p: Peca): Item {
     nameColor: p.esgotado ? COR.apagado : COR.texto,
     priceColor: p.esgotado ? COR.apagado : COR.texto,
     op: foto ? 0 : 1,
-    foto: foto ?? '',
+    foto,
     ref: p.ref,
   };
 }
@@ -89,8 +103,11 @@ export function contextoDaLoja(d: DadosDaLoja): Contexto {
   const destaques = d.pecas.filter((p) => p.destaque);
   const paraDestaque = destaques.length > 0 ? destaques : disponiveis;
 
-  // A primeira fotografia que houver serve a capa; as seguintes, as portas.
-  const comFoto = d.pecas.filter((p) => p.fotos.length > 0);
+  // A capa do início é uma fotografia DA LOJA — "interior da loja", diz o
+  // desenho —, e não uma peça. Pôr lá a primeira peça dava o que se viu: um
+  // casaco a ocupar a abertura, com o nome dele por cima. Enquanto não houver
+  // uma fotografia da loja, fica a caixa às riscas, que é o que se pediu.
+  const comFoto: Peca[] = [];
 
   const ctx: Contexto = {
     nome: d.nome,
