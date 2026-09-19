@@ -3,12 +3,9 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { getPublicSite } from '@/lib/sites/repository';
 import { paginaPorSlug } from '@/lib/sites/paginas/repository';
-import { catalogo, pecaPorRef } from '@/lib/loja/repository';
-import { familiasDoCatalogo } from '@/lib/loja/peca';
-import { parseTheme } from '@/lib/sites/theme';
+import { catalogo } from '@/lib/loja/repository';
 import { CustomHtmlSite } from '@/components/site/custom-html';
-import { LojaRender, type EcraDaLoja } from '@/components/site/loja-render';
-import { publicEnv } from '@/lib/env';
+import { LojaDesenho, ehPaginaDaLoja } from '@/components/site/loja-desenho';
 import { VisitTracker } from '../tracking';
 
 /**
@@ -34,28 +31,6 @@ interface Props {
   params: Promise<{ code: string; slug: string[] }>;
 }
 
-/** Que ecrã da loja corresponde a este endereço, se algum. */
-async function ecraDaLoja(
-  db: Awaited<ReturnType<typeof createClient>>,
-  siteId: string,
-  slug: string[],
-  familias: readonly string[],
-): Promise<EcraDaLoja | null> {
-  if (slug.length === 2 && slug[0] === 'peca') {
-    const peca = await pecaPorRef(db, siteId, decodeURIComponent(slug[1]!));
-    return peca ? { tipo: 'peca', peca } : null;
-  }
-
-  if (slug.length !== 1) return null;
-  const um = slug[0]!;
-
-  if (um === 'como-comprar') return { tipo: 'como-comprar' };
-  if (um === 'contacto') return { tipo: 'contacto' };
-  if (familias.includes(um)) return { tipo: 'familia', familia: um };
-
-  return null;
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, slug } = await params;
   const supabase = await createClient();
@@ -63,11 +38,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!result) return { title: 'Página não encontrada' };
 
   const nome = result.site.title ?? 'Página';
-
-  if (slug.length === 2 && slug[0] === 'peca') {
-    const peca = await pecaPorRef(supabase, result.site.id, decodeURIComponent(slug[1]!));
-    if (peca) return { title: `${peca.nome} · ${nome}` };
-  }
 
   const pagina = slug.length === 1 ? await paginaPorSlug(supabase, result.site.id, slug[0]!) : null;
   if (pagina) return { title: `${pagina.titulo} · ${nome}` };
@@ -85,32 +55,17 @@ export default async function PaginaInterior({ params }: Props) {
   const { site } = result;
   const pecas = await catalogo(supabase, site.id);
 
-  if (pecas.length > 0) {
-    const ecra = await ecraDaLoja(supabase, site.id, slug, familiasDoCatalogo(pecas));
-    if (ecra) {
-      const { data: negocio } = await supabase
-        .from('businesses')
-        .select('name, formatted_address, phone_e164, phone_raw')
-        .eq('id', site.business_id)
-        .maybeSingle();
-
-      return (
-        <>
-          <VisitTracker publicCode={code} />
-          <LojaRender
-            ecra={ecra}
-            nome={site.title ?? negocio?.name ?? 'Loja'}
-            morada={negocio?.formatted_address ?? null}
-            telefone={negocio?.phone_e164 ?? negocio?.phone_raw ?? null}
-            whatsapp={site.whatsapp_number_e164 ?? negocio?.phone_e164 ?? null}
-            theme={parseTheme(site.theme)}
-            pecas={pecas}
-            raiz={`/s/${code}`}
-            base={publicEnv.NEXT_PUBLIC_SITE_URL}
-          />
-        </>
-      );
-    }
+  // As páginas da loja, servidas pelo desenho. `/peca` sem referência ainda
+  // mostra a ficha de exemplo do desenho — é o que o comerciante vê antes de
+  // ter catálogo.
+  const nomeDaPagina = slug[0] ?? '';
+  if (pecas.length > 0 && slug.length <= 2 && ehPaginaDaLoja(nomeDaPagina)) {
+    return (
+      <>
+        <VisitTracker publicCode={code} />
+        <LojaDesenho pagina={nomeDaPagina} />
+      </>
+    );
   }
 
   // Uma página escrita à parte. Criada mas ainda por gerar devolve 404 em vez

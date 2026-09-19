@@ -8,7 +8,7 @@ import { publicEnv } from '@/lib/env';
 import { publish, unpublish } from '../../../site-actions';
 import { EditarComIa } from './editar-com-ia';
 import { catalogo } from '@/lib/loja/repository';
-import { LojaRender } from '@/components/site/loja-render';
+import { LojaDesenho } from '@/components/site/loja-desenho';
 
 /**
  * Pré-visualização: a página exatamente como o cliente a verá.
@@ -164,17 +164,7 @@ export default async function PreviaPage({ params }: Props) {
       </div>
 
       {pecas.length > 0 ? (
-        <LojaRender
-          ecra={{ tipo: 'inicio' }}
-          nome={site.title ?? negocio?.name ?? 'Loja'}
-          morada={negocio?.formatted_address ?? null}
-          telefone={negocio?.phone_e164 ?? negocio?.phone_raw ?? null}
-          whatsapp={site.whatsapp_number_e164 ?? negocio?.phone_e164 ?? null}
-          theme={theme}
-          pecas={pecas}
-          raiz={`/s/${site.public_code}`}
-          base={publicEnv.NEXT_PUBLIC_SITE_URL}
-        />
+        <LojaDesenho pagina="inicio" />
       ) : site.custom_html ? (
         <CustomHtmlSite html={site.custom_html} />
       ) : (

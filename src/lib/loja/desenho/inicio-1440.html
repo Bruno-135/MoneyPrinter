@@ -1,0 +1,151 @@
+<div style="width:1440px;background:#0B0E12;border:1px solid #232A34">
+
+      <header style="display:flex;align-items:center;justify-content:space-between;padding:20px 80px;border-bottom:1px solid #232A34">
+        <a href="/inicio" style="font:700 21px/1 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none;letter-spacing:-.4px">Volta &amp; Meia</a>
+        <nav style="display:flex;gap:28px;align-items:center">
+          <a href="/inicio" style="font:500 15px/1 'Hanken Grotesk',sans-serif;color:#63E6FF;text-decoration:none;padding-bottom:5px;border-bottom:2px solid #63E6FF">Início</a>
+          <a href="/mulher" style="font:400 15px/1 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none;padding-bottom:5px;border-bottom:2px solid transparent">Mulher</a>
+          <a href="/homem" style="font:400 15px/1 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none;padding-bottom:5px;border-bottom:2px solid transparent">Homem</a>
+          <a href="/como-comprar" style="font:400 15px/1 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none;padding-bottom:5px;border-bottom:2px solid transparent">Como comprar</a>
+          <a href="/contacto" style="font:400 15px/1 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none;padding-bottom:5px;border-bottom:2px solid transparent">Contacto</a>
+          <a href="https://wa.me/351912345678?text=Ol%C3%A1%2C%20queria%20perguntar%20por%20uma%20pe%C3%A7a" style="margin-left:8px;padding:10px 14px;background:#63E6FF;color:#0B0E12;font:500 13px/1 'Martian Mono',monospace;letter-spacing:.04em;text-decoration:none;border-radius:2px">WHATSAPP 912 345 678</a>
+        </nav>
+      </header>
+
+      <div style="padding:48px 80px 0">
+        <div style="position:relative">
+          <div style="aspect-ratio:16/9;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);border:1px solid #232A34;display:grid;place-items:center">
+            <span style="font:400 12px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.1em">fotografia 16:9 — interior da loja, Rua de Cedofeita</span>
+          </div>
+          <div style="position:absolute;left:0;bottom:-1px;width:760px;background:#0B0E12;border:1px solid #232A34;border-left:0;border-bottom:0;padding:40px 48px 40px 0;display:grid;gap:24px">
+            <h2 style="margin:0;font:700 52px/1.04 'Hanken Grotesk',sans-serif;letter-spacing:-1.6px;text-wrap:balance">Roupa nova e em segunda mão, escolhida peça a peça.</h2>
+            <div style="display:flex;gap:12px">
+              <a href="/mulher" style="padding:14px 20px;background:#63E6FF;color:#0B0E12;font:500 14px/1 'Hanken Grotesk',sans-serif;text-decoration:none;border-radius:2px">Ver mulher</a>
+              <a href="/homem" style="padding:14px 20px;border:1px solid #98A4B3;color:#E8ECF2;font:500 14px/1 'Hanken Grotesk',sans-serif;text-decoration:none;border-radius:2px">Ver homem</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:96px 80px 0;display:grid;gap:24px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #232A34;padding-bottom:12px">
+          <h3 style="margin:0;font:500 11px/1 'Martian Mono',monospace;letter-spacing:.18em;color:#E8ECF2">DESTAQUES</h3>
+          <a href="/mulher" style="font:400 14px/1 'Hanken Grotesk',sans-serif;color:#63E6FF;text-decoration:none">Ver tudo</a>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
+          <sc-for list="{{ destaques }}" as="p" hint-placeholder-count="4">
+            <a href="/peca" style="display:grid;gap:12px;text-decoration:none;color:inherit">
+              <div style="position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:#10161F;overflow:hidden">
+                <div style="position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);opacity:{{ p.op }}">
+                  <span style="font:400 10px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5</span>
+                </div>
+                <sc-if value="{{ p.tag }}" hint-placeholder-val="{{ true }}">
+                  <span style="position:absolute;top:8px;left:8px;padding:5px 8px;border:1px solid #232A34;border-radius:2px;font:500 10px/1.1 'Martian Mono',monospace;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;background:{{ p.tagBg }};color:{{ p.tagFg }}">{{ p.tag }}</span>
+                </sc-if>
+                <sc-if value="{{ p.sold }}" hint-placeholder-val="{{ false }}">
+                  <span style="position:absolute;left:0;right:0;bottom:0;padding:10px;text-align:center;background:#0B0E12;color:#98A4B3;font:500 11px/1 'Martian Mono',monospace;text-transform:uppercase;letter-spacing:.14em">esgotado</span>
+                </sc-if>
+              </div>
+              <div style="display:grid;gap:5px">
+                <span style="font:500 16px/1.3 'Hanken Grotesk',sans-serif;color:{{ p.nameColor }}">{{ p.name }}</span>
+                <span style="font:500 15px/1.2 'Hanken Grotesk',sans-serif;color:{{ p.priceColor }}">{{ p.price }}</span>
+              </div>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ mostraVistos }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:80px 80px 0;display:grid;gap:24px">
+          <div style="border-bottom:1px solid #232A34;padding-bottom:12px">
+            <h3 style="margin:0;font:500 11px/1 'Martian Mono',monospace;letter-spacing:.18em;color:#E8ECF2">MAIS VISTOS ESTA SEMANA</h3>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px">
+            <sc-for list="{{ vistos }}" as="p" hint-placeholder-count="6">
+              <a href="/peca" style="display:grid;gap:10px;text-decoration:none;color:inherit">
+                <div style="position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:#10161F;overflow:hidden">
+                  <div style="position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);opacity:{{ p.op }}">
+                    <span style="font:400 10px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5</span>
+                  </div>
+                  <sc-if value="{{ p.sold }}" hint-placeholder-val="{{ false }}">
+                    <span style="position:absolute;left:0;right:0;bottom:0;padding:8px;text-align:center;background:#0B0E12;color:#98A4B3;font:500 10px/1 'Martian Mono',monospace;text-transform:uppercase;letter-spacing:.14em">esgotado</span>
+                  </sc-if>
+                </div>
+                <div style="display:grid;gap:4px">
+                  <span style="font:400 14px/1.3 'Hanken Grotesk',sans-serif;color:{{ p.nameColor }}">{{ p.name }}</span>
+                  <span style="font:500 14px/1.2 'Hanken Grotesk',sans-serif;color:{{ p.priceColor }}">{{ p.price }}</span>
+                </div>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="padding:96px 80px 0;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <a href="/mulher" style="position:relative;display:block;text-decoration:none;color:inherit">
+          <div style="aspect-ratio:3/2;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);display:grid;place-items:center">
+            <span style="font:400 11px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.1em">fotografia 3:2</span>
+          </div>
+          <div style="position:absolute;left:0;bottom:0;background:#0B0E12;border-top:1px solid #232A34;border-right:1px solid #232A34;padding:24px 32px 24px 0;display:grid;gap:6px">
+            <span style="font:700 40px/1 'Hanken Grotesk',sans-serif;letter-spacing:-1px">MULHER</span>
+            <span style="font:400 13px/1 'Martian Mono',monospace;color:#98A4B3">{{ nMulher }} peças</span>
+          </div>
+        </a>
+        <a href="/homem" style="position:relative;display:block;text-decoration:none;color:inherit">
+          <div style="aspect-ratio:3/2;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);display:grid;place-items:center">
+            <span style="font:400 11px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.1em">fotografia 3:2</span>
+          </div>
+          <div style="position:absolute;left:0;bottom:0;background:#0B0E12;border-top:1px solid #232A34;border-right:1px solid #232A34;padding:24px 32px 24px 0;display:grid;gap:6px">
+            <span style="font:700 40px/1 'Hanken Grotesk',sans-serif;letter-spacing:-1px">HOMEM</span>
+            <span style="font:400 13px/1 'Martian Mono',monospace;color:#98A4B3">{{ nHomem }} peças</span>
+          </div>
+        </a>
+      </div>
+
+      <div style="margin:96px 80px 0;background:#141920;border-top:1px solid #232A34;border-bottom:1px solid #232A34;display:grid;grid-template-columns:repeat(3,1fr)">
+        <div style="padding:40px 48px;display:grid;gap:8px;border-right:1px solid #232A34">
+          <span style="font:500 11px/1 'Martian Mono',monospace;letter-spacing:.16em;color:#63E6FF">ENTREGA</span>
+          <span style="font:700 28px/1.1 'Hanken Grotesk',sans-serif;letter-spacing:-.6px">3 € no Porto</span>
+          <span style="font:400 15px/1.45 'Hanken Grotesk',sans-serif;color:#98A4B3">4,50 € no resto do país. Recolha na loja sem custo.</span>
+        </div>
+        <div style="padding:40px 48px;display:grid;gap:8px;border-right:1px solid #232A34">
+          <span style="font:500 11px/1 'Martian Mono',monospace;letter-spacing:.16em;color:#63E6FF">PRAZO</span>
+          <span style="font:700 28px/1.1 'Hanken Grotesk',sans-serif;letter-spacing:-.6px">24 h / 48 h</span>
+          <span style="font:400 15px/1.45 'Hanken Grotesk',sans-serif;color:#98A4B3">24 h no Porto, 48 h no resto do país, dias úteis.</span>
+        </div>
+        <div style="padding:40px 48px;display:grid;gap:8px">
+          <span style="font:500 11px/1 'Martian Mono',monospace;letter-spacing:.16em;color:#63E6FF">TROCAS</span>
+          <span style="font:700 28px/1.1 'Hanken Grotesk',sans-serif;letter-spacing:-.6px">14 dias</span>
+          <span style="font:400 15px/1.45 'Hanken Grotesk',sans-serif;color:#98A4B3">Na loja ou por envio. Segunda mão troca-se na loja.</span>
+        </div>
+      </div>
+
+      <footer style="margin-top:96px;border-top:1px solid #232A34;padding:56px 80px 32px;display:grid;gap:40px">
+        <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:24px">
+          <div style="display:grid;gap:12px;align-content:start">
+            <span style="font:700 19px/1 'Hanken Grotesk',sans-serif;letter-spacing:-.3px">Volta &amp; Meia</span>
+            <span style="font:400 15px/1.55 'Hanken Grotesk',sans-serif;color:#98A4B3">Rua de Cedofeita 212<br>4050-174 Porto</span>
+          </div>
+          <div style="display:grid;gap:12px;align-content:start">
+            <span style="font:500 11px/1 'Martian Mono',monospace;letter-spacing:.16em;color:#98A4B3">HORÁRIO</span>
+            <span style="font:400 15px/1.55 'Hanken Grotesk',sans-serif">Seg a Sáb 10h–19h30<br>Domingo fechado</span>
+          </div>
+          <div style="display:grid;gap:10px;align-content:start">
+            <span style="font:500 11px/1 'Martian Mono',monospace;letter-spacing:.16em;color:#98A4B3">CONTACTO</span>
+            <a href="tel:+351912345678" style="font:400 15px/1.3 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none">912 345 678</a>
+            <a href="https://wa.me/351912345678?text=Ol%C3%A1%2C%20queria%20perguntar%20por%20uma%20pe%C3%A7a" style="font:400 15px/1.3 'Hanken Grotesk',sans-serif;color:#63E6FF;text-decoration:none">WhatsApp</a>
+            <a href="mailto:ola@voltaemeia.pt" style="font:400 15px/1.3 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none">ola@voltaemeia.pt</a>
+          </div>
+          <div style="display:grid;gap:10px;align-content:start">
+            <span style="font:500 11px/1 'Martian Mono',monospace;letter-spacing:.16em;color:#98A4B3">PÁGINAS</span>
+            <a href="/inicio" style="font:400 15px/1.3 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none">Início</a>
+            <a href="/mulher" style="font:400 15px/1.3 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none">Mulher</a>
+            <a href="/homem" style="font:400 15px/1.3 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none">Homem</a>
+            <a href="/como-comprar" style="font:400 15px/1.3 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none">Como comprar</a>
+            <a href="/contacto" style="font:400 15px/1.3 'Hanken Grotesk',sans-serif;color:#E8ECF2;text-decoration:none">Contacto</a>
+          </div>
+        </div>
+        <div style="border-top:1px solid #232A34;padding-top:20px;font:400 12px/1.4 'Martian Mono',monospace;color:#98A4B3">VOLTA &amp; MEIA · NIF 500 000 000 · LIVRO DE RECLAMAÇÕES · PRIVACIDADE</div>
+      </footer>
+
+    </div>
