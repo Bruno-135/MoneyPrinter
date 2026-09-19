@@ -19,29 +19,29 @@
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
           <figure style="margin:0;display:grid;gap:8px">
-            <div style="position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);display:grid;place-items:center">
+            <div style="position:relative;position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);display:grid;place-items:center">
               <span style="font:400 11px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5 — frente</span>
               <span style="position:absolute;top:8px;left:8px;padding:5px 8px;border:1px solid #232A34;border-radius:2px;background:#232A34;color:#E8ECF2;font:500 10px/1.1 'Martian Mono',monospace;letter-spacing:.1em;white-space:nowrap">2ª MÃO</span>
-            </div>
+            <sc-if value="{{ foto1 }}"><img src="{{ foto1 }}" alt="{{ foto1Alt }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if></div>
             <figcaption style="font:400 11px/1 'Martian Mono',monospace;color:#98A4B3;letter-spacing:.06em">1 · FRENTE</figcaption>
           </figure>
           <figure style="margin:0;display:grid;gap:8px">
-            <div style="aspect-ratio:4/5;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);display:grid;place-items:center">
+            <div style="position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);display:grid;place-items:center">
               <span style="font:400 11px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5 — costas</span>
-            </div>
+            <sc-if value="{{ foto2 }}"><img src="{{ foto2 }}" alt="{{ foto2Alt }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if></div>
             <figcaption style="font:400 11px/1 'Martian Mono',monospace;color:#98A4B3;letter-spacing:.06em">2 · COSTAS</figcaption>
           </figure>
           <figure style="margin:0;display:grid;gap:8px">
-            <div style="position:relative;aspect-ratio:4/5;border:1px solid #63E6FF;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);display:grid;place-items:center">
+            <div style="position:relative;position:relative;aspect-ratio:4/5;border:1px solid #63E6FF;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);display:grid;place-items:center">
               <span style="font:400 11px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5 — pormenor</span>
               <span style="position:absolute;bottom:0;left:0;right:0;padding:10px;background:#63E6FF;color:#0B0E12;font:500 10px/1.1 'Martian Mono',monospace;letter-spacing:.1em;white-space:nowrap;text-align:center">A MARCA NA BAINHA É AQUI</span>
-            </div>
+            <sc-if value="{{ foto3 }}"><img src="{{ foto3 }}" alt="{{ foto3Alt }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if></div>
             <figcaption style="font:400 11px/1 'Martian Mono',monospace;color:#98A4B3;letter-spacing:.06em">3 · TECIDO E COSTURA, EM APROXIMAÇÃO</figcaption>
           </figure>
           <figure style="margin:0;display:grid;gap:8px">
-            <div style="aspect-ratio:4/5;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);display:grid;place-items:center">
+            <div style="position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);display:grid;place-items:center">
               <span style="font:400 11px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5 — vestida</span>
-            </div>
+            <sc-if value="{{ foto4 }}"><img src="{{ foto4 }}" alt="{{ foto4Alt }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if></div>
             <figcaption style="font:400 11px/1 'Martian Mono',monospace;color:#98A4B3;letter-spacing:.06em">4 · VESTIDA · 1,78 M, VESTE M</figcaption>
           </figure>
         </div>
@@ -113,7 +113,7 @@ Entrega: ( ) recolher na loja ( ) entregar em ____</div>
           <sc-for list="{{ relacionadas }}" as="p" hint-placeholder-count="4">
             <a href="/peca" style="display:grid;gap:12px;text-decoration:none;color:inherit">
               <div style="position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:#10161F;overflow:hidden">
-                <div style="position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);opacity:{{ p.op }}">
+                <sc-if value="{{ p.foto }}"><img src="{{ p.foto }}" alt="{{ p.name }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><div style="position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);opacity:{{ p.op }}">
                   <span style="font:400 10px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5</span>
                 </div>
                 <sc-if value="{{ p.tag }}" hint-placeholder-val="{{ true }}">

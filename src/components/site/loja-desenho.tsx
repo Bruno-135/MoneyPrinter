@@ -1,4 +1,6 @@
 import { ARTBOARDS, type NomeDeArtboard } from '@/lib/loja/desenho/artboards';
+import { encher } from '@/lib/loja/desenho/motor';
+import { contextoDaLoja, type DadosDaLoja } from '@/lib/loja/desenho/contexto';
 
 /**
  * A loja como o Claude Design a desenhou.
@@ -40,14 +42,22 @@ function artboard(pagina: PaginaDaLoja, largura: 390 | 1440): string | null {
 
 interface Props {
   pagina: PaginaDaLoja;
+  /** Os dados do cliente. Sem eles, fica o desenho com as caixas às riscas. */
+  dados?: DadosDaLoja;
 }
 
-export function LojaDesenho({ pagina }: Props) {
+export function LojaDesenho({ pagina, dados }: Props) {
   // O Homem só foi desenhado em 1440. Cair no de Mulher seria mostrar vestidos
   // na página de homem; cair no de 1440 num telemóvel obriga a arrastar, mas
   // mostra a página certa — e é o desenho, que é o que se pediu.
-  const telemovel = artboard(pagina, 390) ?? artboard(pagina, 1440);
-  const computador = artboard(pagina, 1440) ?? artboard(pagina, 390);
+  const bruto390 = artboard(pagina, 390) ?? artboard(pagina, 1440);
+  const bruto1440 = artboard(pagina, 1440) ?? artboard(pagina, 390);
+
+  // Sem dados o contexto vai vazio, e o motor desenha as cópias e as caixas
+  // às riscas do desenho — que é o que se mostra a quem ainda não tem loja.
+  const contexto = dados ? contextoDaLoja(dados) : {};
+  const telemovel = bruto390 ? encher(bruto390, contexto) : null;
+  const computador = bruto1440 ? encher(bruto1440, contexto) : null;
 
   return (
     // A cor do texto e a letra estavam no <section> da TELA do desenho, que

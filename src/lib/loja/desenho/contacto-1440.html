@@ -47,9 +47,9 @@
 
         <div style="display:grid;gap:32px">
           <figure style="margin:0;display:grid;gap:10px">
-            <div style="aspect-ratio:3/2;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);display:grid;place-items:center">
+            <div style="position:relative;aspect-ratio:3/2;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);display:grid;place-items:center">
               <span style="font:400 12px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.1em">fotografia 3:2 — a montra e a porta azul</span>
-            </div>
+            <sc-if value="{{ foto1 }}"><img src="{{ foto1 }}" alt="{{ foto1Alt }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if></div>
             <figcaption style="font:400 12px/1 'Martian Mono',monospace;color:#98A4B3;letter-spacing:.06em">É ESTA A PORTA. SEM LETREIRO GRANDE.</figcaption>
           </figure>
 

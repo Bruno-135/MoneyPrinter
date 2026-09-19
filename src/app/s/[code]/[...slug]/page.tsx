@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { getPublicSite } from '@/lib/sites/repository';
 import { paginaPorSlug } from '@/lib/sites/paginas/repository';
-import { catalogo } from '@/lib/loja/repository';
+import { catalogo, pecaPorRef } from '@/lib/loja/repository';
 import { CustomHtmlSite } from '@/components/site/custom-html';
 import { LojaDesenho, ehPaginaDaLoja } from '@/components/site/loja-desenho';
 import { VisitTracker } from '../tracking';
@@ -60,10 +60,34 @@ export default async function PaginaInterior({ params }: Props) {
   // ter catálogo.
   const nomeDaPagina = slug[0] ?? '';
   if (pecas.length > 0 && slug.length <= 2 && ehPaginaDaLoja(nomeDaPagina)) {
+    const { data: negocio } = await supabase
+      .from('businesses')
+      .select('name, formatted_address, phone_e164, phone_raw')
+      .eq('id', site.business_id)
+      .maybeSingle();
+
+    // `/peca/<ref>` mostra aquela peça; `/peca` sozinho mostra a ficha de
+    // exemplo do desenho, que é o que o comerciante vê antes de ter catálogo.
+    const peca =
+      nomeDaPagina === 'peca' && slug[1]
+        ? await pecaPorRef(supabase, site.id, decodeURIComponent(slug[1]))
+        : undefined;
+
     return (
       <>
         <VisitTracker publicCode={code} />
-        <LojaDesenho pagina={nomeDaPagina} />
+        <LojaDesenho
+          pagina={nomeDaPagina}
+          dados={{
+            nome: site.title ?? negocio?.name ?? 'Loja',
+            morada: negocio?.formatted_address ?? null,
+            telefone: negocio?.phone_e164 ?? negocio?.phone_raw ?? null,
+            email: null,
+            horario: null,
+            pecas,
+            peca: peca ?? undefined,
+          }}
+        />
       </>
     );
   }

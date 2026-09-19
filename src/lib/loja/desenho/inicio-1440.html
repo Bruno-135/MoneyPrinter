@@ -14,9 +14,9 @@
 
       <div style="padding:48px 80px 0">
         <div style="position:relative">
-          <div style="aspect-ratio:16/9;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);border:1px solid #232A34;display:grid;place-items:center">
+          <div style="position:relative;aspect-ratio:16/9;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);border:1px solid #232A34;display:grid;place-items:center">
             <span style="font:400 12px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.1em">fotografia 16:9 — interior da loja, Rua de Cedofeita</span>
-          </div>
+          <sc-if value="{{ foto1 }}"><img src="{{ foto1 }}" alt="{{ foto1Alt }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if></div>
           <div style="position:absolute;left:0;bottom:-1px;width:760px;background:#0B0E12;border:1px solid #232A34;border-left:0;border-bottom:0;padding:40px 48px 40px 0;display:grid;gap:24px">
             <h2 style="margin:0;font:700 52px/1.04 'Hanken Grotesk',sans-serif;letter-spacing:-1.6px;text-wrap:balance">Roupa nova e em segunda mão, escolhida peça a peça.</h2>
             <div style="display:flex;gap:12px">
@@ -36,7 +36,7 @@
           <sc-for list="{{ destaques }}" as="p" hint-placeholder-count="4">
             <a href="/peca" style="display:grid;gap:12px;text-decoration:none;color:inherit">
               <div style="position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:#10161F;overflow:hidden">
-                <div style="position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);opacity:{{ p.op }}">
+                <sc-if value="{{ p.foto }}"><img src="{{ p.foto }}" alt="{{ p.name }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><div style="position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);opacity:{{ p.op }}">
                   <span style="font:400 10px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5</span>
                 </div>
                 <sc-if value="{{ p.tag }}" hint-placeholder-val="{{ true }}">
@@ -64,7 +64,7 @@
             <sc-for list="{{ vistos }}" as="p" hint-placeholder-count="6">
               <a href="/peca" style="display:grid;gap:10px;text-decoration:none;color:inherit">
                 <div style="position:relative;aspect-ratio:4/5;border:1px solid #232A34;background:#10161F;overflow:hidden">
-                  <div style="position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);opacity:{{ p.op }}">
+                  <sc-if value="{{ p.foto }}"><img src="{{ p.foto }}" alt="{{ p.name }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if><div style="position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#171D25 0 8px,#10161F 8px 16px);opacity:{{ p.op }}">
                     <span style="font:400 10px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.08em">foto 4:5</span>
                   </div>
                   <sc-if value="{{ p.sold }}" hint-placeholder-val="{{ false }}">
@@ -83,18 +83,18 @@
 
       <div style="padding:96px 80px 0;display:grid;grid-template-columns:1fr 1fr;gap:24px">
         <a href="/mulher" style="position:relative;display:block;text-decoration:none;color:inherit">
-          <div style="aspect-ratio:3/2;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);display:grid;place-items:center">
+          <div style="position:relative;aspect-ratio:3/2;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);display:grid;place-items:center">
             <span style="font:400 11px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.1em">fotografia 3:2</span>
-          </div>
+          <sc-if value="{{ foto2 }}"><img src="{{ foto2 }}" alt="{{ foto2Alt }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if></div>
           <div style="position:absolute;left:0;bottom:0;background:#0B0E12;border-top:1px solid #232A34;border-right:1px solid #232A34;padding:24px 32px 24px 0;display:grid;gap:6px">
             <span style="font:700 40px/1 'Hanken Grotesk',sans-serif;letter-spacing:-1px">MULHER</span>
             <span style="font:400 13px/1 'Martian Mono',monospace;color:#98A4B3">{{ nMulher }} peças</span>
           </div>
         </a>
         <a href="/homem" style="position:relative;display:block;text-decoration:none;color:inherit">
-          <div style="aspect-ratio:3/2;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);display:grid;place-items:center">
+          <div style="position:relative;aspect-ratio:3/2;border:1px solid #232A34;background:repeating-linear-gradient(135deg,#171D25 0 10px,#10161F 10px 20px);display:grid;place-items:center">
             <span style="font:400 11px/1 'Martian Mono',monospace;color:#5D6A7A;letter-spacing:.1em">fotografia 3:2</span>
-          </div>
+          <sc-if value="{{ foto3 }}"><img src="{{ foto3 }}" alt="{{ foto3Alt }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if></div>
           <div style="position:absolute;left:0;bottom:0;background:#0B0E12;border-top:1px solid #232A34;border-right:1px solid #232A34;padding:24px 32px 24px 0;display:grid;gap:6px">
             <span style="font:700 40px/1 'Hanken Grotesk',sans-serif;letter-spacing:-1px">HOMEM</span>
             <span style="font:400 13px/1 'Martian Mono',monospace;color:#98A4B3">{{ nHomem }} peças</span>

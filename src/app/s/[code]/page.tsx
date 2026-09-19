@@ -55,10 +55,26 @@ export default async function PaginaPublica({ params }: Props) {
   // Design. Nada de redesenhar: foi isso que nunca ficou igual.
   const pecas = await catalogo(supabase, site.id);
   if (pecas.length > 0) {
+    const { data: negocio } = await supabase
+      .from('businesses')
+      .select('name, formatted_address, phone_e164, phone_raw')
+      .eq('id', site.business_id)
+      .maybeSingle();
+
     return (
       <>
         <VisitTracker publicCode={code} />
-        <LojaDesenho pagina="inicio" />
+        <LojaDesenho
+          pagina="inicio"
+        dados={{
+          nome: site.title ?? negocio?.name ?? 'Loja',
+          morada: negocio?.formatted_address ?? null,
+          telefone: negocio?.phone_e164 ?? negocio?.phone_raw ?? null,
+          email: null,
+          horario: null,
+          pecas,
+        }}
+        />
       </>
     );
   }

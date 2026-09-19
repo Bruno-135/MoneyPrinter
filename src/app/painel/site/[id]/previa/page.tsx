@@ -164,7 +164,17 @@ export default async function PreviaPage({ params }: Props) {
       </div>
 
       {pecas.length > 0 ? (
-        <LojaDesenho pagina="inicio" />
+        <LojaDesenho
+          pagina="inicio"
+          dados={{
+            nome: site.title ?? negocio?.name ?? 'Loja',
+            morada: negocio?.formatted_address ?? null,
+            telefone: negocio?.phone_e164 ?? negocio?.phone_raw ?? null,
+            email: null,
+            horario: null,
+            pecas,
+          }}
+        />
       ) : site.custom_html ? (
         <CustomHtmlSite html={site.custom_html} />
       ) : (
