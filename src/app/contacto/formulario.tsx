@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef } from 'react';
 import { CAMPO_ISCO } from '@/lib/vaidesign/pedidos/campos';
 import { MENSAGEM_DE_EXEMPLO } from '@/lib/vaidesign/desenho/dados';
+import { WHATSAPP_DA_AGENCIA } from '@/lib/vaidesign/agencia';
 import { enviarPedido } from './actions';
 import { ENVIO_PARADO, type EstadoDoEnvio } from './estado';
 
@@ -112,6 +113,42 @@ export function ContactoVivo({ telemovel, computador }: Props) {
 
     raiz.addEventListener('click', usarExemplo);
     return () => raiz.removeEventListener('click', usarExemplo);
+  }, []);
+
+  // O «Enviar pelo WhatsApp» que está ao lado do exemplo. No desenho era uma
+  // caixa desenhada e não fazia nada. Agora leva o que está escrito no
+  // formulário e abre a conversa já com o texto lá dentro — para quem
+  // escreveu tudo e prefere não deixar o contacto num formulário.
+  useEffect(() => {
+    const raiz = envelope.current;
+    if (!raiz || !WHATSAPP_DA_AGENCIA) return;
+
+    const mandar = (evento: Event) => {
+      const alvo = (evento.target as HTMLElement | null)?.closest('[data-whatsapp-do-formulario]');
+      if (!alvo) return;
+      evento.preventDefault();
+
+      const form = alvo.closest('form');
+      const ler = (nome: string) =>
+        (form?.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${nome}"]`)?.value ?? '').trim();
+
+      const linhas = [
+        ler('negocio') && `Olá! Sou da ${ler('negocio')}.`,
+        ler('pedido'),
+        ler('modelo') && ler('modelo') !== 'Sem preferência' && `Gostei do modelo ${ler('modelo')}.`,
+        ler('prazo') && `Precisava para: ${ler('prazo')}.`,
+      ].filter(Boolean);
+
+      const texto = linhas.length > 0 ? linhas.join('\n\n') : 'Olá! Queria falar sobre um site.';
+      window.open(
+        `https://wa.me/${WHATSAPP_DA_AGENCIA}?text=${encodeURIComponent(texto)}`,
+        '_blank',
+        'noopener,noreferrer',
+      );
+    };
+
+    raiz.addEventListener('click', mandar);
+    return () => raiz.removeEventListener('click', mandar);
   }, []);
 
   const classe = `vd-contacto ${classeDoEstado(estado)}`;

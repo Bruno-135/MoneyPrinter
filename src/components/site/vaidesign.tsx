@@ -1,4 +1,5 @@
 import { paginaDaVaiDesign, type Pagina } from '@/lib/vaidesign/desenho/pagina';
+import { MenuMovel } from './menu-movel';
 
 /**
  * O site da VaiDesign como o Claude Design o desenhou.
@@ -104,6 +105,10 @@ export function MolduraVaiDesign({ children }: { children: React.ReactNode }) {
       <link rel="stylesheet" href="/vaidesign/movimento.css" />
 
       <style dangerouslySetInnerHTML={{ __html: ESTILO }} />
+
+      {/* O painel que o botão "Menu" do telemóvel abre. O desenho desenhou o
+          botão e não o painel — ver `menu-movel.tsx`. */}
+      <MenuMovel />
 
       {children}
     </div>

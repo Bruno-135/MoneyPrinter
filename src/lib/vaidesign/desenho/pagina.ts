@@ -4,6 +4,13 @@ import { resolverComponentes } from './componentes';
 import { reescreverLinks, type Destinos } from './links';
 import { abrirAsPartes } from './partes';
 import {
+  apontarPorEtiqueta,
+  ligarRodapeMovel,
+  marcarEnviarPeloWhatsApp,
+  marcarMenuMovel,
+} from './acoes';
+import { EMAIL_DA_AGENCIA } from '../agencia';
+import {
   FORMULARIO_VAZIO,
   RAMOS,
   RAMO_DO_MODELO,
@@ -93,10 +100,20 @@ export function paginaDaVaiDesign(
   // trocava o HTML e apagava o que a pessoa tinha escrito.
   const preparado = pagina === 'contacto' ? abrirAsPartes(molde) : molde;
   const cheio = encher(preparado, contexto(pagina, formulario));
-  return marcarModelo(
-    reescreverLinks(resolverComponentes(cheio), destinos),
-    pagina === 'contacto' ? formulario.v4 : '',
+  const comLinks = reescreverLinks(resolverComponentes(cheio), destinos);
+
+  // Os botões que o desenho deixou sem destino. Ver `acoes.ts`.
+  const vivo = marcarEnviarPeloWhatsApp(
+    marcarMenuMovel(
+      ligarRodapeMovel(
+        apontarPorEtiqueta(comLinks, destinos, EMAIL_DA_AGENCIA),
+        destinos,
+        EMAIL_DA_AGENCIA,
+      ),
+    ),
   );
+
+  return marcarModelo(vivo, pagina === 'contacto' ? formulario.v4 : '');
 }
 
 /**

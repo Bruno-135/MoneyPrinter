@@ -1,0 +1,126 @@
+import { describe, expect, it } from 'vitest';
+import { PAGINAS, paginaDaVaiDesign, type Pagina } from './pagina';
+import { ROTAS } from './links';
+import { EMAIL_DA_AGENCIA, WHATSAPP_DA_AGENCIA } from '../agencia';
+
+/**
+ * Nenhum botão do site pode ficar a olhar para quem lhe carrega.
+ *
+ * Isto existe porque a primeira versão do site tinha cinco botões mortos e eu
+ * não dei por nada: os testes viam o HTML todo certo, e o HTML ESTAVA todo
+ * certo — o desenho é que desenha botões, não links, porque numa tela não há
+ * para onde ir. Só se vê a carregar.
+ *
+ * Então passa a ver-se aqui: percorre-se cada página nas duas larguras, e
+ * qualquer coisa com ar de botão tem de ser um link com destino ou estar
+ * marcada para o browser lhe pegar.
+ */
+
+const LARGURAS = [390, 1440] as const;
+const destinos = { whatsapp: WHATSAPP_DA_AGENCIA };
+
+/** Os destinos que valem: as rotas do site, o WhatsApp, o email e as âncoras. */
+const DESTINOS_BONS = [
+  ...Object.values(ROTAS),
+  `https://wa.me/${WHATSAPP_DA_AGENCIA}`,
+  `mailto:${EMAIL_DA_AGENCIA}`,
+  '#',
+];
+
+function texto(html: string): string {
+  return html.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+}
+
+function paginaCompleta(pagina: Pagina, largura: 390 | 1440): string {
+  return paginaDaVaiDesign(pagina, largura, destinos);
+}
+
+describe('os links de todas as páginas', () => {
+  for (const pagina of PAGINAS) {
+    for (const largura of LARGURAS) {
+      const html = paginaCompleta(pagina, largura);
+
+      it(`${pagina} · ${largura}: todos os links levam a algum lado`, () => {
+        const alvos = [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1]!);
+        expect(alvos.length).toBeGreaterThan(5);
+        for (const alvo of alvos) {
+          expect(DESTINOS_BONS, `${alvo} em ${pagina}/${largura}`).toContain(alvo);
+        }
+      });
+
+      it(`${pagina} · ${largura}: nenhum link ficou a apontar para o desenho`, () => {
+        expect(html).not.toContain('.dc.html');
+        expect(html).not.toContain('href="#whatsapp"');
+      });
+    }
+  }
+});
+
+describe('os botões que o desenho deixou sem destino', () => {
+  for (const pagina of PAGINAS) {
+    it(`${pagina}: o botão do menu no telemóvel está marcado`, () => {
+      const html = paginaCompleta(pagina, 390);
+      // O cabeçalho de 390 não tem os links das páginas: sem este botão a
+      // funcionar, quem entra pelo telemóvel fica preso onde caiu.
+      expect(html).toContain('data-menu-movel');
+      expect(html).toContain('>Menu');
+    });
+
+    it(`${pagina}: o botão de WhatsApp do rodapé abre o WhatsApp`, () => {
+      for (const largura of LARGURAS) {
+        const html = paginaCompleta(pagina, largura);
+        const whats = [...html.matchAll(/<a\b[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g)].filter(
+          (m) => /whatsapp/i.test(texto(m[2]!)),
+        );
+        expect(whats.length, `${pagina}/${largura}`).toBeGreaterThan(0);
+        for (const m of whats) {
+          expect(m[1], `«${texto(m[2]!)}» em ${pagina}/${largura}`).toContain('wa.me');
+        }
+      }
+    });
+
+    it(`${pagina}: o botão com o email abre o email`, () => {
+      for (const largura of LARGURAS) {
+        const html = paginaCompleta(pagina, largura);
+        const emails = [...html.matchAll(/<a\b[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g)].filter(
+          (m) => texto(m[2]!) === EMAIL_DA_AGENCIA,
+        );
+        expect(emails.length, `${pagina}/${largura}`).toBeGreaterThan(0);
+        for (const m of emails) expect(m[1]).toBe(`mailto:${EMAIL_DA_AGENCIA}`);
+      }
+    });
+  }
+
+  it('o «Enviar pelo WhatsApp» do formulário está marcado', () => {
+    // Só existe no artboard de computador: o desenho não o pôs no telemóvel,
+    // onde o botão grande do WhatsApp já está por cima do formulário.
+    expect(paginaCompleta('contacto', 1440)).toContain('data-whatsapp-do-formulario');
+  });
+
+  it('o rodapé do telemóvel também liga ao WhatsApp e ao email', () => {
+    for (const pagina of PAGINAS) {
+      const html = paginaCompleta(pagina, 390);
+      expect(html, pagina).not.toContain('<span>WhatsApp</span>');
+      expect(html, pagina).not.toContain('<span>Email</span>');
+    }
+  });
+
+  it('o «Copiar exemplo» está marcado', () => {
+    for (const largura of LARGURAS) {
+      expect(paginaCompleta('contacto', largura)).toContain('data-copiar-exemplo');
+    }
+  });
+});
+
+describe('o menu, em todas as páginas', () => {
+  for (const pagina of PAGINAS) {
+    for (const largura of LARGURAS) {
+      it(`${pagina} · ${largura}: dá para chegar às cinco páginas`, () => {
+        const html = paginaCompleta(pagina, largura);
+        for (const rota of Object.values(ROTAS)) {
+          expect(html, `falta ${rota}`).toContain(`href="${rota}"`);
+        }
+      });
+    }
+  }
+});
