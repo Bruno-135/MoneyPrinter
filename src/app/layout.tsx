@@ -1,10 +1,17 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+/**
+ * O título que se vê no separador do browser e quando se partilha o endereço.
+ *
+ * Era "Prospeção Comercial", que servia enquanto isto vivia num endereço da
+ * Vercel que só eu conhecia. Agora vive em vaidesign.net, e o separador é a
+ * primeira coisa que um cliente lê. As páginas dos clientes em `/s/<código>`
+ * têm título próprio e não herdam este.
+ */
 export const metadata: Metadata = {
-  title: 'Prospeção Comercial',
-  description:
-    'Encontra comércios sem site, calcula a probabilidade de venda e gera landing pages de apresentação.',
+  title: { default: 'VaiDesign', template: '%s · VaiDesign' },
+  description: 'Sites para comércio local. Feitos em dias, não em meses.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

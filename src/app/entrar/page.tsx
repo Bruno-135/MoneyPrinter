@@ -10,6 +10,12 @@ import { createClient } from '@/lib/supabase/client';
  * Não há registo: os utilizadores são criados no painel do Supabase. Este
  * sistema é para uso próprio, e uma página de registo aberta seria uma porta
  * escancarada para uma ferramenta que gasta dinheiro numa API paga.
+ *
+ * Desde que o domínio próprio entrou, esta página deixou de ser um canto
+ * privado de um endereço que ninguém sabia: está na raiz da agência, e quem
+ * lá cair por engano é um cliente. Por isso não diz o que há do outro lado
+ * nem com que ferramentas foi feito — o que se dá a ler aqui é o nome da
+ * casa e mais nada.
  */
 export default function EntrarPage() {
   const router = useRouter();
@@ -29,10 +35,7 @@ export default function EntrarPage() {
     if (signInError) {
       // A mensagem do Supabase é sempre "Invalid login credentials", mesmo
       // quando a causa real é o email por confirmar. Vale a pena dizê-lo.
-      setError(
-        'Não foi possível entrar. Confirma o email e a password — e, se criaste o ' +
-          'utilizador agora, que a caixa "Auto Confirm User" estava ligada.',
-      );
+      setError('Não foi possível entrar. Confirma o email e a password.');
       setBusy(false);
       return;
     }
@@ -44,7 +47,7 @@ export default function EntrarPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-8 px-6">
       <div>
-        <p className="text-sm font-medium tracking-wide text-brand-600 uppercase">Prospeção comercial</p>
+        <p className="text-sm font-medium tracking-wide text-brand-600 uppercase">VaiDesign</p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Entrar</h1>
       </div>
 
@@ -87,10 +90,6 @@ export default function EntrarPage() {
           {busy ? 'A entrar…' : 'Entrar'}
         </button>
       </form>
-
-      <p className="text-sm opacity-60">
-        Os utilizadores criam-se no painel do Supabase, em Authentication &rsaquo; Users.
-      </p>
     </main>
   );
 }
