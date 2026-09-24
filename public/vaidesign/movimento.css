@@ -1,0 +1,113 @@
+/* VaiDesign · Movimento v1
+   Só CSS. Nenhum JavaScript.
+   Por omissão tudo está parado; o movimento só existe dentro de
+   @media (prefers-reduced-motion: no-preference).
+   Curvas:
+     --vd-saida     cubic-bezier(.2,.7,.2,1)   entradas
+     --vd-travagem  cubic-bezier(.16,1,.3,1)   contagem dos números
+     --vd-resposta  cubic-bezier(.25,.8,.25,1) hover
+     linear                                    fitas, carrossel, selo
+     ease-in-out                               respiração da forma */
+
+@property --vd-n { syntax: '<integer>'; inherits: false; initial-value: 0; }
+
+/* ── ESTRUTURA (sempre activa, não é movimento) ── */
+.vd-car { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; padding-top: 10px; }
+.vd-car::-webkit-scrollbar { display: none; }
+.vd-track { display: flex; width: max-content; }
+.vd-slide { flex: none; scroll-snap-align: start; }
+.vd-dup { display: none; }
+.vd-fita { overflow: hidden; }
+.vd-fita-track { display: flex; width: max-content; }
+
+/* estados de hover sem deslocação — valem também para quem reduz o movimento */
+.vd-btn { background-image: linear-gradient(#141210, #141210); background-repeat: no-repeat; background-position: left center; background-size: 0% 100%; }
+.vd-btn--tijolo { background-image: linear-gradient(#BA4100, #BA4100); }
+.vd-btn--creme { background-image: linear-gradient(#F6EFE4, #F6EFE4); }
+.vd-btn:hover { background-size: 100% 100%; color: #F6EFE4 !important; border-color: #141210 !important; }
+.vd-btn--tijolo:hover { border-color: #BA4100 !important; }
+.vd-btn--creme:hover { color: #141210 !important; border-color: #F6EFE4 !important; }
+.vd-btn:hover .vd-ring { border-color: currentColor !important; }
+.vd-btn:hover .vd-dot { background-color: #EC5B13 !important; color: #141210 !important; }
+.vd-btn:focus-visible, .vd-slide-card:focus-visible { outline: 3px solid #EC5B13; outline-offset: 3px; }
+
+.vd-nav a { position: relative; }
+.vd-nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 3px; border-radius: 2px; background: #EC5B13; transform: scaleX(0); transform-origin: left center; }
+.vd-nav a:hover::after, .vd-nav a[aria-current="page"]::after { transform: scaleX(1); }
+
+.vd-slide-card:hover { border-color: #EC5B13 !important; }
+.vd-svc:hover .vd-svc-seta { background-color: #EC5B13 !important; border-color: #EC5B13 !important; color: #141210 !important; }
+
+/* ── MOVIMENTO ── */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Botões: enche da esquerda 200 ms; seta +4 px; carregar 0.98 em 80 ms */
+  .vd-btn { transition: background-size 200ms cubic-bezier(.25,.8,.25,1), color 200ms cubic-bezier(.25,.8,.25,1), border-color 200ms cubic-bezier(.25,.8,.25,1), transform 80ms ease-out; }
+  .vd-btn .vd-seta { display: inline-block; transition: transform 200ms cubic-bezier(.25,.8,.25,1); }
+  .vd-btn:hover .vd-seta { transform: translateX(4px); }
+  .vd-btn:active { transform: scale(.98); }
+
+  /* Navegação: traço cresce da esquerda, 250 ms */
+  .vd-nav a::after { transition: transform 250ms cubic-bezier(.25,.8,.25,1); }
+
+  /* Abertura: título linha a linha, 520 ms, 60 ms entre linhas, uma vez */
+  .vd-linha { display: block; animation: vd-sobe 520ms cubic-bezier(.2,.7,.2,1) both; }
+  .vd-l1 { animation-delay: 60ms; } .vd-l2 { animation-delay: 120ms; } .vd-l3 { animation-delay: 180ms; }
+  /* checks: 320 ms cada, 80 ms entre eles, depois do título */
+  .vd-check { animation: vd-sobe-curto 320ms cubic-bezier(.2,.7,.2,1) both; }
+  .vd-k0 { animation-delay: 420ms; } .vd-k1 { animation-delay: 500ms; } .vd-k2 { animation-delay: 580ms; }
+  /* forma laranja: respira 1 → 1.03, 12 s ida e volta */
+  .vd-respira { animation: vd-respira 12s ease-in-out infinite alternate; transform-origin: 50% 50%; }
+
+  /* Carrossel de modelos: 40 s por volta, pára com rato, foco ou dedo */
+  .vd-dup { display: block; }
+  .vd-track--modelos { animation: vd-fita 40s linear infinite; }
+  .vd-car:hover .vd-track, .vd-car:focus-within .vd-track, .vd-car:active .vd-track { animation-play-state: paused; }
+  .vd-slide-card { transition: transform 250ms cubic-bezier(.25,.8,.25,1), border-color 250ms cubic-bezier(.25,.8,.25,1); }
+  .vd-slide-card:hover { transform: translateY(-6px); }
+
+  /* Fita VAIDESIGN: 25 s por volta */
+  .vd-fita-track { animation: vd-fita 25s linear infinite; }
+
+  /* Selo: uma volta em 20 s, velocidade constante */
+  .vd-gira { transform-box: view-box; transform-origin: 50% 50%; animation: vd-gira 20s linear infinite; }
+
+  /* Serviços: hover 250 ms */
+  .vd-svc { transition: transform 250ms cubic-bezier(.25,.8,.25,1); }
+  .vd-svc:hover { transform: translateY(-4px); }
+  .vd-svc-foto { transition: transform 250ms cubic-bezier(.25,.8,.25,1); }
+  .vd-svc:hover .vd-svc-foto { transform: scale(1.04); }
+  .vd-svc-seta { transition: transform 250ms cubic-bezier(.25,.8,.25,1), background-color 250ms, border-color 250ms, color 250ms; }
+  .vd-svc:hover .vd-svc-seta { transform: rotate(-45deg); }
+
+  /* Entradas ligadas ao scroll — só onde o navegador suporta view() */
+  @supports (animation-timeline: view()) {
+    .vd-entra { animation: vd-desliza linear both; animation-timeline: view(); animation-range: cover 0% cover 20%; }
+    .vd-i1 { animation-range: cover 4% cover 24%; }
+    .vd-i2 { animation-range: cover 8% cover 28%; }
+    .vd-i3 { animation-range: cover 12% cover 32%; }
+    .vd-traco :is(path, rect, circle, line, polyline) { stroke-dasharray: 100; animation: vd-desenha linear both; animation-timeline: view(); animation-range: cover 2% cover 30%; }
+    .vd-i1 .vd-traco :is(path, rect, circle, line, polyline) { animation-range: cover 6% cover 34%; }
+    .vd-i2 .vd-traco :is(path, rect, circle, line, polyline) { animation-range: cover 10% cover 38%; }
+    .vd-i3 .vd-traco :is(path, rect, circle, line, polyline) { animation-range: cover 14% cover 42%; }
+
+    /* Números a contar: @property + counter-reset */
+    .vd-conta { counter-reset: vd var(--vd-n); animation: linear both; animation-timing-function: cubic-bezier(.16,1,.3,1); animation-timeline: view(); animation-range: entry 30% cover 40%; font-variant-numeric: tabular-nums; }
+    .vd-conta::before { content: counter(vd); }
+    .vd-conta > .vd-conta-txt { display: none; }
+    .vd-conta-7 { animation-name: vd-n7; }
+    .vd-conta-48 { animation-name: vd-n48; }
+    .vd-conta-1 { animation-name: vd-n1; }
+  }
+}
+
+@keyframes vd-sobe { from { opacity: 0; transform: translateY(.35em); } to { opacity: 1; transform: none; } }
+@keyframes vd-sobe-curto { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes vd-respira { from { transform: scale(1); } to { transform: scale(1.03); } }
+@keyframes vd-fita { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes vd-gira { to { transform: rotate(360deg); } }
+@keyframes vd-desliza { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes vd-desenha { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes vd-n7 { from { --vd-n: 0; } to { --vd-n: 7; } }
+@keyframes vd-n48 { from { --vd-n: 0; } to { --vd-n: 48; } }
+@keyframes vd-n1 { from { --vd-n: 0; } to { --vd-n: 1; } }

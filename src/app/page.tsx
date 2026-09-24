@@ -1,11 +1,23 @@
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import type { Metadata } from 'next';
+import { SiteVaiDesign } from '@/components/site/vaidesign';
+import { WHATSAPP_DA_AGENCIA } from '@/lib/vaidesign/agencia';
 
-export const dynamic = 'force-dynamic';
+/**
+ * A raiz é o site da agência.
+ *
+ * Era um reencaminhamento para o painel ou para a entrada, o que servia
+ * enquanto isto vivia num endereço da Vercel que ninguém sabia de cor. Desde
+ * que o vaidesign.net aponta para cá, quem escreve o domínio é um cliente — e
+ * um cliente não deve cair num formulário de login. O painel continua onde
+ * estava, em `/painel`, e pede sessão como sempre.
+ */
 
-/** A raiz não tem conteúdo próprio: encaminha para o painel ou para a entrada. */
-export default async function HomePage() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  redirect(data.user ? '/painel' : '/entrar');
+export const metadata: Metadata = {
+  title: 'VaiDesign — sites para comércio local',
+  description:
+    'Sete modelos prontos para adaptar ao seu negócio. Proposta por escrito, domínio em seu nome, sem fidelização.',
+};
+
+export default function InicioPage() {
+  return <SiteVaiDesign pagina="inicio" whatsapp={WHATSAPP_DA_AGENCIA} />;
 }

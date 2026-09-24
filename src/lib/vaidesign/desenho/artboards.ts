@@ -1,0 +1,574 @@
+/**
+ * Os artboards do desenho da VaiDesign, saídos do Claude Design.
+ *
+ * GERADO — não editar à mão. Cada entrada é o `<div>` de um artboard, ou o
+ * corpo de um componente, com as tags equilibradas e duas únicas mudanças:
+ * `<image-slot>` passou a `<img>` (o elemento só existe dentro do editor
+ * deles) e os tratadores de eventos do editor saíram. A estrutura, as cores e
+ * os espaçamentos são os do desenho.
+ *
+ * Os `<dc-import>` ficam como vieram: são resolvidos em `componentes.ts`,
+ * depois de o motor encher o molde, porque alguns recebem props que só
+ * existem a meio de um `sc-for`.
+ */
+
+export const ARTBOARDS = {
+  'comp-cabecalho': `<sc-if value="{{ desk }}" hint-placeholder-val="{{ true }}">
+<header style="height:96px;padding:0 80px;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;width:100%;font-family:'Hanken Grotesk',sans-serif">
+<a href="Inicio.dc.html" style="display:flex;align-items:center;gap:4px;color:#141210;text-decoration:none"><span aria-label="VaiDesign" style="display:flex;align-items:baseline;font-size:54px;color:#141210"><span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">vaı<span style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></span></a>
+<nav class="vd-nav" style="display:flex;gap:40px"><sc-for list="{{ items }}" as="it" hint-placeholder-count="5"><a href="{{ it.href }}" aria-current="{{ it.cur }}" style="position:relative;padding:8px 0;font:500 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#141210;text-decoration:none">{{ it.l }}</a></sc-for></nav>
+<a href="Contacto.dc.html" class="vd-btn" style="display:flex;align-items:center;gap:12px;height:48px;padding:0 7px 0 22px;border:1.5px solid #141210;border-radius:999px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#141210;text-decoration:none;box-sizing:border-box">Falar connosco<span class="vd-dot" style="width:32px;height:32px;border-radius:50%;background-color:#141210;color:#F6EFE4;display:grid;place-items:center"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a>
+</header>
+</sc-if>
+<sc-if value="{{ mob }}">
+<header style="height:72px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;width:100%">
+<a href="Inicio.dc.html" style="display:flex;align-items:center;gap:2px;color:#141210;text-decoration:none"><span aria-label="VaiDesign" style="display:flex;align-items:baseline;font-size:44px;color:#141210"><span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">vaı<span style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></span></a>
+<div style="display:flex;gap:8px">
+<a href="Contacto.dc.html" style="width:44px;height:44px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box;text-decoration:none"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;color:#141210">chat</span></a>
+<span style="height:44px;padding:0 16px;border-radius:999px;background:#141210;color:#F6EFE4;display:flex;align-items:center;gap:8px;font:600 13px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">Menu<span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">menu</span></span>
+</div>
+</header>
+</sc-if>`,
+  'comp-ficha-modelo': `<div style="width:100%;container-type:inline-size;font-family:'Hanken Grotesk',sans-serif">
+<div style="background:#FFFBF5;border:1.5px solid {{ borda }};outline:{{ contorno }};outline-offset:3px;border-radius:12px;padding:3cqw;box-sizing:border-box;cursor:pointer">
+<div style="position:relative;aspect-ratio:4/5;border-radius:8px;overflow:hidden;background:#EEE">
+<sc-if value="{{ is_forno }}"><div style="position:absolute;inset:0;background:#2B1B13;color:#F3E6D3">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:5cqw 6cqw"><span style="font:400 6cqw/1 'Instrument Serif'">Forno &amp; Brasa</span><span style="font:500 2.8cqw/1 'Hanken Grotesk';opacity:.8">Menu · Horário · Contacto</span></div>
+<div style="padding:4cqw 6cqw 0;font:400 14cqw/.92 'Instrument Serif'">Pão quente<br>às 7h.</div>
+<div style="padding:3cqw 6cqw 0;font:400 3.2cqw/1.4 'Hanken Grotesk';opacity:.75">Padaria e grelhados · aberto todos os dias</div>
+<div style="margin:4cqw 6cqw 0;width:fit-content;padding:2.4cqw 4cqw;background:#E0A33A;color:#2B1B13;border-radius:999px;font:600 3.2cqw/1 'Hanken Grotesk'">Ver o menu</div>
+<div style="position:absolute;left:6cqw;right:6cqw;bottom:0;height:40%;border-radius:3cqw 3cqw 0 0;background:repeating-linear-gradient(135deg,#4A3022 0 8px,#3D271B 8px 16px);display:flex;align-items:flex-end;padding:3cqw;box-sizing:border-box"><span style="font:400 2.6cqw 'JetBrains Mono';color:#E9D6BE">foto · pão e brasa</span></div>
+</div></sc-if>
+<sc-if value="{{ is_clinica }}"><div style="position:absolute;inset:0;background:#EEF2EE;color:#1F3A33;display:flex;flex-direction:column;align-items:center">
+<div style="align-self:stretch;display:flex;justify-content:space-between;align-items:center;padding:5cqw 6cqw"><span style="font:600 4.2cqw/1 'Hanken Grotesk'">Clínica Vale</span><span style="font:600 2.6cqw/1 'Hanken Grotesk';border:1px solid #1F3A33;border-radius:999px;padding:1.6cqw 3cqw">Marcar</span></div>
+<div style="width:46cqw;aspect-ratio:1;border-radius:50%;background:repeating-linear-gradient(135deg,#CFDDD5 0 8px,#DCE6E0 8px 16px);display:grid;place-items:center;margin-top:1cqw"><span style="font:400 2.6cqw 'JetBrains Mono';color:#1F3A33">foto · sala</span></div>
+<div style="margin-top:5cqw;text-align:center;font:400 11cqw/.95 'Instrument Serif'">Cuidar<br>sem pressa.</div>
+<div style="margin-top:4cqw;padding:2.4cqw 4.4cqw;background:#1F3A33;color:#EEF2EE;border-radius:999px;font:600 3.2cqw/1 'Hanken Grotesk'">Marcar consulta</div>
+<div style="margin-top:4cqw;display:flex;gap:1.6cqw;font:500 2.6cqw/1 'Hanken Grotesk'"><span style="background:#DCE6E0;padding:1.6cqw 2.6cqw;border-radius:999px">Estética</span><span style="background:#DCE6E0;padding:1.6cqw 2.6cqw;border-radius:999px">Fisioterapia</span><span style="background:#DCE6E0;padding:1.6cqw 2.6cqw;border-radius:999px">Nutrição</span></div>
+</div></sc-if>
+<sc-if value="{{ is_predial }}"><div style="position:absolute;inset:0;background:#F7F5F1;color:#1B2433">
+<div style="background:#1B2433;display:flex;justify-content:space-between;align-items:center;padding:4cqw 6cqw"><span style="font:600 3.4cqw/1 'Hanken Grotesk';letter-spacing:.3em;color:#FFFFFF">PREDIAL</span><span style="font:400 2.6cqw/1 'Hanken Grotesk';color:#C9D1DE">Comprar · Arrendar · Contacto</span></div>
+<div style="padding:6cqw 6cqw 0;font:400 11cqw/.95 'Instrument Serif'">Casas em Braga,<br>sem rodeios.</div>
+<div style="margin:4cqw 6cqw;display:flex;align-items:center;justify-content:space-between;background:#FFFFFF;border:1px solid #D5D9E0;padding:2.4cqw 2.4cqw 2.4cqw 3cqw;font:400 2.8cqw/1 'Hanken Grotesk';color:#5B6475">Tipologia · Zona · Preço<span style="width:6cqw;height:6cqw;background:#1B2433"></span></div>
+<div style="margin:0 6cqw;display:grid;grid-template-columns:1fr 1fr;gap:2.4cqw">
+<div style="aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#D9DDE4 0 8px,#E4E7EC 8px 16px);display:flex;align-items:flex-end"><span style="font:600 2.4cqw/1 'Hanken Grotesk';background:#FFFFFF;padding:1.4cqw 2cqw">T2 · 245 000 €</span></div>
+<div style="aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#D9DDE4 0 8px,#E4E7EC 8px 16px);display:flex;align-items:flex-end"><span style="font:600 2.4cqw/1 'Hanken Grotesk';background:#FFFFFF;padding:1.4cqw 2cqw">T3 · 310 000 €</span></div>
+<div style="aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#D9DDE4 0 8px,#E4E7EC 8px 16px)"></div>
+<div style="aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#D9DDE4 0 8px,#E4E7EC 8px 16px)"></div>
+</div>
+</div></sc-if>
+<sc-if value="{{ is_retrato }}"><div style="position:absolute;inset:0;background:#E9DFD2;color:#2A2522">
+<div style="height:60%;background:repeating-linear-gradient(135deg,#D8C9B6 0 8px,#E1D4C3 8px 16px);position:relative;display:flex;align-items:flex-end;padding:3cqw 6cqw;box-sizing:border-box">
+<div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:5cqw 6cqw;font:600 3cqw/1 'Hanken Grotesk'"><span>AM</span><span>Contacto</span></div>
+<span style="font:400 2.6cqw 'JetBrains Mono';color:#6B5A4E">foto · retrato grande</span></div>
+<div style="padding:5cqw 6cqw 0;font:400 11cqw/1 'Instrument Serif'">Ana Martins</div>
+<div style="padding:1.6cqw 6cqw 0;font:400 3.2cqw/1.3 'Hanken Grotesk';color:#6B5A4E">Nutricionista · Porto</div>
+<div style="margin:4cqw 6cqw 0;width:fit-content;padding:2.4cqw 4cqw;background:#2A2522;color:#E9DFD2;border-radius:999px;font:600 3cqw/1 'Hanken Grotesk'">Marcar primeira consulta</div>
+</div></sc-if>
+<sc-if value="{{ is_oficina }}"><div style="position:absolute;inset:0;background:#D8DBDE;color:#15181B">
+<div style="background:#15181B;display:flex;justify-content:space-between;align-items:center;padding:4cqw 6cqw"><span style="font:800 6cqw/1 'Barlow Condensed';color:#F2C200;letter-spacing:.04em">OFICINA</span><span style="font:500 2.6cqw/1 'Hanken Grotesk';color:#9AA1A8">Produtos · Orçamento · PT/EN</span></div>
+<div style="padding:6cqw 6cqw 4cqw;font:800 15cqw/.88 'Barlow Condensed';text-transform:uppercase">Peças em<br>aço à<br>medida.</div>
+<div style="margin:0 6cqw;font:500 3cqw/1 'Hanken Grotesk'">
+<div style="display:flex;justify-content:space-between;border-top:1px solid #15181B;padding:2.4cqw 0"><span>Corte laser</span><span>até 25 mm</span></div>
+<div style="display:flex;justify-content:space-between;border-top:1px solid #15181B;padding:2.4cqw 0"><span>Quinagem</span><span>até 4 m</span></div>
+<div style="display:flex;justify-content:space-between;border-top:1px solid #15181B;border-bottom:1px solid #15181B;padding:2.4cqw 0"><span>Ficha técnica</span><span>PDF</span></div>
+</div>
+<div style="margin:4cqw 6cqw 0;width:fit-content;padding:2.6cqw 4cqw;background:#F2C200;font:700 3.2cqw/1 'Hanken Grotesk'">Pedir orçamento</div>
+</div></sc-if>
+<sc-if value="{{ is_estrada }}"><div style="position:absolute;inset:0;background:#FFFFFF;color:#0E1A3A">
+<div style="height:58%;background:#1747D6;color:#FFFFFF;padding:5cqw 6cqw;box-sizing:border-box">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font:800 5.4cqw/1 'Barlow Condensed';letter-spacing:.04em">ESTRADA</span><span style="font:600 2.6cqw/1 'Hanken Grotesk';background:#25D366;color:#0E1A3A;padding:1.6cqw 3cqw;border-radius:999px">WhatsApp</span></div>
+<div style="margin-top:7cqw;font:800 14cqw/.9 'Barlow Condensed';text-transform:uppercase">Entregamos<br>hoje.</div>
+<div style="margin-top:2.4cqw;font:400 3.2cqw/1.3 'Hanken Grotesk';color:#D6E0FF">Norte a Sul, porta a porta.</div>
+</div>
+<div style="position:absolute;right:6cqw;top:44%;width:50cqw;aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#DADFE8 0 8px,#E6EAF0 8px 16px);border:1.5cqw solid #FFFFFF;display:flex;align-items:flex-end;padding:2cqw;box-sizing:border-box"><span style="font:400 2.4cqw 'JetBrains Mono';color:#0E1A3A">foto · carrinha</span></div>
+<div style="position:absolute;left:6cqw;bottom:6cqw;display:flex;flex-direction:column;gap:2cqw"><span style="font:600 2.8cqw/1 'Hanken Grotesk'">Zonas servidas</span><div style="display:flex;flex-wrap:wrap;gap:1.6cqw;width:34cqw;font:600 2.6cqw/1 'Hanken Grotesk';color:#1747D6"><span style="border:1px solid #1747D6;border-radius:999px;padding:1.4cqw 2.4cqw">Porto</span><span style="border:1px solid #1747D6;border-radius:999px;padding:1.4cqw 2.4cqw">Coimbra</span><span style="border:1px solid #1747D6;border-radius:999px;padding:1.4cqw 2.4cqw">Lisboa</span><span style="border:1px solid #1747D6;border-radius:999px;padding:1.4cqw 2.4cqw">Faro</span></div></div>
+</div></sc-if>
+<sc-if value="{{ is_neon }}"><div style="position:absolute;inset:0;background:#0D0D0D;color:#FFFFFF">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:5cqw 6cqw"><span style="font:800 7cqw/1 'Barlow Condensed';color:#D7FF3A;letter-spacing:.04em">NEON</span><span style="font:500 2.8cqw/1 'Hanken Grotesk'">Saco (0)</span></div>
+<div style="padding:1cqw 6cqw 5cqw;font:800 16cqw/.86 'Barlow Condensed';text-transform:uppercase">Nova<br><span style="color:#D7FF3A">coleção</span></div>
+<div style="margin:0 6cqw;display:grid;grid-template-columns:1fr 1fr;gap:3cqw">
+<div><div style="aspect-ratio:1;background:repeating-linear-gradient(135deg,#1E1E1E 0 8px,#272727 8px 16px)"></div><div style="display:flex;justify-content:space-between;margin-top:1.6cqw;font:500 2.8cqw/1 'Hanken Grotesk'"><span>Casaco</span><span style="color:#D7FF3A">49 €</span></div><div style="margin-top:1cqw;font:400 2.4cqw/1 'Hanken Grotesk';color:#9A9A9A">S · M · L · XL</div></div>
+<div><div style="aspect-ratio:1;background:repeating-linear-gradient(135deg,#1E1E1E 0 8px,#272727 8px 16px)"></div><div style="display:flex;justify-content:space-between;margin-top:1.6cqw;font:500 2.8cqw/1 'Hanken Grotesk'"><span>T-shirt</span><span style="color:#D7FF3A">19 €</span></div><div style="margin-top:1cqw;font:400 2.4cqw/1 'Hanken Grotesk';color:#9A9A9A">S · M · L</div></div>
+<div style="aspect-ratio:1;background:repeating-linear-gradient(135deg,#1E1E1E 0 8px,#272727 8px 16px)"></div>
+<div style="aspect-ratio:1;background:repeating-linear-gradient(135deg,#1E1E1E 0 8px,#272727 8px 16px)"></div>
+</div>
+</div></sc-if>
+<sc-if value="{{ hover }}"><div style="position:absolute;left:0;right:0;bottom:0;padding:4cqw 5cqw;background:#141210;color:#F6EFE4;display:flex;align-items:center;justify-content:space-between;font:600 clamp(12px,4.6cqw,15px)/1.2 'Hanken Grotesk'">Ver o modelo ao vivo<span style="font-family:'Material Symbols Outlined';font-weight:400;font-size:clamp(16px,6cqw,20px);line-height:1;text-transform:none;letter-spacing:0;color:#EC5B13">arrow_outward</span></div></sc-if>
+</div>
+<div style="padding:5cqw 2cqw 2cqw;display:flex;flex-direction:column;gap:clamp(6px,2.6cqw,10px)">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+<div style="font:700 clamp(19px,8.6cqw,28px)/1 'Barlow Condensed';text-transform:uppercase;letter-spacing:.01em;color:#141210">{{ nome }}</div>
+<span style="flex:none;width:clamp(28px,11cqw,36px);height:clamp(28px,11cqw,36px);border-radius:50%;border:1.5px solid #141210;background:{{ setaBg }};display:grid;place-items:center;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:clamp(16px,6cqw,20px);line-height:1;text-transform:none;letter-spacing:0;color:#141210">arrow_forward</span></span>
+</div>
+<div style="font:400 clamp(13px,4.8cqw,15px)/1.35 'Hanken Grotesk';color:#5A5249">{{ ramo }}</div>
+<div style="display:flex;flex-wrap:wrap;gap:clamp(4px,1.8cqw,6px)"><sc-for list="{{ tags }}" as="t" hint-placeholder-count="3"><span style="font:500 clamp(11px,4cqw,12px)/1 'Hanken Grotesk';padding:clamp(4px,1.8cqw,6px) clamp(6px,3cqw,10px);border:1px solid #DDD2C0;border-radius:999px;color:#141210;white-space:nowrap">{{ t }}</span></sc-for></div>
+</div>
+</div>
+</div>`,
+  'comp-logotipo': `<section style="padding:80px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:12px;max-width:900px"><span style="font:800 48px/1 'Barlow Condensed';text-transform:uppercase">Logótipo · 4 ideias</span><span style="font:400 17px/1.55 'Hanken Grotesk';color:#5A5249">«Vai» é movimento, é seguir em frente. As quatro ideias partem daí, com as cores e as letras do site. Cada uma aparece em creme, em preto, no tamanho do cabeçalho e como ícone de 64 px. A recomendada é a <a href="#1a">1a</a>.</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start">
+
+<div id="1a" style="width:640px;background:#FFFBF5;border-radius:12px;overflow:hidden;border:2px solid #EC5B13">
+<div style="padding:20px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #DDD2C0"><div style="display:flex;gap:12px;align-items:center"><span style="font:500 12px/1 'JetBrains Mono';background:#141210;color:#F6EFE4;padding:6px 8px;border-radius:3px">1a</span><span style="font:700 26px/1 'Barlow Condensed';text-transform:uppercase">O ponto que vai à frente</span></div><span style="font:600 11px/1 'Hanken Grotesk';letter-spacing:.1em;text-transform:uppercase;color:#BA4100">Recomendada</span></div>
+<div style="height:300px;display:grid;place-items:center;background:#F6EFE4"><div style="display:flex;flex-direction:column;align-items:flex-start;gap:14px;font-size:150px;color:#141210"><span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em">vaı<span style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="font:500 .13em/1 'JetBrains Mono';letter-spacing:.42em;text-transform:uppercase">design</span></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr">
+<div style="height:180px;display:grid;place-items:center;background:#141210"><div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;font-size:84px;color:#F6EFE4"><span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em">vaı<span style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="font:500 .13em/1 'JetBrains Mono';letter-spacing:.42em;text-transform:uppercase">design</span></div></div>
+<div style="height:180px;display:grid;place-items:center;background:#EC5B13"><div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;font-size:84px;color:#141210"><span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em">vaı<span style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#FFFBF5"></span></span><span style="font:500 .13em/1 'JetBrains Mono';letter-spacing:.42em;text-transform:uppercase">design</span></div></div>
+</div>
+<div style="padding:24px;display:flex;align-items:center;gap:24px;border-top:1px solid #DDD2C0">
+<div style="flex:1;height:64px;border:1px solid #DDD2C0;border-radius:8px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#F6EFE4"><div style="display:flex;align-items:baseline;gap:10px;font-size:38px"><span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em">vaı<span style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.3em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></div><span style="font:500 11px/1 'Hanken Grotesk';letter-spacing:.08em;color:#5A5249">SERVIÇOS · MODELOS · SOBRE</span></div>
+<div style="width:64px;height:64px;border-radius:14px;background:#141210;display:grid;place-items:center"><span style="position:relative;display:block;font:800 40px/.78 'Barlow Condensed';color:#F6EFE4;margin-right:10px">v<span style="position:absolute;right:-.36em;top:-.06em;width:.26em;height:.26em;border-radius:50%;background:#EC5B13"></span></span></div>
+</div>
+<div style="padding:0 24px 24px;font:400 15px/1.55 'Hanken Grotesk';color:#5A5249">O ponto do «i» saiu do sítio e seguiu em frente. Tudo o resto está parado; é o ponto que diz «vai». Funciona em minúsculas, que são mais simpáticas do que o título do site, e o ponto sozinho pode servir de marca nos cartões, no Instagram e nos botões.</div>
+</div>
+
+<div id="1b" style="width:640px;background:#FFFBF5;border-radius:12px;overflow:hidden;border:1.5px solid #DDD2C0">
+<div style="padding:20px 24px;display:flex;gap:12px;align-items:center;border-bottom:1px solid #DDD2C0"><span style="font:500 12px/1 'JetBrains Mono';background:#141210;color:#F6EFE4;padding:6px 8px;border-radius:3px">1b</span><span style="font:700 26px/1 'Barlow Condensed';text-transform:uppercase">O botão de seguir</span></div>
+<div style="height:300px;display:grid;place-items:center;background:#F6EFE4"><div style="display:flex;flex-direction:column;gap:12px;font-size:140px;color:#141210"><div style="display:flex;align-items:center;gap:.1em"><span style="font:800 1em/.8 'Barlow Condensed';text-transform:uppercase;letter-spacing:-.01em">Vai</span><span style="width:.72em;height:.72em;border-radius:50%;background:#EC5B13;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:400;font-size:.5em;line-height:1;color:#141210">arrow_forward</span></span></div><span style="font:500 .12em/1 'JetBrains Mono';letter-spacing:.5em;text-transform:uppercase">design</span></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr">
+<div style="height:180px;display:grid;place-items:center;background:#141210"><div style="display:flex;flex-direction:column;gap:8px;font-size:78px;color:#F6EFE4"><div style="display:flex;align-items:center;gap:.1em"><span style="font:800 1em/.8 'Barlow Condensed';text-transform:uppercase">Vai</span><span style="width:.72em;height:.72em;border-radius:50%;background:#EC5B13;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:.5em;line-height:1;color:#141210">arrow_forward</span></span></div><span style="font:500 .12em/1 'JetBrains Mono';letter-spacing:.5em;text-transform:uppercase">design</span></div></div>
+<div style="height:180px;display:grid;place-items:center;background:#EC5B13"><div style="display:flex;flex-direction:column;gap:8px;font-size:78px;color:#141210"><div style="display:flex;align-items:center;gap:.1em"><span style="font:800 1em/.8 'Barlow Condensed';text-transform:uppercase">Vai</span><span style="width:.72em;height:.72em;border-radius:50%;background:#141210;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:.5em;line-height:1;color:#EC5B13">arrow_forward</span></span></div><span style="font:500 .12em/1 'JetBrains Mono';letter-spacing:.5em;text-transform:uppercase">design</span></div></div>
+</div>
+<div style="padding:24px;display:flex;align-items:center;gap:24px;border-top:1px solid #DDD2C0">
+<div style="flex:1;height:64px;border:1px solid #DDD2C0;border-radius:8px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#F6EFE4"><div style="display:flex;align-items:center;gap:.1em;font-size:34px"><span style="font:800 1em/.8 'Barlow Condensed';text-transform:uppercase">Vai</span><span style="width:.72em;height:.72em;border-radius:50%;background:#EC5B13;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:.5em;line-height:1">arrow_forward</span></span><span style="margin-left:.4em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></div><span style="font:500 11px/1 'Hanken Grotesk';letter-spacing:.08em;color:#5A5249">SERVIÇOS · MODELOS · SOBRE</span></div>
+<div style="width:64px;height:64px;border-radius:14px;background:#EC5B13;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-size:40px;line-height:1;color:#141210">arrow_forward</span></div>
+</div>
+<div style="padding:0 24px 24px;font:400 15px/1.55 'Hanken Grotesk';color:#5A5249">A seta redonda que já está nos botões e nos cartões passa a ser a marca. É a mais directa: lê-se «vai» e vê-se «vai». Tem menos personalidade do que a 1a, porque uma seta num círculo é comum.</div>
+</div>
+
+<div id="1c" style="width:640px;background:#FFFBF5;border-radius:12px;overflow:hidden;border:1.5px solid #DDD2C0">
+<div style="padding:20px 24px;display:flex;gap:12px;align-items:center;border-bottom:1px solid #DDD2C0"><span style="font:500 12px/1 'JetBrains Mono';background:#141210;color:#F6EFE4;padding:6px 8px;border-radius:3px">1c</span><span style="font:700 26px/1 'Barlow Condensed';text-transform:uppercase">A estrada</span></div>
+<div style="height:300px;display:grid;place-items:center;background:#F6EFE4;overflow:hidden"><div style="display:flex;flex-direction:column;gap:14px;font-size:150px;color:#141210"><span style="font:800 1em/.78 'Barlow Condensed';text-transform:uppercase;letter-spacing:-.01em">Vai</span><div style="display:flex;align-items:center;gap:.08em"><span style="height:.07em;width:1.3em;background:#EC5B13;border-radius:99px"></span><span style="font:500 .1em/1 'JetBrains Mono';letter-spacing:.35em;text-transform:uppercase">design</span></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr">
+<div style="height:180px;display:grid;place-items:center;background:#141210"><div style="display:flex;flex-direction:column;gap:8px;font-size:84px;color:#F6EFE4"><span style="font:800 1em/.78 'Barlow Condensed';text-transform:uppercase">Vai</span><div style="display:flex;align-items:center;gap:.08em"><span style="height:.07em;width:1.3em;background:#EC5B13;border-radius:99px"></span><span style="font:500 .1em/1 'JetBrains Mono';letter-spacing:.35em;text-transform:uppercase">design</span></div></div></div>
+<div style="height:180px;display:grid;place-items:center;background:#EC5B13"><div style="display:flex;flex-direction:column;gap:8px;font-size:84px;color:#141210"><span style="font:800 1em/.78 'Barlow Condensed';text-transform:uppercase">Vai</span><div style="display:flex;align-items:center;gap:.08em"><span style="height:.07em;width:1.3em;background:#FFFBF5;border-radius:99px"></span><span style="font:500 .1em/1 'JetBrains Mono';letter-spacing:.35em;text-transform:uppercase">design</span></div></div></div>
+</div>
+<div style="padding:24px;display:flex;align-items:center;gap:24px;border-top:1px solid #DDD2C0">
+<div style="flex:1;height:64px;border:1px solid #DDD2C0;border-radius:8px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#F6EFE4"><div style="display:flex;align-items:center;gap:10px"><span style="font:800 34px/.8 'Barlow Condensed';text-transform:uppercase">Vai</span><span style="height:3px;width:28px;background:#EC5B13;border-radius:99px"></span><span style="font:500 10px/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></div><span style="font:500 11px/1 'Hanken Grotesk';letter-spacing:.08em;color:#5A5249">SERVIÇOS · MODELOS · SOBRE</span></div>
+<div style="width:64px;height:64px;border-radius:14px;background:#141210;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px"><span style="font:800 34px/.78 'Barlow Condensed';color:#F6EFE4">V</span><span style="height:4px;width:30px;background:#EC5B13;border-radius:99px"></span></div>
+</div>
+<div style="padding:0 24px 24px;font:400 15px/1.55 'Hanken Grotesk';color:#5A5249">«Vai» grande e um traço laranja que corre para a frente, como uma estrada ou uma barra de progresso. É a mais sóbria e a que melhor combina com os títulos do site. Arrisca pouco.</div>
+</div>
+
+<div id="1d" style="width:640px;background:#FFFBF5;border-radius:12px;overflow:hidden;border:1.5px solid #DDD2C0">
+<div style="padding:20px 24px;display:flex;gap:12px;align-items:center;border-bottom:1px solid #DDD2C0"><span style="font:500 12px/1 'JetBrains Mono';background:#141210;color:#F6EFE4;padding:6px 8px;border-radius:3px">1d</span><span style="font:700 26px/1 'Barlow Condensed';text-transform:uppercase">A forma do site</span></div>
+<div style="height:300px;display:grid;place-items:center;background:#F6EFE4"><div style="display:flex;align-items:center;gap:22px"><span style="width:150px;height:170px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%;display:grid;place-items:center;font:800 76px/1 'Barlow Condensed';color:#141210;letter-spacing:-.02em">vd</span><div style="display:flex;flex-direction:column;gap:6px"><span style="font:800 64px/.85 'Barlow Condensed';text-transform:uppercase">Vai</span><span style="font:800 64px/.85 'Barlow Condensed';text-transform:uppercase">Design</span></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr">
+<div style="height:180px;display:grid;place-items:center;background:#141210"><div style="display:flex;align-items:center;gap:14px"><span style="width:84px;height:96px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%;display:grid;place-items:center;font:800 44px/1 'Barlow Condensed';color:#141210">vd</span><div style="display:flex;flex-direction:column;gap:2px;color:#F6EFE4"><span style="font:800 36px/.85 'Barlow Condensed';text-transform:uppercase">Vai</span><span style="font:800 36px/.85 'Barlow Condensed';text-transform:uppercase">Design</span></div></div></div>
+<div style="height:180px;display:grid;place-items:center;background:#EC5B13"><div style="display:flex;align-items:center;gap:14px"><span style="width:84px;height:96px;background:#141210;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%;display:grid;place-items:center;font:800 44px/1 'Barlow Condensed';color:#EC5B13">vd</span><div style="display:flex;flex-direction:column;gap:2px;color:#141210"><span style="font:800 36px/.85 'Barlow Condensed';text-transform:uppercase">Vai</span><span style="font:800 36px/.85 'Barlow Condensed';text-transform:uppercase">Design</span></div></div></div>
+</div>
+<div style="padding:24px;display:flex;align-items:center;gap:24px;border-top:1px solid #DDD2C0">
+<div style="flex:1;height:64px;border:1px solid #DDD2C0;border-radius:8px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#F6EFE4"><div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:44px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%;display:grid;place-items:center;font:800 20px/1 'Barlow Condensed'">vd</span><span style="font:800 26px/1 'Barlow Condensed';text-transform:uppercase">VaiDesign</span></div><span style="font:500 11px/1 'Hanken Grotesk';letter-spacing:.08em;color:#5A5249">SERVIÇOS · MODELOS · SOBRE</span></div>
+<div style="width:64px;height:64px;border-radius:14px;background:#F6EFE4;border:1px solid #DDD2C0;display:grid;place-items:center;box-sizing:border-box"><span style="width:46px;height:52px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%;display:grid;place-items:center;font:800 24px/1 'Barlow Condensed'">vd</span></div>
+</div>
+<div style="padding:0 24px 24px;font:400 15px/1.55 'Hanken Grotesk';color:#5A5249">A forma laranja da capa passa a ser o símbolo, com «vd» por dentro. Liga o logótipo ao site todo, mas é a menos simples das quatro e a forma orgânica perde-se abaixo dos 32 px.</div>
+</div>
+
+</div>
+</section>`,
+  'comp-rodape': `<sc-if value="{{ desk }}" hint-placeholder-val="{{ true }}">
+<footer style="background:#141210;color:#F6EFE4;font-family:'Hanken Grotesk',sans-serif">
+<div style="padding:120px 80px 96px;display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end;border-bottom:1px solid #3A342E">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Próximo passo</div><h2 style="margin:20px 0 0;font:800 88px/.92 'Barlow Condensed';text-transform:uppercase;text-wrap:balance">Diga-nos o que vende.<br><span style="color:#EC5B13">Nós mostramos como fica.</span></h2></div>
+<div style="display:flex;flex-direction:column;gap:32px"><p style="margin:0;font:400 18px/1.55 'Hanken Grotesk';color:#BDB3A6;max-width:440px">Mande uma mensagem com o nome do negócio e o modelo de que mais gostou — ou conte-nos o que precisa e fazemos um à sua medida. A proposta chega por escrito, sem custo.</p>
+<div style="display:flex;gap:16px"><a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:56px;padding:0 8px 0 24px;display:flex;align-items:center;gap:14px;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Escrever no WhatsApp<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a><a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:56px;padding:0 24px;display:flex;align-items:center;border:1.5px solid #F6EFE4;color:#F6EFE4;border-radius:4px;font:600 15px/1 'Hanken Grotesk';text-decoration:none;box-sizing:border-box">geral@vaidesign.net</a></div></div>
+</div>
+<div style="padding:56px 80px;display:grid;grid-template-columns:6fr 3fr 3fr;gap:24px">
+<div style="display:flex;flex-direction:column;gap:16px"><span aria-label="VaiDesign" style="display:flex;align-items:baseline;font-size:64px;color:#F6EFE4"><span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">vaı<span style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#BDB3A6;max-width:320px">Design e sites para negócios de todos os tamanhos. Em português, por uma pessoa só.</span></div>
+<div style="display:flex;flex-direction:column;gap:12px;font:400 15px/1.3 'Hanken Grotesk'"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BDB3A6;margin-bottom:6px">Páginas</span><a href="Servicos.dc.html" style="color:#F6EFE4;text-decoration:none">Serviços</a><a href="Modelos.dc.html" style="color:#F6EFE4;text-decoration:none">Modelos</a><a href="Sobre.dc.html" style="color:#F6EFE4;text-decoration:none">Sobre</a><a href="Contacto.dc.html" style="color:#F6EFE4;text-decoration:none">Contacto</a></div>
+<div style="display:flex;flex-direction:column;gap:12px;font:400 15px/1.3 'Hanken Grotesk'"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BDB3A6;margin-bottom:6px">Contacto</span><a href="#whatsapp" data-whatsapp="" style="color:inherit;text-decoration:none">WhatsApp</a><a href="mailto:geral@vaidesign.net" style="color:inherit;text-decoration:none"><span>geral@vaidesign.net</span></a><span>Instagram @vaidesign</span></div>
+</div>
+<div style="padding:24px 80px;border-top:1px solid #3A342E;display:flex;justify-content:space-between;font:400 13px/1 'Hanken Grotesk';color:#BDB3A6"><span>© 2026 VaiDesign</span><span>Política de privacidade</span></div>
+</footer>
+</sc-if>
+<sc-if value="{{ mob }}">
+<footer style="background:#141210;color:#F6EFE4;font-family:'Hanken Grotesk',sans-serif">
+<div style="padding:72px 20px 48px;display:flex;flex-direction:column;gap:24px;border-bottom:1px solid #3A342E">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Próximo passo</div>
+<h2 style="margin:0;font:800 48px/.92 'Barlow Condensed';text-transform:uppercase">Diga-nos o que vende.<br><span style="color:#EC5B13">Nós mostramos como fica.</span></h2>
+<p style="margin:0;font:400 16px/1.55 'Hanken Grotesk';color:#BDB3A6">Mande uma mensagem com o nome do negócio e o modelo de que mais gostou — ou conte-nos o que precisa e fazemos um à sua medida. A proposta chega por escrito, sem custo.</p>
+<a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:56px;padding:0 8px 0 20px;display:flex;align-items:center;justify-content:space-between;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Escrever no WhatsApp<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a>
+<a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:56px;display:flex;align-items:center;justify-content:center;border:1.5px solid #F6EFE4;color:#F6EFE4;border-radius:4px;font:600 15px/1 'Hanken Grotesk';text-decoration:none">geral@vaidesign.net</a>
+</div>
+<div style="padding:40px 20px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font:400 15px/1.3 'Hanken Grotesk'">
+<span style="grid-column:1/-1"><span aria-label="VaiDesign" style="display:flex;align-items:baseline;font-size:52px;color:#F6EFE4"><span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">vaı<span style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></span></span>
+<div style="display:flex;flex-direction:column;gap:12px"><a href="Servicos.dc.html" style="color:#F6EFE4;text-decoration:none">Serviços</a><a href="Modelos.dc.html" style="color:#F6EFE4;text-decoration:none">Modelos</a><a href="Sobre.dc.html" style="color:#F6EFE4;text-decoration:none">Sobre</a><a href="Contacto.dc.html" style="color:#F6EFE4;text-decoration:none">Contacto</a></div>
+<div style="display:flex;flex-direction:column;gap:12px;color:#BDB3A6"><span>WhatsApp</span><span>Email</span><span>Instagram</span></div>
+</div>
+<div style="padding:20px;border-top:1px solid #3A342E;font:400 13px/1 'Hanken Grotesk';color:#BDB3A6">© 2026 VaiDesign</div>
+</footer>
+</sc-if>`,
+  'contacto-1440': `<div style="width:1440px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-160px;top:-220px;width:560px;height:560px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="computador" ativa="contacto" hint-size="100%,96px" style="position:relative"></dc-import>
+<div style="position:relative;padding:96px 80px 72px;display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Contacto</div><h1 style="margin:20px 0 0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Escreva-nos.<br><span style="color:#BA4100">Respondemos nós.</span></h1></div>
+<p style="margin:0;font:400 20px/1.5 'Hanken Grotesk';color:#5A5249">Sem formulários de dez campos. Uma mensagem chega para começar, e a proposta não custa nada.</p>
+</div>
+</div>
+<div style="padding:0 80px 96px;display:grid;grid-template-columns:7fr 5fr;gap:24px">
+<div style="background:#EC5B13;border-radius:12px;padding:48px;display:flex;flex-direction:column;gap:28px;color:#141210">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font:600 14px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase">WhatsApp · o mais rápido</span><span style="font-family:'Material Symbols Outlined';font-weight:200;font-size:56px;line-height:1">chat</span></div>
+<span style="font:800 88px/.9 'Barlow Condensed';text-transform:uppercase">Fale connosco</span>
+<span style="font:400 17px/1.5 'Hanken Grotesk';max-width:480px">Dias úteis, das 9h às 19h. Mensagens fora de horas têm resposta na manhã seguinte.</span>
+<a href="#whatsapp" data-whatsapp="" style="align-self:flex-start;height:56px;padding:0 8px 0 24px;display:flex;align-items:center;gap:14px;background:#141210;color:#F6EFE4;border-radius:4px;font:600 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Abrir conversa<span style="width:40px;height:40px;border-radius:50%;background:#EC5B13;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0;color:#141210">arrow_forward</span></span></a>
+</div>
+<div style="background:#141210;border-radius:12px;padding:48px;display:flex;flex-direction:column;gap:28px;color:#F6EFE4">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="font:600 14px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#EC5B13">Email · para anexos</span><span style="font-family:'Material Symbols Outlined';font-weight:200;font-size:56px;line-height:1;color:#EC5B13">mail</span></div>
+<a href="mailto:geral@vaidesign.net" style="color:inherit;text-decoration:none"><span style="font:800 56px/.95 'Barlow Condensed'">geral@vaidesign.net</span></a>
+<span style="font:400 17px/1.5 'Hanken Grotesk';color:#BDB3A6">Para mandar fotografias, logótipo antigo ou textos já escritos.</span>
+</div>
+</div>
+<div style="padding:96px 80px 120px;border-top:1px solid #DDD2C0;display:grid;grid-template-columns:6fr 6fr;gap:80px">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">A primeira mensagem</div><h2 style="margin:16px 0 32px;font:800 64px/.95 'Barlow Condensed';text-transform:uppercase">O que mandar para a proposta vir certa</h2>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ lista }}" as="l" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:48px 1fr;gap:16px;padding:20px 0;border-top:1px solid #DDD2C0"><span style="font:800 32px/1 'Barlow Condensed';color:#EC5B13">{{ l.n }}</span><div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 17px/1.3 'Hanken Grotesk'">{{ l.t }}</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#5A5249">{{ l.d }}</span></div></div></sc-for>
+</div></div>
+<div style="align-self:start;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:20px">
+<span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#5A5249">Exemplo — pode copiar e mudar</span>
+<div style="background:#141210;color:#F6EFE4;border-radius:12px 12px 12px 2px;padding:24px;font:400 17px/1.6 'Hanken Grotesk'">Olá! Chamo-me Rita e tenho uma padaria em Setúbal, a Pão da Rita. Vendemos pão, bolos e fazemos encomendas para festas. Gostei do modelo Forno &amp; Brasa. Já tenho logótipo, não tenho domínio. Tenho algumas fotografias do balcão. Queria o site antes do Natal.</div>
+<div style="display:flex;gap:12px"><span style="height:48px;padding:0 20px;display:flex;align-items:center;gap:8px;border:1.5px solid #141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">content_copy</span>Copiar exemplo</span><span style="height:48px;padding:0 20px;display:flex;align-items:center;background:#EC5B13;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">Enviar pelo WhatsApp</span></div>
+</div>
+</div>
+<dc-import name="Rodape" largura="computador" hint-size="100%,640px"></dc-import>
+</div>`,
+  'contacto-390': `<div style="width:390px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-120px;top:-140px;width:300px;height:300px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="telemovel" ativa="contacto" hint-size="100%,72px" style="position:relative"></dc-import>
+<div style="position:relative;padding:40px 20px 32px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Contacto</div>
+<h1 style="margin:16px 0 20px;font:800 60px/.9 'Barlow Condensed';text-transform:uppercase">Escreva-nos. <span style="color:#BA4100">Respondemos nós.</span></h1>
+<p style="margin:0;font:400 17px/1.5 'Hanken Grotesk';color:#5A5249">Uma mensagem chega para começar, e a proposta não custa nada.</p>
+</div>
+</div>
+<div style="padding:0 20px 56px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#EC5B13;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px;color:#141210"><span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase">WhatsApp · o mais rápido</span><span style="font:800 44px/.9 'Barlow Condensed';text-transform:uppercase">Fale connosco</span><span style="font:400 15px/1.5 'Hanken Grotesk'">Dias úteis, das 9h às 19h.</span><a href="#whatsapp" data-whatsapp="" style="height:52px;padding:0 8px 0 20px;display:flex;align-items:center;justify-content:space-between;background:#141210;color:#F6EFE4;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Abrir conversa<span style="width:36px;height:36px;border-radius:50%;background:#EC5B13;display:grid;place-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0;color:#141210">arrow_forward</span></span></a></div>
+<div style="background:#141210;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px;color:#F6EFE4"><span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#EC5B13">Email · para anexos</span><a href="mailto:geral@vaidesign.net" style="color:inherit;text-decoration:none"><span style="font:800 36px/.95 'Barlow Condensed'">geral@vaidesign.net</span></a><span style="font:400 15px/1.5 'Hanken Grotesk';color:#BDB3A6">Para fotografias, logótipo ou textos.</span></div>
+</div>
+<div style="padding:56px 20px 72px;border-top:1px solid #DDD2C0">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">A primeira mensagem</div>
+<h2 style="margin:12px 0 20px;font:800 44px/.95 'Barlow Condensed';text-transform:uppercase">O que mandar para a proposta vir certa</h2>
+<sc-for list="{{ lista }}" as="l" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:36px 1fr;gap:12px;padding:16px 0;border-top:1px solid #DDD2C0"><span style="font:800 28px/1 'Barlow Condensed';color:#EC5B13">{{ l.n }}</span><div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 16px/1.3 'Hanken Grotesk'">{{ l.t }}</span><span style="font:400 14px/1.5 'Hanken Grotesk';color:#5A5249">{{ l.d }}</span></div></div></sc-for>
+<div style="margin-top:24px;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px"><span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#5A5249">Exemplo — pode copiar</span><div style="background:#141210;color:#F6EFE4;border-radius:12px 12px 12px 2px;padding:18px;font:400 15px/1.55 'Hanken Grotesk'">Olá! Chamo-me Rita e tenho uma padaria em Setúbal, a Pão da Rita. Gostei do modelo Forno &amp; Brasa. Já tenho logótipo, não tenho domínio. Queria o site antes do Natal.</div><span style="height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid #141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">content_copy</span>Copiar exemplo</span></div>
+</div>
+<dc-import name="Rodape" largura="telemovel" hint-size="100%,760px"></dc-import>
+</div>`,
+  'inicio-1440': `<div style="width:1440px;background:#F6EFE4;overflow:hidden">
+
+<div style="position:relative;height:900px;overflow:hidden">
+<div class="vd-respira" style="position:absolute;left:800px;top:-180px;width:880px;height:1020px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<div style="position:absolute;left:940px;top:440px;width:640px;height:640px;border:44px solid #F6EFE4;border-radius:50%;box-sizing:border-box"></div>
+<div style="position:absolute;left:820px;top:170px;width:580px;height:680px"><img src="/vaidesign/fotos/capa-equipa.jpg" alt="Equipa numa mesa redonda de cowork, vista de cima, portáteis e papéis. Luz natural." loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover;clip-path:inset(0 round 290px 290px 24px 24px)"></div>
+<div style="position:absolute;left:752px;top:210px;width:156px;height:156px;border-radius:50%;background:#141210;color:#F6EFE4;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-10deg);text-align:center"><span style="font:800 52px/.9 'Barlow Condensed';color:#EC5B13">0 €</span><span style="font:600 12px/1.25 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;margin-top:6px">até ver<br>a proposta</span></div>
+<dc-import name="Cabecalho" largura="computador" ativa="inicio" hint-size="100%,96px" style="position:absolute;top:0;left:0;right:0"></dc-import>
+<div style="position:absolute;left:80px;top:168px;width:660px">
+<div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Design e sites à medida do seu negócio</div>
+<h1 style="margin:24px 0 0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase;letter-spacing:-.005em"><span class="vd-linha" style="display:block">O site já</span><span class="vd-linha vd-l1" style="display:block">está feito.</span><span class="vd-linha vd-l2" style="display:block;color:#BA4100">Falta o seu</span><span class="vd-linha vd-l3" style="display:block;color:#BA4100">nome.</span></h1>
+<p style="margin:28px 0 0;font:400 20px/1.5 'Hanken Grotesk';color:#5A5249;max-width:500px;text-wrap:pretty">Partimos de um modelo pensado para o seu ramo e ajustamo-lo a si: textos, cores, fotografias e contactos. Com o material entregue, fica no ar em 48 horas.</p>
+<div style="margin-top:36px;display:flex;gap:16px">
+<a href="Modelos.dc.html" class="vd-btn" style="height:56px;padding:0 8px 0 24px;display:flex;align-items:center;gap:14px;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Ver os modelos<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a>
+<a href="Contacto.dc.html" class="vd-btn" style="height:56px;padding:0 24px;display:flex;align-items:center;border:1.5px solid #141210;color:#141210;border-radius:4px;font:600 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none;box-sizing:border-box">Falar por WhatsApp</a>
+</div>
+<div style="margin-top:28px;display:flex;gap:24px;font:500 14px/1 'Hanken Grotesk';color:#5A5249">
+<span class="vd-check vd-k0" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#BA4100">check_circle</span>Proposta sem custo</span>
+<span class="vd-check vd-k1" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#BA4100">check_circle</span>Domínio em seu nome</span>
+<span class="vd-check vd-k2" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#BA4100">check_circle</span>Sem fidelização</span>
+</div>
+</div>
+</div>
+
+<div style="background:#141210;padding:56px 80px;display:grid;grid-template-columns:repeat(4,1fr)">
+<div class="vd-entra vd-i0" style="display:flex;gap:20px;padding:0 32px;border-left:1px solid #3A342E"><svg class="vd-traco" viewBox="0 0 24 24" width="44" height="44" style="flex:none;fill:none;stroke:#EC5B13;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg><div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 15px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#F6EFE4">Modelos por ramo</span><span style="font:400 15px/1.55 'Hanken Grotesk';color:#BDB3A6">Parte-se de um modelo feito para o seu tipo de negócio. Não se começa do zero.</span></div></div>
+<div class="vd-entra vd-i1" style="display:flex;gap:20px;padding:0 32px;border-left:1px solid #3A342E"><svg class="vd-traco" viewBox="0 0 24 24" width="44" height="44" style="flex:none;fill:none;stroke:#EC5B13;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round"><path d="M12 20h9"></path><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7.4 18.6 3 20l1.4-4.4z"></path></svg><div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 15px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#F6EFE4">Texto escrito consigo</span><span style="font:400 15px/1.55 'Hanken Grotesk';color:#BDB3A6">As palavras do site pensadas para quem as vai ler.</span></div></div>
+<div class="vd-entra vd-i2" style="display:flex;gap:20px;padding:0 32px;border-left:1px solid #3A342E"><svg class="vd-traco" viewBox="0 0 24 24" width="44" height="44" style="flex:none;fill:none;stroke:#EC5B13;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M11 18h2"></path></svg><div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 15px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#F6EFE4">Primeiro no telemóvel</span><span style="font:400 15px/1.55 'Hanken Grotesk';color:#BDB3A6">Desenhado para o ecrã onde os seus clientes o vão abrir.</span></div></div>
+<div class="vd-entra vd-i3" style="display:flex;gap:20px;padding:0 32px;border-left:1px solid #3A342E"><svg class="vd-traco" viewBox="0 0 24 24" width="44" height="44" style="flex:none;fill:none;stroke:#EC5B13;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"></path></svg><div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 15px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#F6EFE4">Tudo por WhatsApp</span><span style="font:400 15px/1.55 'Hanken Grotesk';color:#BDB3A6">Dúvidas, alterações e aprovações na mesma conversa.</span></div></div>
+</div>
+
+<div style="padding:120px 0">
+<div style="padding:0 80px;display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end;margin-bottom:48px">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Os nossos modelos</div><h2 style="margin:16px 0 0;font:800 80px/.92 'Barlow Condensed';text-transform:uppercase">Temos o site certo<br><span style="color:#BA4100">para o seu negócio</span></h2></div>
+<div style="display:flex;flex-direction:column;gap:20px;align-items:flex-start"><p style="margin:0;font:400 18px/1.55 'Hanken Grotesk';color:#5A5249">Veja alguns exemplos dos sites que fazemos. Há muitas mais opções, e cada site é ajustado ao que o seu negócio precisa.</p><a href="Modelos.dc.html" style="display:flex;align-items:center;gap:8px;font:600 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#BA4100;text-decoration:none;border-bottom:1.5px solid #BA4100;padding-bottom:6px">Ver todos, com filtro por ramo<span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></a></div>
+</div>
+<div class="vd-car" style="padding-left:80px;padding-bottom:8px;scroll-padding-left:80px">
+<div class="vd-track vd-track--modelos">
+<sc-for list="{{ modelos }}" as="m" hint-placeholder-count="7"><div class="vd-slide" style="width:324px;padding-right:24px;box-sizing:border-box"><a href="Modelos.dc.html" class="vd-slide-card" style="display:block;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:8px;text-decoration:none;color:#141210"><div style="aspect-ratio:4/5;border-radius:8px;overflow:hidden;background:#ECE2D3"><img src="{{ m.img }}" alt="{{ m.alt }}" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div><div style="padding:14px 6px 8px;display:flex;flex-direction:column;gap:6px"><span style="font:700 28px/1 'Barlow Condensed';text-transform:uppercase">{{ m.nome }}</span><span style="font:400 14px/1.35 'Hanken Grotesk';color:#5A5249">{{ m.ramo }}</span></div></a></div></sc-for>
+<sc-for list="{{ modelos }}" as="m" hint-placeholder-count="0"><div class="vd-slide vd-dup" aria-hidden="true" style="width:324px;padding-right:24px;box-sizing:border-box"><a href="Modelos.dc.html" tabindex="-1" class="vd-slide-card" style="display:block;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:8px;text-decoration:none;color:#141210"><div style="aspect-ratio:4/5;border-radius:8px;overflow:hidden;background:#ECE2D3"><img src="{{ m.img }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div><div style="padding:14px 6px 8px;display:flex;flex-direction:column;gap:6px"><span style="font:700 28px/1 'Barlow Condensed';text-transform:uppercase">{{ m.nome }}</span><span style="font:400 14px/1.35 'Hanken Grotesk';color:#5A5249">{{ m.ramo }}</span></div></a></div></sc-for>
+</div>
+</div>
+<div style="margin:40px 80px 0;background:#141210;border-radius:12px;padding:32px 40px;display:grid;grid-template-columns:auto 1fr auto;gap:32px;align-items:center;color:#F6EFE4">
+<span style="font-family:'Material Symbols Outlined';font-weight:200;font-size:48px;line-height:1;color:#EC5B13">add_circle</span>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font:700 40px/.95 'Barlow Condensed';text-transform:uppercase">Não vê o seu ramo?</span><span style="font:400 16px/1.5 'Hanken Grotesk';color:#BDB3A6">Diga-nos o que faz. Adaptamos o modelo mais próximo ou desenhamos um à sua medida, e a proposta continua sem custo.</span></div>
+<a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:48px;padding:0 28px;display:flex;align-items:center;justify-content:center;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Perguntar</a>
+</div>
+</div>
+
+<div style="padding:0 80px 120px">
+<div style="text-align:center;margin-bottom:56px"><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">O que fazemos</div><h2 style="margin:16px 0 0;font:800 64px/.95 'Barlow Condensed';text-transform:uppercase">Nove serviços, ditos sem rodeios</h2></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+<sc-for list="{{ servicos }}" as="s" hint-placeholder-count="6"><div class="{{ s.cls }}" style="display:flex"><div class="vd-svc" style="flex:1;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="position:relative;aspect-ratio:3/2;overflow:hidden"><div class="vd-svc-foto" style="position:absolute;inset:0"><img src="/vaidesign/fotos/{{ s.id }}.jpg" alt="{{ s.f }}" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover"></div></div>
+<div style="padding:24px 24px 20px;display:flex;flex-direction:column;gap:12px;flex:1"><span style="font:700 30px/1 'Barlow Condensed';text-transform:uppercase">{{ s.t }}</span><span style="font:400 16px/1.5 'Hanken Grotesk';color:#5A5249;text-wrap:pretty">{{ s.d }}</span>
+<span class="vd-svc-seta" style="margin-top:auto;align-self:flex-end;width:40px;height:40px;border-radius:50%;border:1.5px solid #BA4100;color:#BA4100;display:grid;place-items:center;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1">arrow_forward</span></span></div>
+</div></div></sc-for>
+</div>
+<div style="display:flex;justify-content:center;gap:16px;margin-top:40px"><a href="Servicos.dc.html" class="vd-btn vd-btn--tijolo" style="height:52px;padding:0 24px;display:flex;align-items:center;gap:10px;background-color:#141210;border:1.5px solid #141210;box-sizing:border-box;color:#F6EFE4;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Ver o que inclui cada um<span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></a><a href="Contacto.dc.html" class="vd-btn" style="height:52px;padding:0 24px;display:flex;align-items:center;border:1.5px solid #141210;box-sizing:border-box;color:#141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Pedir proposta personalizada</a></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;min-height:600px;background:#FFFBF5">
+<div style="position:relative;min-height:600px;overflow:hidden"><img src="/vaidesign/fotos/historia.jpg" alt="" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover;object-position:50% 62.65925758832546%;position:absolute;inset:0;width:100%;height:100%"></div>
+<div style="position:relative;padding:96px 80px;display:flex;flex-direction:column;justify-content:center;gap:24px">
+<svg viewBox="0 0 200 200" width="176" height="176" style="position:absolute;top:56px;right:64px"><defs><path id="selo-d" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"></path></defs><circle cx="100" cy="100" r="97" fill="#F6EFE4" stroke="#141210" style="stroke-width:1.5"></circle><g class="vd-gira"><text fill="#141210" style="font:600 14px 'Hanken Grotesk';letter-spacing:3.6px"><textPath href="#selo-d" textLength="462" lengthAdjust="spacing">VAIDESIGN · FEITO À SUA MEDIDA ·</textPath></text></g><text x="100" y="116" text-anchor="middle" fill="#BA4100" style="font:800 46px 'Barlow Condensed'">VD</text></svg>
+<div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">A nossa história</div>
+<h2 style="margin:0;font:800 64px/.95 'Barlow Condensed';text-transform:uppercase;max-width:440px">Começámos agora.<br>Por isso atendemos nós.</h2>
+<p style="margin:0;font:400 18px/1.6 'Hanken Grotesk';color:#5A5249;max-width:520px;text-wrap:pretty">A VaiDesign é recente, e não o escondemos. Não temos centenas de clientes para mostrar. Temos sete modelos prontos, um processo em quatro passos e tempo para cada pessoa que nos escreve.</p>
+<a href="Sobre.dc.html" class="vd-btn vd-btn--tijolo" style="align-self:flex-start;height:52px;padding:0 24px;display:flex;align-items:center;gap:10px;border:1.5px solid #BA4100;color:#BA4100;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none;box-sizing:border-box">Conhecer a VaiDesign<span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></a>
+</div>
+</div>
+
+<div class="vd-fita" style="background:#141210;color:#F6EFE4;padding:20px 0">
+<div class="vd-fita-track">
+<sc-for list="{{ fita }}" as="f" hint-placeholder-count="8"><span aria-hidden="{{ f.dup }}" style="display:flex;align-items:center;gap:28px;padding-right:28px;font:800 32px/1 'Barlow Condensed';text-transform:uppercase;white-space:nowrap">VaiDesign<span style="width:10px;height:10px;border-radius:50%;background:#EC5B13"></span>Feito à sua medida<span style="width:10px;height:10px;border-radius:50%;background:#EC5B13"></span></span></sc-for>
+</div>
+</div>
+
+<div style="background:#EC5B13;padding:64px 80px;display:grid;grid-template-columns:repeat(4,1fr);color:#141210">
+<div style="padding:0 32px;border-left:1.5px solid #141210;display:flex;flex-direction:column;gap:10px"><span style="font:800 104px/.85 'Barlow Condensed';letter-spacing:-.01em"><span class="vd-conta vd-conta-7"><span class="vd-conta-txt">7</span></span></span><span style="font:600 15px/1.25 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase">modelos de site prontos</span><span style="font:400 15px/1.45 'Hanken Grotesk'">Veja-os todos antes de decidir.</span></div>
+<div style="padding:0 32px;border-left:1.5px solid #141210;display:flex;flex-direction:column;gap:10px"><span style="font:800 104px/.85 'Barlow Condensed';letter-spacing:-.01em"><span class="vd-conta vd-conta-48" style="display:inline-block;min-width:1.1em"><span class="vd-conta-txt">48</span></span> h</span><span style="font:600 15px/1.25 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase">do sim ao site no ar</span><span style="font:400 15px/1.45 'Hanken Grotesk'">Com os textos e as fotografias entregues.</span></div>
+<div style="padding:0 32px;border-left:1.5px solid #141210;display:flex;flex-direction:column;gap:10px"><span style="font:800 104px/.85 'Barlow Condensed';letter-spacing:-.01em"><span class="vd-conta vd-conta-1"><span class="vd-conta-txt">1</span></span></span><span style="font:600 15px/1.25 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase">pessoa a responder</span><span style="font:400 15px/1.45 'Hanken Grotesk'">Sempre a mesma, do primeiro olá à entrega.</span></div>
+<div style="padding:0 32px;border-left:1.5px solid #141210;display:flex;flex-direction:column;gap:10px"><span style="font:800 104px/.85 'Barlow Condensed';letter-spacing:-.01em">0 €</span><span style="font:600 15px/1.25 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase">até ver a proposta</span><span style="font:400 15px/1.45 'Hanken Grotesk'">Por escrito, com o preço fechado.</span></div>
+</div>
+
+<div style="padding:56px 80px;display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #DDD2C0">
+<sc-for list="{{ garantias }}" as="g" hint-placeholder-count="4"><div style="display:flex;gap:18px;padding:0 28px;border-left:1px solid #DDD2C0"><span style="font-family:'Material Symbols Outlined';font-weight:200;font-size:40px;line-height:1;color:#141210">{{ g.i }}</span><div style="display:flex;flex-direction:column;gap:8px"><span style="font:600 15px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase">{{ g.t }}</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#5A5249">{{ g.d }}</span></div></div></sc-for>
+</div>
+
+<dc-import name="Rodape" largura="computador" hint-size="100%,640px"></dc-import>
+</div>`,
+  'inicio-390': `<div style="width:390px;background:#F6EFE4;overflow:hidden">
+<dc-import name="Cabecalho" largura="telemovel" ativa="inicio" hint-size="100%,72px"></dc-import>
+<div style="padding:24px 20px 0">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Design e sites à medida do seu negócio</div>
+<h1 style="margin:16px 0 0;font:800 60px/.9 'Barlow Condensed';text-transform:uppercase"><span class="vd-linha" style="display:block">O site já</span><span class="vd-linha vd-l1" style="display:block">está feito.</span><span class="vd-linha vd-l2" style="display:block;color:#BA4100">Falta o seu nome.</span></h1>
+<p style="margin:20px 0 0;font:400 17px/1.5 'Hanken Grotesk';color:#5A5249">Partimos de um modelo pensado para o seu ramo e ajustamo-lo a si. Com o material entregue, fica no ar em 48 horas.</p>
+<div style="margin-top:24px;display:flex;flex-direction:column;gap:12px">
+<a href="Modelos.dc.html" class="vd-btn" style="height:56px;padding:0 8px 0 20px;display:flex;align-items:center;justify-content:space-between;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Ver os modelos<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a>
+<a href="Contacto.dc.html" class="vd-btn" style="height:56px;display:flex;align-items:center;justify-content:center;border:1.5px solid #141210;box-sizing:border-box;color:#141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Falar por WhatsApp</a>
+</div>
+<div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;font:500 14px/1 'Hanken Grotesk';color:#5A5249">
+<span class="vd-check vd-k0" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#BA4100">check_circle</span>Proposta sem custo</span>
+<span class="vd-check vd-k1" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#BA4100">check_circle</span>Domínio em seu nome</span>
+<span class="vd-check vd-k2" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#BA4100">check_circle</span>Sem fidelização</span>
+</div>
+</div>
+<div style="position:relative;height:440px;margin-top:32px;overflow:hidden">
+<div class="vd-respira" style="position:absolute;left:70px;top:10px;width:440px;height:500px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<div style="position:absolute;left:150px;top:220px;width:340px;height:340px;border:26px solid #F6EFE4;border-radius:50%;box-sizing:border-box"></div>
+<div style="position:absolute;left:80px;top:40px;width:290px;height:400px"><img src="/vaidesign/fotos/capa-equipa.jpg" alt="Equipa numa mesa redonda de cowork." loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover;clip-path:inset(0 round 145px 145px 16px 16px)"></div>
+<div style="position:absolute;left:16px;top:36px;width:112px;height:112px;border-radius:50%;background:#141210;color:#F6EFE4;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-10deg);text-align:center"><span style="font:800 38px/.9 'Barlow Condensed';color:#EC5B13">0 €</span><span style="font:600 11px/1.2 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;margin-top:4px">até ver<br>a proposta</span></div>
+</div>
+<div style="background:#141210;padding:12px 20px">
+<div class="vd-entra vd-i0" style="display:flex;gap:16px;padding:20px 0;border-bottom:1px solid #3A342E"><svg class="vd-traco" viewBox="0 0 24 24" width="36" height="36" style="flex:none;fill:none;stroke:#EC5B13;stroke-width:1;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg><div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#F6EFE4">Modelos por ramo</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#BDB3A6">Parte-se de um modelo feito para o seu tipo de negócio.</span></div></div>
+<div class="vd-entra vd-i1" style="display:flex;gap:16px;padding:20px 0;border-bottom:1px solid #3A342E"><svg class="vd-traco" viewBox="0 0 24 24" width="36" height="36" style="flex:none;fill:none;stroke:#EC5B13;stroke-width:1;stroke-linecap:round;stroke-linejoin:round"><path d="M12 20h9"></path><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7.4 18.6 3 20l1.4-4.4z"></path></svg><div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#F6EFE4">Texto escrito consigo</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#BDB3A6">As palavras pensadas para quem as vai ler.</span></div></div>
+<div class="vd-entra vd-i2" style="display:flex;gap:16px;padding:20px 0;border-bottom:1px solid #3A342E"><svg class="vd-traco" viewBox="0 0 24 24" width="36" height="36" style="flex:none;fill:none;stroke:#EC5B13;stroke-width:1;stroke-linecap:round;stroke-linejoin:round"><rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M11 18h2"></path></svg><div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#F6EFE4">Primeiro no telemóvel</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#BDB3A6">Desenhado para o ecrã onde os clientes o abrem.</span></div></div>
+<div class="vd-entra vd-i3" style="display:flex;gap:16px;padding:20px 0"><svg class="vd-traco" viewBox="0 0 24 24" width="36" height="36" style="flex:none;fill:none;stroke:#EC5B13;stroke-width:1;stroke-linecap:round;stroke-linejoin:round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"></path></svg><div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;color:#F6EFE4">Tudo por WhatsApp</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#BDB3A6">Dúvidas, alterações e aprovações na mesma conversa.</span></div></div>
+</div>
+<div style="padding:72px 0">
+<div style="padding:0 20px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Os nossos modelos</div>
+<h2 style="margin:12px 0 16px;font:800 48px/.92 'Barlow Condensed';text-transform:uppercase">Temos o site certo <span style="color:#BA4100">para o seu negócio</span></h2>
+<p style="margin:0 0 24px;font:400 16px/1.55 'Hanken Grotesk';color:#5A5249">Alguns exemplos do que fazemos. Há muitas mais opções, sempre à sua medida.</p>
+</div>
+<div class="vd-car" style="padding-left:20px;padding-bottom:8px;scroll-padding-left:20px">
+<div class="vd-track vd-track--modelos">
+<sc-for list="{{ modelos }}" as="m" hint-placeholder-count="7"><div class="vd-slide" style="width:232px;padding-right:12px;box-sizing:border-box"><a href="Modelos.dc.html" class="vd-slide-card" style="display:block;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:6px;text-decoration:none;color:#141210"><div style="aspect-ratio:4/5;border-radius:8px;overflow:hidden;background:#ECE2D3"><img src="{{ m.img }}" alt="{{ m.alt }}" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div><div style="padding:12px 4px 6px;display:flex;flex-direction:column;gap:4px"><span style="font:700 22px/1 'Barlow Condensed';text-transform:uppercase">{{ m.nome }}</span><span style="font:400 13px/1.35 'Hanken Grotesk';color:#5A5249">{{ m.ramo }}</span></div></a></div></sc-for>
+<sc-for list="{{ modelos }}" as="m" hint-placeholder-count="0"><div class="vd-slide vd-dup" aria-hidden="true" style="width:232px;padding-right:12px;box-sizing:border-box"><a href="Modelos.dc.html" tabindex="-1" class="vd-slide-card" style="display:block;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:6px;text-decoration:none;color:#141210"><div style="aspect-ratio:4/5;border-radius:8px;overflow:hidden;background:#ECE2D3"><img src="{{ m.img }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div><div style="padding:12px 4px 6px;display:flex;flex-direction:column;gap:4px"><span style="font:700 22px/1 'Barlow Condensed';text-transform:uppercase">{{ m.nome }}</span><span style="font:400 13px/1.35 'Hanken Grotesk';color:#5A5249">{{ m.ramo }}</span></div></a></div></sc-for>
+</div>
+</div>
+<div style="margin:28px 20px 0;background:#141210;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;color:#F6EFE4"><span style="font-family:'Material Symbols Outlined';font-weight:200;font-size:36px;line-height:1;color:#EC5B13">add_circle</span><span style="font:700 28px/.95 'Barlow Condensed';text-transform:uppercase">Não vê o seu ramo?</span><span style="font:400 15px/1.45 'Hanken Grotesk';color:#BDB3A6">Adaptamos o mais próximo ou fazemos um à sua medida. A proposta continua sem custo.</span><a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:48px;display:flex;align-items:center;justify-content:center;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 13px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Perguntar</a></div>
+</div>
+<div style="padding:0 20px 72px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">O que fazemos</div>
+<h2 style="margin:12px 0 28px;font:800 44px/.95 'Barlow Condensed';text-transform:uppercase">Nove serviços, ditos sem rodeios</h2>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+<sc-for list="{{ servicos }}" as="s" hint-placeholder-count="6"><div class="{{ s.clsm }}" style="display:flex"><div class="vd-svc" style="flex:1;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="position:relative;aspect-ratio:3/2;overflow:hidden"><div class="vd-svc-foto" style="position:absolute;inset:0"><img src="/vaidesign/fotos/{{ s.id }}.jpg" alt="{{ s.fm }}" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover"></div></div>
+<div style="padding:14px 12px 12px;display:flex;flex-direction:column;gap:8px;flex:1"><span style="font:700 21px/1 'Barlow Condensed';text-transform:uppercase">{{ s.t }}</span><span style="font:400 14px/1.4 'Hanken Grotesk';color:#5A5249">{{ s.c }}</span><span class="vd-svc-seta" style="margin-top:auto;align-self:flex-end;width:36px;height:36px;border-radius:50%;border:1.5px solid #BA4100;color:#BA4100;display:grid;place-items:center;box-sizing:border-box"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1">arrow_forward</span></span></div>
+</div></div></sc-for>
+</div>
+</div>
+<div style="background:#FFFBF5">
+<div style="position:relative;aspect-ratio:3/4"><img src="/vaidesign/fotos/historia.jpg" alt="" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover;object-position:50% 62.65925758832546%">
+<svg viewBox="0 0 200 200" width="112" height="112" style="position:absolute;right:16px;bottom:-40px"><defs><path id="selo-m" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"></path></defs><circle cx="100" cy="100" r="97" fill="#F6EFE4" stroke="#141210" style="stroke-width:2"></circle><g class="vd-gira"><text fill="#141210" style="font:600 14px 'Hanken Grotesk';letter-spacing:3.6px"><textPath href="#selo-m" textLength="462" lengthAdjust="spacing">VAIDESIGN · FEITO À SUA MEDIDA ·</textPath></text></g><text x="100" y="116" text-anchor="middle" fill="#BA4100" style="font:800 46px 'Barlow Condensed'">VD</text></svg></div>
+<div style="padding:56px 20px 64px;display:flex;flex-direction:column;gap:18px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">A nossa história</div>
+<h2 style="margin:0;font:800 44px/.95 'Barlow Condensed';text-transform:uppercase">Começámos agora. Por isso atendemos nós.</h2>
+<p style="margin:0;font:400 16px/1.6 'Hanken Grotesk';color:#5A5249">A VaiDesign é recente, e não o escondemos. Temos sete modelos prontos, um processo em quatro passos e tempo para cada pessoa que nos escreve.</p>
+<a href="Sobre.dc.html" class="vd-btn vd-btn--tijolo" style="height:52px;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid #BA4100;box-sizing:border-box;color:#BA4100;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Conhecer a VaiDesign<span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></a>
+</div>
+</div>
+<div class="vd-fita" style="background:#141210;color:#F6EFE4;padding:16px 0">
+<div class="vd-fita-track">
+<sc-for list="{{ fita }}" as="f" hint-placeholder-count="8"><span aria-hidden="{{ f.dup }}" style="display:flex;align-items:center;gap:18px;padding-right:18px;font:800 24px/1 'Barlow Condensed';text-transform:uppercase;white-space:nowrap">VaiDesign<span style="width:8px;height:8px;border-radius:50%;background:#EC5B13"></span>Feito à sua medida<span style="width:8px;height:8px;border-radius:50%;background:#EC5B13"></span></span></sc-for>
+</div>
+</div>
+<div style="background:#EC5B13;padding:40px 20px;display:grid;grid-template-columns:1fr 1fr;gap:32px 16px;color:#141210">
+<div style="padding-left:14px;border-left:1.5px solid #141210;display:flex;flex-direction:column;gap:6px"><span style="font:800 64px/.85 'Barlow Condensed'"><span class="vd-conta vd-conta-7"><span class="vd-conta-txt">7</span></span></span><span style="font:600 13px/1.25 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">modelos de site</span><span style="font:400 14px/1.4 'Hanken Grotesk'">Veja-os antes de decidir.</span></div>
+<div style="padding-left:14px;border-left:1.5px solid #141210;display:flex;flex-direction:column;gap:6px"><span style="font:800 64px/.85 'Barlow Condensed'"><span class="vd-conta vd-conta-48" style="display:inline-block;min-width:1.1em"><span class="vd-conta-txt">48</span></span> h</span><span style="font:600 13px/1.25 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">do sim ao site no ar</span><span style="font:400 14px/1.4 'Hanken Grotesk'">Com o material entregue.</span></div>
+<div style="padding-left:14px;border-left:1.5px solid #141210;display:flex;flex-direction:column;gap:6px"><span style="font:800 64px/.85 'Barlow Condensed'"><span class="vd-conta vd-conta-1"><span class="vd-conta-txt">1</span></span></span><span style="font:600 13px/1.25 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">pessoa a responder</span><span style="font:400 14px/1.4 'Hanken Grotesk'">Sempre a mesma.</span></div>
+<div style="padding-left:14px;border-left:1.5px solid #141210;display:flex;flex-direction:column;gap:6px"><span style="font:800 64px/.85 'Barlow Condensed'">0 €</span><span style="font:600 13px/1.25 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">até ver a proposta</span><span style="font:400 14px/1.4 'Hanken Grotesk'">Por escrito.</span></div>
+</div>
+<div style="padding:40px 20px;display:grid;grid-template-columns:1fr 1fr;gap:28px 16px">
+<sc-for list="{{ garantias }}" as="g" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:10px"><span style="font-family:'Material Symbols Outlined';font-weight:200;font-size:36px;line-height:1">{{ g.i }}</span><span style="font:600 13px/1.2 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">{{ g.t }}</span><span style="font:400 14px/1.45 'Hanken Grotesk';color:#5A5249">{{ g.d }}</span></div></sc-for>
+</div>
+<dc-import name="Rodape" largura="telemovel" hint-size="100%,760px"></dc-import>
+</div>`,
+  'modelos-1440': `<div style="width:1440px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-130px;top:-240px;width:610px;height:440px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="computador" ativa="modelos" hint-size="100%,96px" style="position:relative"></dc-import>
+<div style="position:relative;padding:96px 80px 64px;display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Modelos</div><h1 style="margin:20px 0 0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Escolha o ponto<br><span style="color:#BA4100">de partida.</span></h1></div>
+<p style="margin:0;max-width:420px;font:400 20px/1.5 'Hanken Grotesk';color:#5A5249;text-wrap:pretty">Veja alguns exemplos do que fazemos, um por ramo. São só o ponto de partida: temos muitas mais opções e desenhamos o seu site à medida do que o seu negócio precisa.</p>
+</div>
+</div>
+<div style="padding:0 80px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #DDD2C0;margin:0 80px;padding-left:0;padding-right:0">
+<div style="display:flex;gap:10px;flex-wrap:wrap"><sc-for list="{{ chipsD }}" as="c" hint-placeholder-count="6"><sc-if value="{{ c.on }}"><button style="height:44px;padding:0 20px;border-radius:999px;border:1.5px solid #141210;background:#141210;color:#F6EFE4;font:600 14px/1 'Hanken Grotesk';cursor:pointer">{{ c.l }}</button></sc-if><sc-if value="{{ c.off }}"><button style="height:44px;padding:0 20px;border-radius:999px;border:1.5px solid #C9BCA8;background:transparent;color:#141210;font:500 14px/1 'Hanken Grotesk';cursor:pointer">{{ c.l }}</button></sc-if></sc-for></div>
+<span style="font:500 14px/1 'Hanken Grotesk';color:#5A5249">{{ contaD }}</span>
+</div>
+<div style="padding:40px 80px 120px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px">
+<sc-for list="{{ itemsD }}" as="m" hint-placeholder-count="7"><dc-import name="FichaModelo" modelo="{{ m.id }}" estado="{{ m.estado }}" hint-size="100%,490px" style="width:100%"></dc-import></sc-for>
+</div>
+<div style="margin:0 80px 120px;padding:40px;border:1.5px solid #141210;border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px">
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BA4100">Muda</span><span style="font:400 17px/1.5 'Hanken Grotesk'">Textos, cores, fotografias, logótipo e as secções que não lhe fazem falta.</span></div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BA4100">Fica</span><span style="font:400 17px/1.5 'Hanken Grotesk'">A estrutura, a ordem das secções e o funcionamento no telemóvel.</span></div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BA4100">Não é partilhado</span><span style="font:400 17px/1.5 'Hanken Grotesk'">Dois negócios da mesma rua nunca ficam com o mesmo site: as cores e as fotografias são suas.</span></div>
+</div>
+<dc-import name="Rodape" largura="computador" hint-size="100%,640px"></dc-import>
+</div>`,
+  'modelos-390': `<div style="width:390px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-120px;top:-140px;width:300px;height:300px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="telemovel" ativa="modelos" hint-size="100%,72px" style="position:relative"></dc-import>
+<div style="position:relative;padding:40px 20px 32px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Modelos</div>
+<h1 style="margin:16px 0 20px;font:800 60px/.9 'Barlow Condensed';text-transform:uppercase">Escolha o ponto <span style="color:#BA4100">de partida.</span></h1>
+<p style="margin:0;font:400 17px/1.5 'Hanken Grotesk';color:#5A5249">Alguns exemplos, um por ramo. Temos muitas mais opções e fazemos o seu à medida.</p>
+</div>
+</div>
+<div style="display:flex;gap:8px;overflow-x:auto;padding:0 20px 20px"><sc-for list="{{ chipsM }}" as="c" hint-placeholder-count="6"><sc-if value="{{ c.on }}"><button style="flex:none;height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #141210;background:#141210;color:#F6EFE4;font:600 14px/1 'Hanken Grotesk'">{{ c.l }}</button></sc-if><sc-if value="{{ c.off }}"><button style="flex:none;height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #C9BCA8;background:transparent;color:#141210;font:500 14px/1 'Hanken Grotesk'">{{ c.l }}</button></sc-if></sc-for></div>
+<div style="padding:0 20px 8px;font:500 13px/1 'Hanken Grotesk';color:#5A5249">{{ contaM }}</div>
+<div style="padding:12px 20px 72px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+<sc-for list="{{ itemsM }}" as="m" hint-placeholder-count="7"><dc-import name="FichaModelo" modelo="{{ m.id }}" hint-size="100%,310px" style="width:100%"></dc-import></sc-for>
+</div>
+<dc-import name="Rodape" largura="telemovel" hint-size="100%,760px"></dc-import>
+</div>`,
+  'servicos-1440': `<div style="width:1440px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-160px;top:-220px;width:560px;height:560px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="computador" ativa="servicos" hint-size="100%,96px" style="position:relative"></dc-import>
+<div style="position:relative;padding:96px 80px 88px;display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Serviços</div><h1 style="margin:20px 0 0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Nove serviços.<br><span style="color:#BA4100">O que entra e o que não.</span></h1></div>
+<p style="margin:0;font:400 20px/1.5 'Hanken Grotesk';color:#5A5249;text-wrap:pretty">Cada serviço diz o que está incluído e o que fica de fora. Assim sabe exatamente o que está a pedir antes de receber a proposta.</p>
+</div>
+</div>
+<div style="padding:0 80px 120px;display:flex;flex-direction:column">
+<sc-for list="{{ servicos }}" as="s" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:5fr 7fr;gap:56px;padding:56px 0;border-top:1.5px solid #141210">
+<div style="position:relative;aspect-ratio:3/2;border-radius:12px;overflow:hidden"><img src="/vaidesign/fotos/{{ s.id }}.jpg" alt="" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover"></div>
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">{{ s.n }}</span><h2 style="margin:0;font:800 56px/.95 'Barlow Condensed';text-transform:uppercase">{{ s.t }}</h2></div>
+<p style="margin:0;font:400 19px/1.55 'Hanken Grotesk';color:#5A5249;max-width:620px">{{ s.d }}</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:8px">
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase">Inclui</span><sc-for list="{{ s.inc }}" as="x" hint-placeholder-count="4"><span style="display:flex;gap:10px;font:400 16px/1.4 'Hanken Grotesk'"><span style="font-family:'Material Symbols Outlined';font-weight:400;font-size:20px;line-height:1.1;color:#BA4100">check</span>{{ x }}</span></sc-for></div>
+<div style="border:1.5px dashed #C9BCA8;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#5A5249">Não inclui</span><sc-for list="{{ s.exc }}" as="x" hint-placeholder-count="3"><span style="display:flex;gap:10px;font:400 16px/1.4 'Hanken Grotesk';color:#5A5249"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1.1">remove</span>{{ x }}</span></sc-for></div>
+</div>
+<a href="Contacto.dc.html" style="align-self:flex-start;margin-top:4px;display:flex;align-items:center;gap:8px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#BA4100;text-decoration:none;border-bottom:1.5px solid #BA4100;padding-bottom:6px">Pedir proposta para este<span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></a>
+</div>
+</div></sc-for>
+<div style="margin-top:56px;background:#141210;color:#F6EFE4;border-radius:12px;padding:56px;display:grid;grid-template-columns:7fr 5fr;gap:48px;align-items:center">
+<div style="display:flex;flex-direction:column;gap:16px"><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Proposta personalizada</div><h2 style="margin:0;font:800 64px/.92 'Barlow Condensed';text-transform:uppercase">Não tem de escolher<br><span style="color:#EC5B13">só um destes.</span></h2><p style="margin:0;font:400 18px/1.55 'Hanken Grotesk';color:#BDB3A6;max-width:560px;text-wrap:pretty">Junte os serviços que fazem sentido, tire o que não precisa, ou conte-nos um objetivo que não está aqui. Montamos uma proposta à sua medida, por escrito e sem custo.</p></div>
+<div style="display:flex;flex-direction:column;gap:20px"><div style="display:flex;flex-direction:column;gap:10px;font:400 16px/1.4 'Hanken Grotesk'"><span style="display:flex;gap:10px;align-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#EC5B13">check</span>Combinar vários serviços num só preço</span><span style="display:flex;gap:10px;align-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#EC5B13">check</span>Tirar o que não precisa</span><span style="display:flex;gap:10px;align-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#EC5B13">check</span>Pedir algo que não está na lista</span></div><a href="Contacto.dc.html" class="vd-btn vd-btn--tijolo" style="height:56px;padding:0 8px 0 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Pedir proposta personalizada<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a></div>
+</div>
+</div>
+<dc-import name="Rodape" largura="computador" hint-size="100%,640px"></dc-import>
+</div>`,
+  'servicos-390': `<div style="width:390px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-120px;top:-140px;width:300px;height:300px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="telemovel" ativa="servicos" hint-size="100%,72px" style="position:relative"></dc-import>
+<div style="position:relative;padding:40px 20px 48px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Serviços</div>
+<h1 style="margin:16px 0 20px;font:800 60px/.9 'Barlow Condensed';text-transform:uppercase">Nove serviços.<br><span style="color:#BA4100">O que entra e o que não.</span></h1>
+<p style="margin:0;font:400 17px/1.5 'Hanken Grotesk';color:#5A5249">Cada serviço diz o que está incluído e o que fica de fora, antes de receber a proposta.</p>
+</div>
+</div>
+<div style="padding:0 20px 72px">
+<sc-for list="{{ servicos }}" as="s" hint-placeholder-count="6"><div style="padding:32px 0;border-top:1.5px solid #141210;display:flex;flex-direction:column;gap:16px">
+<div style="position:relative;aspect-ratio:3/2;border-radius:12px;overflow:hidden"><img src="/vaidesign/fotos/{{ s.id }}.jpg" alt="" loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover"></div>
+<div style="display:flex;align-items:baseline;gap:12px"><span style="font:800 40px/1 'Barlow Condensed';color:#EC5B13">{{ s.n }}</span><h2 style="margin:0;font:800 36px/.95 'Barlow Condensed';text-transform:uppercase">{{ s.t }}</h2></div>
+<p style="margin:0;font:400 16px/1.55 'Hanken Grotesk';color:#5A5249">{{ s.d }}</p>
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px"><span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase">Inclui</span><sc-for list="{{ s.inc }}" as="x" hint-placeholder-count="4"><span style="display:flex;gap:10px;font:400 15px/1.4 'Hanken Grotesk'"><span style="font-family:'Material Symbols Outlined';font-weight:400;font-size:20px;line-height:1.1;color:#BA4100">check</span>{{ x }}</span></sc-for></div>
+<div style="border:1.5px dashed #C9BCA8;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px"><span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#5A5249">Não inclui</span><sc-for list="{{ s.exc }}" as="x" hint-placeholder-count="3"><span style="display:flex;gap:10px;font:400 15px/1.4 'Hanken Grotesk';color:#5A5249"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1.1">remove</span>{{ x }}</span></sc-for></div>
+</div></sc-for>
+<div style="margin-top:32px;background:#141210;color:#F6EFE4;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Proposta personalizada</div><h2 style="margin:0;font:800 40px/.92 'Barlow Condensed';text-transform:uppercase">Não tem de escolher <span style="color:#EC5B13">só um destes.</span></h2><p style="margin:0;font:400 16px/1.5 'Hanken Grotesk';color:#BDB3A6">Junte serviços, tire o que não precisa, ou conte-nos um objetivo que não está aqui. A proposta vem à sua medida, sem custo.</p><a href="Contacto.dc.html" class="vd-btn vd-btn--tijolo" style="height:56px;padding:0 8px 0 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Pedir proposta personalizada<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a>
+</div>
+</div>
+<dc-import name="Rodape" largura="telemovel" hint-size="100%,760px"></dc-import>
+</div>`,
+  'sobre-1440': `<div style="width:1440px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;height:760px;overflow:hidden">
+<div style="position:absolute;left:930px;top:-160px;width:690px;height:900px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<div style="position:absolute;left:920px;bottom:0;width:420px;height:600px"><img src="/vaidesign/fotos/fundador.jpg" alt="O fundador, meio corpo, de frente, no seu espaço de trabalho. Luz de janela." loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover;clip-path:inset(0 round 210px 210px 0 0)"></div>
+<svg viewBox="0 0 200 200" width="176" height="176" style="position:absolute;left:800px;top:420px;transform:rotate(-12deg)"><defs><path id="sb-d" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"></path></defs><circle cx="100" cy="100" r="97" fill="#F6EFE4" stroke="#141210" style="stroke-width:1.5"></circle><g class="vd-gira"><text fill="#141210" style="font:600 14px 'Hanken Grotesk';letter-spacing:3.6px"><textPath href="#sb-d" textLength="462" lengthAdjust="spacing">VAIDESIGN · FEITO À SUA MEDIDA ·</textPath></text></g><text x="100" y="116" text-anchor="middle" fill="#BA4100" style="font:800 46px 'Barlow Condensed'">VD</text></svg>
+<dc-import name="Cabecalho" largura="computador" ativa="sobre" hint-size="100%,96px" style="position:absolute;top:0;left:0;right:0"></dc-import>
+<div style="position:absolute;left:80px;top:184px;width:660px;display:flex;flex-direction:column;gap:24px">
+<div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Quem é</div>
+<h1 style="margin:0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Do outro lado<br>está <span style="color:#BA4100">uma pessoa.</span></h1>
+<p style="margin:0;font:400 20px/1.55 'Hanken Grotesk';color:#5A5249;max-width:540px;text-wrap:pretty">Por trás da VaiDesign está Bruno Dias, empenhado em ajudá-lo a atingir os seus objetivos. É quem lê as mensagens, desenha os sites e os põe no ar. Não há gestor de conta nem passagem de testemunho: fala sempre com a mesma pessoa.</p>
+</div>
+</div>
+<div style="background:#141210;color:#F6EFE4;padding:112px 80px;display:grid;grid-template-columns:5fr 7fr;gap:24px">
+<div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Porquê</div>
+<div style="display:flex;flex-direction:column;gap:32px"><p style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase;text-wrap:balance">Um pequeno negócio não precisa de um projeto de seis meses. <span style="color:#EC5B13">Precisa de um site claro, esta semana.</span></p><p style="margin:0;font:400 18px/1.6 'Hanken Grotesk';color:#BDB3A6;max-width:620px">A maioria dos comércios adia o site porque parece caro, lento e complicado. Os modelos existem para tirar essas três razões da frente: parte-se de uma base que já funciona e gasta-se o tempo no que é seu.</p></div>
+</div>
+<div style="padding:120px 80px">
+<div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:56px"><div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Como se trabalha</div><h2 style="margin:16px 0 0;font:800 80px/.92 'Barlow Condensed';text-transform:uppercase">Quatro passos.<br><span style="color:#BA4100">Nenhum escondido.</span></h2></div></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px">
+<sc-for list="{{ passos }}" as="p" hint-placeholder-count="4"><div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:32px 28px;display:flex;flex-direction:column;gap:16px"><span style="font:800 88px/.85 'Barlow Condensed';color:#EC5B13">{{ p.n }}</span><span style="font:700 32px/1 'Barlow Condensed';text-transform:uppercase">{{ p.t }}</span><span style="font:400 16px/1.55 'Hanken Grotesk';color:#5A5249;flex:1">{{ p.d }}</span><span style="align-self:flex-start;font:600 12px/1 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;border-radius:999px;background:#141210;color:#F6EFE4">{{ p.q }}</span></div></sc-for>
+</div>
+</div>
+<dc-import name="Rodape" largura="computador" hint-size="100%,640px"></dc-import>
+</div>`,
+  'sobre-390': `<div style="width:390px;background:#F6EFE4;overflow:hidden">
+<dc-import name="Cabecalho" largura="telemovel" ativa="sobre" hint-size="100%,72px"></dc-import>
+<div style="padding:24px 20px 0;display:flex;flex-direction:column;gap:16px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Quem é</div>
+<h1 style="margin:0;font:800 60px/.9 'Barlow Condensed';text-transform:uppercase">Do outro lado está <span style="color:#BA4100">uma pessoa.</span></h1>
+<p style="margin:0;font:400 17px/1.55 'Hanken Grotesk';color:#5A5249">Por trás da VaiDesign está Bruno Dias, empenhado em ajudá-lo a atingir os seus objetivos. Lê as mensagens, desenha os sites e põe-nos no ar. Fala sempre com a mesma pessoa.</p>
+</div>
+<div style="position:relative;height:400px;margin-top:32px;overflow:hidden">
+<div style="position:absolute;left:60px;top:10px;width:420px;height:460px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<div style="position:absolute;left:100px;bottom:0;width:240px;height:350px"><img src="/vaidesign/fotos/fundador.jpg" alt="O fundador, meio corpo." loading="lazy" style="display:block;width:100%;height:100%;object-fit:cover;clip-path:inset(0 round 120px 120px 0 0)"></div>
+<svg viewBox="0 0 200 200" width="112" height="112" style="position:absolute;left:16px;top:40px;transform:rotate(-12deg)"><defs><path id="sb-m" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"></path></defs><circle cx="100" cy="100" r="97" fill="#F6EFE4" stroke="#141210" style="stroke-width:2"></circle><g class="vd-gira"><text fill="#141210" style="font:600 14px 'Hanken Grotesk';letter-spacing:3.6px"><textPath href="#sb-m" textLength="462" lengthAdjust="spacing">VAIDESIGN · FEITO À SUA MEDIDA ·</textPath></text></g><text x="100" y="116" text-anchor="middle" fill="#BA4100" style="font:800 46px 'Barlow Condensed'">VD</text></svg>
+</div>
+<div style="background:#141210;color:#F6EFE4;padding:64px 20px;display:flex;flex-direction:column;gap:20px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Porquê</div>
+<p style="margin:0;font:800 38px/1 'Barlow Condensed';text-transform:uppercase">Um pequeno negócio não precisa de um projeto de seis meses. <span style="color:#EC5B13">Precisa de um site claro, esta semana.</span></p>
+<p style="margin:0;font:400 16px/1.6 'Hanken Grotesk';color:#BDB3A6">Os modelos existem para tirar da frente o caro, o lento e o complicado. Parte-se de uma base que já funciona.</p>
+</div>
+<div style="padding:72px 20px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Como se trabalha</div>
+<h2 style="margin:12px 0 28px;font:800 48px/.92 'Barlow Condensed';text-transform:uppercase">Quatro passos. <span style="color:#BA4100">Nenhum escondido.</span></h2>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ passos }}" as="p" hint-placeholder-count="4"><div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:20px;display:grid;grid-template-columns:64px 1fr;gap:4px 16px"><span style="grid-row:span 3;font:800 60px/.85 'Barlow Condensed';color:#EC5B13">{{ p.n }}</span><span style="font:700 26px/1 'Barlow Condensed';text-transform:uppercase">{{ p.t }}</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#5A5249">{{ p.d }}</span><span style="justify-self:start;margin-top:8px;font:600 11px/1 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;border-radius:999px;background:#141210;color:#F6EFE4">{{ p.q }}</span></div></sc-for>
+</div>
+</div>
+<dc-import name="Rodape" largura="telemovel" hint-size="100%,760px"></dc-import>
+</div>`,
+} as const;
+
+export type NomeDeArtboard = keyof typeof ARTBOARDS;
