@@ -343,6 +343,77 @@ export const passos = [
   },
 ];
 
+/**
+ * O estado do formulário de contacto, como o desenho o pede.
+ *
+ * O Claude Design desenhou três ecrãs — vazio, com erro e enviado — e
+ * pergunta por eles com estes nomes. Quem decide qual deles se mostra é o
+ * servidor, depois de receber o formulário.
+ */
+export interface EstadoDoFormulario {
+  /** Mostrar o formulário. Falso depois de enviado. */
+  form: boolean;
+  /** O campo do contacto sem erro. */
+  ok2: boolean;
+  /** O campo do contacto com erro. */
+  erro: boolean;
+  /** O painel do «Recebido». */
+  enviado: boolean;
+  /** O que a pessoa já tinha escrito, para não se perder num erro. */
+  v1: string;
+  v3: string;
+  v4: string;
+  v5: string;
+}
+
+export const FORMULARIO_VAZIO: EstadoDoFormulario = {
+  form: true,
+  ok2: true,
+  erro: false,
+  enviado: false,
+  v1: '',
+  v3: '',
+  v4: 'Sem preferência',
+  v5: '',
+};
+
+export const FORMULARIO_ENVIADO: EstadoDoFormulario = {
+  form: false,
+  ok2: false,
+  erro: false,
+  enviado: true,
+  v1: '',
+  v3: '',
+  v4: '',
+  v5: '',
+};
+
+/** Os modelos que se podem escolher no formulário, na ordem do desenho. */
+export const ESCOLHAS_DE_MODELO = [
+  'Sem preferência',
+  'Forno & Brasa',
+  'Clínica Vale',
+  'Predial',
+  'Retrato',
+  'Oficina',
+  'Estrada',
+  'Neon',
+] as const;
+
+/**
+ * A mensagem de exemplo que o desenho põe ao lado do formulário.
+ *
+ * É a melhor ideia da página e não é minha: quem vende a um padeiro sabe que
+ * o que trava não é o formulário, é ficar a olhar para uma caixa vazia sem
+ * saber o que escrever. Dar um texto para copiar e mudar tira isso do
+ * caminho. Está aqui porque o botão «Copiar exemplo» precisa dela no browser.
+ */
+export const MENSAGEM_DE_EXEMPLO =
+  'Olá! Chamo-me Rita e tenho uma padaria em Setúbal, a Pão da Rita. ' +
+  'Vendemos pão, bolos e fazemos encomendas para festas. ' +
+  'Gostei do modelo Forno & Brasa. Já tenho logótipo, não tenho domínio. ' +
+  'Tenho algumas fotografias do balcão. Queria o site antes do Natal.';
+
 /** O que trazer na primeira mensagem, na página de Contacto. */
 export const lista = [
   { n: '1', t: 'O nome do negócio e onde fica', d: 'Rua ou zona chega. Ajuda a pensar no SEO local.' },

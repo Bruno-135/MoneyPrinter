@@ -13,12 +13,6 @@ import { paginaDaVaiDesign, type Pagina } from '@/lib/vaidesign/desenho/pagina';
  * seguro aqui e não o seria com HTML gerado.
  */
 
-interface Props {
-  pagina: Pagina;
-  /** O WhatsApp da agência, só dígitos. Sem ele, o botão leva ao contacto. */
-  whatsapp?: string | null;
-}
-
 /**
  * O que o desenho punha na TELA e não dentro do artboard.
  *
@@ -34,7 +28,10 @@ const ESTILO = `
 
   /* A moldura de cada artboard é o contorno da tela do desenho, não parte da
      página: num site a sério ficava uma linha à volta de tudo. */
-  .vd > .vd-tela > div { border: 0 !important; margin: 0 auto; }
+  .vd .vd-tela > div { border: 0 !important; margin: 0 auto; }
+  /* Na página de contacto a tela é o próprio <form>, e o artboard fica um
+     nível mais abaixo. */
+  .vd form.vd-tela > div > div { border: 0 !important; margin: 0 auto; }
 
   .vd-390 { display: block; }
   .vd-1440 { display: none; }
@@ -42,6 +39,7 @@ const ESTILO = `
     .vd-390 { display: none; }
     .vd-1440 { display: block; }
     .vd-1440 > div { width: 100% !important; max-width: 1440px; }
+    .vd form.vd-1440 > div > div { width: 100% !important; max-width: 1440px; }
   }
 
   /* A ficha de um modelo. Na tela do desenho um dos cartões vinha aceso para
@@ -54,16 +52,32 @@ const ESTILO = `
   .vd-ficha-fita { opacity: 0; transition: opacity .18s ease; }
   .vd-ficha:hover .vd-ficha-fita { opacity: 1; }
 
+  /* As quatro partes do formulário estão todas na página; é isto que escolhe
+     o que se vê. O envelope leva display:contents para não existir no layout —
+     os filhos continuam a ser filhos de quem estava por fora, com os
+     espaçamentos do desenho. */
+  .vd-parte { display: contents; }
+  .vd-parte-erro, .vd-parte-enviado { display: none; }
+  .vd-mostra-erro .vd-parte-ok2 { display: none; }
+  .vd-mostra-erro .vd-parte-erro { display: contents; }
+  .vd-mostra-enviado .vd-parte-form { display: none; }
+  .vd-mostra-enviado .vd-parte-enviado { display: contents; }
+
+  .vd-contacto { margin: 0; }
+  .vd-contacto [data-copiar-exemplo]:hover { background: #F6EFE4; }
+
   @media (prefers-reduced-motion: reduce) {
     .vd-ficha, .vd-ficha-seta, .vd-ficha-fita { transition: none; }
   }
 `;
 
-export function SiteVaiDesign({ pagina, whatsapp }: Props) {
-  const destinos = { whatsapp };
-  const telemovel = paginaDaVaiDesign(pagina, 390, destinos);
-  const computador = paginaDaVaiDesign(pagina, 1440, destinos);
-
+/**
+ * A moldura: as letras do desenho, o estilo e o fundo.
+ *
+ * Fica separada do conteúdo porque a página de contacto precisa dela à volta
+ * de um componente de browser, e as outras quatro à volta do HTML servido.
+ */
+export function MolduraVaiDesign({ children }: { children: React.ReactNode }) {
   return (
     <div className="vd">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -91,8 +105,26 @@ export function SiteVaiDesign({ pagina, whatsapp }: Props) {
 
       <style dangerouslySetInnerHTML={{ __html: ESTILO }} />
 
+      {children}
+    </div>
+  );
+}
+
+interface Props {
+  pagina: Pagina;
+  /** O WhatsApp da agência, só dígitos. Sem ele, o botão leva ao contacto. */
+  whatsapp?: string | null;
+}
+
+export function SiteVaiDesign({ pagina, whatsapp }: Props) {
+  const destinos = { whatsapp };
+  const telemovel = paginaDaVaiDesign(pagina, 390, destinos);
+  const computador = paginaDaVaiDesign(pagina, 1440, destinos);
+
+  return (
+    <MolduraVaiDesign>
       <div className="vd-tela vd-390" dangerouslySetInnerHTML={{ __html: telemovel }} />
       <div className="vd-tela vd-1440" dangerouslySetInnerHTML={{ __html: computador }} />
-    </div>
+    </MolduraVaiDesign>
   );
 }

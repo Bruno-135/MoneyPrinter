@@ -17,6 +17,12 @@
  * calcula sozinha. Regerar o ficheiro inteiro trocava um bloco novo por essa
  * proteção em todo o schema. Na próxima vez que correres `npm run db:types`
  * com o CLI, confirma que esses `never` continuam lá.
+ *
+ * Pela mesma razão, a tabela `pedidos` e as funções `registar_pedido` e
+ * `dono_da_agencia` (0033) também foram acrescentadas à mão. Regerar tudo para
+ * as apanhar punha as colunas da vista `businesses_with_stage` todas como
+ * anuláveis e partia a fila de contactos — o gerador não sabe o que numa vista
+ * é obrigatório, e a correção acima existe precisamente por isso.
  */
 
 export type Json =
@@ -1253,6 +1259,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      pedidos: {
+        Row: {
+          id: string;
+          owner_id: string;
+          negocio: string;
+          contacto: string;
+          pedido: string;
+          modelo: string | null;
+          prazo: string | null;
+          estado: string;
+          notas: string | null;
+          origem: string;
+          business_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          negocio: string;
+          contacto: string;
+          pedido: string;
+          modelo?: string | null;
+          prazo?: string | null;
+          estado?: string;
+          notas?: string | null;
+          origem?: string;
+          business_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          negocio?: string;
+          contacto?: string;
+          pedido?: string;
+          modelo?: string | null;
+          prazo?: string | null;
+          estado?: string;
+          notas?: string | null;
+          origem?: string;
+          business_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       support_requests: {
         Row: {
           business_id: string;
@@ -1450,6 +1504,20 @@ export type Database = {
       };
     };
     Functions: {
+      registar_pedido: {
+        Args: {
+          p_negocio: string;
+          p_contacto: string;
+          p_pedido: string;
+          p_modelo?: string | null;
+          p_prazo?: string | null;
+        };
+        Returns: string;
+      };
+      dono_da_agencia: {
+        Args: Record<string, never>;
+        Returns: string;
+      };
       facet_counts: {
         Args: {
           p_field: string;

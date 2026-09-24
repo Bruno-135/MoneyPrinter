@@ -1,8 +1,10 @@
 import { ARTBOARDS, type NomeDeArtboard } from './artboards';
-import { encher, type Contexto } from '../../loja/desenho/motor';
+import { encher, escapar, type Contexto } from '../../loja/desenho/motor';
 import { resolverComponentes } from './componentes';
 import { reescreverLinks, type Destinos } from './links';
+import { abrirAsPartes } from './partes';
 import {
+  FORMULARIO_VAZIO,
   RAMOS,
   RAMO_DO_MODELO,
   fita,
@@ -12,6 +14,7 @@ import {
   passos,
   servicos,
   servicosDoInicio,
+  type EstadoDoFormulario,
 } from './dados';
 
 /**
@@ -29,7 +32,7 @@ export type Pagina = (typeof PAGINAS)[number];
 /** O ramo escolhido nos filtros da página Modelos. Sem escolha, `Todos`. */
 const SEM_FILTRO = 'Todos';
 
-function contexto(pagina: Pagina): Contexto {
+function contexto(pagina: Pagina, formulario: EstadoDoFormulario): Contexto {
   switch (pagina) {
     case 'inicio':
       return {
@@ -67,7 +70,9 @@ function contexto(pagina: Pagina): Contexto {
       return { passos } as unknown as Contexto;
 
     case 'contacto':
-      return { lista } as unknown as Contexto;
+      // O desenho pede os três ecrãs do formulário num ciclo sobre `estados`.
+      // Aqui só entra um: o que o servidor mandou mostrar.
+      return { lista, estados: [formulario] } as unknown as Contexto;
   }
 }
 
@@ -76,10 +81,45 @@ export function paginaDaVaiDesign(
   pagina: Pagina,
   largura: 390 | 1440,
   destinos: Destinos = {},
+  formulario: EstadoDoFormulario = FORMULARIO_VAZIO,
 ): string {
   const chave = `${pagina}-${largura}` as NomeDeArtboard;
   const molde = ARTBOARDS[chave];
   if (!molde) throw new Error(`Não há artboard para ${chave}`);
 
-  return reescreverLinks(resolverComponentes(encher(molde, contexto(pagina))), destinos);
+  // Na página de contacto as quatro partes do formulário deixam de ser
+  // condições do motor e passam a ser divisões com classe: ficam todas na
+  // página e é o CSS que escolhe o que se vê. Sem isto, mudar de estado
+  // trocava o HTML e apagava o que a pessoa tinha escrito.
+  const preparado = pagina === 'contacto' ? abrirAsPartes(molde) : molde;
+  const cheio = encher(preparado, contexto(pagina, formulario));
+  return marcarModelo(
+    reescreverLinks(resolverComponentes(cheio), destinos),
+    pagina === 'contacto' ? formulario.v4 : '',
+  );
+}
+
+/**
+ * Marca no `<select>` o modelo que a pessoa tinha escolhido.
+ *
+ * Em HTML quem escolhe uma opção é o atributo `selected`, e o desenho não o
+ * escreve — no editor dele era o React a tratar disso. Sem isto, um erro de
+ * validação apagava a escolha do modelo e obrigava a escolher outra vez.
+ *
+ * Procura-se a opção pelo texto, porque nem todas as opções do desenho trazem
+ * `value`.
+ */
+function marcarModelo(html: string, escolhido: string): string {
+  if (!escolhido || escolhido === 'Sem preferência') return html;
+
+  const texto = escapar(escolhido);
+  const semValor = `<option>${texto}</option>`;
+  if (html.includes(semValor)) {
+    return html.replace(semValor, `<option selected>${texto}</option>`);
+  }
+
+  const comValor = `<option value="${texto}">`;
+  return html.includes(comValor)
+    ? html.replace(comValor, `<option value="${texto}" selected>`)
+    : html;
 }

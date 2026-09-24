@@ -386,6 +386,8 @@ limitada à "Places API (New)", mais uma quota diária de pedidos.
 | `PUBLIC_SITE_DEFAULT_TTL_DAYS` | Só servidor | Não (30) | Validade por omissão das landing pages |
 | `REGION_SEARCH_CACHE_DAYS` | Só servidor | Não (30) | Dias até uma região pesquisada ser considerada velha |
 | `ANTHROPIC_API_KEY` | **Só servidor** | Não | Geração de páginas por IA. Sem ela, só esse botão avisa que falta |
+| `RESEND_API_KEY` | **Só servidor** | Não | Aviso por email quando alguém preenche o formulário do site. Sem ela o pedido grava-se na mesma e aparece no painel — só não há o toque |
+| `EMAIL_DOS_AVISOS` | **Só servidor** | Não | Para onde vai esse aviso. Por omissão, `geral@vaidesign.net` |
 | `PEXELS_API_KEY` | **Só servidor** | Não | Fotografias de banco grátis. Sem ela, as páginas usam as imagens geradas |
 
 Na Vercel, as mesmas variáveis são definidas em **Project Settings → Environment Variables**

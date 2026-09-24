@@ -44,6 +44,14 @@ const serverSchema = z.object({
   // Só tarefas de sistema precisam desta. Nada no caminho normal a usa.
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
 
+  // O aviso por email quando alguém preenche o formulário do site. Opcional
+  // pela mesma razão que a chave da Anthropic: sem ela o pedido continua a
+  // ser gravado e a aparecer no painel — só não há o toque no telemóvel.
+  // Melhor isso do que o site inteiro recusar-se a arrancar.
+  RESEND_API_KEY: z.string().min(1).optional(),
+  // Para onde vai o aviso. Sem isto, vai para o `geral@` da agência.
+  EMAIL_DOS_AVISOS: z.string().email("EMAIL_DOS_AVISOS tem de ser um email válido").optional(),
+
   // Só a geração de páginas por IA precisa desta. Opcional de propósito: sem
   // ela, tudo o resto continua a funcionar — o varrimento, a lista, o editor,
   // o PDF — e só o botão de gerar por IA diz que falta a chave. Torná-la
