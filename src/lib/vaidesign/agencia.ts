@@ -1,15 +1,16 @@
 /**
  * Os dados da própria agência.
  *
- * Ficam num sítio só para não andarem espalhados pelas cinco páginas. O número
- * do WhatsApp está por pôr: enquanto for `null`, o botão de WhatsApp do
- * desenho leva à página de contacto em vez de não levar a lado nenhum.
- *
- * O endereço de email já vem escrito no desenho (`geral@vaidesign.net`) e é
- * esse que está a receber.
+ * Ficam num sítio só para não andarem espalhados pelas cinco páginas. O
+ * endereço de email já vem escrito no desenho (`geral@vaidesign.net`) e é esse
+ * que está a receber; o número veio do manual de marca, da folha do cartão de
+ * visita — é o número feito para ser impresso e lido por quem quiser ligar.
  */
 
-/** Formato internacional, só dígitos: `351912345678`. */
-export const WHATSAPP_DA_AGENCIA: string | null = null;
+/** Formato internacional, só dígitos: `351913014170` é `+351 913 014 170`. */
+export const WHATSAPP_DA_AGENCIA: string | null = '351913014170';
+
+/** O mesmo número, escrito como se lê em voz alta. */
+export const TELEFONE_DA_AGENCIA = '+351 913 014 170';
 
 export const EMAIL_DA_AGENCIA = 'geral@vaidesign.net';
