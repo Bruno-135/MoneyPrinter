@@ -112,6 +112,37 @@ export const publicEnv: PublicEnv = parsedPublic.data;
 let cachedServerEnv: ServerEnv | null = null;
 
 /**
+ * Lê do ambiente TODAS as variáveis que o esquema declara.
+ *
+ * Isto era uma lista escrita à mão, e a lista e o esquema saíram do sítio: a
+ * `RESEND_API_KEY` foi declarada em cima e nunca foi lida aqui em baixo. Como
+ * é opcional, o `safeParse` não se queixou — ficou `undefined` para sempre.
+ * Resultado: a chave estava posta no painel do Vercel, o site enviava pedidos,
+ * e o email de aviso nunca saía. Ninguém dava por nada, porque não havia por
+ * onde dar: uma variável opcional em falta é exatamente aquilo que uma
+ * variável opcional em falta parece.
+ *
+ * Passa a derivar-se do esquema. Declarar uma variável lá em cima é agora
+ * suficiente para ela ser lida, e as duas coisas não podem voltar a divergir.
+ *
+ * Aqui o acesso dinâmico a `process.env` é seguro, ao contrário do que se faz
+ * com as públicas: estas nunca vão ao bundle do browser, portanto não há
+ * substituição estática nenhuma a acontecer e `process.env` é um objeto
+ * normal com tudo lá dentro.
+ *
+ * Um valor só com espaços conta como ausente. É o que acontece quando se cola
+ * uma chave com um espaço atrás dela num painel web — e uma chave com um
+ * espaço não é melhor do que chave nenhuma.
+ */
+function lerDoAmbiente(): Record<string, string | undefined> {
+  const entrada: Record<string, string | undefined> = {};
+  for (const chave of Object.keys(serverSchema.shape)) {
+    entrada[chave] = process.env[chave]?.trim() || undefined;
+  }
+  return entrada;
+}
+
+/**
  * Variáveis privadas. Só pode ser chamada em código de servidor
  * (Server Components, Route Handlers, Server Actions, jobs).
  */
@@ -126,17 +157,7 @@ export function getServerEnv(): ServerEnv {
     return cachedServerEnv;
   }
 
-  const parsed = serverSchema.safeParse({
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || undefined,
-    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY?.trim() || undefined,
-    PEXELS_API_KEY: process.env.PEXELS_API_KEY?.trim() || undefined,
-    GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
-    PROSPECTOR_EMAIL: process.env.PROSPECTOR_EMAIL || undefined,
-    PROSPECTOR_PASSWORD: process.env.PROSPECTOR_PASSWORD || undefined,
-    SCAN_API_SECRET: process.env.SCAN_API_SECRET || undefined,
-    PUBLIC_SITE_DEFAULT_TTL_DAYS: process.env.PUBLIC_SITE_DEFAULT_TTL_DAYS || undefined,
-    REGION_SEARCH_CACHE_DAYS: process.env.REGION_SEARCH_CACHE_DAYS || undefined,
-  });
+  const parsed = serverSchema.safeParse(lerDoAmbiente());
 
   if (!parsed.success) {
     formatIssues("privadas", parsed.error);

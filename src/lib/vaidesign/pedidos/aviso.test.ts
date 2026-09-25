@@ -98,8 +98,8 @@ describe('o aviso do pedido', () => {
 
   it('a resposta do cliente vai no reply-to, e o envio é para a agência', async () => {
     env.RESEND_API_KEY = 'chave-de-mentira';
-    const chamar = vi.fn(
-      async (_url: string, _opcoes: RequestInit) => new Response('{"id":"msg_1"}', { status: 200 }),
+    const chamar = vi.fn<(url: string, opcoes: RequestInit) => Promise<Response>>(
+      async () => new Response('{"id":"msg_1"}', { status: 200 }),
     );
     vi.stubGlobal('fetch', chamar);
 
@@ -113,8 +113,8 @@ describe('o aviso do pedido', () => {
 
   it('um contacto que é telefone não vai no reply-to', async () => {
     env.RESEND_API_KEY = 'chave-de-mentira';
-    const chamar = vi.fn(
-      async (_url: string, _opcoes: RequestInit) => new Response('{"id":"msg_1"}', { status: 200 }),
+    const chamar = vi.fn<(url: string, opcoes: RequestInit) => Promise<Response>>(
+      async () => new Response('{"id":"msg_1"}', { status: 200 }),
     );
     vi.stubGlobal('fetch', chamar);
 

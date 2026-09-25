@@ -78,3 +78,46 @@ describe('variáveis obrigatórias', () => {
     expect(() => getServerEnv()).toThrow(/GOOGLE_PLACES_API_KEY/);
   });
 });
+
+/**
+ * E existem também por causa de um erro que não derrubou nada — foi pior.
+ *
+ * A `RESEND_API_KEY` foi declarada no esquema e esquecida na lista que lia o
+ * `process.env`. Sendo opcional, ninguém se queixou: o site aceitava pedidos,
+ * a chave estava posta no painel do Vercel, e o email de aviso nunca saía.
+ * Levou dois dias a descobrir, porque uma opcional em falta é igualzinha a uma
+ * opcional em falta.
+ *
+ * Por isso testa-se o que ninguém pensa em testar: que uma variável declarada
+ * chega mesmo ao outro lado.
+ */
+describe('todas as variáveis declaradas são lidas do ambiente', () => {
+  const OPCIONAIS = {
+    RESEND_API_KEY: 'chave-resend',
+    EMAIL_DOS_AVISOS: 'avisos@exemplo.pt',
+    ANTHROPIC_API_KEY: 'chave-anthropic',
+    PEXELS_API_KEY: 'chave-pexels',
+    SUPABASE_SERVICE_ROLE_KEY: 'chave-servico',
+    SCAN_API_SECRET: 'segredo-com-dezasseis',
+    PROSPECTOR_EMAIL: 'eu@exemplo.pt',
+    PROSPECTOR_PASSWORD: 'palavra-passe',
+  };
+
+  for (const [chave, valor] of Object.entries(OPCIONAIS)) {
+    it(`${chave} posta no ambiente chega ao getServerEnv()`, async () => {
+      const { getServerEnv } = await loadEnv({ [chave]: valor });
+      expect(getServerEnv()[chave as keyof ReturnType<typeof getServerEnv>]).toBe(valor);
+    });
+  }
+
+  it('uma chave colada com espaços à volta conta como a chave', async () => {
+    // É o que sai de um copiar-colar num painel web.
+    const { getServerEnv } = await loadEnv({ RESEND_API_KEY: '  re_abc123  ' });
+    expect(getServerEnv().RESEND_API_KEY).toBe('re_abc123');
+  });
+
+  it('uma chave que é só espaços conta como não estar lá', async () => {
+    const { getServerEnv } = await loadEnv({ RESEND_API_KEY: '   ' });
+    expect(getServerEnv().RESEND_API_KEY).toBeUndefined();
+  });
+});
