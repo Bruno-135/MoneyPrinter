@@ -1266,7 +1266,7 @@ export type Database = {
           negocio: string;
           contacto: string;
           pedido: string;
-          modelo: string | null;
+          ramo: string | null;
           prazo: string | null;
           estado: string;
           notas: string | null;
@@ -1281,7 +1281,7 @@ export type Database = {
           negocio: string;
           contacto: string;
           pedido: string;
-          modelo?: string | null;
+          ramo?: string | null;
           prazo?: string | null;
           estado?: string;
           notas?: string | null;
@@ -1296,7 +1296,7 @@ export type Database = {
           negocio?: string;
           contacto?: string;
           pedido?: string;
-          modelo?: string | null;
+          ramo?: string | null;
           prazo?: string | null;
           estado?: string;
           notas?: string | null;
@@ -1509,7 +1509,7 @@ export type Database = {
           p_negocio: string;
           p_contacto: string;
           p_pedido: string;
-          p_modelo?: string | null;
+          p_ramo?: string | null;
           p_prazo?: string | null;
         };
         Returns: string;

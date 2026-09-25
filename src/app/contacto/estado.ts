@@ -17,12 +17,12 @@ export interface EstadoDoEnvio {
   /** Quando alguma coisa correu mal do nosso lado e não da pessoa. */
   mensagem: string | null;
   /** O que já estava escrito, para não se perder num erro. */
-  valores: { negocio: string; pedido: string; modelo: string; prazo: string };
+  valores: { negocio: string; pedido: string; ramo: string; prazo: string };
 }
 
 export const ENVIO_PARADO: EstadoDoEnvio = {
   fase: 'parado',
   falta: null,
   mensagem: null,
-  valores: { negocio: '', pedido: '', modelo: 'Sem preferência', prazo: '' },
+  valores: { negocio: '', pedido: '', ramo: '', prazo: '' },
 };

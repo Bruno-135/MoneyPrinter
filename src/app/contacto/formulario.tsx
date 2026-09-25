@@ -135,7 +135,7 @@ export function ContactoVivo({ telemovel, computador }: Props) {
       const linhas = [
         ler('negocio') && `Olá! Sou da ${ler('negocio')}.`,
         ler('pedido'),
-        ler('modelo') && ler('modelo') !== 'Sem preferência' && `Gostei do modelo ${ler('modelo')}.`,
+        ler('ramo') && `O meu ramo é ${ler('ramo')}.`,
         ler('prazo') && `Precisava para: ${ler('prazo')}.`,
       ].filter(Boolean);
 

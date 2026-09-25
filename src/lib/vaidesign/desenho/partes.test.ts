@@ -41,7 +41,7 @@ describe('a página de contacto servida', () => {
     const html = paginaDaVaiDesign('contacto', largura);
 
     it(`leva os cinco campos em ${largura}`, () => {
-      for (const nome of ['negocio', 'contacto', 'pedido', 'modelo', 'prazo']) {
+      for (const nome of ['negocio', 'contacto', 'pedido', 'ramo', 'prazo']) {
         expect(html, nome).toContain(`name="${nome}"`);
       }
     });
@@ -66,7 +66,7 @@ describe('a página de contacto servida', () => {
     });
   }
 
-  it('guarda o modelo escolhido quando a validação falha', () => {
+  it('guarda o ramo escolhido quando a validação falha', () => {
     const html = paginaDaVaiDesign('contacto', 1440, {}, {
       form: true,
       ok2: false,
@@ -74,11 +74,11 @@ describe('a página de contacto servida', () => {
       enviado: true,
       v1: 'Pão da Rita',
       v3: 'Quero um site.',
-      v4: 'Neon',
+      v4: 'Comércio e lojas',
       v5: '',
     });
 
-    expect(html).toContain('<option selected>Neon</option>');
+    expect(html).toContain('<option selected>Comércio e lojas</option>');
   });
 
   it('não marca nada quando não houve escolha', () => {

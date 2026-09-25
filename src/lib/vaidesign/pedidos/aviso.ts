@@ -50,9 +50,9 @@ export function corpoDoAviso(p: PedidoLido, ligacaoAoPainel: string): string {
     `<p style="margin:0 0 20px;font:400 16px/1.6 system-ui;color:#141210;white-space:pre-wrap">${escapar(p.pedido)}</p>`,
   ];
 
-  if (p.modelo && p.modelo !== 'Sem preferência') {
+  if (p.ramo) {
     linhas.push(
-      `<p style="margin:0 0 4px;font:400 15px system-ui;color:#5A5249">Modelo — <strong style="color:#141210">${escapar(p.modelo)}</strong></p>`,
+      `<p style="margin:0 0 4px;font:400 15px system-ui;color:#5A5249">Ramo — <strong style="color:#141210">${escapar(p.ramo)}</strong></p>`,
     );
   }
   if (p.prazo) {

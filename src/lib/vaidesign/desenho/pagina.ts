@@ -8,6 +8,7 @@ import {
   ligarRodapeMovel,
   marcarEnviarPeloWhatsApp,
   marcarMenuMovel,
+  perguntarORamo,
 } from './acoes';
 import { EMAIL_DA_AGENCIA } from '../agencia';
 import {
@@ -103,31 +104,32 @@ export function paginaDaVaiDesign(
   const comLinks = reescreverLinks(resolverComponentes(cheio), destinos);
 
   // Os botões que o desenho deixou sem destino. Ver `acoes.ts`.
-  const vivo = marcarEnviarPeloWhatsApp(
-    marcarMenuMovel(
-      ligarRodapeMovel(
-        apontarPorEtiqueta(comLinks, destinos, EMAIL_DA_AGENCIA),
-        destinos,
-        EMAIL_DA_AGENCIA,
+  const vivo = perguntarORamo(
+    marcarEnviarPeloWhatsApp(
+      marcarMenuMovel(
+        ligarRodapeMovel(
+          apontarPorEtiqueta(comLinks, destinos, EMAIL_DA_AGENCIA),
+          destinos,
+          EMAIL_DA_AGENCIA,
+        ),
       ),
     ),
   );
 
-  return marcarModelo(vivo, pagina === 'contacto' ? formulario.v4 : '');
+  return marcarRamo(vivo, pagina === 'contacto' ? formulario.v4 : '');
 }
 
 /**
- * Marca no `<select>` o modelo que a pessoa tinha escolhido.
+ * Marca no `<select>` o ramo que a pessoa tinha escolhido.
  *
  * Em HTML quem escolhe uma opção é o atributo `selected`, e o desenho não o
  * escreve — no editor dele era o React a tratar disso. Sem isto, um erro de
- * validação apagava a escolha do modelo e obrigava a escolher outra vez.
+ * validação apagava a escolha e obrigava a escolher outra vez.
  *
- * Procura-se a opção pelo texto, porque nem todas as opções do desenho trazem
- * `value`.
+ * Procura-se a opção pelo texto, porque as opções não trazem `value`.
  */
-function marcarModelo(html: string, escolhido: string): string {
-  if (!escolhido || escolhido === 'Sem preferência') return html;
+function marcarRamo(html: string, escolhido: string): string {
+  if (!escolhido) return html;
 
   const texto = escapar(escolhido);
   const semValor = `<option>${texto}</option>`;

@@ -58,7 +58,7 @@ describe('lerPedido', () => {
   it('dá vazio ao campo que não veio', () => {
     const v = lerPedido(formulario({ negocio: 'X' }));
     expect(v.contacto).toBe('');
-    expect(v.modelo).toBe('');
+    expect(v.ramo).toBe('');
   });
 });
 

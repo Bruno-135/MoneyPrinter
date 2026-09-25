@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { PAGINAS, paginaDaVaiDesign, type Pagina } from './pagina';
 import { ROTAS } from './links';
 import { EMAIL_DA_AGENCIA, WHATSAPP_DA_AGENCIA } from '../agencia';
+import { RAMOS_DO_FORMULARIO } from './dados';
 
 /**
  * Nenhum botão do site pode ficar a olhar para quem lhe carrega.
@@ -123,4 +124,45 @@ describe('o menu, em todas as páginas', () => {
       });
     }
   }
+});
+
+describe('a pergunta do ramo', () => {
+  for (const largura of LARGURAS) {
+    const html = paginaCompleta('contacto', largura);
+
+    it(`${largura}: pergunta o ramo e não o modelo`, () => {
+      expect(html).toContain('O seu ramo');
+      expect(html).not.toContain('Modelo preferido');
+      expect(html).toContain('name="ramo"');
+      expect(html).not.toContain('name="modelo"');
+    });
+
+    it(`${largura}: dá os seis ramos e o convite a escolher`, () => {
+      expect(html).toContain('<option value="">Escolha o seu ramo</option>');
+      for (const ramo of RAMOS_DO_FORMULARIO) {
+        expect(html, ramo).toContain(`<option>${ramo}</option>`);
+      }
+    });
+
+    it(`${largura}: já não oferece os nomes dos modelos`, () => {
+      for (const nome of ['Forno &amp; Brasa', 'Clínica Vale', 'Neon']) {
+        expect(html).not.toContain(`<option>${nome}</option>`);
+      }
+      expect(html).not.toContain('Sem preferência');
+    });
+  }
+
+  it('guarda o ramo escolhido quando a validação falha', () => {
+    const html = paginaDaVaiDesign('contacto', 1440, destinos, {
+      form: true,
+      ok2: false,
+      erro: true,
+      enviado: true,
+      v1: 'Pão da Rita',
+      v3: 'Quero um site.',
+      v4: 'Restauração e padarias',
+      v5: '',
+    });
+    expect(html).toContain('<option selected>Restauração e padarias</option>');
+  });
 });

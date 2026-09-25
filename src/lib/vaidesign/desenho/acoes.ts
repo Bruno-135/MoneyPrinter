@@ -1,3 +1,4 @@
+import { RAMOS_DO_FORMULARIO } from './dados';
 import type { Destinos } from './links';
 
 /**
@@ -154,4 +155,48 @@ export function ligarRodapeMovel(html: string, destinos: Destinos, email: string
   );
 
   return saida;
+}
+
+/**
+ * O formulário passa a perguntar o RAMO e não o modelo preferido.
+ *
+ * O desenho pergunta "Modelo preferido" e dá os sete nomes da nossa
+ * biblioteca. Quem chega ao formulário tem uma padaria, não tem um "Forno &
+ * Brasa": para responder àquela pergunta tinha de ir a outra página, decorar
+ * um nome e voltar. Ninguém volta.
+ *
+ * Perguntar o ramo é mais fácil para quem escreve e mais útil para quem
+ * recebe — o modelo escolhe-se depois, com o ramo na mão, e escolhe-se melhor.
+ *
+ * Troca-se aqui e não no artboard para o desenho ficar como veio. Se um dia
+ * vier um desenho novo com outra pergunta, isto rebenta em vez de deixar a
+ * antiga a passar.
+ */
+const PERGUNTA_ANTIGA =
+  `<span style="font:600 14px/1.3 'Hanken Grotesk';color:#141210">Modelo preferido<span style="font-weight:400;color:#5A5249"> · opcional</span></span>`;
+
+const PERGUNTA_NOVA =
+  `<span style="font:600 14px/1.3 'Hanken Grotesk';color:#141210">O seu ramo<span style="font-weight:400;color:#5A5249"> · opcional</span></span>`;
+
+const OPCOES_ANTIGAS =
+  `<option value="Sem preferência">Sem preferência</option><option value="Forno &amp; Brasa">Forno &amp; Brasa</option><option>Clínica Vale</option><option>Predial</option><option>Retrato</option><option>Oficina</option><option>Estrada</option><option>Neon</option>`;
+
+export function perguntarORamo(html: string): string {
+  if (!html.includes(PERGUNTA_ANTIGA)) return html;
+
+  if (!html.includes(OPCOES_ANTIGAS)) {
+    throw new Error('a pergunta do modelo mudou de opções — ver `perguntarORamo`');
+  }
+
+  // A primeira opção fica vazia: é o convite a escolher, e um pedido sem ramo
+  // escolhido guarda-se sem ramo em vez de guardar a palavra do convite.
+  const opcoes = [
+    '<option value="">Escolha o seu ramo</option>',
+    ...RAMOS_DO_FORMULARIO.map((r) => `<option>${r}</option>`),
+  ].join('');
+
+  return html
+    .replace(PERGUNTA_ANTIGA, PERGUNTA_NOVA)
+    .replace(OPCOES_ANTIGAS, opcoes)
+    .replace('<select name="modelo"', '<select name="ramo"');
 }

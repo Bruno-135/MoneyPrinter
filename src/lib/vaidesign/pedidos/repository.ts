@@ -11,7 +11,7 @@ export interface Pedido {
   negocio: string;
   contacto: string;
   pedido: string;
-  modelo: string | null;
+  ramo: string | null;
   prazo: string | null;
   estado: EstadoDoPedido;
   notas: string | null;
@@ -26,7 +26,7 @@ function montar(linha: Linha): Pedido {
     negocio: linha.negocio,
     contacto: linha.contacto,
     pedido: linha.pedido,
-    modelo: linha.modelo,
+    ramo: linha.ramo,
     prazo: linha.prazo,
     estado: linha.estado as EstadoDoPedido,
     notas: linha.notas,
@@ -47,7 +47,7 @@ export async function registarPedido(db: Db, valores: PedidoLido): Promise<strin
     p_negocio: valores.negocio,
     p_contacto: valores.contacto,
     p_pedido: valores.pedido,
-    p_modelo: valores.modelo || null,
+    p_ramo: valores.ramo || null,
     p_prazo: valores.prazo || null,
   });
 

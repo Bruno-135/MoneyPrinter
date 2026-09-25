@@ -115,14 +115,14 @@ export default async function PedidosPage() {
 
               <p className="mt-3 text-[14px] leading-relaxed whitespace-pre-wrap">{p.pedido}</p>
 
-              {(p.modelo || p.prazo) && (
+              {(p.ramo || p.prazo) && (
                 <p className="mt-2 text-[13px] text-ink2">
-                  {p.modelo && p.modelo !== 'Sem preferência' && (
+                  {p.ramo && (
                     <span>
-                      Modelo: <strong>{p.modelo}</strong>
+                      Ramo: <strong>{p.ramo}</strong>
                     </span>
                   )}
-                  {p.modelo && p.modelo !== 'Sem preferência' && p.prazo && ' · '}
+                  {p.ramo && p.prazo && ' · '}
                   {p.prazo && (
                     <span>
                       Para quando: <strong>{p.prazo}</strong>

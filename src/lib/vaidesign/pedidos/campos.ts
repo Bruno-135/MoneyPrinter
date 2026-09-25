@@ -11,7 +11,7 @@ export interface PedidoLido {
   negocio: string;
   contacto: string;
   pedido: string;
-  modelo: string;
+  ramo: string;
   prazo: string;
 }
 
@@ -29,7 +29,7 @@ const MAXIMOS: Record<keyof PedidoLido, number> = {
   negocio: 200,
   contacto: 200,
   pedido: 4000,
-  modelo: 100,
+  ramo: 100,
   prazo: 200,
 };
 
@@ -59,7 +59,7 @@ export function lerPedido(dados: FormData): PedidoLido {
     negocio: texto(dados, 'negocio'),
     contacto: texto(dados, 'contacto'),
     pedido: texto(dados, 'pedido'),
-    modelo: texto(dados, 'modelo'),
+    ramo: texto(dados, 'ramo'),
     prazo: texto(dados, 'prazo'),
   };
 }

@@ -388,16 +388,26 @@ export const FORMULARIO_ENVIADO: EstadoDoFormulario = {
   v5: '',
 };
 
-/** Os modelos que se podem escolher no formulário, na ordem do desenho. */
-export const ESCOLHAS_DE_MODELO = [
-  'Sem preferência',
-  'Forno & Brasa',
-  'Clínica Vale',
-  'Predial',
-  'Retrato',
-  'Oficina',
-  'Estrada',
-  'Neon',
+/**
+ * Os ramos que se podem escolher no formulário.
+ *
+ * O desenho perguntava qual o MODELO preferido, com os sete nomes da nossa
+ * biblioteca. Mas quem chega ao formulário tem uma padaria, não tem um
+ * "Forno & Brasa" — e pedir-lhe o nome de um modelo que viu de passagem
+ * noutra página é pedir-lhe trabalho que é nosso. O modelo escolhemos nós, e
+ * escolhemo-lo melhor sabendo o ramo.
+ *
+ * Os nomes são os mesmos dos filtros da página Modelos, com uma palavra a
+ * mais onde ajuda a pessoa a reconhecer-se: uma padeira não sabe se "padaria"
+ * conta como "Restauração".
+ */
+export const RAMOS_DO_FORMULARIO = [
+  'Restauração e padarias',
+  'Saúde e estética',
+  'Serviços profissionais',
+  'Indústria e logística',
+  'Comércio e lojas',
+  'Outro',
 ] as const;
 
 /**

@@ -14,7 +14,7 @@ export async function enviarPedido(
   const valores = {
     negocio: julgamento.valores.negocio,
     pedido: julgamento.valores.pedido,
-    modelo: julgamento.valores.modelo || 'Sem preferência',
+    ramo: julgamento.valores.ramo,
     prazo: julgamento.valores.prazo,
   };
 
