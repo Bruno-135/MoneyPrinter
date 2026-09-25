@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PAGINAS, paginaDaVaiDesign, type Pagina } from './pagina';
 import { ROTAS } from './links';
-import { EMAIL_DA_AGENCIA, WHATSAPP_DA_AGENCIA } from '../agencia';
+import { EMAIL_DA_AGENCIA, INSTAGRAM_DA_AGENCIA, WHATSAPP_DA_AGENCIA } from '../agencia';
 import { RAMOS_DO_FORMULARIO } from './dados';
 
 /**
@@ -25,6 +25,7 @@ const DESTINOS_BONS = [
   ...Object.values(ROTAS),
   `https://wa.me/${WHATSAPP_DA_AGENCIA}`,
   `mailto:${EMAIL_DA_AGENCIA}`,
+  `https://instagram.com/${INSTAGRAM_DA_AGENCIA}`,
   '#',
 ];
 
@@ -165,4 +166,19 @@ describe('a pergunta do ramo', () => {
     });
     expect(html).toContain('<option selected>Restauração e padarias</option>');
   });
+});
+
+describe('o Instagram do rodapé', () => {
+  for (const pagina of PAGINAS) {
+    for (const largura of LARGURAS) {
+      it(`${pagina} · ${largura}: leva à conta certa`, () => {
+        const html = paginaCompleta(pagina, largura);
+        expect(html).toContain(`https://instagram.com/${INSTAGRAM_DA_AGENCIA}`);
+        // O desenho escrevia @vaidesign, que é outra conta. Um endereço errado
+        // no rodapé manda o cliente a uma conta que não é a nossa.
+        expect(html).not.toContain('@vaidesign<');
+        expect(html).not.toContain('<span>Instagram</span>');
+      });
+    }
+  }
 });

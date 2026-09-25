@@ -5,12 +5,13 @@ import { reescreverLinks, type Destinos } from './links';
 import { abrirAsPartes } from './partes';
 import {
   apontarPorEtiqueta,
+  ligarInstagram,
   ligarRodapeMovel,
   marcarEnviarPeloWhatsApp,
   marcarMenuMovel,
   perguntarORamo,
 } from './acoes';
-import { EMAIL_DA_AGENCIA } from '../agencia';
+import { EMAIL_DA_AGENCIA, INSTAGRAM_DA_AGENCIA } from '../agencia';
 import {
   FORMULARIO_VAZIO,
   RAMOS,
@@ -103,18 +104,15 @@ export function paginaDaVaiDesign(
   const cheio = encher(preparado, contexto(pagina, formulario));
   const comLinks = reescreverLinks(resolverComponentes(cheio), destinos);
 
-  // Os botões que o desenho deixou sem destino. Ver `acoes.ts`.
-  const vivo = perguntarORamo(
-    marcarEnviarPeloWhatsApp(
-      marcarMenuMovel(
-        ligarRodapeMovel(
-          apontarPorEtiqueta(comLinks, destinos, EMAIL_DA_AGENCIA),
-          destinos,
-          EMAIL_DA_AGENCIA,
-        ),
-      ),
-    ),
-  );
+  // Os botões que o desenho deixou sem destino, um a um. Em sequência e não
+  // aninhados: cinco chamadas dentro umas das outras liam-se de dentro para
+  // fora e ninguém percebia a ordem. Ver `acoes.ts`.
+  let vivo = apontarPorEtiqueta(comLinks, destinos, EMAIL_DA_AGENCIA);
+  vivo = ligarRodapeMovel(vivo, destinos, EMAIL_DA_AGENCIA);
+  vivo = ligarInstagram(vivo, INSTAGRAM_DA_AGENCIA);
+  vivo = marcarMenuMovel(vivo);
+  vivo = marcarEnviarPeloWhatsApp(vivo);
+  vivo = perguntarORamo(vivo);
 
   return marcarRamo(vivo, pagina === 'contacto' ? formulario.v4 : '');
 }

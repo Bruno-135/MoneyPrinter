@@ -200,3 +200,23 @@ export function perguntarORamo(html: string): string {
     .replace(OPCOES_ANTIGAS, opcoes)
     .replace('<select name="modelo"', '<select name="ramo"');
 }
+
+/**
+ * O Instagram do rodapé.
+ *
+ * Ficou por ligar quando fiz a varredura aos botões, e disse-o então: não
+ * inventava um endereço que não sabia se existia. A conta existe agora, e o
+ * desenho ainda por cima escrevia o nome errado — `@vaidesign` em vez de
+ * `@agenciavaidesign`. Um endereço errado no rodapé é pior do que nenhum:
+ * manda o cliente a uma conta que não é a nossa.
+ *
+ * No artboard de computador é "Instagram @conta"; no de telemóvel é só
+ * "Instagram". Os dois passam a levar lá.
+ */
+export function ligarInstagram(html: string, conta: string): string {
+  const abre = `<a href="https://instagram.com/${conta}" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none">`;
+
+  return html
+    .replace('<span>Instagram @vaidesign</span>', `${abre}Instagram @${conta}</a>`)
+    .replace('<span>Instagram</span>', `${abre}Instagram</a>`);
+}

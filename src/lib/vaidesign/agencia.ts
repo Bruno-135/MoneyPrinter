@@ -14,3 +14,6 @@ export const WHATSAPP_DA_AGENCIA: string | null = '351913014170';
 export const TELEFONE_DA_AGENCIA = '+351 913 014 170';
 
 export const EMAIL_DA_AGENCIA = 'geral@vaidesign.net';
+
+/** A conta do Instagram, sem o arroba. */
+export const INSTAGRAM_DA_AGENCIA = 'agenciavaidesign';
