@@ -6,6 +6,11 @@ import { avisarDoPedido } from '@/lib/vaidesign/pedidos/aviso';
 import { julgarPedido, pareceRobo } from '@/lib/vaidesign/pedidos/campos';
 import { ENVIO_PARADO, type EstadoDoEnvio } from './estado';
 
+const AVISOS: Record<'negocio' | 'pedido', string> = {
+  negocio: 'Falta o nome do negócio.',
+  pedido: 'Falta dizer o que precisa.',
+};
+
 export async function enviarPedido(
   _anterior: EstadoDoEnvio,
   dados: FormData,
@@ -29,7 +34,10 @@ export async function enviarPedido(
     return {
       fase: 'erro',
       falta: julgamento.falta,
-      mensagem: null,
+      // O desenho só desenhou o aviso do contacto. Para os outros dois campos
+      // escreve-se em cima do formulário, porque um erro sem nada escrito é a
+      // mesma coisa que carregar no botão e não acontecer nada.
+      mensagem: julgamento.falta === 'contacto' ? null : AVISOS[julgamento.falta ?? 'negocio'],
       valores,
     };
   }

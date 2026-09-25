@@ -46,9 +46,13 @@ describe('a página de contacto servida', () => {
       }
     });
 
-    it(`leva os dois ecrãs do contacto e o do recebido em ${largura}`, () => {
-      expect(html).toContain('vd-parte-ok2');
-      expect(html).toContain('vd-parte-erro');
+    it(`leva o campo do contacto, o aviso e o ecrã do recebido em ${largura}`, () => {
+      // Os dois ecrãs do contacto que o desenho trazia são hoje um só: o
+      // escondido era obrigatório e travava o envio (ver `contacto.ts`). Fica
+      // um campo e o aviso à espera de acender.
+      expect(html).toContain('vd-parte-contacto');
+      expect(html).not.toContain('vd-parte-ok2');
+      expect(html).not.toContain('vd-parte-erro');
       expect(html).toContain('vd-parte-enviado');
       expect(html).toContain('Recebido.');
       expect(html).toContain('Falta o telemóvel ou o email');

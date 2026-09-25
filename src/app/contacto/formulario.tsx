@@ -75,17 +75,30 @@ export function ContactoVivo({ telemovel, computador }: Props) {
     const raiz = envelope.current;
     if (!raiz) return;
 
+    const campos = (nome: string) =>
+      raiz.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(`[name="${nome}"]`);
+
     const repor = (nome: string, valor: string) => {
       if (!valor) return;
-      for (const campo of raiz.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-        `[name="${nome}"]`,
-      )) {
-        if (!campo.value) campo.value = valor;
-      }
+      for (const campo of campos(nome)) if (!campo.value) campo.value = valor;
     };
     repor('negocio', estado.valores.negocio);
     repor('pedido', estado.valores.pedido);
     repor('prazo', estado.valores.prazo);
+
+    // O campo que está mal diz que está mal a quem não vê a moldura vermelha.
+    for (const campo of raiz.querySelectorAll('[aria-invalid]')) {
+      campo.removeAttribute('aria-invalid');
+    }
+    if (!estado.falta) return;
+    for (const campo of campos(estado.falta)) campo.setAttribute('aria-invalid', 'true');
+
+    // E leva-se lá a pessoa. Depois de uma ida ao servidor a página volta ao
+    // topo, e num telemóvel o campo que falhou pode ficar dois ecrãs abaixo:
+    // quem não o encontra pensa que carregou no botão e não aconteceu nada.
+    const primeiro = [...campos(estado.falta)].find((c) => c.offsetParent !== null);
+    primeiro?.focus({ preventScroll: true });
+    primeiro?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }, [estado]);
 
   // O «Copiar exemplo» do desenho. Copia para a área de transferência e, se a

@@ -3,6 +3,7 @@ import { encher, escapar, type Contexto } from '../../loja/desenho/motor';
 import { resolverComponentes } from './componentes';
 import { reescreverLinks, type Destinos } from './links';
 import { abrirAsPartes } from './partes';
+import { fundirOCampoDeContacto } from './contacto';
 import {
   apontarPorEtiqueta,
   ligarInstagram,
@@ -100,7 +101,11 @@ export function paginaDaVaiDesign(
   // condições do motor e passam a ser divisões com classe: ficam todas na
   // página e é o CSS que escolhe o que se vê. Sem isto, mudar de estado
   // trocava o HTML e apagava o que a pessoa tinha escrito.
-  const preparado = pagina === 'contacto' ? abrirAsPartes(molde) : molde;
+  // E as duas versões do campo de contacto passam a uma só, porque a escondida
+  // continuava a contar para a validação do browser e travava o envio sem dizer
+  // nada a ninguém. Ver `contacto.ts` — foi o botão «Enviar pedido» calado.
+  const preparado =
+    pagina === 'contacto' ? fundirOCampoDeContacto(abrirAsPartes(molde), largura) : molde;
   const cheio = encher(preparado, contexto(pagina, formulario));
   const comLinks = reescreverLinks(resolverComponentes(cheio), destinos);
 

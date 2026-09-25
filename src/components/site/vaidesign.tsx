@@ -58,11 +58,19 @@ const ESTILO = `
      os filhos continuam a ser filhos de quem estava por fora, com os
      espaçamentos do desenho. */
   .vd-parte { display: contents; }
-  .vd-parte-erro, .vd-parte-enviado { display: none; }
-  .vd-mostra-erro .vd-parte-ok2 { display: none; }
-  .vd-mostra-erro .vd-parte-erro { display: contents; }
+  .vd-parte-enviado { display: none; }
   .vd-mostra-enviado .vd-parte-form { display: none; }
   .vd-mostra-enviado .vd-parte-enviado { display: contents; }
+
+  /* O erro do contacto não troca de campo: acende o que lá está. O desenho
+     tinha dois campos, um normal e um vermelho, e o vermelho escondido travava
+     o envio — ver desenho/contacto.ts. Aqui é o mesmo campo a mudar de cor, e
+     o que a pessoa escreveu fica onde estava. */
+  /* O !important é preciso: o aviso traz display:flex no style do desenho, e um
+     style em linha ganha a qualquer regra que não o leve. */
+  .vd [data-erro-do-contacto] { display: none !important; }
+  .vd-mostra-erro [data-erro-do-contacto] { display: flex !important; }
+  .vd-mostra-erro input[name="contacto"] { border: 2px solid #BA4100 !important; }
 
   .vd-contacto { margin: 0; }
   .vd-contacto [data-copiar-exemplo]:hover { background: #F6EFE4; }

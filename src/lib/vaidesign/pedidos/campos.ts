@@ -36,11 +36,16 @@ const MAXIMOS: Record<keyof PedidoLido, number> = {
 /**
  * O primeiro valor PREENCHIDO com aquele nome, e não simplesmente o primeiro.
  *
- * O desenho tem o campo do contacto duas vezes na página — a versão normal e a
- * versão com o erro — e as duas estão sempre no HTML, porque é o CSS que
- * escolhe qual se vê. Um `dados.get('contacto')` devolve a primeira das duas,
- * que pode ser a que está escondida e vazia: era assim que o formulário
- * recusava um contacto que a pessoa tinha mesmo escrito.
+ * O desenho trazia o campo do contacto duas vezes — a versão normal e a versão
+ * com o erro — e as duas iam para o HTML, porque é o CSS que escolhe o que se
+ * vê. Um `dados.get('contacto')` devolvia a primeira das duas, que podia ser a
+ * escondida e vazia: era assim que o formulário recusava um contacto que a
+ * pessoa tinha mesmo escrito.
+ *
+ * As duas versões passaram entretanto a uma só (ver `desenho/contacto.ts`,
+ * onde se conta porquê), por isso hoje já não há duas. Isto fica: nenhum campo
+ * do desenho está prometido a ser único para sempre, e ler o primeiro
+ * PREENCHIDO nunca dá pior resultado do que ler o primeiro.
  *
  * Isto não se via em teste nenhum de unidade. Vi-o a carregar no botão.
  */
