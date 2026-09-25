@@ -92,6 +92,17 @@ export default async function PedidosPage() {
                 <span className="font-mono text-[11px] text-ink3">
                   {haQuantoTempo(p.criadoEm)}
                 </span>
+                {p.aviso && p.aviso !== 'enviado' && (
+                  // Só aparece quando correu mal. Um pedido cujo aviso saiu não
+                  // precisa de o dizer; um cujo aviso NÃO saiu precisa muito,
+                  // porque quem está à espera do email não vem cá ver.
+                  <span
+                    title={p.avisoDetalhe ?? undefined}
+                    className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-semibold text-amber-900"
+                  >
+                    {p.aviso === 'sem-chave' ? 'sem email: falta a chave' : 'email não saiu'}
+                  </span>
+                )}
               </div>
 
               <div className="mt-2 flex flex-wrap items-center gap-2">

@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { registarPedido } from '@/lib/vaidesign/pedidos/repository';
+import { marcarAviso, registarPedido } from '@/lib/vaidesign/pedidos/repository';
 import { avisarDoPedido } from '@/lib/vaidesign/pedidos/aviso';
 import { julgarPedido, pareceRobo } from '@/lib/vaidesign/pedidos/campos';
 import { ENVIO_PARADO, type EstadoDoEnvio } from './estado';
@@ -42,9 +42,11 @@ export async function enviarPedido(
     };
   }
 
+  let db;
+  let id: string;
   try {
-    const db = await createClient();
-    await registarPedido(db, julgamento.valores);
+    db = await createClient();
+    id = await registarPedido(db, julgamento.valores);
   } catch (erro) {
     console.error('não foi possível gravar o pedido do site', erro);
     return {
@@ -58,7 +60,12 @@ export async function enviarPedido(
 
   // O pedido já está gravado. O aviso é um extra: se falhar, o pedido não se
   // perde, aparece no painel na mesma.
-  await avisarDoPedido(julgamento.valores);
+  //
+  // Mas fica escrito na linha do pedido SE saiu ou não. Da primeira vez que
+  // isto correu a sério o email não chegou e não havia maneira de saber
+  // porquê: o resultado era deitado fora aqui mesmo.
+  const aviso = await avisarDoPedido(julgamento.valores);
+  await marcarAviso(db, id, aviso.estado, aviso.detalhe);
 
   return { fase: 'enviado', falta: null, mensagem: null, valores: ENVIO_PARADO.valores };
 }

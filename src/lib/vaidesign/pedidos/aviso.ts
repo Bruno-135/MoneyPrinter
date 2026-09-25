@@ -20,7 +20,13 @@ import { ehEmail, type PedidoLido } from './campos';
 const RESEND = 'https://api.resend.com/emails';
 
 /** Onde é que isto foi parar, para o aviso dizer o que aconteceu. */
-export type ResultadoDoAviso = 'enviado' | 'sem-chave' | 'falhou';
+export type EstadoDoAviso = 'enviado' | 'sem-chave' | 'falhou';
+
+export interface ResultadoDoAviso {
+  estado: EstadoDoAviso;
+  /** O que a Resend respondeu: o id quando aceitou, o erro quando recusou. */
+  detalhe: string | null;
+}
 
 function escapar(v: string): string {
   return v
@@ -68,9 +74,26 @@ export function corpoDoAviso(p: PedidoLido, ligacaoAoPainel: string): string {
   return `<div style="max-width:560px;margin:0 auto;padding:32px 24px;background:#F6EFE4">${linhas.join('')}</div>`;
 }
 
+/**
+ * Manda o aviso e DIZ o que aconteceu.
+ *
+ * Antes não dizia. O primeiro pedido a sério entrou pelo site, o email não
+ * apareceu, e fui ao log do servidor à procura da razão: não estava lá nada.
+ * O caminho bom era calado, o caminho «não há chave» era calado, e quem
+ * chamava esta função deitava o resultado fora. Ficámos os dois — eu e quem
+ * espera pelo email — sem maneira de saber se o aviso tinha sequer sido
+ * tentado.
+ *
+ * Agora todos os caminhos escrevem no log, e quem chama guarda o resultado na
+ * linha do pedido. Diagnosticar isto não pode depender de eu ter acesso a um
+ * log de produção que o dono do site não tem.
+ */
 export async function avisarDoPedido(p: PedidoLido): Promise<ResultadoDoAviso> {
   const env = getServerEnv();
-  if (!env.RESEND_API_KEY) return 'sem-chave';
+  if (!env.RESEND_API_KEY) {
+    console.error('aviso do pedido: não há RESEND_API_KEY neste ambiente');
+    return { estado: 'sem-chave', detalhe: 'RESEND_API_KEY não está definida' };
+  }
 
   const para = env.EMAIL_DOS_AVISOS ?? EMAIL_DA_AGENCIA;
   const painel = `${publicEnv.NEXT_PUBLIC_SITE_URL}/painel/pedidos`;
@@ -93,13 +116,26 @@ export async function avisarDoPedido(p: PedidoLido): Promise<ResultadoDoAviso> {
       }),
     });
 
+    const corpo = await resposta.text();
+
     if (!resposta.ok) {
-      console.error('aviso do pedido: a Resend recusou', resposta.status, await resposta.text());
-      return 'falhou';
+      console.error('aviso do pedido: a Resend recusou', resposta.status, corpo);
+      return { estado: 'falhou', detalhe: `${resposta.status} ${corpo}`.trim() };
     }
-    return 'enviado';
+
+    // O id da mensagem é o que se leva ao painel da Resend para ver se ela
+    // chegou mesmo a entrar na caixa, ou se ficou pelo caminho.
+    let id: string | null = null;
+    try {
+      id = (JSON.parse(corpo) as { id?: string }).id ?? null;
+    } catch {
+      id = null;
+    }
+
+    console.log('aviso do pedido: a Resend aceitou', { para, id });
+    return { estado: 'enviado', detalhe: id };
   } catch (erro) {
     console.error('aviso do pedido: não foi possível falar com a Resend', erro);
-    return 'falhou';
+    return { estado: 'falhou', detalhe: erro instanceof Error ? erro.message : String(erro) };
   }
 }

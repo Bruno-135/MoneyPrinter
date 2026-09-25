@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
 import type { PedidoLido } from './campos';
+import type { EstadoDoAviso } from './aviso';
 
 type Db = SupabaseClient<Database>;
 
@@ -16,6 +17,9 @@ export interface Pedido {
   estado: EstadoDoPedido;
   notas: string | null;
   criadoEm: string;
+  /** Se o email de aviso saiu. Nulo nos pedidos anteriores a isto existir. */
+  aviso: EstadoDoAviso | null;
+  avisoDetalhe: string | null;
 }
 
 type Linha = Database['public']['Tables']['pedidos']['Row'];
@@ -31,6 +35,8 @@ function montar(linha: Linha): Pedido {
     estado: linha.estado as EstadoDoPedido,
     notas: linha.notas,
     criadoEm: linha.created_at,
+    aviso: (linha.aviso as EstadoDoAviso | null) ?? null,
+    avisoDetalhe: linha.aviso_detalhe ?? null,
   };
 }
 
@@ -53,6 +59,27 @@ export async function registarPedido(db: Db, valores: PedidoLido): Promise<strin
 
   if (error) throw new Error(`Não foi possível gravar o pedido: ${error.message}`);
   return data as string;
+}
+
+/**
+ * Anota no pedido se o aviso por email saiu.
+ *
+ * Passa pela mesma porta que o pedido: quem preenche o formulário não tem
+ * sessão. Nunca rebenta — o pedido já está gravado, e perder a anotação do
+ * aviso é muito menos grave do que devolver um erro a quem acabou de escrever.
+ */
+export async function marcarAviso(
+  db: Db,
+  id: string,
+  estado: EstadoDoAviso,
+  detalhe: string | null,
+): Promise<void> {
+  const { error } = await db.rpc('marcar_aviso', {
+    p_id: id,
+    p_estado: estado,
+    p_detalhe: detalhe,
+  });
+  if (error) console.error('não foi possível anotar o aviso do pedido', error.message);
 }
 
 /** Os pedidos do dono, os mais recentes primeiro. */

@@ -19,7 +19,8 @@
  * com o CLI, confirma que esses `never` continuam lá.
  *
  * Pela mesma razão, a tabela `pedidos` e as funções `registar_pedido` e
- * `dono_da_agencia` (0033) também foram acrescentadas à mão. Regerar tudo para
+ * `dono_da_agencia` (0033), as colunas `aviso`, `aviso_em` e `aviso_detalhe` e
+ * a função `marcar_aviso` (0035) também foram acrescentadas à mão. Regerar tudo para
  * as apanhar punha as colunas da vista `businesses_with_stage` todas como
  * anuláveis e partia a fila de contactos — o gerador não sabe o que numa vista
  * é obrigatório, e a correção acima existe precisamente por isso.
@@ -1272,6 +1273,9 @@ export type Database = {
           notas: string | null;
           origem: string;
           business_id: string | null;
+          aviso: string | null;
+          aviso_em: string | null;
+          aviso_detalhe: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -1287,6 +1291,9 @@ export type Database = {
           notas?: string | null;
           origem?: string;
           business_id?: string | null;
+          aviso?: string | null;
+          aviso_em?: string | null;
+          aviso_detalhe?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -1302,6 +1309,9 @@ export type Database = {
           notas?: string | null;
           origem?: string;
           business_id?: string | null;
+          aviso?: string | null;
+          aviso_em?: string | null;
+          aviso_detalhe?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -1513,6 +1523,14 @@ export type Database = {
           p_prazo?: string | null;
         };
         Returns: string;
+      };
+      marcar_aviso: {
+        Args: {
+          p_id: string;
+          p_estado: string;
+          p_detalhe?: string | null;
+        };
+        Returns: undefined;
       };
       dono_da_agencia: {
         Args: Record<string, never>;
