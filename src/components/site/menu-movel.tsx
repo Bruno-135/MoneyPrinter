@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { EMAIL_DA_AGENCIA, TELEFONE_DA_AGENCIA, WHATSAPP_DA_AGENCIA } from '@/lib/vaidesign/agencia';
+import {
+  EMAIL_DA_AGENCIA,
+  INSTAGRAM_DA_AGENCIA,
+  TELEFONE_DA_AGENCIA,
+  WHATSAPP_DA_AGENCIA,
+} from '@/lib/vaidesign/agencia';
 
 /**
  * O painel do menu no telemóvel.
@@ -206,7 +211,26 @@ export function MenuMovel() {
         >
           {EMAIL_DA_AGENCIA}
         </a>
-        <p style={{ margin: '6px 0 0', textAlign: 'center', font: "400 14px/1.4 'Hanken Grotesk'", color: '#5A5249' }}>
+        {/* O Instagram fica aqui e não entre os botões: é para quem quer ver
+            trabalho, não para quem quer falar connosco. Dar-lhe o mesmo peso
+            que ao WhatsApp era desviar quem já decidiu contactar. */}
+        <p
+          style={{
+            margin: '6px 0 0',
+            textAlign: 'center',
+            font: "400 14px/1.5 'Hanken Grotesk'",
+            color: '#5A5249',
+          }}
+        >
+          <a
+            href={`https://instagram.com/${INSTAGRAM_DA_AGENCIA}`}
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: '#BA4100', textDecoration: 'none', fontWeight: 600 }}
+          >
+            @{INSTAGRAM_DA_AGENCIA}
+          </a>
+          <br />
           {TELEFONE_DA_AGENCIA} · dias úteis
         </p>
       </div>
