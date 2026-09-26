@@ -1,3 +1,4 @@
+import { PORTA_DO_WHATSAPP } from '../agencia';
 import { RAMOS_DO_FORMULARIO } from './dados';
 import type { Destinos } from './links';
 
@@ -71,7 +72,7 @@ export function apontarPorEtiqueta(html: string, destinos: Destinos, email: stri
       if (/whatsapp/i.test(etiqueta) && destinos.whatsapp) {
         nova = abertura.replace(
           paraContacto,
-          `href="https://wa.me/${destinos.whatsapp}" target="_blank" rel="noreferrer"`,
+          `href="${PORTA_DO_WHATSAPP}" target="_blank" rel="noreferrer"`,
         );
         mexidos += 1;
       } else if (etiqueta.includes(email)) {
@@ -150,7 +151,7 @@ export function ligarRodapeMovel(html: string, destinos: Destinos, email: string
   if (destinos.whatsapp) {
     saida = saida.replace(
       '<span>WhatsApp</span>',
-      `<a href="https://wa.me/${destinos.whatsapp}" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none">WhatsApp</a>`,
+      `<a href="${PORTA_DO_WHATSAPP}" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none">WhatsApp</a>`,
     );
   }
   saida = saida.replace(

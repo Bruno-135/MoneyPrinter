@@ -8,6 +8,8 @@
  * veio, e se um dia vier outro, este ficheiro continua a servir.
  */
 
+import { PORTA_DO_WHATSAPP } from '../agencia';
+
 /** Cada página do desenho e a rota onde vive. */
 export const ROTAS: Record<string, string> = {
   'Inicio.dc.html': '/',
@@ -46,8 +48,9 @@ export function reescreverLinks(html: string, destinos: Destinos = {}): string {
       // Sem número, o botão leva à página de contacto em vez de não levar a
       // lado nenhum. Um botão que não faz nada num site de agência é pior do
       // que não ter botão.
+      // `/wa` e não `wa.me/<número>`: o número não anda escrito no HTML.
       return destinos.whatsapp
-        ? `href="https://wa.me/${destinos.whatsapp}"`
+        ? `href="${PORTA_DO_WHATSAPP}"`
         : `href="${destinos.prefixo ?? ''}/contacto"`;
     }
 

@@ -3,8 +3,8 @@
 import { useActionState, useEffect, useRef } from 'react';
 import { CAMPO_ISCO } from '@/lib/vaidesign/pedidos/campos';
 import { MENSAGEM_DE_EXEMPLO } from '@/lib/vaidesign/desenho/dados';
-import { enderecoDeEmail, enderecoDeWhatsApp } from '@/lib/vaidesign/pedidos/mensagem';
-import { EMAIL_DA_AGENCIA, WHATSAPP_DA_AGENCIA } from '@/lib/vaidesign/agencia';
+import { enderecoDeEmail, portaDoWhatsApp } from '@/lib/vaidesign/pedidos/mensagem';
+import { EMAIL_DA_AGENCIA } from '@/lib/vaidesign/agencia';
 import { enviarPedido } from './actions';
 import { ENVIO_PARADO, type EstadoDoEnvio } from './estado';
 
@@ -162,13 +162,11 @@ export function ContactoVivo({ telemovel, computador }: Props) {
       const onde = evento.target as HTMLElement | null;
 
       const paraWhatsApp = onde?.closest('[data-whatsapp-do-formulario]');
-      if (paraWhatsApp && WHATSAPP_DA_AGENCIA) {
+      if (paraWhatsApp) {
         evento.preventDefault();
-        window.open(
-          enderecoDeWhatsApp(WHATSAPP_DA_AGENCIA, lerFormulario(paraWhatsApp)),
-          '_blank',
-          'noopener,noreferrer',
-        );
+        // Pela porta, que é quem sabe o número. Este ficheiro corre no browser
+        // e tudo o que ele importa acaba dentro do JavaScript que se descarrega.
+        window.open(portaDoWhatsApp(lerFormulario(paraWhatsApp)), '_blank', 'noopener,noreferrer');
         return;
       }
 

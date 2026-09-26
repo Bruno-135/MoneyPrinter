@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { PAGINAS, paginaDaVaiDesign, type Pagina } from './pagina';
 import { ROTAS } from './links';
-import { EMAIL_DA_AGENCIA, INSTAGRAM_DA_AGENCIA, WHATSAPP_DA_AGENCIA } from '../agencia';
+import {
+  EMAIL_DA_AGENCIA,
+  INSTAGRAM_DA_AGENCIA,
+  PORTA_DO_WHATSAPP,
+  WHATSAPP_DA_AGENCIA,
+} from '../agencia';
 import { RAMOS_DO_FORMULARIO } from './dados';
 
 /**
@@ -23,7 +28,7 @@ const destinos = { whatsapp: WHATSAPP_DA_AGENCIA };
 /** Os destinos que valem: as rotas do site, o WhatsApp, o email e as âncoras. */
 const DESTINOS_BONS = [
   ...Object.values(ROTAS),
-  `https://wa.me/${WHATSAPP_DA_AGENCIA}`,
+  PORTA_DO_WHATSAPP,
   `mailto:${EMAIL_DA_AGENCIA}`,
   `https://instagram.com/${INSTAGRAM_DA_AGENCIA}`,
   '#',
@@ -79,7 +84,9 @@ describe('os botões que o desenho deixou sem destino', () => {
         );
         expect(whats.length, `${pagina}/${largura}`).toBeGreaterThan(0);
         for (const m of whats) {
-          expect(m[1], `«${texto(m[2]!)}» em ${pagina}/${largura}`).toContain('wa.me');
+          // `/wa` e não `wa.me/<número>`: ver `app/wa/route.ts`. O número não
+          // anda escrito no HTML, nem no texto nem dentro de um `href`.
+          expect(m[1], `«${texto(m[2]!)}» em ${pagina}/${largura}`).toBe(PORTA_DO_WHATSAPP);
         }
       }
     });

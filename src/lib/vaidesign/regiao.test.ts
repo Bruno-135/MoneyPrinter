@@ -46,6 +46,9 @@ describe('as páginas do Brasil', () => {
         const rotas = [...br.matchAll(/\shref="(\/[^"]*)"/g)].map((m) => m[1]!);
         expect(rotas.length).toBeGreaterThan(3);
         for (const r of rotas) {
+          // `/wa` é a porta do WhatsApp e é uma só para os dois países: o
+          // número é o mesmo e não há nada ali para traduzir.
+          if (r === '/wa') continue;
           expect(r.startsWith('/br'), `${r} em ${pagina}/${largura}`).toBe(true);
         }
       });

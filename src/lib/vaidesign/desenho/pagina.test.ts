@@ -100,9 +100,17 @@ describe('as páginas da VaiDesign', () => {
   it('sem número, o botão de WhatsApp leva ao contacto', () => {
     const sem = paginaDaVaiDesign('inicio', 1440);
     expect(sem).not.toContain('href="#whatsapp"');
+    expect(sem).toContain('href="/contacto"');
+  });
 
-    const com = paginaDaVaiDesign('inicio', 1440, { whatsapp: '351912345678' });
-    expect(com).toContain('https://wa.me/351912345678');
+  it('o número nunca aparece no HTML, nem dentro de um href', () => {
+    // Tirar o número do texto e deixá-lo no link era esconder a chave debaixo
+    // do tapete: um robô lê o `href` tão bem como lê o texto. Os botões vão à
+    // porta `/wa`, e é o servidor que sabe o número — ver `app/wa/route.ts`.
+    const html = paginaDaVaiDesign('inicio', 1440, { whatsapp: '351912345678' });
+    expect(html).not.toContain('351912345678');
+    expect(html).not.toContain('wa.me');
+    expect(html).toContain('href="/wa"');
   });
 
   it('a ficha do modelo ainda tem as três peças que o rato acende', () => {

@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import {
   EMAIL_DA_AGENCIA,
   INSTAGRAM_DA_AGENCIA,
-  TELEFONE_DA_AGENCIA,
-  WHATSAPP_DA_AGENCIA,
+  PORTA_DO_WHATSAPP,
 } from '@/lib/vaidesign/agencia';
 
 /**
@@ -171,9 +170,9 @@ export function MenuMovel() {
       </nav>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {WHATSAPP_DA_AGENCIA && (
+        {(
           <a
-            href={`https://wa.me/${WHATSAPP_DA_AGENCIA}`}
+            href={PORTA_DO_WHATSAPP}
             target="_blank"
             rel="noreferrer"
             style={{
@@ -231,7 +230,7 @@ export function MenuMovel() {
             @{INSTAGRAM_DA_AGENCIA}
           </a>
           <br />
-          {TELEFONE_DA_AGENCIA} · dias úteis
+          Dias úteis, das 9h às 19h
         </p>
       </div>
     </div>
