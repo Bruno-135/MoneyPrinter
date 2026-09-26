@@ -1,5 +1,8 @@
+import { headers } from 'next/headers';
 import { paginaDaVaiDesign, type Pagina } from '@/lib/vaidesign/desenho/pagina';
+import { REGIAO_POR_OMISSAO, type Regiao } from '@/lib/vaidesign/regiao';
 import { MenuMovel } from './menu-movel';
+import { EscolherRegiao, SugerirRegiao } from './trocar-regiao';
 
 /**
  * O site da VaiDesign como o Claude Design o desenhou.
@@ -127,17 +130,38 @@ interface Props {
   pagina: Pagina;
   /** O WhatsApp da agência, só dígitos. Sem ele, o botão leva ao contacto. */
   whatsapp?: string | null;
+  /** Portugal ou Brasil. Muda as palavras e os exemplos, não o desenho. */
+  regiao?: Regiao;
 }
 
-export function SiteVaiDesign({ pagina, whatsapp }: Props) {
+/**
+ * O país de quem está a ver, se o Vercel o souber.
+ *
+ * Serve só para SUGERIR a outra versão, nunca para a impor. Vem de um
+ * cabeçalho que o Vercel acrescenta a cada pedido; fora do Vercel não existe,
+ * e aí não se sugere nada, que é o comportamento certo quando não se sabe.
+ */
+async function paisDeQuemVe(): Promise<string | undefined> {
+  try {
+    const h = await headers();
+    return h.get('x-vercel-ip-country') ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function SiteVaiDesign({ pagina, whatsapp, regiao = REGIAO_POR_OMISSAO }: Props) {
   const destinos = { whatsapp };
-  const telemovel = paginaDaVaiDesign(pagina, 390, destinos);
-  const computador = paginaDaVaiDesign(pagina, 1440, destinos);
+  const telemovel = paginaDaVaiDesign(pagina, 390, destinos, undefined, regiao);
+  const computador = paginaDaVaiDesign(pagina, 1440, destinos, undefined, regiao);
+  const pais = await paisDeQuemVe();
 
   return (
     <MolduraVaiDesign>
+      <SugerirRegiao regiao={regiao} pais={pais} />
       <div className="vd-tela vd-390" dangerouslySetInnerHTML={{ __html: telemovel }} />
       <div className="vd-tela vd-1440" dangerouslySetInnerHTML={{ __html: computador }} />
+      <EscolherRegiao regiao={regiao} />
     </MolduraVaiDesign>
   );
 }

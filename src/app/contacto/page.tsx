@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { MolduraVaiDesign } from '@/components/site/vaidesign';
+import { EscolherRegiao, SugerirRegiao } from '@/components/site/trocar-regiao';
 import { paginaDaVaiDesign } from '@/lib/vaidesign/desenho/pagina';
 import { WHATSAPP_DA_AGENCIA } from '@/lib/vaidesign/agencia';
 import { ContactoVivo } from './formulario';
@@ -17,6 +18,15 @@ export const metadata: Metadata = {
   title: 'Contacto — VaiDesign',
   description:
     'Diga o que vende e receba uma proposta por escrito no próprio dia. Por WhatsApp, por email ou pelo formulário.',
+  alternates: {
+    canonical: "/contacto",
+    // Diz ao Google que as duas versões são a mesma página em duas línguas, e
+    // não conteúdo copiado — sem isto, uma das duas é escondida dos resultados.
+    languages: {
+      'pt-PT': "/contacto",
+      'pt-BR': "/br/contacto",
+    },
+  },
 };
 
 export default function ContactoPage() {
@@ -24,10 +34,12 @@ export default function ContactoPage() {
 
   return (
     <MolduraVaiDesign>
+      <SugerirRegiao regiao="pt" />
       <ContactoVivo
         telemovel={paginaDaVaiDesign('contacto', 390, destinos)}
         computador={paginaDaVaiDesign('contacto', 1440, destinos)}
       />
+      <EscolherRegiao regiao="pt" />
     </MolduraVaiDesign>
   );
 }

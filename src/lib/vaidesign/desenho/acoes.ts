@@ -41,6 +41,10 @@ function texto(html: string): string {
  * onde quer falar, e obrigá-lo a passar por uma página é perdê-lo.
  */
 export function apontarPorEtiqueta(html: string, destinos: Destinos, email: string): string {
+  // Com a versão do Brasil, o link que o desenho aponta à página de contacto
+  // já leva o prefixo `/br`. Procurar `/contacto` à letra deixava os botões
+  // do rodapé brasileiro a apontar para a página em vez de abrirem o WhatsApp.
+  const paraContacto = `href="${destinos.prefixo ?? ''}/contacto"`;
   let saida = '';
   let i = 0;
   let mexidos = 0;
@@ -63,15 +67,15 @@ export function apontarPorEtiqueta(html: string, destinos: Destinos, email: stri
     const etiqueta = texto(dentro);
 
     let nova = abertura;
-    if (abertura.includes('href="/contacto"')) {
+    if (abertura.includes(paraContacto)) {
       if (/whatsapp/i.test(etiqueta) && destinos.whatsapp) {
         nova = abertura.replace(
-          'href="/contacto"',
+          paraContacto,
           `href="https://wa.me/${destinos.whatsapp}" target="_blank" rel="noreferrer"`,
         );
         mexidos += 1;
       } else if (etiqueta.includes(email)) {
-        nova = abertura.replace('href="/contacto"', `href="mailto:${email}"`);
+        nova = abertura.replace(paraContacto, `href="mailto:${email}"`);
         mexidos += 1;
       }
     }
@@ -282,4 +286,32 @@ export function marcarCopiarExemplo(html: string): string {
       );
   }
   return saida;
+}
+
+/**
+ * O selo passa a dizer «Grátis» em vez de «0 €».
+ *
+ * Vale nos dois países e não só no Brasil. Para quem lê de lá, um símbolo de
+ * moeda europeia é o primeiro sinal de que a agência não é de cá — e é o selo
+ * mais visível da página inicial, portanto é o primeiro sinal de todos. Mas
+ * mesmo em Portugal a palavra é melhor: «grátis» vende, «0 €» faz somar.
+ *
+ * O tamanho da letra desce ao mesmo tempo, e é isso que obriga esta troca a
+ * viver aqui em vez de no dicionário das regiões: «0 €» são três caracteres e
+ * «Grátis» são seis, e ao tamanho do desenho a palavra saltava para fora do
+ * círculo. Uma tradução que estraga o desenho não é uma tradução, é um erro
+ * com boas intenções.
+ */
+const SELOS: readonly (readonly [string, string])[] = [
+  [`<span style="font:800 52px/.9 'Barlow Condensed';color:#EC5B13">0 €</span>`, `<span style="font:800 40px/.9 'Barlow Condensed';color:#EC5B13">Grátis</span>`],
+  [`<span style="font:800 38px/.9 'Barlow Condensed';color:#EC5B13">0 €</span>`, `<span style="font:800 29px/.9 'Barlow Condensed';color:#EC5B13">Grátis</span>`],
+];
+
+export function dizerGratis(html: string): string {
+  let saida = html;
+  for (const [de, para] of SELOS) saida = saida.split(de).join(para);
+
+  // Fora dos selos o «0 €» aparece em texto corrido, onde não há tamanho que
+  // acertar: troca-se a seco.
+  return saida.split('>0 €').join('>Grátis');
 }

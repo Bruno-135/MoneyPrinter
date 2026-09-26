@@ -6,6 +6,7 @@ import { abrirAsPartes } from './partes';
 import { fundirOCampoDeContacto } from './contacto';
 import {
   apontarPorEtiqueta,
+  dizerGratis,
   ligarInstagram,
   ligarRodapeMovel,
   marcarCopiarExemplo,
@@ -14,6 +15,7 @@ import {
   perguntarORamo,
 } from './acoes';
 import { EMAIL_DA_AGENCIA, INSTAGRAM_DA_AGENCIA } from '../agencia';
+import { PREFIXO, REGIAO_POR_OMISSAO, regionalizar, type Regiao } from '../regiao';
 import {
   FORMULARIO_VAZIO,
   RAMOS,
@@ -93,6 +95,7 @@ export function paginaDaVaiDesign(
   largura: 390 | 1440,
   destinos: Destinos = {},
   formulario: EstadoDoFormulario = FORMULARIO_VAZIO,
+  regiao: Regiao = REGIAO_POR_OMISSAO,
 ): string {
   const chave = `${pagina}-${largura}` as NomeDeArtboard;
   const molde = ARTBOARDS[chave];
@@ -108,20 +111,26 @@ export function paginaDaVaiDesign(
   const preparado =
     pagina === 'contacto' ? fundirOCampoDeContacto(abrirAsPartes(molde), largura) : molde;
   const cheio = encher(preparado, contexto(pagina, formulario));
-  const comLinks = reescreverLinks(resolverComponentes(cheio), destinos);
+  // O prefixo das rotas entra aqui e não em cada sítio onde há um link: a
+  // partir deste ponto, tudo o que mexe em `href` já o vê.
+  const comRegiao: Destinos = { ...destinos, prefixo: PREFIXO[regiao] };
+  const comLinks = reescreverLinks(resolverComponentes(cheio), comRegiao);
 
   // Os botões que o desenho deixou sem destino, um a um. Em sequência e não
   // aninhados: cinco chamadas dentro umas das outras liam-se de dentro para
   // fora e ninguém percebia a ordem. Ver `acoes.ts`.
-  let vivo = apontarPorEtiqueta(comLinks, destinos, EMAIL_DA_AGENCIA);
-  vivo = ligarRodapeMovel(vivo, destinos, EMAIL_DA_AGENCIA);
+  let vivo = apontarPorEtiqueta(comLinks, comRegiao, EMAIL_DA_AGENCIA);
+  vivo = ligarRodapeMovel(vivo, comRegiao, EMAIL_DA_AGENCIA);
   vivo = ligarInstagram(vivo, INSTAGRAM_DA_AGENCIA);
   vivo = marcarMenuMovel(vivo);
   vivo = marcarEnviarPeloWhatsApp(vivo);
   vivo = marcarCopiarExemplo(vivo);
+  vivo = dizerGratis(vivo);
   vivo = perguntarORamo(vivo);
 
-  return marcarRamo(vivo, pagina === 'contacto' ? formulario.v4 : '');
+  // A língua e os exemplos são a última coisa a entrar: já não há marcas nem
+  // links para estragar, e o que fica é só o texto que a pessoa vê.
+  return regionalizar(marcarRamo(vivo, pagina === 'contacto' ? formulario.v4 : ''), regiao);
 }
 
 /**
