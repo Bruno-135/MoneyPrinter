@@ -5,6 +5,7 @@ import { reescreverLinks, type Destinos } from './links';
 import { abrirAsPartes } from './partes';
 import { fundirOCampoDeContacto } from './contacto';
 import {
+  animarOPontoDaMarca,
   apontarPorEtiqueta,
   ligarInstagram,
   ligarRodapeMovel,
@@ -118,6 +119,7 @@ export function paginaDaVaiDesign(
   vivo = marcarMenuMovel(vivo);
   vivo = marcarEnviarPeloWhatsApp(vivo);
   vivo = perguntarORamo(vivo);
+  vivo = animarOPontoDaMarca(vivo);
 
   return marcarRamo(vivo, pagina === 'contacto' ? formulario.v4 : '');
 }

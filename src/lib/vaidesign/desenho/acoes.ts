@@ -220,3 +220,47 @@ export function ligarInstagram(html: string, conta: string): string {
     .replace('<span>Instagram @vaidesign</span>', `${abre}Instagram @${conta}</a>`)
     .replace('<span>Instagram</span>', `${abre}Instagram</a>`);
 }
+
+/**
+ * O ponto da marca salta quando a página abre.
+ *
+ * O Bruno pediu isto ao Claude Design e não veio na exportação — o
+ * `movimento.css` que de lá veio é byte a byte igual ao que já cá estava, e o
+ * artboard do logótipo não tem uma linha de animação. Faz-se aqui, que é onde
+ * se faz bem: isto é código, não é desenho.
+ *
+ * O ponto vem de trás para a frente — começa pequeno, como se estivesse longe,
+ * cresce até passar do tamanho e assenta com dois ressaltos. O movimento é o
+ * da marca: «vai» é seguir em frente, e o ponto chega antes do resto.
+ *
+ * Corre UMA VEZ, quando a página abre, e nunca mais. Um logótipo que salta de
+ * cinco em cinco segundos deixa de ser uma assinatura e passa a ser uma
+ * distracção — e quem está a ler os preços não quer nada a mexer ao lado.
+ *
+ * Marca-se em vez de se escrever a animação no artboard para o desenho ficar
+ * como veio, e porque o ponto aparece dezassete vezes em sítios diferentes: o
+ * cabeçalho, o rodapé, o logótipo gigante da abertura, as fichas. Uma marca e
+ * o CSS trata dos dezassete.
+ */
+const PONTOS_DA_MARCA = [
+  'position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13',
+  'position:absolute;right:-.36em;top:-.06em;width:.26em;height:.26em;border-radius:50%;background:#EC5B13',
+];
+
+export function animarOPontoDaMarca(html: string): string {
+  let saida = html;
+  let mexidos = 0;
+
+  for (const estilo of PONTOS_DA_MARCA) {
+    const antigo = `<span style="${estilo}">`;
+    const novo = `<span data-ponto-da-marca style="${estilo}">`;
+    const partes = saida.split(antigo);
+    mexidos += partes.length - 1;
+    saida = partes.join(novo);
+  }
+
+  if (mexidos === 0) {
+    throw new Error('o ponto da marca mudou de forma — ver `animarOPontoDaMarca`');
+  }
+  return saida;
+}

@@ -182,3 +182,40 @@ describe('o Instagram do rodapé', () => {
     }
   }
 });
+
+describe('o ponto da marca', () => {
+  for (const pagina of PAGINAS) {
+    for (const largura of LARGURAS) {
+      it(`${pagina} · ${largura}: está marcado para saltar`, () => {
+        const html = paginaCompleta(pagina, largura);
+        expect(html).toContain('data-ponto-da-marca');
+      });
+    }
+  }
+
+  it('todos os pontos do logótipo ficam marcados, e não só o primeiro', () => {
+    // O logótipo aparece mais do que uma vez na mesma página — no cabeçalho e
+    // no rodapé. Marcar só um deixava o outro parado ao lado de um a saltar.
+    //
+    // Conta-se só o ponto DO LOGÓTIPO: é o círculo laranja que está colocado
+    // por cima do «vaı» com `position:absolute`. O desenho tem muitos outros
+    // círculos da mesma cor — as bolinhas das listas, os fundos das setas — e
+    // esses não têm nada que salte.
+    const html = paginaCompleta('inicio', 1440);
+    const doLogotipo = /<span[^>]*position:absolute;right:-\.\d+em;[^"]*border-radius:50%;background:#EC5B13/g;
+    const pontos = (html.match(doLogotipo) ?? []).length;
+    const marcados = (html.match(/data-ponto-da-marca/g) ?? []).length;
+    expect(pontos).toBeGreaterThan(1);
+    expect(marcados).toBe(pontos);
+  });
+
+  it('as bolinhas que não são o logótipo ficam quietas', () => {
+    const html = paginaCompleta('inicio', 1440);
+    // Se um dia isto falhar, é porque a marca foi posta num círculo qualquer.
+    const marcadas = [...html.matchAll(/<span data-ponto-da-marca style="([^"]*)"/g)];
+    expect(marcadas.length).toBeGreaterThan(0);
+    for (const m of marcadas) {
+      expect(m[1], m[1]).toContain('position:absolute');
+    }
+  });
+});
