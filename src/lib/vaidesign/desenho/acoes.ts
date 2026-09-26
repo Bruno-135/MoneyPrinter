@@ -315,3 +315,44 @@ export function dizerGratis(html: string): string {
   // acertar: troca-se a seco.
   return saida.split('>0 €').join('>Grátis');
 }
+
+/**
+ * O «Enviar pelo WhatsApp» que falta no telemóvel.
+ *
+ * O desenho pô-lo ao lado do «Copiar exemplo» no artboard de computador e
+ * esqueceu-se dele no de telemóvel. É ao contrário do que faz sentido: num
+ * computador quem chega ao formulário escreve no formulário, e é no telemóvel
+ * — onde a pessoa já tem o WhatsApp aberto noutra aba — que aquele botão é o
+ * atalho que evita um formulário inteiro.
+ *
+ * Não é um botão inventado: é o mesmo texto e a mesma cor do de computador,
+ * posto por baixo do «Copiar exemplo» porque a 390px não cabem dois lado a
+ * lado. Fica com a mesma marca, portanto o browser trata-o da mesma maneira:
+ * leva o que estiver escrito no formulário e abre a conversa já com o texto
+ * lá dentro.
+ */
+/**
+ * Como se reconhece o artboard de telemóvel: o «Copiar exemplo» de lá estica-se
+ * e centra o texto, o de computador tem `padding` lateral.
+ *
+ * Procura-se por este pedaço do meio do estilo e não pela etiqueta inteira,
+ * porque a esta altura o `marcarCopiarExemplo` já lhe mexeu no princípio — e
+ * a primeira versão disto procurava a etiqueta original, não a encontrava, e
+ * não acrescentava botão nenhum sem se queixar.
+ */
+const COPIAR_NO_TELEMOVEL = `justify-content:center;gap:8px;border:1.5px solid #141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">`;
+
+const WHATSAPP_NO_TELEMOVEL = `<span data-whatsapp-do-formulario role="button" tabindex="0" style="cursor:pointer;margin-top:10px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;background:#EC5B13;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#141210">Enviar pelo WhatsApp</span>`;
+
+export function juntarOWhatsAppNoTelemovel(html: string, temWhatsApp: boolean): string {
+  if (!temWhatsApp) return html;
+  // Só no artboard de telemóvel: o de computador já tem o seu, e pô-lo duas
+  // vezes na mesma página era dar dois botões iguais à mesma pessoa.
+  if (!html.includes(COPIAR_NO_TELEMOVEL)) return html;
+
+  const fim = html.indexOf('</span>', html.indexOf('Copiar exemplo'));
+  if (fim === -1) return html;
+
+  const corte = fim + '</span>'.length;
+  return html.slice(0, corte) + WHATSAPP_NO_TELEMOVEL + html.slice(corte);
+}

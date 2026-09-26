@@ -96,10 +96,29 @@ describe('os botões que o desenho deixou sem destino', () => {
     });
   }
 
-  it('o «Enviar pelo WhatsApp» do formulário está marcado', () => {
-    // Só existe no artboard de computador: o desenho não o pôs no telemóvel,
-    // onde o botão grande do WhatsApp já está por cima do formulário.
-    expect(paginaCompleta('contacto', 1440)).toContain('data-whatsapp-do-formulario');
+  it('o «Enviar pelo WhatsApp» do formulário está nas duas larguras', () => {
+    // No desenho só existia no artboard de computador. É ao contrário do que
+    // faz sentido: é no telemóvel, com o WhatsApp já aberto noutra aba, que
+    // aquele botão poupa um formulário inteiro.
+    for (const largura of LARGURAS) {
+      expect(paginaCompleta('contacto', largura), String(largura)).toContain(
+        'data-whatsapp-do-formulario',
+      );
+    }
+  });
+
+  it('não aparece duas vezes na mesma largura', () => {
+    for (const largura of LARGURAS) {
+      const html = paginaCompleta('contacto', largura);
+      expect((html.match(/data-whatsapp-do-formulario/g) ?? []).length, String(largura)).toBe(1);
+    }
+  });
+
+  it('sem número de WhatsApp, não se inventa o botão', () => {
+    // Um botão que diz «Enviar pelo WhatsApp» e não tem para onde enviar é
+    // pior do que não haver botão.
+    const html = paginaDaVaiDesign('contacto', 390, {});
+    expect(html).not.toContain('data-whatsapp-do-formulario');
   });
 
   it('o rodapé do telemóvel também liga ao WhatsApp e ao email', () => {
