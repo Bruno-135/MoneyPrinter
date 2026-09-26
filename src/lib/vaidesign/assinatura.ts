@@ -42,6 +42,7 @@ const CREME = '#F6EFE4';
 const CINZENTO = '#5A5249';
 const LARANJA = '#EC5B13';
 const LINHA = '#DDD2C0';
+const LINK = '#BA4100';
 
 /** A letra dos títulos. Condensada, com duas alternativas de sistema. */
 const TITULO = "'Barlow Condensed','Arial Narrow',Arial,sans-serif";
@@ -51,6 +52,61 @@ const MONO = "'JetBrains Mono','Courier New',monospace";
 const TEXTO = "-apple-system,'Segoe UI',Roboto,Arial,sans-serif";
 
 export const MORADA_DO_SITE = 'vaidesign.net';
+
+/**
+ * A assinatura desenhada, como fotografia.
+ *
+ * Veio do Claude Design, e é a única maneira de ter exactamente o desenho:
+ * a forma curva cor de laranja, os cantos redondos, as letras da marca. Nada
+ * disso sobrevive escrito em HTML.
+ *
+ * O preço é que muita gente nunca vê imagens. O Outlook bloqueia-as por
+ * omissão, e há quem nunca carregue em «mostrar imagens» em nenhum email da
+ * vida. Para essas pessoas a assinatura é um rectângulo vazio — e é por isso
+ * que o texto alternativo diz tudo o que a imagem diz, e os links vão a
+ * seguir, em texto, sempre visíveis.
+ *
+ * O endereço da imagem é absoluto, de propósito. Uma assinatura vive dentro
+ * de um email, longe do site: um caminho relativo não tem contra o que
+ * resolver e a imagem nunca aparece.
+ */
+const IMAGEM = `https://${'vaidesign.net'}/vaidesign/assinatura.png`;
+
+/** O que a imagem diz, para quem não a vê. */
+const DESCRICAO_DA_IMAGEM = [
+  'Bruno Dias · VaiDesign',
+  'Sites, marca e redes sociais à medida',
+  `WhatsApp ${TELEFONE_DA_AGENCIA}`,
+  MORADA_DO_SITE,
+  `@${INSTAGRAM_DA_AGENCIA}`,
+].join(' · ');
+
+export function assinaturaComImagem(): string {
+  const atalho = (href: string, texto: string) =>
+    `<a href="${href}" style="color:${LINK};text-decoration:none;font-weight:600">${texto}</a>`;
+
+  const atalhos = [
+    WHATSAPP_DA_AGENCIA ? atalho(`https://wa.me/${WHATSAPP_DA_AGENCIA}`, 'WhatsApp') : '',
+    atalho(`mailto:${EMAIL_DA_AGENCIA}`, 'Email'),
+    atalho(`https://${MORADA_DO_SITE}`, 'Site'),
+    atalho(`https://instagram.com/${INSTAGRAM_DA_AGENCIA}`, 'Instagram'),
+  ]
+    .filter(Boolean)
+    .join('&nbsp;&nbsp;·&nbsp;&nbsp;');
+
+  return [
+    `<table cellpadding="0" cellspacing="0" border="0" width="520" style="border-collapse:collapse;max-width:520px">`,
+    `<tr><td style="padding:0">`,
+    `<a href="https://${MORADA_DO_SITE}" style="text-decoration:none">`,
+    // `width` como atributo E no estilo: o Outlook lê o atributo, o resto lê o
+    // estilo, e sem os dois a imagem sai ao tamanho original de 1200px.
+    `<img src="${IMAGEM}" width="520" alt="${DESCRICAO_DA_IMAGEM}" style="display:block;width:100%;max-width:520px;height:auto;border:0">`,
+    `</a>`,
+    `</td></tr>`,
+    `<tr><td style="padding:10px 0 0;font-family:${TEXTO};font-size:13px;line-height:20px;color:${CINZENTO}">${atalhos}</td></tr>`,
+    `</table>`,
+  ].join('');
+}
 
 /**
  * O logótipo sobre o preto.

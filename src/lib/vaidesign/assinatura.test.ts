@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assinaturaCompleta, assinaturaCurta } from './assinatura';
+import { assinaturaComImagem, assinaturaCompleta, assinaturaCurta } from './assinatura';
 import {
   EMAIL_DA_AGENCIA,
   INSTAGRAM_DA_AGENCIA,
@@ -20,6 +20,39 @@ const AS_DUAS = [
   ['completa', assinaturaCompleta()],
   ['curta', assinaturaCurta()],
 ] as const;
+
+describe('a versão com imagem', () => {
+  const html = assinaturaComImagem();
+
+  it('o endereço da imagem é absoluto', () => {
+    // Uma assinatura vive dentro de um email, longe do site. Um caminho
+    // relativo não tem contra o que resolver, e a imagem nunca aparece.
+    const src = /<img[^>]*src="([^"]*)"/.exec(html)?.[1];
+    expect(src).toMatch(/^https:\/\/vaidesign\.net\//);
+  });
+
+  it('quem não vê imagens fica a saber tudo na mesma', () => {
+    // O Outlook bloqueia imagens por omissão, e há quem nunca carregue em
+    // «mostrar imagens». Para essas pessoas isto é tudo o que sobra.
+    const alt = /<img[^>]*alt="([^"]*)"/.exec(html)?.[1] ?? '';
+    expect(alt).toContain('Bruno Dias');
+    expect(alt).toContain(TELEFONE_DA_AGENCIA);
+    expect(alt).toContain(INSTAGRAM_DA_AGENCIA);
+  });
+
+  it('os links vão em texto, fora da imagem', () => {
+    expect(html).toContain(`https://wa.me/${WHATSAPP_DA_AGENCIA}`);
+    expect(html).toContain(`mailto:${EMAIL_DA_AGENCIA}`);
+    expect(html).toContain(`https://instagram.com/${INSTAGRAM_DA_AGENCIA}`);
+  });
+
+  it('a imagem leva a largura no atributo e no estilo', () => {
+    // O Outlook lê o atributo, o resto lê o estilo. Sem os dois, a imagem sai
+    // ao tamanho original de 1200px e rebenta a largura da mensagem.
+    expect(html).toMatch(/<img[^>]*width="520"/);
+    expect(html).toMatch(/<img[^>]*max-width:520px/);
+  });
+});
 
 describe('a assinatura sobrevive a um cliente de email', () => {
   for (const [nome, html] of AS_DUAS) {

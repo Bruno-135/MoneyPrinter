@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { MolduraVaiDesign } from '@/components/site/vaidesign';
 import { CopiarAssinatura } from '@/components/site/copiar-assinatura';
-import { assinaturaCompleta, assinaturaCurta } from '@/lib/vaidesign/assinatura';
+import { assinaturaComImagem, assinaturaCompleta, assinaturaCurta } from '@/lib/vaidesign/assinatura';
 
 /**
  * A página de onde se copia a assinatura para o Gmail.
@@ -45,8 +45,14 @@ export default function AssinaturaPage() {
 
         <CopiarAssinatura
           titulo="Mensagens novas"
-          nota="A completa. Vai nos emails que começa."
+          nota="Escrita em texto: aparece sempre, em qualquer caixa de correio, e o cliente pode copiar o número. É esta que recomendo para o dia a dia."
           html={assinaturaCompleta()}
+        />
+
+        <CopiarAssinatura
+          titulo="A mesma, como imagem"
+          nota="É o desenho exacto, com a forma curva e as letras da marca. Mas o Outlook bloqueia imagens por omissão, e quem não as carregar vê só o texto por baixo."
+          html={assinaturaComImagem()}
         />
 
         <CopiarAssinatura
