@@ -75,33 +75,8 @@ const ESTILO = `
   .vd-contacto { margin: 0; }
   .vd-contacto [data-copiar-exemplo]:hover { background: #F6EFE4; }
 
-  /* O ponto da marca, quando a página abre.
-
-     Vem de trás para a frente: começa pequeno, como se estivesse longe, passa
-     do tamanho e assenta com dois ressaltos. Corre uma vez e nunca mais — um
-     logótipo que salta de cinco em cinco segundos deixa de ser assinatura e
-     passa a ser distracção.
-
-     A escala é medida a partir do centro do ponto, senão ele cresce para um
-     canto e sai do sítio onde o desenho o pôs. */
-  [data-ponto-da-marca] {
-    transform-origin: 50% 50%;
-    animation: vd-ponto-chega .9s cubic-bezier(.34,1.56,.64,1) .15s both;
-  }
-
-  @keyframes vd-ponto-chega {
-    0%   { transform: scale(.1) translateY(-160%); opacity: 0; }
-    35%  { transform: scale(1.5) translateY(-30%); opacity: 1; }
-    58%  { transform: scale(.88) translateY(14%); }
-    76%  { transform: scale(1.1) translateY(-8%); }
-    90%  { transform: scale(.97) translateY(3%); }
-    100% { transform: scale(1) translateY(0); }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .vd-ficha, .vd-ficha-seta, .vd-ficha-fita { transition: none; }
-    /* Quem pediu menos movimento ao sistema recebe o ponto já pousado. */
-    [data-ponto-da-marca] { animation: none; }
   }
 `;
 

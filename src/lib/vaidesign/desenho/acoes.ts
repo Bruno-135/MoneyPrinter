@@ -224,24 +224,31 @@ export function ligarInstagram(html: string, conta: string): string {
 /**
  * O ponto da marca salta quando a página abre.
  *
- * O Bruno pediu isto ao Claude Design e não veio na exportação — o
- * `movimento.css` que de lá veio é byte a byte igual ao que já cá estava, e o
- * artboard do logótipo não tem uma linha de animação. Faz-se aqui, que é onde
- * se faz bem: isto é código, não é desenho.
+ * O Bruno pediu esta animação ao Claude Design, ela não veio na primeira
+ * exportação, eu fiz uma — e depois veio a dele, que é melhor. Fica a dele.
  *
- * O ponto vem de trás para a frente — começa pequeno, como se estivesse longe,
- * cresce até passar do tamanho e assenta com dois ressaltos. O movimento é o
- * da marca: «vai» é seguir em frente, e o ponto chega antes do resto.
+ * A minha fazia o ponto crescer e assentar; a do desenho faz o que ele tinha
+ * mesmo pedido: o ponto SAI DE TRÁS DO «v», atravessa a palavra aos pulos, e
+ * só no fim chega ao sítio, à frente do «ı». E pula como pula uma bola — nos
+ * três impactos achata-se e volta a esticar, que é o que separa uma coisa com
+ * peso de uma caixa a deslizar.
  *
- * Corre UMA VEZ, quando a página abre, e nunca mais. Um logótipo que salta de
- * cinco em cinco segundos deixa de ser uma assinatura e passa a ser uma
- * distracção — e quem está a ler os preços não quer nada a mexer ao lado.
+ * O CSS vem inteiro de `movimento.css`, do desenho. Aqui só se põem as duas
+ * classes que ele espera encontrar, e põem-se da mesma maneira que o artboard
+ * novo as põe: `vd-logo` no «vaı» e `vd-ponto` no ponto.
  *
- * Marca-se em vez de se escrever a animação no artboard para o desenho ficar
- * como veio, e porque o ponto aparece dezassete vezes em sítios diferentes: o
- * cabeçalho, o rodapé, o logótipo gigante da abertura, as fichas. Uma marca e
- * o CSS trata dos dezassete.
+ * Podia ter trocado os artboards pelos do ZIP novo em vez disto. Não trocou
+ * porque nesse ZIP mudaram outras coisas ao mesmo tempo — o Início inteiro,
+ * entre elas — e uma alteração de cada vez é uma alteração que se percebe.
  */
+
+/** O «vaı» que serve de palco: é dentro dele que o ponto anda. */
+const PALCOS_DO_LOGOTIPO = [
+  `<span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">`,
+  `<span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em">`,
+];
+
+/** O ponto, nas duas medidas que o desenho usa. */
 const PONTOS_DA_MARCA = [
   'position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13',
   'position:absolute;right:-.36em;top:-.06em;width:.26em;height:.26em;border-radius:50%;background:#EC5B13',
@@ -249,18 +256,28 @@ const PONTOS_DA_MARCA = [
 
 export function animarOPontoDaMarca(html: string): string {
   let saida = html;
-  let mexidos = 0;
+  let palcos = 0;
+  let pontos = 0;
+
+  for (const palco of PALCOS_DO_LOGOTIPO) {
+    const partes = saida.split(palco);
+    palcos += partes.length - 1;
+    saida = partes.join(palco.replace('<span style="', '<span class="vd-logo" style="'));
+  }
 
   for (const estilo of PONTOS_DA_MARCA) {
     const antigo = `<span style="${estilo}">`;
-    const novo = `<span data-ponto-da-marca style="${estilo}">`;
     const partes = saida.split(antigo);
-    mexidos += partes.length - 1;
-    saida = partes.join(novo);
+    pontos += partes.length - 1;
+    saida = partes.join(`<span class="vd-ponto" style="${estilo}">`);
   }
 
-  if (mexidos === 0) {
-    throw new Error('o ponto da marca mudou de forma — ver `animarOPontoDaMarca`');
+  // O ponto sem o palco fica a saltar contra o que estiver por fora, e o palco
+  // sem o ponto não faz nada. Ou vêm os dois, ou o desenho mudou.
+  if (palcos === 0 || pontos === 0 || palcos !== pontos) {
+    throw new Error(
+      `o logótipo mudou de forma: ${palcos} palcos para ${pontos} pontos — ver \`animarOPontoDaMarca\``,
+    );
   }
   return saida;
 }

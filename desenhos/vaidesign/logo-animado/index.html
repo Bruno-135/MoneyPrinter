@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VaiDesign · Logótipo animado</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:sans-serif}
+.logo{display:flex;align-items:baseline;font-size:clamp(80px,16vw,200px)}
+.vai{position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;isolation:isolate}
+.ponto{position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;z-index:-1;transform-origin:50% 100%;animation:vd-ciclo 2800ms 400ms both infinite}
+.design{margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase}
+.logo:hover .ponto{animation-play-state:paused}
+@media (prefers-reduced-motion: reduce){.ponto{animation:none}}
+@keyframes vd-pulo {
+  0%   { transform: translate(-1.10em, .34em) scale(.8); animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+  12%  { transform: translate(-1.10em, -.12em) scale(1); animation-timing-function: cubic-bezier(.3,0,.6,1); }
+  24%  { transform: translate(-.87em, -.42em); animation-timing-function: cubic-bezier(.5,0,.9,.6); }
+  34%  { transform: translate(-.645em, .04em) scale(1.25,.75); animation-timing-function: ease-out; }
+  38%  { transform: translate(-.645em, .04em) scale(1); animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+  48%  { transform: translate(-.49em, -.34em); animation-timing-function: cubic-bezier(.5,0,.9,.6); }
+  58%  { transform: translate(-.335em, .04em) scale(1.22,.78); animation-timing-function: ease-out; }
+  62%  { transform: translate(-.335em, .04em) scale(1); animation-timing-function: cubic-bezier(.2,.7,.4,1); }
+  76%  { transform: translate(-.16em, -.30em); animation-timing-function: cubic-bezier(.5,0,.9,.6); }
+  88%  { transform: translate(0, 0) scale(1.15,.85); animation-timing-function: ease-out; }
+  94%  { transform: translate(0, 0) scale(.96,1.04); }
+  100% { transform: none; }
+}
+
+@keyframes vd-ciclo{
+  0%{transform:translate(-1.10em,.34em) scale(.8);animation-timing-function:cubic-bezier(.2,.7,.2,1)}
+  6%{transform:translate(-1.10em,-.12em) scale(1);animation-timing-function:cubic-bezier(.3,0,.6,1)}
+  12%{transform:translate(-.87em,-.42em);animation-timing-function:cubic-bezier(.5,0,.9,.6)}
+  17%{transform:translate(-.645em,.04em) scale(1.25,.75);animation-timing-function:ease-out}
+  19%{transform:translate(-.645em,.04em) scale(1);animation-timing-function:cubic-bezier(.2,.7,.4,1)}
+  24%{transform:translate(-.49em,-.34em);animation-timing-function:cubic-bezier(.5,0,.9,.6)}
+  29%{transform:translate(-.335em,.04em) scale(1.22,.78);animation-timing-function:ease-out}
+  31%{transform:translate(-.335em,.04em) scale(1);animation-timing-function:cubic-bezier(.2,.7,.4,1)}
+  38%{transform:translate(-.16em,-.30em);animation-timing-function:cubic-bezier(.5,0,.9,.6)}
+  44%{transform:translate(0,0) scale(1.15,.85);animation-timing-function:ease-out}
+  47%{transform:translate(0,0) scale(.96,1.04)}
+  50%,100%{transform:none}
+}
+</style>
+</head>
+<body>
+<div style="background:#F6EFE4;display:grid;place-items:center;min-height:50vh"><span class="logo" style="color:#141210"><span class="vai">vaı<span class="ponto" style="background:#EC5B13"></span></span><span class="design">design</span></span></div>
+<div style="background:#141210;display:grid;place-items:center;min-height:50vh"><span class="logo" style="color:#F6EFE4"><span class="vai">vaı<span class="ponto" style="background:#EC5B13"></span></span><span class="design">design</span></span></div>
+</body>
+</html>

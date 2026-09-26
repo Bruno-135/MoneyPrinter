@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"><style>body{margin:0;background:#CFC8BD;font-family:'Hanken Grotesk',sans-serif;color:#141210;-webkit-font-smoothing:antialiased}a{color:#BA4100}a:hover{color:#141210}</style></helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;align-items:baseline;gap:28px;font:500 14px 'Hanken Grotesk'"><span style="font:800 32px/1 'Barlow Condensed';text-transform:uppercase">VaiDesign · Folha de movimento</span><a href="Inicio.dc.html">Início v2</a><a href="Sistema.dc.html">Folha de sistema</a><a href="movimento.css">movimento.css</a></div>
+<div data-screen-label="Folha de movimento" style="width:1440px;background:#F6EFE4;padding:96px 80px;box-sizing:border-box;display:flex;flex-direction:column;gap:96px">
+
+<div style="display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end;padding-bottom:48px;border-bottom:1.5px solid #141210"><h1 style="margin:0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Folha de<br><span style="color:#BA4100">movimento</span></h1><div style="display:flex;flex-direction:column;gap:12px;font:400 17px/1.55 'Hanken Grotesk';color:#5A5249"><span>Só CSS. Nenhuma linha depende de JavaScript.</span><span>Tudo o que se mexe está dentro de <span style="font-family:'JetBrains Mono';color:#141210">@media (prefers-reduced-motion: no-preference)</span>. Sem essa condição, a página fica parada e completa.</span></div></div>
+
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">01</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Curvas</h2></div>
+<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px">
+<sc-for list="{{ curvas }}" as="c" hint-placeholder-count="5"><div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px"><span style="font:700 24px/1 'Barlow Condensed';text-transform:uppercase">{{ c.n }}</span><span style="font:400 12px/1.4 'JetBrains Mono'">{{ c.v }}</span><span style="font:400 14px/1.45 'Hanken Grotesk';color:#5A5249">{{ c.u }}</span></div></sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">02</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Cada animação</h2></div>
+<div style="background:#FFFBF5;border:1.5px solid #141210;border-radius:12px;overflow:hidden">
+<div style="display:grid;grid-template-columns:1.3fr 2.2fr 1fr 1.2fr 1.6fr 1.6fr 1.1fr;gap:16px;padding:16px 20px;background:#141210;color:#F6EFE4;font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.1em;text-transform:uppercase"><span>Elemento</span><span>O que se mexe</span><span>Duração</span><span>Curva</span><span>Dispara</span><span>Versão parada</span><span>Classe</span></div>
+<sc-for list="{{ linhas }}" as="l" hint-placeholder-count="14"><div style="display:grid;grid-template-columns:1.3fr 2.2fr 1fr 1.2fr 1.6fr 1.6fr 1.1fr;gap:16px;padding:16px 20px;border-top:1px solid #DDD2C0;font:400 14px/1.45 'Hanken Grotesk';align-items:start"><span style="font:700 20px/1.05 'Barlow Condensed';text-transform:uppercase">{{ l.e }}</span><span>{{ l.o }}</span><span style="font:400 13px/1.45 'JetBrains Mono'">{{ l.d }}</span><span style="font:400 13px/1.45 'JetBrains Mono'">{{ l.c }}</span><span>{{ l.t }}</span><span style="color:#5A5249">{{ l.p }}</span><span style="font:400 12px/1.45 'JetBrains Mono';color:#BA4100">{{ l.k }}</span></div></sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">03</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">O que tem de saber</h2></div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
+<sc-for list="{{ notas }}" as="n" hint-placeholder-count="4"><div style="border:1.5px solid #141210;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:10px"><span style="font:700 26px/1 'Barlow Condensed';text-transform:uppercase">{{ n.t }}</span><span style="font:400 16px/1.55 'Hanken Grotesk';color:#5A5249">{{ n.d }}</span></div></sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">04</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">O código · movimento.css</h2></div>
+<span style="font:400 16px/1.55 'Hanken Grotesk';color:#5A5249">É o ficheiro que o Início usa. Copia-se inteiro para o sistema de publicação; as classes começam todas por <span style="font-family:'JetBrains Mono';color:#141210">vd-</span>.</span>
+<pre style="margin:0;background:#141210;color:#F6EFE4;border-radius:12px;padding:32px;font:400 13px/1.6 'JetBrains Mono';white-space:pre-wrap;overflow:hidden">{{ css }}</pre>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { css: 'A carregar movimento.css…' };
+  componentDidMount() {
+    fetch('movimento.css').then(r => r.text()).then(css => this.setState({ css })).catch(() => this.setState({ css: 'Abra movimento.css na raiz do projecto.' }));
+  }
+  renderVals() {
+    return {
+      css: this.state.css,
+      curvas: [
+        { n: 'Saída', v: 'cubic-bezier(.2,.7,.2,1)', u: 'Entradas: título, checks, pilares, cartões.' },
+        { n: 'Travagem', v: 'cubic-bezier(.16,1,.3,1)', u: 'Números a contar: rápido e trava no fim.' },
+        { n: 'Resposta', v: 'cubic-bezier(.25,.8,.25,1)', u: 'Hover e navegação.' },
+        { n: 'Carregar', v: 'ease-out · 80 ms', u: 'Botão a encolher para 0.98.' },
+        { n: 'Constante', v: 'linear · ease-in-out', u: 'Linear em fitas, carrossel e selo. Ease-in-out só na forma.' }
+      ],
+      linhas: [
+        { e: 'Título da abertura', o: 'Cada linha sobe 0,35 em e passa de opacidade 0 a 1', d: '520 ms', c: 'Saída', t: 'Ao abrir a página, uma vez. 60 ms entre linhas (0 · 60 · 120 · 180)', p: 'Título visível de imediato', k: '.vd-linha .vd-l1–3' },
+        { e: 'Checks', o: 'Sobem 8 px e aparecem, um a seguir ao outro', d: '320 ms', c: 'Saída', t: 'Ao abrir. Atrasos 420 · 500 · 580 ms', p: 'Os três visíveis', k: '.vd-check .vd-k0–2' },
+        { e: 'Forma laranja', o: 'Escala 1 → 1.03, ida e volta', d: '12 s', c: 'ease-in-out', t: 'Sempre, sem fim', p: 'Forma parada a 1', k: '.vd-respira' },
+        { e: 'Pilares', o: 'Sobem 16 px e aparecem, esquerda → direita', d: '20% do percurso de cada um', c: 'linear (scroll)', t: 'Ao entrar no ecrã · view(). Cada pilar começa 4% depois do anterior', p: 'Pilares visíveis', k: '.vd-entra .vd-i0–3' },
+        { e: 'Ícones dos pilares', o: 'O traço desenha-se: stroke-dashoffset 100 → 0', d: '28% do percurso', c: 'linear (scroll)', t: 'Ao entrar no ecrã · view(), com o mesmo escalonamento', p: 'Ícone completo', k: '.vd-traco' },
+        { e: 'Carrossel de modelos', o: 'Fila duplicada desliza translateX 0 → −50%, da direita para a esquerda', d: '40 s por volta', c: 'linear', t: 'Sempre. Pára com rato por cima, foco ou dedo (:hover, :focus-within, :active)', p: 'Fila parada, arrasta-se à mão com scroll-snap', k: '.vd-car .vd-track--modelos' },
+        { e: 'Cartão de modelo', o: 'Sobe 6 px e o filete passa a laranja', d: '250 ms', c: 'Resposta', t: 'Rato por cima', p: 'Só o filete muda', k: '.vd-slide-card' },
+        { e: 'Cartões de serviço · entrada', o: 'Sobem 16 px e aparecem em escada', d: '20% do percurso', c: 'linear (scroll)', t: 'Ao entrar no ecrã · view(). +4% por coluna (equivale aos 60 ms)', p: 'Cartões visíveis', k: '.vd-entra .vd-i0–2' },
+        { e: 'Cartões de serviço · hover', o: 'Cartão sobe 4 px; foto 1 → 1.04; seta roda −45° e enche a laranja', d: '250 ms', c: 'Resposta', t: 'Rato por cima', p: 'Só a seta muda de cor', k: '.vd-svc .vd-svc-foto .vd-svc-seta' },
+        { e: 'Fita VaiDesign', o: 'Faixa duplicada desliza translateX 0 → −50%', d: '25 s por volta', c: 'linear', t: 'Sempre, sem fim', p: 'Fita parada', k: '.vd-fita-track' },
+        { e: 'Números', o: 'Contam de 0 até 7, 48 e 1 (@property --vd-n + counter-reset)', d: 'entry 30% → cover 40%', c: 'Travagem', t: 'Ao entrar no ecrã · view()', p: 'Número final escrito', k: '.vd-conta .vd-conta-7/48/1' },
+        { e: 'Selo VD', o: 'O anel de texto roda 360°. As letras VD ficam direitas', d: '20 s por volta', c: 'linear', t: 'Sempre, sem fim', p: 'Selo parado', k: '.vd-gira' },
+        { e: 'Botões', o: 'O fundo enche-se da esquerda (background-size 0 → 100%); seta +4 px; ao carregar, escala 0.98', d: '200 ms · 80 ms', c: 'Resposta · ease-out', t: 'Rato por cima · carregar', p: 'O fundo muda de cor de uma vez, sem deslizar', k: '.vd-btn .vd-seta' },
+        { e: 'Logótipo', o: 'O ponto sai de trás do «v», pula por cima do «a» e do «ı» e aterra à frente, com um pequeno achatamento a cada aterragem', d: '1400 ms (+250 ms de espera)', c: 'Subida: saída · descida: ease-in', t: 'Ao abrir a página, uma vez. Repete ao passar o rato no logótipo', p: 'Ponto já no sítio final', k: '.vd-logo .vd-ponto' },
+        { e: 'Navegação', o: 'Traço laranja de 3 px cresce da esquerda (scaleX 0 → 1). A página actual tem-no sempre', d: '250 ms', c: 'Resposta', t: 'Rato por cima', p: 'O traço aparece sem crescer', k: '.vd-nav [aria-current]' }
+      ],
+      notas: [
+        { t: 'Entradas com view() medem-se em scroll, não em milissegundos', d: 'Uma animação ligada ao scroll avança à medida que a pessoa desce: não tem duração em tempo. Os 400 ms dos pilares, os 600 ms dos ícones e os 900 ms dos números passam a ser um troço do percurso (os % na tabela). Se parar o scroll a meio, a animação pára a meio. Com CSS puro não há outra forma de disparar uma animação com tempo quando um elemento entra no ecrã.' },
+        { t: 'Os números contam em CSS puro', d: '@property regista --vd-n como número inteiro, o que o torna animável; counter-reset passa-o para um contador, que se escreve com ::before. Funciona onde há suporte para view(). Onde não há, fica o número escrito, sem contar. O 0 € não conta: de zero a zero não há nada para mostrar.' },
+        { t: 'Onde funciona', d: 'O carrossel, a fita, o selo, os botões e o hover funcionam em todos os navegadores actuais. As entradas com view() e a contagem funcionam em Chrome, Edge e Safari recentes. No Firefox, por agora, a página aparece completa e parada — é essa a versão por omissão, por isso não se perde nada.' },
+        { t: 'Parar o carrossel ao tocar', d: 'No telemóvel, tocar num cartão dá-lhe foco e :focus-within pára a fila. :active cobre o tempo em que o dedo está pousado. Ao arrastar, o scroll-snap alinha o cartão à margem esquerda.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

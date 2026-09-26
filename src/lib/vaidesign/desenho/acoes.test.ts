@@ -188,7 +188,9 @@ describe('o ponto da marca', () => {
     for (const largura of LARGURAS) {
       it(`${pagina} · ${largura}: está marcado para saltar`, () => {
         const html = paginaCompleta(pagina, largura);
-        expect(html).toContain('data-ponto-da-marca');
+        // As duas classes que o `movimento.css` do desenho espera encontrar.
+        expect(html).toContain('class="vd-ponto"');
+        expect(html).toContain('class="vd-logo"');
       });
     }
   }
@@ -204,15 +206,19 @@ describe('o ponto da marca', () => {
     const html = paginaCompleta('inicio', 1440);
     const doLogotipo = /<span[^>]*position:absolute;right:-\.\d+em;[^"]*border-radius:50%;background:#EC5B13/g;
     const pontos = (html.match(doLogotipo) ?? []).length;
-    const marcados = (html.match(/data-ponto-da-marca/g) ?? []).length;
+    const marcados = (html.match(/class="vd-ponto"/g) ?? []).length;
     expect(pontos).toBeGreaterThan(1);
     expect(marcados).toBe(pontos);
+
+    // Cada ponto tem de ter o seu palco: o ponto anda dentro do «vaı», e sem
+    // ele saltava contra o que estivesse por fora.
+    expect((html.match(/class="vd-logo"/g) ?? []).length).toBe(pontos);
   });
 
   it('as bolinhas que não são o logótipo ficam quietas', () => {
     const html = paginaCompleta('inicio', 1440);
     // Se um dia isto falhar, é porque a marca foi posta num círculo qualquer.
-    const marcadas = [...html.matchAll(/<span data-ponto-da-marca style="([^"]*)"/g)];
+    const marcadas = [...html.matchAll(/<span class="vd-ponto" style="([^"]*)"/g)];
     expect(marcadas.length).toBeGreaterThan(0);
     for (const m of marcadas) {
       expect(m[1], m[1]).toContain('position:absolute');

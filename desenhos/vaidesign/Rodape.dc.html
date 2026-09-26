@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=JetBrains+Mono:wght@500&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><link href="movimento.css" rel="stylesheet"></helmet>
+<sc-if value="{{ desk }}" hint-placeholder-val="{{ true }}">
+<footer style="background:#141210;color:#F6EFE4;font-family:'Hanken Grotesk',sans-serif">
+<div style="padding:120px 80px 96px;display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end;border-bottom:1px solid #3A342E">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Próximo passo</div><h2 style="margin:20px 0 0;font:800 88px/.92 'Barlow Condensed';text-transform:uppercase;text-wrap:balance">Diga-nos o que vende.<br><span style="color:#EC5B13">Nós mostramos como fica.</span></h2></div>
+<div style="display:flex;flex-direction:column;gap:32px"><p style="margin:0;font:400 18px/1.55 'Hanken Grotesk';color:#BDB3A6;max-width:440px">Mande uma mensagem com o nome do negócio e o modelo de que mais gostou — ou conte-nos o que precisa e fazemos um à sua medida. A proposta chega por escrito, sem custo.</p>
+<div style="display:flex;gap:16px"><a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:56px;padding:0 8px 0 24px;display:flex;align-items:center;gap:14px;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Escrever no WhatsApp<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a><a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:56px;padding:0 24px;display:flex;align-items:center;border:1.5px solid #F6EFE4;color:#F6EFE4;border-radius:4px;font:600 15px/1 'Hanken Grotesk';text-decoration:none;box-sizing:border-box">geral@vaidesign.net</a></div></div>
+</div>
+<div style="padding:56px 80px;display:grid;grid-template-columns:6fr 3fr 3fr;gap:24px">
+<div style="display:flex;flex-direction:column;gap:16px"><span aria-label="VaiDesign" style="display:flex;align-items:baseline;font-size:64px;color:#F6EFE4"><span class="vd-logo" style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">vaı<span class="vd-ponto" style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#BDB3A6;max-width:320px">Design e sites para negócios de todos os tamanhos. Em português, por uma pessoa só.</span></div>
+<div style="display:flex;flex-direction:column;gap:12px;font:400 15px/1.3 'Hanken Grotesk'"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BDB3A6;margin-bottom:6px">Páginas</span><a href="Servicos.dc.html" style="color:#F6EFE4;text-decoration:none">Serviços</a><a href="Modelos.dc.html" style="color:#F6EFE4;text-decoration:none">Modelos</a><a href="Sobre.dc.html" style="color:#F6EFE4;text-decoration:none">Sobre</a><a href="Contacto.dc.html" style="color:#F6EFE4;text-decoration:none">Contacto</a></div>
+<div style="display:flex;flex-direction:column;gap:12px;font:400 15px/1.3 'Hanken Grotesk'"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BDB3A6;margin-bottom:6px">Contacto</span><a href="#whatsapp" data-whatsapp="" style="color:inherit;text-decoration:none">WhatsApp</a><a href="mailto:geral@vaidesign.net" style="color:inherit;text-decoration:none"><span>geral@vaidesign.net</span></a><span>Instagram @vaidesign</span></div>
+</div>
+<div style="padding:24px 80px;border-top:1px solid #3A342E;display:flex;justify-content:space-between;font:400 13px/1 'Hanken Grotesk';color:#BDB3A6"><span>© 2026 VaiDesign</span><span>Política de privacidade</span></div>
+</footer>
+</sc-if>
+<sc-if value="{{ mob }}">
+<footer style="background:#141210;color:#F6EFE4;font-family:'Hanken Grotesk',sans-serif">
+<div style="padding:72px 20px 48px;display:flex;flex-direction:column;gap:24px;border-bottom:1px solid #3A342E">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Próximo passo</div>
+<h2 style="margin:0;font:800 48px/.92 'Barlow Condensed';text-transform:uppercase">Diga-nos o que vende.<br><span style="color:#EC5B13">Nós mostramos como fica.</span></h2>
+<p style="margin:0;font:400 16px/1.55 'Hanken Grotesk';color:#BDB3A6">Mande uma mensagem com o nome do negócio e o modelo de que mais gostou — ou conte-nos o que precisa e fazemos um à sua medida. A proposta chega por escrito, sem custo.</p>
+<a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:56px;padding:0 8px 0 20px;display:flex;align-items:center;justify-content:space-between;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Escrever no WhatsApp<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a>
+<a href="Contacto.dc.html" class="vd-btn vd-btn--creme" style="height:56px;display:flex;align-items:center;justify-content:center;border:1.5px solid #F6EFE4;color:#F6EFE4;border-radius:4px;font:600 15px/1 'Hanken Grotesk';text-decoration:none">geral@vaidesign.net</a>
+</div>
+<div style="padding:40px 20px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font:400 15px/1.3 'Hanken Grotesk'">
+<span style="grid-column:1/-1"><span aria-label="VaiDesign" style="display:flex;align-items:baseline;font-size:52px;color:#F6EFE4"><span class="vd-logo" style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">vaı<span class="vd-ponto" style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></span></span>
+<div style="display:flex;flex-direction:column;gap:12px"><a href="Servicos.dc.html" style="color:#F6EFE4;text-decoration:none">Serviços</a><a href="Modelos.dc.html" style="color:#F6EFE4;text-decoration:none">Modelos</a><a href="Sobre.dc.html" style="color:#F6EFE4;text-decoration:none">Sobre</a><a href="Contacto.dc.html" style="color:#F6EFE4;text-decoration:none">Contacto</a></div>
+<div style="display:flex;flex-direction:column;gap:12px;color:#BDB3A6"><span>WhatsApp</span><span>Email</span><span>Instagram</span></div>
+</div>
+<div style="padding:20px;border-top:1px solid #3A342E;font:400 13px/1 'Hanken Grotesk';color:#BDB3A6">© 2026 VaiDesign</div>
+</footer>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:640},&quot;largura&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;computador&quot;,&quot;telemovel&quot;],&quot;default&quot;:&quot;computador&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const desk = (this.props.largura ?? 'computador') === 'computador';
+    return { desk, mob: !desk };
+  }
+}
+</script>
+</body>
+</html>

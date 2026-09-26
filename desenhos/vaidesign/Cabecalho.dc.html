@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=JetBrains+Mono:wght@500&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><link href="movimento.css" rel="stylesheet"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141210'/%3E%3Cpath d='M17 22l9 22h4l9-22h-6l-5 14-5-14z' fill='%23F6EFE4'/%3E%3Ccircle cx='47' cy='19' r='5.5' fill='%23EC5B13'/%3E%3C/svg%3E"></helmet>
+<sc-if value="{{ desk }}" hint-placeholder-val="{{ true }}">
+<header style="height:96px;padding:0 80px;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;width:100%;font-family:'Hanken Grotesk',sans-serif">
+<a href="Inicio.dc.html" style="display:flex;align-items:center;gap:4px;color:#141210;text-decoration:none"><span aria-label="VaiDesign" style="display:flex;align-items:baseline;font-size:54px;color:#141210"><span class="vd-logo" style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">vaı<span class="vd-ponto" style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></span></a>
+<nav class="vd-nav" style="display:flex;gap:40px"><sc-for list="{{ items }}" as="it" hint-placeholder-count="5"><a href="{{ it.href }}" aria-current="{{ it.cur }}" style="position:relative;padding:8px 0;font:500 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#141210;text-decoration:none">{{ it.l }}</a></sc-for></nav>
+<a href="Contacto.dc.html" class="vd-btn" style="display:flex;align-items:center;gap:12px;height:48px;padding:0 7px 0 22px;border:1.5px solid #141210;border-radius:999px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#141210;text-decoration:none;box-sizing:border-box">Falar connosco<span class="vd-dot" style="width:32px;height:32px;border-radius:50%;background-color:#141210;color:#F6EFE4;display:grid;place-items:center"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a>
+</header>
+</sc-if>
+<sc-if value="{{ mob }}">
+<header style="height:72px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;width:100%">
+<a href="Inicio.dc.html" style="display:flex;align-items:center;gap:2px;color:#141210;text-decoration:none"><span aria-label="VaiDesign" style="display:flex;align-items:baseline;font-size:44px;color:#141210"><span class="vd-logo" style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">vaı<span class="vd-ponto" style="position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13"></span></span><span style="margin-left:.34em;font:500 .3em/1 'JetBrains Mono';letter-spacing:.3em;text-transform:uppercase">design</span></span></a>
+<div style="display:flex;gap:8px">
+<a href="Contacto.dc.html" style="width:44px;height:44px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box;text-decoration:none"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;color:#141210">chat</span></a>
+<span style="height:44px;padding:0 16px;border-radius:999px;background:#141210;color:#F6EFE4;display:flex;align-items:center;gap:8px;font:600 13px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">Menu<span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">menu</span></span>
+</div>
+</header>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:96},&quot;largura&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;computador&quot;,&quot;telemovel&quot;],&quot;default&quot;:&quot;computador&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ativa&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;inicio&quot;,&quot;servicos&quot;,&quot;modelos&quot;,&quot;sobre&quot;,&quot;contacto&quot;],&quot;default&quot;:&quot;inicio&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const a = this.props.ativa ?? 'inicio';
+    const desk = (this.props.largura ?? 'computador') === 'computador';
+    const items = [['inicio', 'Início', 'Inicio'], ['servicos', 'Serviços', 'Servicos'], ['modelos', 'Modelos', 'Modelos'], ['sobre', 'Sobre', 'Sobre'], ['contacto', 'Contacto', 'Contacto']]
+      .map(([id, l, f]) => ({ l, href: f + '.dc.html', cur: id === a ? 'page' : 'false' }));
+    return { items, desk, mob: !desk };
+  }
+}
+</script>
+</body>
+</html>
