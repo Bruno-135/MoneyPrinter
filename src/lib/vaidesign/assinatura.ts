@@ -6,88 +6,142 @@ import {
 } from './agencia';
 
 /**
- * A assinatura de email da agência.
+ * A assinatura de email da agência, reconstruída a partir do desenho.
  *
- * Escrita à mão e não desenhada, porque uma assinatura de email quase não é
- * desenho — é uma lista de coisas que os clientes de email recusam. O Outlook
- * ignora flexbox e grid; o Gmail corta o `<style>` e as classes; nenhum deles
- * carrega uma fonte do Google; e o Outlook do Windows nem SVG mostra. O que
- * sobra são tabelas e estilos em linha, como em 2005, e é isso que está aqui.
+ * O desenho veio do Claude Design e é isso mesmo: um desenho. Uma assinatura
+ * de email quase não é desenho — é uma lista de coisas que os clientes de
+ * email recusam. O Outlook ignora flexbox, grid e `border-radius`; o Gmail
+ * corta o `<style>` e as classes; nenhum dos dois vai buscar uma fonte ao
+ * Google. O que sobra são tabelas e estilos em linha, como em 2005, e é isso
+ * que está aqui.
  *
- * Sem imagens, de propósito. O logótipo do site já é feito de letra e um
- * ponto, portanto não se perde nada — e ganha-se o que interessa: uma
- * assinatura sem imagens nunca aparece partida, nunca fica à espera de que
- * alguém carregue em «mostrar imagens», e não engorda a mensagem.
+ * Do desenho fica tudo o que sobrevive: as duas colunas, o bloco preto com o
+ * logótipo, o nome em Barlow Condensed, as etiquetas cor de laranja em
+ * maiúsculas espaçadas, as linhas a separar cada contacto.
  *
- * Duas versões. A completa vai nas mensagens novas; a curta nas respostas,
- * porque uma assinatura grande repetida em cada troca de mensagens cansa e
- * acaba por se ler como ruído.
+ * TRÊS COISAS MUDARAM, e digo-as em vez de fingir que o resultado é igual:
+ *
+ *  - A FORMA CURVA cor de laranja no canto do bloco preto não existe aqui. Um
+ *    quarto de círculo só se faz com `border-radius` (que o Outlook deita
+ *    fora) ou com uma imagem (que fica à espera de que alguém carregue em
+ *    «mostrar imagens», e muita gente nunca carrega). Um enfeite não vale uma
+ *    assinatura partida.
+ *  - Os CANTOS ARREDONDADOS ficam, mas só para quem os desenha. No Outlook a
+ *    caixa aparece quadrada, e é uma diferença que ninguém repara.
+ *  - A LARGURA passa de 1200px para 520. Uma assinatura de 1200px obriga o
+ *    telemóvel a encolher tudo até não se ler, ou a arrastar para o lado.
+ *
+ * As letras do desenho — Barlow Condensed e uma monoespaçada — não podem ser
+ * descarregadas num email. Quem as tiver instaladas vê-as; quem não, cai numa
+ * alternativa parecida. É por isso que o `font-family` traz sempre três
+ * nomes.
  */
 
 const PRETO = '#141210';
+const CREME = '#F6EFE4';
 const CINZENTO = '#5A5249';
 const LARANJA = '#EC5B13';
-const LINK = '#BA4100';
 const LINHA = '#DDD2C0';
 
-/** A letra do logótipo. Quem não tiver a primeira cai na segunda, condensada. */
+/** A letra dos títulos. Condensada, com duas alternativas de sistema. */
 const TITULO = "'Barlow Condensed','Arial Narrow',Arial,sans-serif";
-/** A letra do resto. Todas de sistema: nenhuma precisa de ser descarregada. */
+/** A letra das etiquetas pequenas, monoespaçada. */
+const MONO = "'JetBrains Mono','Courier New',monospace";
+/** A letra do texto corrido. Todas de sistema. */
 const TEXTO = "-apple-system,'Segoe UI',Roboto,Arial,sans-serif";
 
 export const MORADA_DO_SITE = 'vaidesign.net';
 
-function ligacao(href: string, texto: string, tamanho = 14): string {
-  return `<a href="${href}" style="color:${LINK};text-decoration:none;font-weight:600;font-size:${tamanho}px;font-family:${TEXTO}">${texto}</a>`;
+/**
+ * O logótipo sobre o preto.
+ *
+ * O «i» é o sem pinto (U+0131): o pinto dele foi promovido a ponto da marca e
+ * ficou cor de laranja, acima e à direita. O ponto é o carácter `•` levantado
+ * com `vertical-align`, e não uma caixa redonda — um `border-radius` não
+ * sobrevive ao Outlook.
+ *
+ * O levantamento vai em pixéis e não em percentagem: em percentagem é medido
+ * contra o `line-height`, que cada cliente de email calcula à sua maneira, e
+ * o ponto acabava a alturas diferentes em cada caixa de correio.
+ */
+function logotipo(tamanho: number, cor: string): string {
+  const ponto = Math.round(tamanho * 0.42);
+  return (
+    `<span style="font-family:${TITULO};font-size:${tamanho}px;font-weight:800;letter-spacing:-.02em;color:${cor};line-height:1">vaı</span>` +
+    `<span style="font-family:${TEXTO};font-size:${ponto}px;color:${LARANJA};line-height:1;vertical-align:${Math.round(tamanho * 0.52)}px">&bull;</span>`
+  );
 }
 
-/**
- * O logótipo: `vaı` com o ponto laranja, e DESIGN espaçado ao lado.
- *
- * O «i» é o sem pinto (U+0131), como no site — o pinto dele foi promovido a
- * ponto da marca e ficou cor de laranja, à direita. O ponto é o carácter `•`
- * e não um `<div>` redondo: um `border-radius` não sobrevive ao Outlook.
- */
-function logotipo(tamanho: number): string {
-  const pequeno = Math.round(tamanho * 0.3);
+/** Uma linha da tabela de contactos: etiqueta cor de laranja, valor a seguir. */
+function contacto(etiqueta: string, href: string, valor: string, ultima: boolean): string {
+  const borda = ultima ? '' : `border-bottom:1px solid ${LINHA};`;
   return (
-    `<span style="font-family:${TITULO};font-size:${tamanho}px;font-weight:800;letter-spacing:-0.02em;color:${PRETO};line-height:1">vaı</span>` +
-    `<span style="color:${LARANJA};font-size:${tamanho}px;font-weight:800;line-height:1">•</span>` +
-    `<span style="font-family:${TEXTO};font-size:${pequeno}px;letter-spacing:0.3em;color:${CINZENTO};text-transform:uppercase;padding-left:8px">design</span>`
+    `<tr>` +
+    `<td valign="middle" style="${borda}padding:9px 14px 9px 0;font-family:${MONO};font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:${LARANJA};white-space:nowrap">${etiqueta}</td>` +
+    `<td valign="middle" style="${borda}padding:9px 0;font-family:${TEXTO};font-size:15px;font-weight:600">` +
+    `<a href="${href}" style="color:${PRETO};text-decoration:none;font-weight:600">${valor}</a>` +
+    `</td>` +
+    `</tr>`
   );
 }
 
 /** A assinatura das mensagens novas. */
 export function assinaturaCompleta(): string {
-  const whats = WHATSAPP_DA_AGENCIA
-    ? `<tr><td style="padding:0 0 3px;font-family:${TEXTO};font-size:14px;color:${CINZENTO}">WhatsApp ${ligacao(`https://wa.me/${WHATSAPP_DA_AGENCIA}`, TELEFONE_DA_AGENCIA)}</td></tr>`
-    : '';
+  const linhas = [
+    WHATSAPP_DA_AGENCIA
+      ? contacto('WhatsApp', `https://wa.me/${WHATSAPP_DA_AGENCIA}`, TELEFONE_DA_AGENCIA, false)
+      : '',
+    contacto('Email', `mailto:${EMAIL_DA_AGENCIA}`, EMAIL_DA_AGENCIA, false),
+    contacto('Site', `https://${MORADA_DO_SITE}`, MORADA_DO_SITE, false),
+    contacto('Instagram', `https://instagram.com/${INSTAGRAM_DA_AGENCIA}`, `@${INSTAGRAM_DA_AGENCIA}`, true),
+  ].join('');
 
   return [
-    `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;max-width:460px">`,
-    `<tr><td style="padding:0 0 12px">${logotipo(30)}</td></tr>`,
-    // Uma linha de 1px feita com border e não com <hr>, que o Outlook engorda.
-    `<tr><td style="border-top:1px solid ${LINHA};font-size:0;line-height:0">&nbsp;</td></tr>`,
-    `<tr><td style="padding:12px 0 2px;font-family:${TEXTO};font-size:15px;font-weight:600;color:${PRETO}">Bruno Dias</td></tr>`,
-    `<tr><td style="padding:0 0 12px;font-family:${TEXTO};font-size:14px;color:${CINZENTO};line-height:1.45">Sites e marketing para quem vive do seu negócio</td></tr>`,
-    whats,
-    `<tr><td style="padding:0 0 3px">${ligacao(`mailto:${EMAIL_DA_AGENCIA}`, EMAIL_DA_AGENCIA)}</td></tr>`,
-    `<tr><td style="padding:0 0 3px">${ligacao(`https://${MORADA_DO_SITE}`, MORADA_DO_SITE)}</td></tr>`,
-    `<tr><td>${ligacao(`https://instagram.com/${INSTAGRAM_DA_AGENCIA}`, `@${INSTAGRAM_DA_AGENCIA}`)}</td></tr>`,
+    `<table cellpadding="0" cellspacing="0" border="0" width="520" style="border-collapse:collapse;max-width:520px;background:${CREME};border-radius:10px">`,
+    `<tr>`,
+
+    // A coluna preta: o logótipo em cima, DESIGN em baixo, como no desenho.
+    `<td width="132" valign="top" style="width:132px;background:${PRETO};padding:22px 0 22px 20px;border-radius:10px 0 0 10px">`,
+    `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;height:100%">`,
+    `<tr><td style="padding:0 0 34px">${logotipo(44, CREME)}</td></tr>`,
+    `<tr><td style="font-family:${MONO};font-size:11px;font-weight:500;letter-spacing:.42em;text-transform:uppercase;color:${CREME}">design</td></tr>`,
+    `</table>`,
+    `</td>`,
+
+    // A coluna creme: o nome, o que fazemos, e os contactos.
+    `<td valign="top" style="padding:20px 22px 20px 22px;border-radius:0 10px 10px 0">`,
+    `<div style="font-family:${TITULO};font-size:34px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:${PRETO};line-height:1">Bruno Dias</div>`,
+    `<div style="padding:6px 0 12px;font-family:${TEXTO};font-size:14px;color:${CINZENTO};line-height:1.4">Sites, marca e redes sociais à medida</div>`,
+    // A barra preta grossa que o desenho põe por baixo do subtítulo.
+    `<table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse"><tr><td style="border-top:2px solid ${PRETO};font-size:0;line-height:0">&nbsp;</td></tr></table>`,
+    `<table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse">${linhas}</table>`,
+    `</td>`,
+
+    `</tr>`,
     `</table>`,
   ].join('');
 }
 
-/** A assinatura das respostas: o nome e uma maneira de falar consigo. */
+/**
+ * A assinatura das respostas.
+ *
+ * Numa troca de mensagens a assinatura grande repete-se a cada resposta e
+ * acaba por se ler como ruído — e o bloco preto, repetido cinco vezes numa
+ * conversa, pesa. Fica o logótipo, o nome e uma maneira de ligar.
+ */
 export function assinaturaCurta(): string {
   const whats = WHATSAPP_DA_AGENCIA
-    ? ` · ${ligacao(`https://wa.me/${WHATSAPP_DA_AGENCIA}`, TELEFONE_DA_AGENCIA, 13)}`
+    ? ` &nbsp;·&nbsp; <a href="https://wa.me/${WHATSAPP_DA_AGENCIA}" style="color:${PRETO};text-decoration:none;font-weight:600">${TELEFONE_DA_AGENCIA}</a>`
     : '';
 
   return [
-    `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;max-width:460px">`,
-    `<tr><td style="padding:0 0 4px">${logotipo(20)}</td></tr>`,
-    `<tr><td style="font-family:${TEXTO};font-size:13px;color:${CINZENTO}">Bruno Dias${whats}</td></tr>`,
+    `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;max-width:520px">`,
+    `<tr>`,
+    `<td valign="middle" style="padding:0 12px 0 0;border-right:2px solid ${LARANJA}">${logotipo(22, PRETO)}</td>`,
+    `<td valign="middle" style="padding:0 0 0 12px;font-family:${TEXTO};font-size:13px;color:${CINZENTO}">`,
+    `<span style="color:${PRETO};font-weight:600">Bruno Dias</span>${whats}`,
+    `</td>`,
+    `</tr>`,
     `</table>`,
   ].join('');
 }

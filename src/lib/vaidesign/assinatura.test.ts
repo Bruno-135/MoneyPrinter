@@ -24,9 +24,31 @@ const AS_DUAS = [
 describe('a assinatura sobrevive a um cliente de email', () => {
   for (const [nome, html] of AS_DUAS) {
     it(`${nome}: nada do que o Outlook ignora`, () => {
-      for (const proibido of ['display:flex', 'display:grid', 'position:', 'float:', '<svg', 'border-radius']) {
+      for (const proibido of ['display:flex', 'display:grid', 'position:', 'float:', '<svg']) {
         expect(html, proibido).not.toContain(proibido);
       }
+    });
+
+    it(`${nome}: o que o Outlook ignora é só enfeite`, () => {
+      // O `border-radius` está lá e o Outlook deita-o fora: a caixa aparece
+      // quadrada em vez de arredondada, e mais nada. É a diferença entre um
+      // estilo que DEGRADA e um que PARTE — e só o segundo é proibido.
+      //
+      // Pela mesma regra ficou de fora a forma curva cor de laranja do
+      // desenho: essa não degradava, ou exigia uma imagem que fica à espera
+      // de que alguém carregue em «mostrar imagens».
+      expect(html).not.toContain('url(');
+      expect(html).not.toContain('box-shadow');
+      // `transform:` e não `text-transform:`, que é outra coisa e é legítima.
+      expect(html).not.toMatch(/[;"]transform:/);
+    });
+
+    it(`${nome}: cabe num telemóvel`, () => {
+      // O desenho veio com 1200px de largura. A essa largura, um telemóvel ou
+      // encolhe tudo até não se ler, ou obriga a arrastar para o lado.
+      const larguras = [...html.matchAll(/max-width:(\d+)px/g)].map((m) => Number(m[1]));
+      expect(larguras.length).toBeGreaterThan(0);
+      for (const l of larguras) expect(l).toBeLessThanOrEqual(520);
     });
 
     it(`${nome}: nada do que o Gmail deita fora`, () => {
@@ -76,5 +98,7 @@ describe('a assinatura sobrevive a um cliente de email', () => {
     expect(curta.length).toBeLessThan(assinaturaCompleta().length / 2);
     expect(curta).toContain('Bruno Dias');
     expect(curta).not.toContain('instagram.com');
+    // Sem o bloco preto: repetido cinco vezes numa conversa, pesa.
+    expect(curta).not.toContain('background:#141210');
   });
 });
