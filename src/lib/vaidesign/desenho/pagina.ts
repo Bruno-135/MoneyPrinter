@@ -6,7 +6,7 @@ import { abrirAsPartes } from './partes';
 import { fundirOCampoDeContacto } from './contacto';
 import {
   apontarPorEtiqueta,
-  juntarOWhatsAppNoTelemovel,
+  juntarOsAtalhos,
   dizerGratis,
   ligarInstagram,
   ligarRodapeMovel,
@@ -127,7 +127,7 @@ export function paginaDaVaiDesign(
   vivo = marcarEnviarPeloWhatsApp(vivo);
   vivo = marcarCopiarExemplo(vivo);
   vivo = dizerGratis(vivo);
-  vivo = juntarOWhatsAppNoTelemovel(vivo, Boolean(destinos.whatsapp));
+  vivo = juntarOsAtalhos(vivo, Boolean(destinos.whatsapp));
   vivo = perguntarORamo(vivo);
 
   // A língua e os exemplos são a última coisa a entrar: já não há marcas nem

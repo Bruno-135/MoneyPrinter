@@ -3,7 +3,8 @@
 import { useActionState, useEffect, useRef } from 'react';
 import { CAMPO_ISCO } from '@/lib/vaidesign/pedidos/campos';
 import { MENSAGEM_DE_EXEMPLO } from '@/lib/vaidesign/desenho/dados';
-import { WHATSAPP_DA_AGENCIA } from '@/lib/vaidesign/agencia';
+import { enderecoDeEmail, enderecoDeWhatsApp } from '@/lib/vaidesign/pedidos/mensagem';
+import { EMAIL_DA_AGENCIA, WHATSAPP_DA_AGENCIA } from '@/lib/vaidesign/agencia';
 import { enviarPedido } from './actions';
 import { ENVIO_PARADO, type EstadoDoEnvio } from './estado';
 
@@ -128,40 +129,60 @@ export function ContactoVivo({ telemovel, computador }: Props) {
     return () => raiz.removeEventListener('click', usarExemplo);
   }, []);
 
-  // O «Enviar pelo WhatsApp» que está ao lado do exemplo. No desenho era uma
-  // caixa desenhada e não fazia nada. Agora leva o que está escrito no
-  // formulário e abre a conversa já com o texto lá dentro — para quem
-  // escreveu tudo e prefere não deixar o contacto num formulário.
+  // Os dois atalhos ao lado do exemplo: o WhatsApp e o email.
+  //
+  // Levam os dois o que já está escrito no formulário. Quem escreveu seis
+  // linhas e a meio decidiu que preferia outro caminho não as vai escrever
+  // outra vez — fecha a página e não volta.
+  //
+  // O texto de cada um é montado em `pedidos/mensagem.ts`, fora daqui: assim
+  // não há duas versões da mesma frase a afastarem-se uma da outra, e assim
+  // dá para as testar sem abrir um browser.
   useEffect(() => {
     const raiz = envelope.current;
-    if (!raiz || !WHATSAPP_DA_AGENCIA) return;
+    if (!raiz) return;
 
-    const mandar = (evento: Event) => {
-      const alvo = (evento.target as HTMLElement | null)?.closest('[data-whatsapp-do-formulario]');
-      if (!alvo) return;
-      evento.preventDefault();
-
-      const form = alvo.closest('form');
+    const lerFormulario = (dentroDe: Element | null) => {
+      const form = dentroDe?.closest('form');
       const ler = (nome: string) =>
-        (form?.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${nome}"]`)?.value ?? '').trim();
-
-      const linhas = [
-        ler('negocio') && `Olá! Sou da ${ler('negocio')}.`,
-        ler('pedido'),
-        ler('ramo') && `O meu ramo é ${ler('ramo')}.`,
-        ler('prazo') && `Precisava para: ${ler('prazo')}.`,
-      ].filter(Boolean);
-
-      const texto = linhas.length > 0 ? linhas.join('\n\n') : 'Olá! Queria falar sobre um site.';
-      window.open(
-        `https://wa.me/${WHATSAPP_DA_AGENCIA}?text=${encodeURIComponent(texto)}`,
-        '_blank',
-        'noopener,noreferrer',
-      );
+        (
+          form?.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${nome}"]`)?.value ??
+          ''
+        ).trim();
+      return {
+        negocio: ler('negocio'),
+        contacto: ler('contacto'),
+        pedido: ler('pedido'),
+        ramo: ler('ramo'),
+        prazo: ler('prazo'),
+      };
     };
 
-    raiz.addEventListener('click', mandar);
-    return () => raiz.removeEventListener('click', mandar);
+    const carregou = (evento: Event) => {
+      const onde = evento.target as HTMLElement | null;
+
+      const paraWhatsApp = onde?.closest('[data-whatsapp-do-formulario]');
+      if (paraWhatsApp && WHATSAPP_DA_AGENCIA) {
+        evento.preventDefault();
+        window.open(
+          enderecoDeWhatsApp(WHATSAPP_DA_AGENCIA, lerFormulario(paraWhatsApp)),
+          '_blank',
+          'noopener,noreferrer',
+        );
+        return;
+      }
+
+      const paraEmail = onde?.closest('[data-email-do-formulario]');
+      if (paraEmail) {
+        evento.preventDefault();
+        // `location.href` e não `window.open`: um `mailto:` numa janela nova
+        // deixa uma aba em branco aberta atrás do programa de email.
+        window.location.href = enderecoDeEmail(EMAIL_DA_AGENCIA, lerFormulario(paraEmail));
+      }
+    };
+
+    raiz.addEventListener('click', carregou);
+    return () => raiz.removeEventListener('click', carregou);
   }, []);
 
   const classe = `vd-contacto ${classeDoEstado(estado)}`;

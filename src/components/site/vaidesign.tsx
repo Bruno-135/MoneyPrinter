@@ -76,6 +76,16 @@ const ESTILO = `
   .vd-mostra-erro input[name="contacto"] { border: 2px solid #BA4100 !important; }
 
   .vd-contacto { margin: 0; }
+
+  /* A fila dos atalhos por baixo do exemplo passa a poder quebrar.
+
+     O desenho desenhou-a para dois botões e nós somos três. A 1440 os três
+     cabem à justa, mas «à justa» depende da letra ter carregado: enquanto a
+     Hanken Grotesk não chega, a letra de reserva é mais larga e o texto
+     parte-se dentro de botões de 48px de altura, a sair por cima e por baixo.
+     Com isto, o que não cabe desce uma linha — que é feio durante um instante
+     em vez de partido. */
+  .vd-contacto div:has(> [data-copiar-exemplo]) { flex-wrap: wrap; }
   .vd-contacto [data-copiar-exemplo]:hover { background: #F6EFE4; }
 
   @media (prefers-reduced-motion: reduce) {

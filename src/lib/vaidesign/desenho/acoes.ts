@@ -317,23 +317,28 @@ export function dizerGratis(html: string): string {
 }
 
 /**
- * O «Enviar pelo WhatsApp» que falta no telemóvel.
+ * Os atalhos por baixo da mensagem de exemplo.
  *
- * O desenho pô-lo ao lado do «Copiar exemplo» no artboard de computador e
- * esqueceu-se dele no de telemóvel. É ao contrário do que faz sentido: num
- * computador quem chega ao formulário escreve no formulário, e é no telemóvel
- * — onde a pessoa já tem o WhatsApp aberto noutra aba — que aquele botão é o
- * atalho que evita um formulário inteiro.
+ * O desenho pôs ali dois: o «Copiar exemplo» e o «Enviar pelo WhatsApp» — e o
+ * do WhatsApp só no artboard de computador, que é ao contrário do que faz
+ * sentido. Num computador quem chega ao formulário escreve no formulário; é no
+ * telemóvel, com o WhatsApp já aberto noutra aba, que aquele botão poupa um
+ * formulário inteiro a quem só quer perguntar o preço.
  *
- * Não é um botão inventado: é o mesmo texto e a mesma cor do de computador,
- * posto por baixo do «Copiar exemplo» porque a 390px não cabem dois lado a
- * lado. Fica com a mesma marca, portanto o browser trata-o da mesma maneira:
- * leva o que estiver escrito no formulário e abre a conversa já com o texto
- * lá dentro.
+ * Falta um terceiro, e por isso entra aqui: o EMAIL. O desenho oferece o
+ * WhatsApp a quem prefere falar e o formulário a quem prefere escrever, e não
+ * oferece nada a quem prefere email — que é muita gente e é, de longe, quem
+ * manda mensagens mais completas. Fica com o contorno e não com o laranja: o
+ * laranja é do WhatsApp, e três botões acesos ao mesmo tempo não escolhem
+ * nada por ninguém.
+ *
+ * Os dois levam o que estiver escrito no formulário. Quem escreveu seis linhas
+ * e a meio decidiu que preferia email não as vai escrever outra vez.
  */
+
 /**
- * Como se reconhece o artboard de telemóvel: o «Copiar exemplo» de lá estica-se
- * e centra o texto, o de computador tem `padding` lateral.
+ * Como se reconhece cada artboard: no de telemóvel os botões esticam-se e
+ * centram o texto, no de computador têm `padding` lateral e ficam lado a lado.
  *
  * Procura-se por este pedaço do meio do estilo e não pela etiqueta inteira,
  * porque a esta altura o `marcarCopiarExemplo` já lhe mexeu no princípio — e
@@ -342,17 +347,52 @@ export function dizerGratis(html: string): string {
  */
 const COPIAR_NO_TELEMOVEL = `justify-content:center;gap:8px;border:1.5px solid #141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">`;
 
-const WHATSAPP_NO_TELEMOVEL = `<span data-whatsapp-do-formulario role="button" tabindex="0" style="cursor:pointer;margin-top:10px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;background:#EC5B13;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#141210">Enviar pelo WhatsApp</span>`;
+/** O «Enviar pelo WhatsApp» do computador, que o desenho já traz. */
+const WHATSAPP_DO_COMPUTADOR = `<span data-whatsapp-do-formulario role="button" tabindex="0" style="cursor:pointer;height:48px;`;
 
-export function juntarOWhatsAppNoTelemovel(html: string, temWhatsApp: boolean): string {
-  if (!temWhatsApp) return html;
-  // Só no artboard de telemóvel: o de computador já tem o seu, e pô-lo duas
-  // vezes na mesma página era dar dois botões iguais à mesma pessoa.
-  if (!html.includes(COPIAR_NO_TELEMOVEL)) return html;
+function botao(marca: string, texto: string, telemovel: boolean, laranja: boolean): string {
+  const forma = telemovel
+    ? 'margin-top:10px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px'
+    : 'height:48px;padding:0 20px;display:flex;align-items:center;gap:8px';
+  const cor = laranja
+    ? 'background:#EC5B13;color:#141210'
+    : 'border:1.5px solid #141210;color:#141210';
 
-  const fim = html.indexOf('</span>', html.indexOf('Copiar exemplo'));
+  // `white-space:nowrap` porque sem ele, num computador, o texto parte-se em
+  // três linhas dentro de um botão de 48px de altura e o botão fica com o
+  // texto a sair por cima e por baixo. Melhor o botão crescer do que o texto
+  // encavalitar-se.
+  return `<span ${marca} role="button" tabindex="0" style="cursor:pointer;${forma};${cor};border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;white-space:nowrap">${texto}</span>`;
+}
+
+/**
+ * Acrescenta os atalhos que faltam, conforme a largura.
+ *
+ * No telemóvel faltam os dois; no computador falta só o email, porque o
+ * WhatsApp já lá está desenhado. Em qualquer dos casos entram a seguir ao
+ * último botão que existe, nunca antes do «Copiar exemplo».
+ */
+export function juntarOsAtalhos(html: string, temWhatsApp: boolean): string {
+  const noTelemovel = html.includes(COPIAR_NO_TELEMOVEL);
+  if (!noTelemovel && !html.includes(WHATSAPP_DO_COMPUTADOR)) return html;
+
+  const depoisDe = noTelemovel
+    ? html.indexOf('Copiar exemplo')
+    : html.indexOf('Enviar pelo WhatsApp');
+  if (depoisDe === -1) return html;
+
+  const fim = html.indexOf('</span>', depoisDe);
   if (fim === -1) return html;
 
+  const novos = [
+    // Sem número, o botão do WhatsApp não aparece: um botão que diz «Enviar
+    // pelo WhatsApp» e não tem para onde enviar é pior do que botão nenhum.
+    noTelemovel && temWhatsApp
+      ? botao('data-whatsapp-do-formulario', 'Enviar pelo WhatsApp', true, true)
+      : '',
+    botao('data-email-do-formulario', `Enviar por email`, noTelemovel, false),
+  ].join('');
+
   const corte = fim + '</span>'.length;
-  return html.slice(0, corte) + WHATSAPP_NO_TELEMOVEL + html.slice(corte);
+  return html.slice(0, corte) + novos + html.slice(corte);
 }

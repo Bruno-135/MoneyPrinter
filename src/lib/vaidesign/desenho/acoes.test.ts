@@ -114,6 +114,32 @@ describe('os botões que o desenho deixou sem destino', () => {
     }
   });
 
+  it('o «Enviar por email» está nas duas larguras', () => {
+    // O desenho dava o WhatsApp a quem prefere falar e o formulário a quem
+    // prefere escrever. A quem prefere email não dava nada.
+    for (const largura of LARGURAS) {
+      expect(paginaCompleta('contacto', largura), String(largura)).toContain(
+        'data-email-do-formulario',
+      );
+    }
+  });
+
+  it('cada atalho aparece uma vez só', () => {
+    for (const largura of LARGURAS) {
+      const html = paginaCompleta('contacto', largura);
+      for (const marca of ['data-whatsapp-do-formulario', 'data-email-do-formulario', 'data-copiar-exemplo']) {
+        expect((html.match(new RegExp(marca, 'g')) ?? []).length, `${marca} em ${largura}`).toBe(1);
+      }
+    }
+  });
+
+  it('o email continua a existir mesmo sem WhatsApp configurado', () => {
+    // Um não depende do outro: sem número, o botão do WhatsApp desaparece e o
+    // do email fica — senão quem não tem WhatsApp fica sem nenhum atalho.
+    const html = paginaDaVaiDesign('contacto', 390, {});
+    expect(html).toContain('data-email-do-formulario');
+  });
+
   it('sem número de WhatsApp, não se inventa o botão', () => {
     // Um botão que diz «Enviar pelo WhatsApp» e não tem para onde enviar é
     // pior do que não haver botão.
