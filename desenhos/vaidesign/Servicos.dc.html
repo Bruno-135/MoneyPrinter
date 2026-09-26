@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><style>body{margin:0;background:#CFC8BD;font-family:'Hanken Grotesk',sans-serif;color:#141210;-webkit-font-smoothing:antialiased}a{color:#BA4100}a:hover{color:#141210}</style><script src="./image-slot.js"></script></helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;align-items:baseline;gap:28px;font:500 14px 'Hanken Grotesk'"><span style="font:800 32px/1 'Barlow Condensed';text-transform:uppercase">VaiDesign · Serviços</span><a href="Inicio.dc.html">Início</a><a href="Servicos.dc.html">Serviços</a><a href="Modelos.dc.html">Modelos</a><a href="Sobre.dc.html">Sobre</a><a href="Contacto.dc.html">Contacto</a><a href="Sistema.dc.html">Folha de sistema</a></div>
+<div style="display:flex;gap:96px;align-items:flex-start">
+
+<div data-screen-label="Serviços · Computador">
+<div style="font:400 12px 'JetBrains Mono';color:#5A5249;margin-bottom:12px">SERVIÇOS · COMPUTADOR 1440</div>
+<div style="width:1440px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-160px;top:-220px;width:560px;height:560px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="computador" ativa="servicos" hint-size="100%,96px" style="position:relative"></dc-import>
+<div style="position:relative;padding:96px 80px 88px;display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Serviços</div><h1 style="margin:20px 0 0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Nove serviços.<br><span style="color:#BA4100">O que entra e o que não.</span></h1></div>
+<p style="margin:0;font:400 20px/1.5 'Hanken Grotesk';color:#5A5249;text-wrap:pretty">Cada serviço diz o que está incluído e o que fica de fora. Assim sabe exatamente o que está a pedir antes de receber a proposta.</p>
+</div>
+</div>
+<div style="padding:0 80px 120px;display:flex;flex-direction:column">
+<sc-for list="{{ servicos }}" as="s" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:5fr 7fr;gap:56px;padding:56px 0;border-top:1.5px solid #141210">
+<div style="position:relative;aspect-ratio:3/2;border-radius:12px;overflow:hidden"><image-slot id="{{ s.id }}" src="assets/fotos/{{ s.id }}.jpg" shape="rect" placeholder="3:2 · {{ s.f }}"></image-slot></div>
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">{{ s.n }}</span><h2 style="margin:0;font:800 56px/.95 'Barlow Condensed';text-transform:uppercase">{{ s.t }}</h2></div>
+<p style="margin:0;font:400 19px/1.55 'Hanken Grotesk';color:#5A5249;max-width:620px">{{ s.d }}</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:8px">
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase">Inclui</span><sc-for list="{{ s.inc }}" as="x" hint-placeholder-count="4"><span style="display:flex;gap:10px;font:400 16px/1.4 'Hanken Grotesk'"><span style="font-family:'Material Symbols Outlined';font-weight:400;font-size:20px;line-height:1.1;color:#BA4100">check</span>{{ x }}</span></sc-for></div>
+<div style="border:1.5px dashed #C9BCA8;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#5A5249">Não inclui</span><sc-for list="{{ s.exc }}" as="x" hint-placeholder-count="3"><span style="display:flex;gap:10px;font:400 16px/1.4 'Hanken Grotesk';color:#5A5249"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1.1">remove</span>{{ x }}</span></sc-for></div>
+</div>
+<a href="Contacto.dc.html" style="align-self:flex-start;margin-top:4px;display:flex;align-items:center;gap:8px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;color:#BA4100;text-decoration:none;border-bottom:1.5px solid #BA4100;padding-bottom:6px">Pedir proposta para este<span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></a>
+</div>
+</div></sc-for>
+<div style="margin-top:56px;background:#141210;color:#F6EFE4;border-radius:12px;padding:56px;display:grid;grid-template-columns:7fr 5fr;gap:48px;align-items:center">
+<div style="display:flex;flex-direction:column;gap:16px"><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Proposta personalizada</div><h2 style="margin:0;font:800 64px/.92 'Barlow Condensed';text-transform:uppercase">Não tem de escolher<br><span style="color:#EC5B13">só um destes.</span></h2><p style="margin:0;font:400 18px/1.55 'Hanken Grotesk';color:#BDB3A6;max-width:560px;text-wrap:pretty">Junte os serviços que fazem sentido, tire o que não precisa, ou conte-nos um objetivo que não está aqui. Montamos uma proposta à sua medida, por escrito e sem custo.</p></div>
+<div style="display:flex;flex-direction:column;gap:20px"><div style="display:flex;flex-direction:column;gap:10px;font:400 16px/1.4 'Hanken Grotesk'"><span style="display:flex;gap:10px;align-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#EC5B13">check</span>Combinar vários serviços num só preço</span><span style="display:flex;gap:10px;align-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#EC5B13">check</span>Tirar o que não precisa</span><span style="display:flex;gap:10px;align-items:center"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1;color:#EC5B13">check</span>Pedir algo que não está na lista</span></div><a href="Contacto.dc.html" class="vd-btn vd-btn--tijolo" style="height:56px;padding:0 8px 0 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 15px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Pedir proposta personalizada<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a></div>
+</div>
+</div>
+<dc-import name="Rodape" largura="computador" hint-size="100%,640px"></dc-import>
+</div>
+</div>
+
+<div data-screen-label="Serviços · Telemóvel">
+<div style="font:400 12px 'JetBrains Mono';color:#5A5249;margin-bottom:12px">SERVIÇOS · TELEMÓVEL 390</div>
+<div style="width:390px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-120px;top:-140px;width:300px;height:300px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="telemovel" ativa="servicos" hint-size="100%,72px" style="position:relative"></dc-import>
+<div style="position:relative;padding:40px 20px 48px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Serviços</div>
+<h1 style="margin:16px 0 20px;font:800 60px/.9 'Barlow Condensed';text-transform:uppercase">Nove serviços.<br><span style="color:#BA4100">O que entra e o que não.</span></h1>
+<p style="margin:0;font:400 17px/1.5 'Hanken Grotesk';color:#5A5249">Cada serviço diz o que está incluído e o que fica de fora, antes de receber a proposta.</p>
+</div>
+</div>
+<div style="padding:0 20px 72px">
+<sc-for list="{{ servicos }}" as="s" hint-placeholder-count="6"><div style="padding:32px 0;border-top:1.5px solid #141210;display:flex;flex-direction:column;gap:16px">
+<div style="position:relative;aspect-ratio:3/2;border-radius:12px;overflow:hidden"><image-slot id="{{ s.id }}" src="assets/fotos/{{ s.id }}.jpg" shape="rect" placeholder="3:2 · {{ s.f }}"></image-slot></div>
+<div style="display:flex;align-items:baseline;gap:12px"><span style="font:800 40px/1 'Barlow Condensed';color:#EC5B13">{{ s.n }}</span><h2 style="margin:0;font:800 36px/.95 'Barlow Condensed';text-transform:uppercase">{{ s.t }}</h2></div>
+<p style="margin:0;font:400 16px/1.55 'Hanken Grotesk';color:#5A5249">{{ s.d }}</p>
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px"><span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase">Inclui</span><sc-for list="{{ s.inc }}" as="x" hint-placeholder-count="4"><span style="display:flex;gap:10px;font:400 15px/1.4 'Hanken Grotesk'"><span style="font-family:'Material Symbols Outlined';font-weight:400;font-size:20px;line-height:1.1;color:#BA4100">check</span>{{ x }}</span></sc-for></div>
+<div style="border:1.5px dashed #C9BCA8;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px"><span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#5A5249">Não inclui</span><sc-for list="{{ s.exc }}" as="x" hint-placeholder-count="3"><span style="display:flex;gap:10px;font:400 15px/1.4 'Hanken Grotesk';color:#5A5249"><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:20px;line-height:1.1">remove</span>{{ x }}</span></sc-for></div>
+</div></sc-for>
+<div style="margin-top:32px;background:#141210;color:#F6EFE4;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Proposta personalizada</div><h2 style="margin:0;font:800 40px/.92 'Barlow Condensed';text-transform:uppercase">Não tem de escolher <span style="color:#EC5B13">só um destes.</span></h2><p style="margin:0;font:400 16px/1.5 'Hanken Grotesk';color:#BDB3A6">Junte serviços, tire o que não precisa, ou conte-nos um objetivo que não está aqui. A proposta vem à sua medida, sem custo.</p><a href="Contacto.dc.html" class="vd-btn vd-btn--tijolo" style="height:56px;padding:0 8px 0 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;background-color:#EC5B13;border:1.5px solid #EC5B13;box-sizing:border-box;color:#141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase;text-decoration:none">Pedir proposta personalizada<span class="vd-ring" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #141210;display:grid;place-items:center;box-sizing:border-box"><span class="vd-seta" style="font-family:'Material Symbols Outlined';font-weight:300;font-size:22px;line-height:1;text-transform:none;letter-spacing:0">arrow_forward</span></span></a>
+</div>
+</div>
+<dc-import name="Rodape" largura="telemovel" hint-size="100%,760px"></dc-import>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      servicos: [
+        { id: 'svc-1', n: '01', t: 'Site de negócio', f: 'montra de um comércio de bairro', d: 'O site que um comércio precisa: quem é, o que faz, onde está e como se fala com ele.',
+          inc: ['Até cinco páginas', 'Mapa, morada e horário', 'Botões de WhatsApp e de chamada', 'Formulário de contacto'],
+          exc: ['Pagamentos no site', 'Blogue com artigos longos', 'Sessão fotográfica'] },
+        { id: 'svc-2', n: '02', t: 'Página pessoal', f: 'profissional no seu espaço', d: 'Para quem trabalha sozinho e é o produto: advogados, nutricionistas, personal trainers.',
+          inc: ['Uma página longa, por secções', 'Fotografia de apresentação em destaque', 'Testemunhos e perguntas frequentes', 'Ligação à sua agenda de marcações'],
+          exc: ['Sistema de marcações próprio', 'Área reservada para clientes'] },
+        { id: 'svc-3', n: '03', t: 'Loja online', f: 'roupa dobrada numa bancada, luz de janela', d: 'Catálogo com fotografias, preços e tamanhos, e a encomenda a fechar-se por WhatsApp.',
+          inc: ['Catálogo até 50 produtos', 'Fotografia, preço e tamanhos por produto', 'Categorias e filtros', 'Encomenda enviada por WhatsApp'],
+          exc: ['Pagamento com cartão no site', 'Gestão de stock', 'Faturação'] },
+        { id: 'svc-4', n: '04', t: 'Logótipo e identidade', f: 'provas de cor e papel sobre a mesa', d: 'O nome, as cores e a letra, prontos para o site, o Instagram e a montra.',
+          inc: ['Logótipo em três versões', 'Paleta de cores e letra', 'Imagem de perfil e capas para Instagram', 'Ficheiros prontos para montra e impressão'],
+          exc: ['Impressão e montagem', 'Registo da marca'] },
+        { id: 'svc-5', n: '05', t: 'Página de vendas', f: 'telemóvel na mão, botão em destaque', d: 'Uma página só, feita para uma coisa: que a pessoa carregue no botão.',
+          inc: ['Uma página com um único objetivo', 'Texto escrito connosco', 'Botão repetido nos pontos certos', 'Versão pronta para anúncios'],
+          exc: ['Gestão de campanhas pagas', 'Várias ofertas na mesma página'] },
+        { id: 'svc-6', n: '06', t: 'SEO local', f: 'mapa no telemóvel, rua reconhecível', d: 'Aparecer no Google quando alguém procura o que vende, na zona onde está.',
+          inc: ['Perfil da empresa no Google configurado', 'Título e descrição de cada página', 'Nome, morada e telefone coerentes em todo o lado', 'Relatório do ponto de partida'],
+          exc: ['Promessa de primeiro lugar', 'Publicidade paga no Google'] },
+        { id: 'svc-7', n: '07', t: 'Gestão de redes sociais', f: 'telemóvel com o Instagram de um comércio aberto, numa mesa de café', d: 'Cuidamos do Instagram e do Facebook por si: calendário do mês, publicações e respostas às mensagens.',
+          inc: ['Calendário mensal aprovado consigo', 'Publicações e histórias agendadas', 'Resposta a comentários e mensagens em dias úteis', 'Resumo mensal do que funcionou'],
+          exc: ['Orçamento de anúncios', 'Atendimento ao fim de semana'] },
+        { id: 'svc-8', n: '08', t: 'Criação de conteúdos', f: 'telemóvel num tripé a filmar um produto num balcão', d: 'Publicações feitas para o seu negócio, não modelos genéricos: fotografia, texto e vídeo curto com a sua cara.',
+          inc: ['Posts de imagem e carrossel', 'Vídeos curtos para Reels e TikTok', 'Textos e legendas escritos consigo', 'Capas e destaques no estilo da marca'],
+          exc: ['Produção de vídeo com equipa', 'Contratação de modelos ou atores'] },
+        { id: 'svc-9', n: '09', t: 'Anúncios pagos', f: 'portátil com a pré-visualização de um anúncio, caderno com o orçamento', d: 'Campanhas no Instagram, Facebook, Google, YouTube, TikTok e LinkedIn, com orçamento definido por si.',
+          inc: ['Criação das campanhas e dos anúncios', 'Público e zona definidos consigo', 'Acompanhamento e ajustes semanais', 'Relatório mensal em linguagem simples'],
+          exc: ['O valor pago às plataformas', 'Promessa de vendas'] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

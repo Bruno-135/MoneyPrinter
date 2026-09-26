@@ -178,14 +178,37 @@ const PERGUNTA_ANTIGA =
 const PERGUNTA_NOVA =
   `<span style="font:600 14px/1.3 'Hanken Grotesk';color:#141210">O seu ramo<span style="font-weight:400;color:#5A5249"> · opcional</span></span>`;
 
-const OPCOES_ANTIGAS =
-  `<option value="Sem preferência">Sem preferência</option><option value="Forno &amp; Brasa">Forno &amp; Brasa</option><option>Clínica Vale</option><option>Predial</option><option>Retrato</option><option>Oficina</option><option>Estrada</option><option>Neon</option>`;
+/**
+ * Troca as opções do `<select>`, sem depender de quais elas são.
+ *
+ * Isto comparava a lista inteira de opções letra a letra, e rebentou com o
+ * primeiro desenho novo: o Claude Design pôs um `selected="{{ e.fb }}"` numa
+ * delas e a comparação deixou de bater. A protecção fez o seu trabalho — mas
+ * estava apertada de mais, porque o que aqui interessa não é QUE opções lá
+ * estão, é que EXISTE um select para trocar.
+ *
+ * Passa a apagar-se o que está entre o `<select>` e o `</select>`, seja o que
+ * for. Continua a rebentar se o campo desaparecer do desenho, que é o caso
+ * que interessa apanhar.
+ */
+function trocarAsOpcoes(html: string, opcoes: string): string {
+  const abre = html.indexOf(ABRE_O_SELECT);
+  if (abre === -1) return html;
+
+  const fimDaAbertura = html.indexOf('>', abre) + 1;
+  const fecha = html.indexOf('</select>', fimDaAbertura);
+  if (fecha === -1) throw new Error('o `<select>` do modelo não tem fecho');
+
+  return html.slice(0, fimDaAbertura) + opcoes + html.slice(fecha);
+}
+
+const ABRE_O_SELECT = '<select name="modelo"';
 
 export function perguntarORamo(html: string): string {
   if (!html.includes(PERGUNTA_ANTIGA)) return html;
 
-  if (!html.includes(OPCOES_ANTIGAS)) {
-    throw new Error('a pergunta do modelo mudou de opções — ver `perguntarORamo`');
+  if (!html.includes(ABRE_O_SELECT)) {
+    throw new Error('a pergunta do modelo já não tem um `<select>` — ver `perguntarORamo`');
   }
 
   // A primeira opção fica vazia: é o convite a escolher, e um pedido sem ramo
@@ -195,10 +218,14 @@ export function perguntarORamo(html: string): string {
     ...RAMOS_DO_FORMULARIO.map((r) => `<option>${r}</option>`),
   ].join('');
 
-  return html
-    .replace(PERGUNTA_ANTIGA, PERGUNTA_NOVA)
-    .replace(OPCOES_ANTIGAS, opcoes)
-    .replace('<select name="modelo"', '<select name="ramo"');
+  let saida = html.replace(PERGUNTA_ANTIGA, PERGUNTA_NOVA);
+  // Há um select por largura, e as duas larguras estão na mesma página.
+  while (saida.includes(ABRE_O_SELECT)) {
+    const antes = saida;
+    saida = trocarAsOpcoes(saida, opcoes).replace(ABRE_O_SELECT, '<select name="ramo"');
+    if (saida === antes) break;
+  }
+  return saida;
 }
 
 /**
@@ -222,62 +249,37 @@ export function ligarInstagram(html: string, conta: string): string {
 }
 
 /**
- * O ponto da marca salta quando a página abre.
+ * O «Copiar exemplo», ao lado da mensagem de exemplo.
  *
- * O Bruno pediu esta animação ao Claude Design, ela não veio na primeira
- * exportação, eu fiz uma — e depois veio a dele, que é melhor. Fica a dele.
+ * É mais um botão que o desenho desenhou e que não fazia nada — e esta marca
+ * estava a ser posta À MÃO dentro do `artboards.ts`, um ficheiro que diz em
+ * cima «GERADO — não editar à mão». Ficou lá meses e só se descobriu quando o
+ * ficheiro foi mesmo gerado outra vez e a marca desapareceu.
  *
- * A minha fazia o ponto crescer e assentar; a do desenho faz o que ele tinha
- * mesmo pedido: o ponto SAI DE TRÁS DO «v», atravessa a palavra aos pulos, e
- * só no fim chega ao sítio, à frente do «ı». E pula como pula uma bola — nos
- * três impactos achata-se e volta a esticar, que é o que separa uma coisa com
- * peso de uma caixa a deslizar.
- *
- * O CSS vem inteiro de `movimento.css`, do desenho. Aqui só se põem as duas
- * classes que ele espera encontrar, e põem-se da mesma maneira que o artboard
- * novo as põe: `vd-logo` no «vaı» e `vd-ponto` no ponto.
- *
- * Podia ter trocado os artboards pelos do ZIP novo em vez disto. Não trocou
- * porque nesse ZIP mudaram outras coisas ao mesmo tempo — o Início inteiro,
- * entre elas — e uma alteração de cada vez é uma alteração que se percebe.
+ * É por isso que vem para aqui, ao pé das outras: uma marca escrita num
+ * ficheiro gerado é uma marca que se perde na próxima geração, em silêncio.
  */
-
-/** O «vaı» que serve de palco: é dentro dele que o ponto anda. */
-const PALCOS_DO_LOGOTIPO = [
-  `<span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em;text-transform:none">`,
-  `<span style="position:relative;display:block;font:800 1em/.78 'Barlow Condensed';letter-spacing:-.02em">`,
+/**
+ * O botão vem em duas medidas: a de computador tem `padding` lateral, a de
+ * telemóvel estica-se e centra o texto. Marcar só uma deixava a outra morta —
+ * e a morta era a do telemóvel, que é onde a maior parte das pessoas escreve.
+ */
+const COPIAR = [
+  `<span style="height:48px;padding:0 20px;display:flex;align-items:center;gap:8px;border:1.5px solid #141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">`,
+  `<span style="height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid #141210;border-radius:4px;font:600 14px/1 'Hanken Grotesk';letter-spacing:.06em;text-transform:uppercase">`,
 ];
 
-/** O ponto, nas duas medidas que o desenho usa. */
-const PONTOS_DA_MARCA = [
-  'position:absolute;right:-.3em;top:-.02em;width:.19em;height:.19em;border-radius:50%;background:#EC5B13',
-  'position:absolute;right:-.36em;top:-.06em;width:.26em;height:.26em;border-radius:50%;background:#EC5B13',
-];
-
-export function animarOPontoDaMarca(html: string): string {
+export function marcarCopiarExemplo(html: string): string {
   let saida = html;
-  let palcos = 0;
-  let pontos = 0;
-
-  for (const palco of PALCOS_DO_LOGOTIPO) {
-    const partes = saida.split(palco);
-    palcos += partes.length - 1;
-    saida = partes.join(palco.replace('<span style="', '<span class="vd-logo" style="'));
-  }
-
-  for (const estilo of PONTOS_DA_MARCA) {
-    const antigo = `<span style="${estilo}">`;
-    const partes = saida.split(antigo);
-    pontos += partes.length - 1;
-    saida = partes.join(`<span class="vd-ponto" style="${estilo}">`);
-  }
-
-  // O ponto sem o palco fica a saltar contra o que estiver por fora, e o palco
-  // sem o ponto não faz nada. Ou vêm os dois, ou o desenho mudou.
-  if (palcos === 0 || pontos === 0 || palcos !== pontos) {
-    throw new Error(
-      `o logótipo mudou de forma: ${palcos} palcos para ${pontos} pontos — ver \`animarOPontoDaMarca\``,
-    );
+  for (const botao of COPIAR) {
+    saida = saida
+      .split(botao)
+      .join(
+        botao.replace(
+          '<span style="height:48px;',
+          '<span data-copiar-exemplo role="button" tabindex="0" style="cursor:pointer;height:48px;',
+        ),
+      );
   }
   return saida;
 }

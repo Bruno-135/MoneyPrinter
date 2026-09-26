@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><style>body{margin:0;background:#CFC8BD;font-family:'Hanken Grotesk',sans-serif;color:#141210;-webkit-font-smoothing:antialiased}a{color:#BA4100}a:hover{color:#141210}</style></helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;align-items:baseline;gap:28px;font:500 14px 'Hanken Grotesk'"><span style="font:800 32px/1 'Barlow Condensed';text-transform:uppercase">VaiDesign · Modelos</span><a href="Inicio.dc.html">Início</a><a href="Servicos.dc.html">Serviços</a><a href="Modelos.dc.html">Modelos</a><a href="Sobre.dc.html">Sobre</a><a href="Contacto.dc.html">Contacto</a><a href="Sistema.dc.html">Folha de sistema</a></div>
+<div style="display:flex;gap:96px;align-items:flex-start">
+
+<div data-screen-label="Modelos · Computador">
+<div style="font:400 12px 'JetBrains Mono';color:#5A5249;margin-bottom:12px">MODELOS · COMPUTADOR 1440 — a 2.ª ficha está no estado «rato por cima»; o filtro funciona</div>
+<div style="width:1440px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-130px;top:-240px;width:610px;height:440px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="computador" ativa="modelos" hint-size="100%,96px" style="position:relative"></dc-import>
+<div style="position:relative;padding:96px 80px 64px;display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end">
+<div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Modelos</div><h1 style="margin:20px 0 0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Escolha o ponto<br><span style="color:#BA4100">de partida.</span></h1></div>
+<p style="margin:0;max-width:420px;font:400 20px/1.5 'Hanken Grotesk';color:#5A5249;text-wrap:pretty">Veja alguns exemplos do que fazemos, um por ramo. São só o ponto de partida: temos muitas mais opções e desenhamos o seu site à medida do que o seu negócio precisa.</p>
+</div>
+</div>
+<div style="padding:0 80px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #DDD2C0;margin:0 80px;padding-left:0;padding-right:0">
+<div style="display:flex;gap:10px;flex-wrap:wrap"><sc-for list="{{ chipsD }}" as="c" hint-placeholder-count="6"><sc-if value="{{ c.on }}"><button onClick="{{ c.go }}" style="height:44px;padding:0 20px;border-radius:999px;border:1.5px solid #141210;background:#141210;color:#F6EFE4;font:600 14px/1 'Hanken Grotesk';cursor:pointer">{{ c.l }}</button></sc-if><sc-if value="{{ c.off }}"><button onClick="{{ c.go }}" style="height:44px;padding:0 20px;border-radius:999px;border:1.5px solid #C9BCA8;background:transparent;color:#141210;font:500 14px/1 'Hanken Grotesk';cursor:pointer">{{ c.l }}</button></sc-if></sc-for></div>
+<span style="font:500 14px/1 'Hanken Grotesk';color:#5A5249">{{ contaD }}</span>
+</div>
+<div style="padding:40px 80px 120px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px">
+<sc-for list="{{ itemsD }}" as="m" hint-placeholder-count="7"><dc-import name="FichaModelo" modelo="{{ m.id }}" estado="{{ m.estado }}" hint-size="100%,490px" style="width:100%"></dc-import></sc-for>
+</div>
+<div style="margin:0 80px 120px;padding:40px;border:1.5px solid #141210;border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px">
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BA4100">Muda</span><span style="font:400 17px/1.5 'Hanken Grotesk'">Textos, cores, fotografias, logótipo e as secções que não lhe fazem falta.</span></div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BA4100">Fica</span><span style="font:400 17px/1.5 'Hanken Grotesk'">A estrutura, a ordem das secções e o funcionamento no telemóvel.</span></div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:600 13px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#BA4100">Não é partilhado</span><span style="font:400 17px/1.5 'Hanken Grotesk'">Dois negócios da mesma rua nunca ficam com o mesmo site: as cores e as fotografias são suas.</span></div>
+</div>
+<dc-import name="Rodape" largura="computador" hint-size="100%,640px"></dc-import>
+</div>
+</div>
+
+<div data-screen-label="Modelos · Telemóvel">
+<div style="font:400 12px 'JetBrains Mono';color:#5A5249;margin-bottom:12px">MODELOS · TELEMÓVEL 390</div>
+<div style="width:390px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;overflow:hidden">
+<div style="position:absolute;right:-120px;top:-140px;width:300px;height:300px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<dc-import name="Cabecalho" largura="telemovel" ativa="modelos" hint-size="100%,72px" style="position:relative"></dc-import>
+<div style="position:relative;padding:40px 20px 32px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Modelos</div>
+<h1 style="margin:16px 0 20px;font:800 60px/.9 'Barlow Condensed';text-transform:uppercase">Escolha o ponto <span style="color:#BA4100">de partida.</span></h1>
+<p style="margin:0;font:400 17px/1.5 'Hanken Grotesk';color:#5A5249">Alguns exemplos, um por ramo. Temos muitas mais opções e fazemos o seu à medida.</p>
+</div>
+</div>
+<div style="display:flex;gap:8px;overflow-x:auto;padding:0 20px 20px"><sc-for list="{{ chipsM }}" as="c" hint-placeholder-count="6"><sc-if value="{{ c.on }}"><button onClick="{{ c.go }}" style="flex:none;height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #141210;background:#141210;color:#F6EFE4;font:600 14px/1 'Hanken Grotesk'">{{ c.l }}</button></sc-if><sc-if value="{{ c.off }}"><button onClick="{{ c.go }}" style="flex:none;height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #C9BCA8;background:transparent;color:#141210;font:500 14px/1 'Hanken Grotesk'">{{ c.l }}</button></sc-if></sc-for></div>
+<div style="padding:0 20px 8px;font:500 13px/1 'Hanken Grotesk';color:#5A5249">{{ contaM }}</div>
+<div style="padding:12px 20px 72px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+<sc-for list="{{ itemsM }}" as="m" hint-placeholder-count="7"><dc-import name="FichaModelo" modelo="{{ m.id }}" hint-size="100%,310px" style="width:100%"></dc-import></sc-for>
+</div>
+<dc-import name="Rodape" largura="telemovel" hint-size="100%,760px"></dc-import>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { fD: 'Todos', fM: 'Todos' };
+  static R = ['Todos', 'Restauração', 'Saúde e estética', 'Serviços profissionais', 'Indústria e logística', 'Comércio'];
+  static L = [['forno', 'Restauração'], ['clinica', 'Saúde e estética'], ['predial', 'Serviços profissionais'], ['retrato', 'Serviços profissionais'], ['oficina', 'Indústria e logística'], ['estrada', 'Indústria e logística'], ['neon', 'Comércio']];
+  chips(k) {
+    return Component.R.map(l => ({ l, on: this.state[k] === l, off: this.state[k] !== l, go: () => this.setState({ [k]: l }) }));
+  }
+  list(k) {
+    return Component.L.filter(([, r]) => this.state[k] === 'Todos' || r === this.state[k]);
+  }
+  renderVals() {
+    const d = this.list('fD'), m = this.list('fM');
+    const n = x => x.length === 1 ? '1 modelo' : x.length + ' modelos';
+    return {
+      chipsD: this.chips('fD'), chipsM: this.chips('fM'),
+      itemsD: d.map(([id], i) => ({ id, estado: i === 1 ? 'hover' : 'normal' })),
+      itemsM: m.map(([id]) => ({ id })),
+      contaD: n(d), contaM: n(m)
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -43,7 +43,10 @@ describe('os links de todas as páginas', () => {
       const html = paginaCompleta(pagina, largura);
 
       it(`${pagina} · ${largura}: todos os links levam a algum lado`, () => {
-        const alvos = [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1]!);
+        // `\shref` e não `href`: o desenho tem `credit-href` nas fotografias,
+        // com o endereço de quem as tirou no Unsplash. Esse não é um link da
+        // página — é a atribuição da fotografia — e não tem de estar na lista.
+        const alvos = [...html.matchAll(/\shref="([^"]*)"/g)].map((m) => m[1]!);
         expect(alvos.length).toBeGreaterThan(5);
         for (const alvo of alvos) {
           expect(DESTINOS_BONS, `${alvo} em ${pagina}/${largura}`).toContain(alvo);

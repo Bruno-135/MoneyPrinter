@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><style>body{margin:0;background:#CFC8BD;font-family:'Hanken Grotesk',sans-serif;color:#141210;-webkit-font-smoothing:antialiased}a{color:#BA4100}a:hover{color:#141210}</style></helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;align-items:baseline;gap:28px;font:500 14px 'Hanken Grotesk'"><span style="font:800 32px/1 'Barlow Condensed';text-transform:uppercase">VaiDesign · Folha de sistema</span><a href="Inicio.dc.html">Início</a><a href="Servicos.dc.html">Serviços</a><a href="Modelos.dc.html">Modelos</a><a href="Sobre.dc.html">Sobre</a><a href="Contacto.dc.html">Contacto</a></div>
+<div data-screen-label="Folha de sistema" style="width:1440px;background:#F6EFE4;padding:96px 80px;box-sizing:border-box;display:flex;flex-direction:column;gap:112px">
+
+<div style="display:grid;grid-template-columns:7fr 5fr;gap:24px;align-items:end;padding-bottom:48px;border-bottom:1.5px solid #141210"><h1 style="margin:0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Folha de<br><span style="color:#BA4100">sistema</span></h1><p style="margin:0;font:400 18px/1.55 'Hanken Grotesk';color:#5A5249">Versão 1 · site parado, sem animação. Tudo o que está nos artboards sai daqui.</p></div>
+
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">01</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Cor</h2></div>
+<div style="display:grid;grid-template-columns:60fr 25fr 10fr 3fr 2fr;height:120px;border-radius:12px;overflow:hidden;border:1.5px solid #141210">
+<div style="background:#F6EFE4;padding:16px;font:600 13px 'Hanken Grotesk'">Creme 60%</div><div style="background:#141210;color:#F6EFE4;padding:16px;font:600 13px 'Hanken Grotesk'">Tinta 25%</div><div style="background:#EC5B13;padding:16px;font:600 13px 'Hanken Grotesk'">Laranja 10%</div><div style="background:#BA4100"></div><div style="background:#FFFBF5"></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px">
+<sc-for list="{{ cores }}" as="c" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;gap:10px"><div style="height:96px;border-radius:12px;border:1.5px solid #DDD2C0;background:{{ c.hex }}"></div><span style="font:700 22px/1 'Barlow Condensed';text-transform:uppercase">{{ c.nome }}</span><span style="font:400 13px 'JetBrains Mono'">{{ c.hex }}</span><span style="font:400 14px/1.45 'Hanken Grotesk';color:#5A5249">{{ c.uso }}</span></div></sc-for>
+</div>
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;overflow:hidden">
+<div style="display:grid;grid-template-columns:3fr 1.2fr 1fr 4fr;padding:14px 24px;font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#5A5249;border-bottom:1px solid #DDD2C0"><span>Par medido</span><span>Contraste</span><span>Texto</span><span>Regra</span></div>
+<sc-for list="{{ contrastes }}" as="r" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:3fr 1.2fr 1fr 4fr;padding:14px 24px;align-items:center;border-bottom:1px solid #EFE6D8;font:400 15px/1.4 'Hanken Grotesk'"><span style="display:flex;align-items:center;gap:12px"><span style="width:56px;height:32px;border-radius:4px;display:grid;place-items:center;font:800 18px/1 'Barlow Condensed';background:{{ r.bg }};color:{{ r.fg }};border:1px solid #DDD2C0">Aa</span>{{ r.par }}</span><span style="font:600 15px 'JetBrains Mono'">{{ r.v }}</span><span style="font-weight:600;color:{{ r.okc }}">{{ r.ok }}</span><span style="color:#5A5249">{{ r.regra }}</span></div></sc-for>
+</div>
+<div style="padding:24px;border:1.5px solid #141210;border-radius:12px;font:400 16px/1.55 'Hanken Grotesk';max-width:880px"><strong>O laranja forte sobre creme dá 3,0:1 — não chega a 4,5:1.</strong> Por isso o Laranja #EC5B13 fica só para fundos, formas, ícones e números a partir de 40 px. Todo o texto laranja sobre creme usa o Tijolo #BA4100 (4,8:1), incluindo a parte laranja dos títulos. Sobre fundo laranja o texto é sempre Tinta — o branco dá 3,5:1 e está proibido.</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">02</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Letra</h2></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+<div style="background:#141210;color:#F6EFE4;border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:12px"><span style="font:800 120px/.85 'Barlow Condensed'">Aa</span><span style="font:700 28px/1 'Barlow Condensed';text-transform:uppercase">Barlow Condensed</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#BDB3A6">Títulos. 800 ExtraBold para display, H1, H2 e números. 700 Bold para H3, nomes de ficha e títulos de cartão. Sempre em maiúsculas.</span></div>
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:12px"><span style="font:500 120px/.85 'Hanken Grotesk'">Aa</span><span style="font:700 28px/1 'Barlow Condensed';text-transform:uppercase">Hanken Grotesk</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#5A5249">Texto. 400 Regular para corpo, 500 Medium para navegação e etiquetas, 600 SemiBold para botões, sobretítulos e rótulos.</span></div>
+</div>
+<div style="border-top:1.5px solid #141210">
+<div style="display:grid;grid-template-columns:1.4fr 1.6fr 1.6fr 5fr;padding:14px 0;font:600 12px/1 'Hanken Grotesk';letter-spacing:.12em;text-transform:uppercase;color:#5A5249;border-bottom:1px solid #DDD2C0"><span>Nível</span><span>Computador</span><span>Telemóvel</span><span>Amostra</span></div>
+<sc-for list="{{ escala }}" as="e" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:1.4fr 1.6fr 1.6fr 5fr;padding:18px 0;align-items:center;border-bottom:1px solid #DDD2C0"><div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 15px 'Hanken Grotesk'">{{ e.n }}</span><span style="font:400 12px 'JetBrains Mono';color:#5A5249">{{ e.f }}</span></div><span style="font:400 13px/1.5 'JetBrains Mono'">{{ e.d }}</span><span style="font:400 13px/1.5 'JetBrains Mono'">{{ e.m }}</span><span style="font-family:{{ e.fam }};font-weight:{{ e.w }};font-size:{{ e.px }};line-height:1;letter-spacing:{{ e.ls }};text-transform:{{ e.tt }};white-space:nowrap;overflow:hidden">{{ e.s }}</span></div></sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">03</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Grelha</h2></div>
+<div style="display:flex;flex-direction:column;gap:12px"><span style="font:600 14px 'Hanken Grotesk'">Computador 1440 · 12 colunas de 84,67 px · goteira 24 · margens 80 · conteúdo 1280</span>
+<div style="height:160px;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:0 calc(80px * 1280 / 1440);display:grid;grid-template-columns:repeat(12,1fr);gap:calc(24px * 1280 / 1440);box-sizing:border-box"><sc-for list="{{ doze }}" as="x" hint-placeholder-count="12"><div style="background:rgba(236,91,19,.22);border-left:1px solid #EC5B13;border-right:1px solid #EC5B13"></div></sc-for></div>
+<span style="font:400 13px 'JetBrains Mono';color:#5A5249">(desenhada a 89% para caber na folha) · 4 fichas = 3 colunas cada · serviços = 4 colunas cada · abertura 7 + 5</span></div>
+<div style="display:grid;grid-template-columns:390px 1fr;gap:48px;align-items:start">
+<div style="height:320px;background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:0 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;box-sizing:border-box"><div style="background:rgba(236,91,19,.22);border-left:1px solid #EC5B13;border-right:1px solid #EC5B13"></div><div style="background:rgba(236,91,19,.22);border-left:1px solid #EC5B13;border-right:1px solid #EC5B13"></div><div style="background:rgba(236,91,19,.22);border-left:1px solid #EC5B13;border-right:1px solid #EC5B13"></div><div style="background:rgba(236,91,19,.22);border-left:1px solid #EC5B13;border-right:1px solid #EC5B13"></div></div>
+<div style="display:flex;flex-direction:column;gap:10px;font:400 16px/1.55 'Hanken Grotesk'"><span style="font:600 14px 'Hanken Grotesk'">Telemóvel 390 · 4 colunas de 78,5 px · goteira 12 · margens 20 · conteúdo 350</span><span style="color:#5A5249">Fichas e serviços: 2 colunas (2 + 2), goteira 12. Pilares e passos: 1 coluna. Números e garantias: 2 × 2. Botões principais ocupam as 4 colunas, com 56 px de altura.</span></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">04</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Espaçamento · base 8</h2></div>
+<div style="display:flex;align-items:flex-end;gap:32px">
+<sc-for list="{{ espacos }}" as="s" hint-placeholder-count="10"><div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start"><div style="width:{{ s.px }};height:{{ s.px }};background:#141210"></div><span style="font:600 14px 'JetBrains Mono'">{{ s.v }}</span><span style="font:400 13px/1.35 'Hanken Grotesk';color:#5A5249;max-width:110px">{{ s.uso }}</span></div></sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">05</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Fotografia</h2></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;align-items:end">
+<div style="display:flex;flex-direction:column;gap:12px"><div style="height:340px;border-radius:170px 170px 0 0;background:repeating-linear-gradient(135deg,#E3D6C4 0 10px,#ECE2D3 10px 20px)"></div><span style="font:700 24px/1 'Barlow Condensed';text-transform:uppercase">Arco · recorte PNG</span><span style="font:400 14px/1.45 'Hanken Grotesk';color:#5A5249">Abertura do Início e do Sobre. Pessoa real, sem fundo, sobre a forma laranja.</span></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:4/5;border-radius:8px;background:repeating-linear-gradient(135deg,#E3D6C4 0 10px,#ECE2D3 10px 20px)"></div><span style="font:700 24px/1 'Barlow Condensed';text-transform:uppercase">4:5 · miniatura</span><span style="font:400 14px/1.45 'Hanken Grotesk';color:#5A5249">Fichas de modelo. Captura da abertura do modelo, cortada de cima.</span></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#E3D6C4 0 10px,#ECE2D3 10px 20px)"></div><span style="font:700 24px/1 'Barlow Condensed';text-transform:uppercase">4:3 · ambiente</span><span style="font:400 14px/1.45 'Hanken Grotesk';color:#5A5249">«A nossa história». Sem cantos, encostada à margem da página.</span></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:3/2;border-radius:12px;background:repeating-linear-gradient(135deg,#E3D6C4 0 10px,#ECE2D3 10px 20px)"></div><span style="font:700 24px/1 'Barlow Condensed';text-transform:uppercase">3:2 · serviço</span><span style="font:400 14px/1.45 'Hanken Grotesk';color:#5A5249">Cartões e linhas de serviço. Objetos e lugares reais, nunca ilustração.</span></div>
+</div>
+<span style="font:400 15px/1.5 'Hanken Grotesk';color:#5A5249;max-width:880px">Proibido: foguetões, lâmpadas, apertos de mão, mãos ao centro, gráficos a subir, banco de imagens com pessoas a apontar para ecrãs.</span>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">06</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Regras fixas</h2></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px">
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:14px"><span style="font:700 28px/1 'Barlow Condensed';text-transform:uppercase">Cantos</span><div style="display:flex;gap:10px;align-items:end"><div style="width:44px;height:44px;border:1.5px solid #141210;border-radius:4px"></div><div style="width:44px;height:44px;border:1.5px solid #141210;border-radius:8px"></div><div style="width:44px;height:44px;border:1.5px solid #141210;border-radius:12px"></div><div style="width:44px;height:44px;border:1.5px solid #141210;border-radius:50%"></div></div><span style="font:400 14px/1.55 'Hanken Grotesk';color:#5A5249">4 botões · 8 miniaturas · 12 cartões e fichas · redondo em etiquetas, filtros e setas.</span></div>
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:14px"><span style="font:700 28px/1 'Barlow Condensed';text-transform:uppercase">Sombras</span><span style="font:800 44px/1 'Barlow Condensed';color:#EC5B13">Nenhuma</span><span style="font:400 14px/1.55 'Hanken Grotesk';color:#5A5249">A profundidade faz-se com traço: 1 px #DDD2C0 para separar, 1,5 px Tinta para marcar e para o estado ativo.</span></div>
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:14px"><span style="font:700 28px/1 'Barlow Condensed';text-transform:uppercase">Movimento</span><span style="font:800 44px/1 'Barlow Condensed';color:#EC5B13">Nenhum</span><span style="font:400 14px/1.55 'Hanken Grotesk';color:#5A5249">Nesta versão, o rato por cima troca de estado sem transição. As animações entram no segundo pedido.</span></div>
+<div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:14px"><span style="font:700 28px/1 'Barlow Condensed';text-transform:uppercase">Ícones</span><div style="display:flex;gap:14px"><span style="font-family:'Material Symbols Outlined';font-weight:200;font-size:40px;line-height:1">dashboard</span><span style="font-family:'Material Symbols Outlined';font-weight:200;font-size:40px;line-height:1">key</span><span style="font-family:'Material Symbols Outlined';font-weight:300;font-size:40px;line-height:1">arrow_forward</span></div><span style="font:400 14px/1.55 'Hanken Grotesk';color:#5A5249">Material Symbols Outlined, sem preenchimento. Peso 200 a 36–48 px, peso 300 nas setas.</span></div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;align-items:baseline;gap:20px"><span style="font:800 56px/1 'Barlow Condensed';color:#EC5B13">07</span><h2 style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase">Ficha de modelo</h2></div>
+<div style="display:grid;grid-template-columns:302px 302px 302px 169px;gap:48px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:14px"><dc-import name="FichaModelo" modelo="forno" estado="normal" hint-size="100%,490px" style="width:100%"></dc-import><span style="font:600 14px 'Hanken Grotesk'">Normal</span><span style="font:400 14px/1.5 'Hanken Grotesk';color:#5A5249">Traço 1,5 #DDD2C0 · seta com traço Tinta, fundo vazio.</span></div>
+<div style="display:flex;flex-direction:column;gap:14px"><dc-import name="FichaModelo" modelo="forno" estado="hover" hint-size="100%,490px" style="width:100%"></dc-import><span style="font:600 14px 'Hanken Grotesk'">Rato por cima</span><span style="font:400 14px/1.5 'Hanken Grotesk';color:#5A5249">Traço passa a Tinta · faixa preta «Ver o modelo ao vivo» na base da miniatura · seta cheia a laranja.</span></div>
+<div style="display:flex;flex-direction:column;gap:14px"><dc-import name="FichaModelo" modelo="forno" estado="foco" hint-size="100%,490px" style="width:100%"></dc-import><span style="font:600 14px 'Hanken Grotesk'">Foco pelo teclado</span><span style="font:400 14px/1.5 'Hanken Grotesk';color:#5A5249">Igual ao rato por cima, mais contorno laranja de 3 px a 3 px de distância.</span></div>
+<div style="display:flex;flex-direction:column;gap:14px"><dc-import name="FichaModelo" modelo="forno" estado="normal" hint-size="100%,300px" style="width:100%"></dc-import><span style="font:600 14px 'Hanken Grotesk'">Telemóvel · 169</span><span style="font:400 14px/1.5 'Hanken Grotesk';color:#5A5249">Mesma peça; os tamanhos escalam com a largura, com mínimos legíveis.</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;padding-top:24px;border-top:1px solid #DDD2C0">
+<sc-for list="{{ anatomia }}" as="a" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:6px"><span style="font:700 22px/1 'Barlow Condensed';text-transform:uppercase">{{ a.t }}</span><span style="font:400 14px/1.5 'Hanken Grotesk';color:#5A5249">{{ a.d }}</span></div></sc-for>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const BC = "'Barlow Condensed'", HG = "'Hanken Grotesk'";
+    return {
+      cores: [
+        { nome: 'Creme', hex: '#F6EFE4', uso: 'Fundo de todas as páginas. 60%.' },
+        { nome: 'Tinta', hex: '#141210', uso: 'Texto, faixa preta, rodapé. 25%.' },
+        { nome: 'Laranja', hex: '#EC5B13', uso: 'Fundos, forma orgânica, faixa de números, ícones. 10%.' },
+        { nome: 'Tijolo', hex: '#BA4100', uso: 'Único laranja permitido em texto sobre creme. 3%.' },
+        { nome: 'Cartão', hex: '#FFFBF5', uso: 'Fichas, cartões, secção história. 2%.' },
+        { nome: 'Cinza quente', hex: '#5A5249', uso: 'Texto secundário sobre creme e cartão.' }
+      ],
+      contrastes: [
+        { par: 'Tinta sobre Creme', bg: '#F6EFE4', fg: '#141210', v: '16,4:1', ok: 'Sim', okc: '#141210', regra: 'Todo o texto principal.' },
+        { par: 'Cinza quente sobre Creme', bg: '#F6EFE4', fg: '#5A5249', v: '6,7:1', ok: 'Sim', okc: '#141210', regra: 'Parágrafos e descrições.' },
+        { par: 'Tijolo sobre Creme', bg: '#F6EFE4', fg: '#BA4100', v: '4,8:1', ok: 'Sim', okc: '#141210', regra: 'Títulos a duas cores, sobretítulos, ligações.' },
+        { par: 'Tijolo sobre Cartão', bg: '#FFFBF5', fg: '#BA4100', v: '5,3:1', ok: 'Sim', okc: '#141210', regra: 'Ligações e setas dentro de cartões.' },
+        { par: 'Laranja sobre Creme', bg: '#F6EFE4', fg: '#EC5B13', v: '3,0:1', ok: 'Não', okc: '#BA4100', regra: 'Só fundos, formas, ícones e números ≥ 40 px.' },
+        { par: 'Tinta sobre Laranja', bg: '#EC5B13', fg: '#141210', v: '5,4:1', ok: 'Sim', okc: '#141210', regra: 'Botões principais e faixa de números.' },
+        { par: 'Laranja sobre Tinta', bg: '#141210', fg: '#EC5B13', v: '5,4:1', ok: 'Sim', okc: '#141210', regra: 'Títulos e sobretítulos na faixa preta e no rodapé.' },
+        { par: 'Cinza claro #BDB3A6 sobre Tinta', bg: '#141210', fg: '#BDB3A6', v: '9,0:1', ok: 'Sim', okc: '#141210', regra: 'Texto secundário em fundo preto.' },
+        { par: 'Branco sobre Laranja', bg: '#EC5B13', fg: '#FFFFFF', v: '3,5:1', ok: 'Não', okc: '#BA4100', regra: 'Proibido. Sobre laranja, texto sempre Tinta.' }
+      ],
+      escala: [
+        { n: 'Display', f: 'Barlow C. 800', d: '104 / 0,90 / −0,5%', m: '60 / 0,90 / 0', s: 'O site já está feito', px: '72px', fam: BC, w: 800, ls: '-.005em', tt: 'uppercase' },
+        { n: 'H1 secção', f: 'Barlow C. 800', d: '80 / 0,92 / 0', m: '48 / 0,92 / 0', s: 'Sete modelos', px: '64px', fam: BC, w: 800, ls: '0', tt: 'uppercase' },
+        { n: 'H2', f: 'Barlow C. 800', d: '64 / 0,95 / 0', m: '44 / 0,95 / 0', s: 'Seis serviços', px: '52px', fam: BC, w: 800, ls: '0', tt: 'uppercase' },
+        { n: 'Número', f: 'Barlow C. 800', d: '104 / 0,85 / −1%', m: '64 / 0,85 / 0', s: '48 h', px: '72px', fam: BC, w: 800, ls: '-.01em', tt: 'none' },
+        { n: 'H3', f: 'Barlow C. 700', d: '30 / 1,0 / +1%', m: '21 / 1,0 / +1%', s: 'Loja online', px: '30px', fam: BC, w: 700, ls: '.01em', tt: 'uppercase' },
+        { n: 'Sobretítulo', f: 'Hanken 600', d: '14 / 1,2 / +14%', m: '12 / 1,2 / +14%', s: 'Os nossos modelos', px: '14px', fam: HG, w: 600, ls: '.14em', tt: 'uppercase' },
+        { n: 'Corpo grande', f: 'Hanken 400', d: '20 / 1,50 / 0', m: '17 / 1,50 / 0', s: 'Partimos de um modelo pensado para o seu ramo.', px: '20px', fam: HG, w: 400, ls: '0', tt: 'none' },
+        { n: 'Corpo', f: 'Hanken 400', d: '16 / 1,55 / 0', m: '15 / 1,50 / 0', s: 'Catálogo com fotografias, preços e tamanhos.', px: '16px', fam: HG, w: 400, ls: '0', tt: 'none' },
+        { n: 'Botão', f: 'Hanken 600', d: '15 / 1,0 / +6%', m: '14 / 1,0 / +6%', s: 'Ver os modelos', px: '15px', fam: HG, w: 600, ls: '.06em', tt: 'uppercase' },
+        { n: 'Etiqueta', f: 'Hanken 500', d: '12 / 1,0 / 0', m: '11 / 1,0 / 0', s: 'preços à vista', px: '12px', fam: HG, w: 500, ls: '0', tt: 'none' }
+      ],
+      doze: Array.from({ length: 12 }, (_, i) => i),
+      espacos: [
+        { v: '8', px: '8px', uso: 'ícone ↔ texto' }, { v: '16', px: '16px', uso: 'entre botões' },
+        { v: '24', px: '24px', uso: 'goteira, título ↔ texto' }, { v: '32', px: '32px', uso: 'interior de cartão' },
+        { v: '40', px: '40px', uso: 'grelha ↔ botão' }, { v: '56', px: '56px', uso: 'faixas, cabeçalho de secção' },
+        { v: '64', px: '64px', uso: 'faixa laranja' }, { v: '80', px: '80px', uso: 'margem 1440' },
+        { v: '96', px: '96px', uso: 'topo de página' }, { v: '120', px: '120px', uso: 'entre secções' }
+      ],
+      anatomia: [
+        { t: 'Miniatura 4:5', d: 'Abertura do modelo, cortada de cima. Cantos 8, dentro de 3% de margem do cartão.' },
+        { t: 'Nome', d: 'Barlow Condensed 700, maiúsculas, 28 px (19 px no telemóvel). Seta redonda à direita.' },
+        { t: 'Ramo', d: 'Uma linha, Hanken 400, 15 px, Cinza quente.' },
+        { t: 'Etiquetas', d: 'Sempre três. Hanken 500, 12 px, traço 1 px, redondas. Minúsculas.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

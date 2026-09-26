@@ -5,10 +5,10 @@ import { reescreverLinks, type Destinos } from './links';
 import { abrirAsPartes } from './partes';
 import { fundirOCampoDeContacto } from './contacto';
 import {
-  animarOPontoDaMarca,
   apontarPorEtiqueta,
   ligarInstagram,
   ligarRodapeMovel,
+  marcarCopiarExemplo,
   marcarEnviarPeloWhatsApp,
   marcarMenuMovel,
   perguntarORamo,
@@ -118,8 +118,8 @@ export function paginaDaVaiDesign(
   vivo = ligarInstagram(vivo, INSTAGRAM_DA_AGENCIA);
   vivo = marcarMenuMovel(vivo);
   vivo = marcarEnviarPeloWhatsApp(vivo);
+  vivo = marcarCopiarExemplo(vivo);
   vivo = perguntarORamo(vivo);
-  vivo = animarOPontoDaMarca(vivo);
 
   return marcarRamo(vivo, pagina === 'contacto' ? formulario.v4 : '');
 }

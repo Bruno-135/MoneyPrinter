@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><style>body{margin:0;background:#CFC8BD;font-family:'Hanken Grotesk',sans-serif;color:#141210;-webkit-font-smoothing:antialiased}a{color:#BA4100}a:hover{color:#141210}</style><script src="./image-slot.js"></script><link href="movimento.css" rel="stylesheet"></helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;align-items:baseline;gap:28px;font:500 14px 'Hanken Grotesk'"><span style="font:800 32px/1 'Barlow Condensed';text-transform:uppercase">VaiDesign · Sobre</span><a href="Inicio.dc.html">Início</a><a href="Servicos.dc.html">Serviços</a><a href="Modelos.dc.html">Modelos</a><a href="Sobre.dc.html">Sobre</a><a href="Contacto.dc.html">Contacto</a><a href="Sistema.dc.html">Folha de sistema</a></div>
+<div style="display:flex;gap:96px;align-items:flex-start">
+
+<div data-screen-label="Sobre · Computador">
+<div style="font:400 12px 'JetBrains Mono';color:#5A5249;margin-bottom:12px">SOBRE · COMPUTADOR 1440</div>
+<div style="width:1440px;background:#F6EFE4;overflow:hidden">
+<div style="position:relative;height:760px;overflow:hidden">
+<div style="position:absolute;left:930px;top:-160px;width:690px;height:900px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<div style="position:absolute;left:920px;bottom:0;width:420px;height:600px"><image-slot id="sobre-fundador" src="assets/fotos/fundador.jpg" mask="inset(0 round 210px 210px 0 0)" placeholder="O fundador, meio corpo, de frente, no seu espaço de trabalho. Luz de janela."></image-slot></div>
+<svg viewBox="0 0 200 200" width="176" height="176" style="position:absolute;left:800px;top:420px;transform:rotate(-12deg)"><defs><path id="sb-d" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"></path></defs><circle cx="100" cy="100" r="97" fill="#F6EFE4" stroke="#141210" style="stroke-width:1.5"></circle><g class="vd-gira"><text fill="#141210" style="font:600 14px 'Hanken Grotesk';letter-spacing:3.6px"><textPath href="#sb-d" textLength="462" lengthAdjust="spacing">VAIDESIGN · FEITO À SUA MEDIDA ·</textPath></text></g><text x="100" y="116" text-anchor="middle" fill="#BA4100" style="font:800 46px 'Barlow Condensed'">VD</text></svg>
+<dc-import name="Cabecalho" largura="computador" ativa="sobre" hint-size="100%,96px" style="position:absolute;top:0;left:0;right:0"></dc-import>
+<div style="position:absolute;left:80px;top:184px;width:660px;display:flex;flex-direction:column;gap:24px">
+<div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Quem é</div>
+<h1 style="margin:0;font:800 104px/.9 'Barlow Condensed';text-transform:uppercase">Do outro lado<br>está <span style="color:#BA4100">uma pessoa.</span></h1>
+<p style="margin:0;font:400 20px/1.55 'Hanken Grotesk';color:#5A5249;max-width:540px;text-wrap:pretty">Por trás da VaiDesign está Bruno Dias, empenhado em ajudá-lo a atingir os seus objetivos. É quem lê as mensagens, desenha os sites e os põe no ar. Não há gestor de conta nem passagem de testemunho: fala sempre com a mesma pessoa.</p>
+</div>
+</div>
+<div style="background:#141210;color:#F6EFE4;padding:112px 80px;display:grid;grid-template-columns:5fr 7fr;gap:24px">
+<div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Porquê</div>
+<div style="display:flex;flex-direction:column;gap:32px"><p style="margin:0;font:800 56px/1 'Barlow Condensed';text-transform:uppercase;text-wrap:balance">Um pequeno negócio não precisa de um projeto de seis meses. <span style="color:#EC5B13">Precisa de um site claro, esta semana.</span></p><p style="margin:0;font:400 18px/1.6 'Hanken Grotesk';color:#BDB3A6;max-width:620px">A maioria dos comércios adia o site porque parece caro, lento e complicado. Os modelos existem para tirar essas três razões da frente: parte-se de uma base que já funciona e gasta-se o tempo no que é seu.</p></div>
+</div>
+<div style="padding:120px 80px">
+<div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:56px"><div><div style="font:600 14px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Como se trabalha</div><h2 style="margin:16px 0 0;font:800 80px/.92 'Barlow Condensed';text-transform:uppercase">Quatro passos.<br><span style="color:#BA4100">Nenhum escondido.</span></h2></div></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px">
+<sc-for list="{{ passos }}" as="p" hint-placeholder-count="4"><div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:32px 28px;display:flex;flex-direction:column;gap:16px"><span style="font:800 88px/.85 'Barlow Condensed';color:#EC5B13">{{ p.n }}</span><span style="font:700 32px/1 'Barlow Condensed';text-transform:uppercase">{{ p.t }}</span><span style="font:400 16px/1.55 'Hanken Grotesk';color:#5A5249;flex:1">{{ p.d }}</span><span style="align-self:flex-start;font:600 12px/1 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;border-radius:999px;background:#141210;color:#F6EFE4">{{ p.q }}</span></div></sc-for>
+</div>
+</div>
+<dc-import name="Rodape" largura="computador" hint-size="100%,640px"></dc-import>
+</div>
+</div>
+
+<div data-screen-label="Sobre · Telemóvel">
+<div style="font:400 12px 'JetBrains Mono';color:#5A5249;margin-bottom:12px">SOBRE · TELEMÓVEL 390</div>
+<div style="width:390px;background:#F6EFE4;overflow:hidden">
+<dc-import name="Cabecalho" largura="telemovel" ativa="sobre" hint-size="100%,72px"></dc-import>
+<div style="padding:24px 20px 0;display:flex;flex-direction:column;gap:16px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Quem é</div>
+<h1 style="margin:0;font:800 60px/.9 'Barlow Condensed';text-transform:uppercase">Do outro lado está <span style="color:#BA4100">uma pessoa.</span></h1>
+<p style="margin:0;font:400 17px/1.55 'Hanken Grotesk';color:#5A5249">Por trás da VaiDesign está Bruno Dias, empenhado em ajudá-lo a atingir os seus objetivos. Lê as mensagens, desenha os sites e põe-nos no ar. Fala sempre com a mesma pessoa.</p>
+</div>
+<div style="position:relative;height:400px;margin-top:32px;overflow:hidden">
+<div style="position:absolute;left:60px;top:10px;width:420px;height:460px;background:#EC5B13;border-radius:62% 38% 46% 54% / 38% 52% 48% 62%"></div>
+<div style="position:absolute;left:100px;bottom:0;width:240px;height:350px"><image-slot id="sobre-fundador" src="assets/fotos/fundador.jpg" mask="inset(0 round 120px 120px 0 0)" placeholder="O fundador, meio corpo."></image-slot></div>
+<svg viewBox="0 0 200 200" width="112" height="112" style="position:absolute;left:16px;top:40px;transform:rotate(-12deg)"><defs><path id="sb-m" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"></path></defs><circle cx="100" cy="100" r="97" fill="#F6EFE4" stroke="#141210" style="stroke-width:2"></circle><g class="vd-gira"><text fill="#141210" style="font:600 14px 'Hanken Grotesk';letter-spacing:3.6px"><textPath href="#sb-m" textLength="462" lengthAdjust="spacing">VAIDESIGN · FEITO À SUA MEDIDA ·</textPath></text></g><text x="100" y="116" text-anchor="middle" fill="#BA4100" style="font:800 46px 'Barlow Condensed'">VD</text></svg>
+</div>
+<div style="background:#141210;color:#F6EFE4;padding:64px 20px;display:flex;flex-direction:column;gap:20px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#EC5B13">Porquê</div>
+<p style="margin:0;font:800 38px/1 'Barlow Condensed';text-transform:uppercase">Um pequeno negócio não precisa de um projeto de seis meses. <span style="color:#EC5B13">Precisa de um site claro, esta semana.</span></p>
+<p style="margin:0;font:400 16px/1.6 'Hanken Grotesk';color:#BDB3A6">Os modelos existem para tirar da frente o caro, o lento e o complicado. Parte-se de uma base que já funciona.</p>
+</div>
+<div style="padding:72px 20px">
+<div style="font:600 12px/1.2 'Hanken Grotesk';letter-spacing:.14em;text-transform:uppercase;color:#BA4100">Como se trabalha</div>
+<h2 style="margin:12px 0 28px;font:800 48px/.92 'Barlow Condensed';text-transform:uppercase">Quatro passos. <span style="color:#BA4100">Nenhum escondido.</span></h2>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ passos }}" as="p" hint-placeholder-count="4"><div style="background:#FFFBF5;border:1.5px solid #DDD2C0;border-radius:12px;padding:20px;display:grid;grid-template-columns:64px 1fr;gap:4px 16px"><span style="grid-row:span 3;font:800 60px/.85 'Barlow Condensed';color:#EC5B13">{{ p.n }}</span><span style="font:700 26px/1 'Barlow Condensed';text-transform:uppercase">{{ p.t }}</span><span style="font:400 15px/1.5 'Hanken Grotesk';color:#5A5249">{{ p.d }}</span><span style="justify-self:start;margin-top:8px;font:600 11px/1 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;border-radius:999px;background:#141210;color:#F6EFE4">{{ p.q }}</span></div></sc-for>
+</div>
+</div>
+<dc-import name="Rodape" largura="telemovel" hint-size="100%,760px"></dc-import>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      passos: [
+        { n: '01', t: 'Conversa', d: 'Manda uma mensagem com o que vende e o modelo de que gostou — ou o que precisa, se quiser um site feito à medida. Fazemos as perguntas que faltam.', q: '15 minutos' },
+        { n: '02', t: 'Proposta', d: 'Recebe por escrito o que fica incluído, o preço e a data de entrega. Não paga nada para a ver.', q: 'No próprio dia' },
+        { n: '03', t: 'Montagem', d: 'Adaptamos o modelo com os seus textos, cores e fotografias. Vê uma versão antes de ir ao ar.', q: '48 horas' },
+        { n: '04', t: 'No ar', d: 'O site fica publicado no seu domínio, em seu nome. Explicamos como pedir alterações daqui para a frente.', q: 'E depois' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
