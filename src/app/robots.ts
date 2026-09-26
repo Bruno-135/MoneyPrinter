@@ -3,8 +3,8 @@ import type { MetadataRoute } from 'next';
 /**
  * O que os motores de busca podem ler.
  *
- * O painel e a entrada ficam de fora: são trabalho interno e não têm nada que
- * apareça numa pesquisa. As páginas dos clientes em `/s/<código>` ficam de
+ * O painel, a entrada e a página da assinatura ficam de fora: são trabalho
+ * interno e não têm nada que apareça numa pesquisa. As páginas dos clientes em `/s/<código>` ficam de
  * dentro de propósito — cada uma é o site de um comércio real, e ser
  * encontrada no Google é metade do que o cliente está a comprar.
  *
@@ -18,7 +18,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/painel', '/entrar', '/api'],
+      disallow: ['/painel', '/entrar', '/api', '/assinatura'],
     },
   };
 }
