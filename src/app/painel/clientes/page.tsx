@@ -44,7 +44,7 @@ export default async function ClientesPage() {
         <div className="rounded-2xl border border-dashed border-line px-6 py-16 text-center dark:border-line">
           <p className="text-lg font-semibold">Ainda não há clientes.</p>
           <p className="mx-auto mt-2 max-w-md text-sm text-ink2 opacity-100">
-            Assim que registares a primeira venda na ficha de um comércio, ele aparece aqui — com
+            Assim que registares a primeira venda na ficha de um lead, ele aparece aqui — com
             uma coluna por serviço, para se ver de relance o que ainda lhe falta comprar.
           </p>
           <Link

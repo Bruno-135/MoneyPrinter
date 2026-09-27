@@ -107,7 +107,7 @@ export default async function ImagensPage({ params, searchParams }: Props) {
         </Link>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Imagens da página</h1>
         <p className="mt-1 opacity-65">
-          {comercio?.name ?? 'Este comércio'} — escolhe a capa. As fotos do próprio comerciante
+          {comercio?.name ?? 'Este lead'} — escolhe a capa. As fotos do próprio comerciante
           entram no editor; aqui estão as de banco grátis e a imagem gerada.
         </p>
       </div>
@@ -157,10 +157,10 @@ export default async function ImagensPage({ params, searchParams }: Props) {
         </div>
       </section>
 
-      {/* ---------------- Fotos do próprio comércio ---------------- */}
+      {/* ---------------- Fotos do próprio lead ---------------- */}
       <section className="flex flex-col gap-5 rounded-lg border border-black/10 p-5 dark:border-white/10">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight">Fotografias do comércio</h2>
+          <h2 className="text-lg font-semibold tracking-tight">Fotografias do lead</h2>
           <p className="mt-1 text-sm opacity-60">
             As que estão no Google, tiradas por clientes e pelo dono. São estas que fazem a
             proposta parecer feita para ele — porque é a loja dele que aparece.
@@ -179,13 +179,13 @@ export default async function ImagensPage({ params, searchParams }: Props) {
               </button>
             </form>
             <p className="text-xs opacity-50">
-              Uma consulta paga, uma vez só por comércio. Depois disto, ver e trocar as fotos não
+              Uma consulta paga, uma vez só por lead. Depois disto, ver e trocar as fotos não
               custa mais nada.
             </p>
           </div>
         ) : fotosDoGoogle.length === 0 ? (
           <p className="rounded-md bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
-            Este comércio não tem fotografias no Google. Usa as de banco aqui em baixo, ou pede-as
+            Este lead não tem fotografias no Google. Usa as de banco aqui em baixo, ou pede-as
             ao dono.
           </p>
         ) : (

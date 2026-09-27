@@ -110,7 +110,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-12">
       {/* ---------------- Cabeçalho da ficha ----------------
-          Uma caixa só, com a fotografia por cima: é o mesmo comércio que se
+          Uma caixa só, com a fotografia por cima: é o mesmo lead que se
           viu no cartão do painel, e ver a loja outra vez ao abrir a ficha
           diz num instante que se está no sítio certo. A fotografia sai do
           cache — nunca se vai à Google por causa de uma ficha aberta.
@@ -386,7 +386,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
 
         {sites.length === 0 ? (
           <p className="rounded-lg border border-dashed border-line px-5 py-6 text-center text-sm text-ink2 opacity-100 dark:border-line">
-            Ainda não há nenhuma página para este comércio. &ldquo;Gerar página&rdquo; cria uma
+            Ainda não há nenhuma página para este lead. &ldquo;Gerar página&rdquo; cria uma
             com os dados que já temos
             {business.is_food_service ? ', no modelo com cardápio e pedido por WhatsApp' : ''}.
           </p>

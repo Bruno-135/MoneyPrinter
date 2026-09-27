@@ -127,8 +127,8 @@ export async function GET(request: Request) {
   const base = batch
     ? `${batch.categoryLabel} ${batch.label}`
     : ramos.length === 1
-      ? (findCategory(ramos[0]!)?.label ?? 'comercios')
-      : 'comercios';
+      ? (findCategory(ramos[0]!)?.label ?? 'leads')
+      : 'leads';
 
   return new NextResponse(paraCsv(colunas, linhas), {
     headers: {

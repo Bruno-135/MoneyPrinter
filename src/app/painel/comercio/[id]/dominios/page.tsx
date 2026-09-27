@@ -97,7 +97,7 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
           href={`/painel/comercio/${id}`}
           className="text-sm underline underline-offset-4 opacity-60"
         >
-          &larr; Voltar ao comércio
+          &larr; Voltar ao lead
         </Link>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Domínios</h1>
         <p className="mt-1 opacity-65">
@@ -107,7 +107,7 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
 
       {nomes.length === 0 ? (
         <p className="rounded-md bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
-          Não consegui tirar um nome de domínio deste nome de comércio. Escreve-o à mão no
+          Não consegui tirar um nome de domínio deste nome de lead. Escreve-o à mão no
           registador.
         </p>
       ) : (

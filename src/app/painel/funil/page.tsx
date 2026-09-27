@@ -54,7 +54,7 @@ export default async function FunilPage() {
       </div>
 
       <p className="text-[13px] text-ink2">
-        Carrega numa etapa para ver os comércios que estão nela. Sem linha em `deals`, um comércio
+        Carrega numa etapa para ver os leads que estão nela. Sem linha em `deals`, um lead
         conta como &ldquo;novo&rdquo;: a linha só nasce quando se mexe nele pela primeira vez.
       </p>
     </>

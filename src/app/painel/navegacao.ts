@@ -26,7 +26,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
       { href: '/painel', label: 'Painel' },
       { href: '/painel/pedidos', label: 'Pedidos do site' },
       { href: '/painel/contactar', label: 'Fila de contacto' },
-      { href: '/painel/comercios', label: 'Comércios' },
+      { href: '/painel/comercios', label: 'Leads' },
       { href: '/painel/funil', label: 'Funil' },
       { href: '/painel/varrimento', label: 'Varrimento e custos' },
       { href: '/painel/paginas', label: 'Landing pages' },
@@ -64,7 +64,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel': ['Painel de hoje', 'a quem ligar agora'],
   '/painel/pedidos': ['Pedidos do site', 'quem nos procurou'],
   '/painel/contactar': ['Fila de contacto', 'um de cada vez, atrasados primeiro'],
-  '/painel/comercios': ['Comércios em base', 'tudo o que já se encontrou'],
+  '/painel/comercios': ['Leads em base', 'tudo o que já se encontrou'],
   '/painel/funil': ['Funil de vendas', '8 etapas'],
   '/painel/varrimento': ['Varrimento e custos', 'Google Places · dinheiro real'],
   '/painel/paginas': ['Landing pages', 'geradas, no ar e vendidas'],
@@ -84,7 +84,7 @@ const TITULOS: Record<string, [string, string]> = {
 export function tituloDoEcra(caminho: string): [string, string] {
   if (TITULOS[caminho]) return TITULOS[caminho];
   if (caminho.startsWith('/painel/comercio/')) {
-    return ['Ficha do comércio', 'tudo o que decide a chamada'];
+    return ['Ficha do lead', 'tudo o que decide a chamada'];
   }
   if (caminho.startsWith('/painel/modelos/')) return ['Modelo de site', 'como o comerciante o vai ver'];
   if (caminho.endsWith('/pecas') && caminho.startsWith('/painel/site/')) {

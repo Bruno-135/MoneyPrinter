@@ -22,7 +22,7 @@ export async function escreverAbordagem(
   formData: FormData,
 ): Promise<AiActionState> {
   const businessId = String(formData.get('businessId') ?? '');
-  if (!businessId) return { ok: false, message: 'Faltou o comércio.' };
+  if (!businessId) return { ok: false, message: 'Faltou o lead.' };
 
   const modelo = String(formData.get('modelo') ?? '');
   const model = isModelId(modelo) ? modelo : DEFAULT_MODEL;
@@ -43,7 +43,7 @@ export async function escreverAbordagem(
     .eq('id', businessId)
     .maybeSingle();
 
-  if (!business) return { ok: false, message: 'Comércio não encontrado.' };
+  if (!business) return { ok: false, message: 'Lead não encontrado.' };
 
   // A página no ar é o argumento mais forte que há: não pede nada e já mostra
   // trabalho feito. Só entra se estiver mesmo acessível — mandar um link

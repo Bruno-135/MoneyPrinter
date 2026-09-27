@@ -38,7 +38,7 @@ export default async function CardapioPage({ params }: { params: Promise<{ id: s
           href={`/painel/comercio/${site.business_id}`}
           className="text-sm underline underline-offset-4 opacity-60"
         >
-          &larr; Voltar ao comércio
+          &larr; Voltar ao lead
         </Link>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Cardápio</h1>
         <p className="mt-1 opacity-65">{site.title}</p>

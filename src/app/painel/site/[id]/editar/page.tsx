@@ -71,7 +71,7 @@ export default async function EditarSitePage({ params }: Props) {
         <div>
           <h2 className="text-lg font-semibold tracking-tight">Fotografias</h2>
           <p className="mt-1 text-sm opacity-60">
-            Peça-as ao dono do comércio. Não se usam as fotos do Google: têm licença própria e
+            Peça-as ao dono do lead. Não se usam as fotos do Google: têm licença própria e
             estas páginas são vendidas.
           </p>
           <p className="mt-2 text-sm">
@@ -152,7 +152,7 @@ export default async function EditarSitePage({ params }: Props) {
           <h2 className="text-lg font-semibold tracking-tight">Capa</h2>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">Nome do comércio</span>
+            <span className="text-sm font-medium">Nome do lead</span>
             <input name="headline" defaultValue={content.hero.headline} className={field} />
           </label>
 

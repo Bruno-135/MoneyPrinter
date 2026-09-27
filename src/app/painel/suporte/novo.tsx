@@ -49,7 +49,7 @@ export function NovoPedido({ clientes }: { clientes: readonly ClientePossivel[] 
     return (
       <p className="rounded-2xl border border-dashed border-line px-4 py-3 text-[13px] text-ink2">
         Ainda não há clientes na carteira. Os pedidos de suporte são de quem já te paga — regista
-        uma venda na ficha de um comércio e ele passa a aparecer aqui.
+        uma venda na ficha de um lead e ele passa a aparecer aqui.
       </p>
     );
   }

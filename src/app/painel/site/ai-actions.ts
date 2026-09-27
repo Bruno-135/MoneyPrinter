@@ -106,7 +106,7 @@ export async function generateWithAi(
     .eq('id', loaded.site.business_id)
     .maybeSingle();
 
-  if (!business) return { ok: false, message: 'Comércio não encontrado.' };
+  if (!business) return { ok: false, message: 'Lead não encontrado.' };
 
   try {
     if (mode === 'html') {
@@ -320,7 +320,7 @@ export async function editarComIa(
     .eq('id', loaded.site.business_id)
     .maybeSingle();
 
-  if (!business) return { ok: false, message: 'Comércio não encontrado.' };
+  if (!business) return { ok: false, message: 'Lead não encontrado.' };
 
   try {
     const result = await editHtml(business, loaded.site.custom_html, instrucao, model);

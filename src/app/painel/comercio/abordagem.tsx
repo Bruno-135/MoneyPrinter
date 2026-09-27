@@ -103,7 +103,7 @@ export function Abordagem({
   atualizadaEm,
   tipo = 'first_contact',
   titulo = 'Mensagem de abordagem',
-  vazio = 'Ainda não há mensagens para este comércio. A IA escreve três versões com ângulos diferentes, a partir do que o Google sabe dele — as avaliações, a rede social, a página que já lhe fizeste.',
+  vazio = 'Ainda não há mensagens para este lead. A IA escreve três versões com ângulos diferentes, a partir do que o Google sabe dele — as avaliações, a rede social, a página que já lhe fizeste.',
 }: {
   businessId: string;
   mensagens: readonly MensagemAbordagem[];

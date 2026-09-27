@@ -66,7 +66,7 @@ export default async function ProcurarPage({ searchParams }: Props) {
       {curtoDeMais && (
         <p className="rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
           Escreve pelo menos duas letras — com uma só vinham quase todos os
-          comércios da base e não servia de nada.
+          leads da base e não servia de nada.
         </p>
       )}
 

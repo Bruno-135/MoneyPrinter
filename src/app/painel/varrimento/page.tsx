@@ -39,9 +39,9 @@ export default async function VarrimentoPage() {
         <div className="mx-auto flex max-w-2xl flex-col gap-5">
           <div className="flex flex-col items-center gap-1.5 text-center">
             <span className="font-mono text-[11px] font-bold tracking-[0.12em] text-acc uppercase">
-              Encontrar comércios sem site
+              Encontrar leads sem site
             </span>
-            <h2 className="text-2xl font-bold tracking-tight">Procurar comércios</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Procurar leads</h2>
             <p className="text-[13px] text-ink2">
               Escolhe a cidade e o ramo. Simula primeiro para ver quanto custa — a simulação não
               gasta nada.

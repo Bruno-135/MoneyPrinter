@@ -96,7 +96,7 @@ export default async function RelatoriosPage() {
                 <table className="w-full text-sm">
                   <thead className="bg-black/[0.03] text-left text-xs uppercase tracking-wide text-ink2 opacity-100 dark:bg-white/[0.04]">
                     <tr>
-                      <th className="px-4 py-3 font-medium">Comércio</th>
+                      <th className="px-4 py-3 font-medium">Lead</th>
                       <th className="px-4 py-3 font-medium">Visitas</th>
                       <th className="px-4 py-3 font-medium">Distintos</th>
                       <th className="px-4 py-3 font-medium">Cliques</th>

@@ -73,7 +73,7 @@ export default async function PreviaPage({ params }: Props) {
             href={`/painel/comercio/${site.business_id}`}
             className="text-sm underline underline-offset-4 opacity-60"
           >
-            &larr; Voltar ao comércio
+            &larr; Voltar ao lead
           </Link>
 
           <span

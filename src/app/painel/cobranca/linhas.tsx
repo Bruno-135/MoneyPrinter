@@ -40,7 +40,7 @@ export function Linhas({
         <p className="text-lg font-bold">Nada a cobrar neste mês.</p>
         <p className="mx-auto mt-2 max-w-md text-[13px] text-ink2">
           Só aparecem aqui os clientes com serviços mensais activos. Regista uma venda mensal na
-          ficha de um comércio e ele passa a aparecer em todos os meses a partir desse.
+          ficha de um lead e ele passa a aparecer em todos os meses a partir desse.
         </p>
       </div>
     );

@@ -111,7 +111,7 @@ export async function gerarPaginaDoSite(
     .eq('id', loaded.site.business_id)
     .maybeSingle();
 
-  if (!business) return { ok: false, message: 'Comércio não encontrado.' };
+  if (!business) return { ok: false, message: 'Lead não encontrado.' };
 
   try {
     const escolhidas = await escolherImagens(supabase, clientePlaces(business.country_code), {

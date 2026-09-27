@@ -31,7 +31,7 @@ export default async function PaginasPage() {
       <div className="rounded-2xl border border-dashed border-line px-6 py-16 text-center">
         <p className="text-lg font-bold">Ainda não há páginas geradas.</p>
         <p className="mx-auto mt-2 max-w-md text-[13px] text-ink2">
-          Abre a ficha de um comércio e gera-lhe a página de demonstração. É o que se manda no
+          Abre a ficha de um lead e gera-lhe a página de demonstração. É o que se manda no
           primeiro contacto.
         </p>
       </div>
@@ -54,7 +54,7 @@ export default async function PaginasPage() {
               href={`/painel/comercio/${s.business_id}`}
               className="min-w-0 flex-1 text-[13px] font-semibold hover:underline"
             >
-              {negocio?.name ?? 'Comércio apagado'}
+              {negocio?.name ?? 'Lead apagado'}
               {negocio?.locality && <span className="ml-2 text-ink3">{negocio.locality}</span>}
             </Link>
 

@@ -269,7 +269,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
    */
   const tituloResultados = batch
     ? `${batch.categoryLabel} sem site em ${batch.label}`
-    : 'Comércios encontrados';
+    : 'Leads encontrados';
 
   // A moldura (menu lateral, cabeçalho, largura máxima e margens) vive agora no
   // `layout.tsx` do painel. Esta página só põe o seu conteúdo lá dentro.
@@ -284,7 +284,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           type="search"
           name="q"
           placeholder="Procurar por nome, telefone ou CLI-0001"
-          aria-label="Procurar um comércio"
+          aria-label="Procurar um lead"
           className="h-11 min-w-0 flex-1 rounded-xl border border-line bg-surf px-4 text-base outline-none focus:border-brand-500"
         />
         <button type="submit" className="h-11 shrink-0 rounded-xl border border-line px-4 text-sm font-medium">
@@ -303,7 +303,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           <h2 className="text-xl font-bold tracking-tight">{tituloResultados}</h2>
           {total > 0 && (
             <span className="font-mono text-[11px] text-ink3">
-              {total} {total === 1 ? 'comércio' : 'comércios'} ·{' '}
+              {total} {total === 1 ? 'lead' : 'leads'} ·{' '}
               {(SORTS.find((s) => s.value === ordem)?.label ?? '').toLowerCase()}
             </span>
           )}
@@ -324,7 +324,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
 
         {/*
           Em cima ficam só os dois filtros que NÃO são colunas da tabela: de que
-          procura veio, e por que ordem se mostra. Os outros três — comércio,
+          procura veio, e por que ordem se mostra. Os outros três — lead,
           estado e site — mudaram-se para o funil do respetivo cabeçalho, que é
           onde uma pessoa que usa Excel os vai procurar.
         */}
@@ -398,10 +398,10 @@ export default async function PainelPage({ searchParams }: PainelProps) {
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-line px-5 py-8 text-center text-sm text-ink2 opacity-100 dark:border-line">
             {ramos.length > 0 || estados.length > 0 || sites.length > 0
-              ? 'Nenhum comércio com estes filtros. Limpa um dos funis no cabeçalho da tabela.'
+              ? 'Nenhum lead com estes filtros. Limpa um dos funis no cabeçalho da tabela.'
               : batch
-                ? `A procura ${batch.label} · ${batch.categoryLabel} não deu nenhum comércio.`
-                : 'Ainda não há comércios. Faz uma simulação primeiro para ver o custo, e depois procura a sério.'}
+                ? `A procura ${batch.label} · ${batch.categoryLabel} não deu nenhum lead.`
+                : 'Ainda não há leads. Faz uma simulação primeiro para ver o custo, e depois procura a sério.'}
           </p>
         ) : (
           <>
@@ -418,8 +418,8 @@ export default async function PainelPage({ searchParams }: PainelProps) {
               <thead className="bg-black/[0.03] text-left text-xs uppercase tracking-wide text-black/55 dark:bg-white/[0.04] dark:text-white/55">
                 <tr>
                   <SortHeader label="Score" sort="score" current={ordem} here={here} />
-                  <SortHeader label="Comércio" sort="nome" current={ordem} here={here}>
-                    {/* Filtra por RAMO e não por nome: com quinhentos comércios,
+                  <SortHeader label="Lead" sort="nome" current={ordem} here={here}>
+                    {/* Filtra por RAMO e não por nome: com quinhentos leads,
                         uma lista de nomes é para ler, não para escolher. O ramo
                         de cada um está à vista na própria célula. */}
                     <ColumnFilter

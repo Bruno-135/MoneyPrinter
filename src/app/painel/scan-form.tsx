@@ -227,13 +227,13 @@ export function ScanForm() {
                 onChange={(e) => setCelula(e.target.value)}
                 className={field}
               >
-                <option value="2000">2000 — mais barato, pode falhar comércios</option>
+                <option value="2000">2000 — mais barato, pode falhar leads</option>
                 <option value="1500">1500 — equilibrado</option>
                 <option value="1000">1000 — mais caro, apanha mais</option>
                 <option value="700">700 — para zonas muito densas</option>
               </select>
               <span className="text-xs text-ink3 opacity-100">
-                Um raio menor faz mais buscas — mais chamadas, mais custo, mas apanha comércios que
+                Um raio menor faz mais buscas — mais chamadas, mais custo, mas apanha leads que
                 um raio grande deixa de fora quando a zona é densa.
               </span>
             </label>

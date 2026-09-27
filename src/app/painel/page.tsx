@@ -153,7 +153,7 @@ export default async function PainelPage() {
           <span>
             <span className="block text-lg font-bold">Contactar agora</span>
             <span className="block text-[13px] text-ink2">
-              {porContactar} {porContactar === 1 ? 'comércio' : 'comércios'} à espera, um de cada
+              {porContactar} {porContactar === 1 ? 'lead' : 'leads'} à espera, um de cada
               vez, com o telefone e a mensagem à mão.
             </span>
           </span>

@@ -404,7 +404,7 @@ export async function usarFotoDoGoogle(formData: FormData): Promise<void> {
 
   const photo: SitePhoto = {
     url: uri,
-    alt: `${comercio?.name ?? loaded.content.hero.headline} — fotografia do comércio`,
+    alt: `${comercio?.name ?? loaded.content.hero.headline} — fotografia do lead`,
     credito: conhecida.credito,
     creditoUrl: conhecida.creditoUrl,
   };
