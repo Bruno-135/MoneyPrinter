@@ -46,8 +46,10 @@ function Cartao({ peca }: { peca: Peca }) {
         <div className="text-[14px] font-bold">{peca.nome}</div>
         <div className="text-ink3 text-[12px] leading-relaxed">{peca.para}</div>
 
-        {peca.medidas && (
-          <div className="text-ink3 pt-0.5 font-mono text-[11px]">{peca.medidas}</div>
+        {(peca.medidas || peca.peso) && (
+          <div className="text-ink3 pt-0.5 font-mono text-[11px]">
+            {[peca.medidas, peca.peso].filter(Boolean).join(' · ')}
+          </div>
         )}
 
         {porFazer ? (
@@ -57,15 +59,19 @@ function Cartao({ peca }: { peca: Peca }) {
           </div>
         ) : (
           <div className="mt-3 flex gap-2">
-            <a
-              href={peca.ficheiro}
-              target="_blank"
-              rel="noreferrer"
-              className="border-line bg-surf hover:border-marca flex h-9 flex-1 items-center justify-center rounded-lg border text-[12px] font-semibold"
-            >
-              Abrir
-            </a>
-            {peca.formato === 'png' && (
+            {/* O .pptx nao tem "Abrir": nenhum browser o mostra, carregar ali
+                so o descarregava na mesma e com outro nome. */}
+            {peca.formato !== 'pptx' && (
+              <a
+                href={peca.ficheiro}
+                target="_blank"
+                rel="noreferrer"
+                className="border-line bg-surf hover:border-marca flex h-9 flex-1 items-center justify-center rounded-lg border text-[12px] font-semibold"
+              >
+                Abrir
+              </a>
+            )}
+            {peca.formato !== 'html' && (
               <a
                 href={peca.ficheiro}
                 download
@@ -110,8 +116,9 @@ export default function MarcaPage() {
       ))}
 
       <p className="text-ink3 border-line border-t pt-4 text-[12px] leading-relaxed">
-        Os dois documentos abrem no browser e imprimem-se para PDF com Ctrl+P — cada folha sai numa
-        página A4. Não precisam de internet depois de abertos.
+        A proposta e o manual abrem no browser e imprimem-se para PDF com Ctrl+P — cada folha sai
+        numa página A4, e não precisam de internet depois de abertos. A apresentação descarrega-se e
+        abre no PowerPoint, no Keynote ou no Google Slides.
       </p>
     </div>
   );

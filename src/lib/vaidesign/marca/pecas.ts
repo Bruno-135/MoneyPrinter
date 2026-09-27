@@ -12,7 +12,7 @@
  * procurar; uma que o mostra diz o que há para fazer a seguir.
  */
 
-export type Formato = 'png' | 'html';
+export type Formato = 'png' | 'html' | 'pptx';
 
 export interface Peca {
   id: string;
@@ -24,6 +24,8 @@ export interface Peca {
   formato?: Formato;
   /** Medidas, quando são o que interessa saber antes de descarregar. */
   medidas?: string;
+  /** O peso, para as peças que não se abrem num instante num telemóvel. */
+  peso?: string;
   /** Quando ainda não existe: o que falta para existir. */
   porFazer?: string;
 }
@@ -104,7 +106,7 @@ export const FAMILIAS: Familia[] = [
   },
   {
     titulo: 'Documentos',
-    nota: 'Os modelos que se mandam a um cliente. Abrem no browser e imprimem-se para PDF.',
+    nota: 'O que se manda a um cliente. Os dois primeiros abrem no browser e imprimem-se para PDF; a apresentação descarrega-se.',
     pecas: [
       {
         id: 'proposta',
@@ -122,10 +124,19 @@ export const FAMILIAS: Familia[] = [
       },
       {
         id: 'apresentacao',
-        nome: 'Apresentação da agência',
-        para: 'As oito páginas para enviar a um possível cliente por WhatsApp ou email.',
+        nome: 'Apresentação da agência · PowerPoint',
+        para: 'Os dez ecrãs para enviar a um possível cliente: quem somos, o que fazemos, os modelos, os quatro passos e os contactos.',
+        ficheiro: MARCA + '/apresentacao.pptx',
+        formato: 'pptx',
+        medidas: '10 ecrãs · 16:9',
+        peso: '3,5 MB',
+      },
+      {
+        id: 'apresentacao-pdf',
+        nome: 'Apresentação da agência · PDF',
+        para: 'A mesma apresentação em PDF, que é o que abre bem num telemóvel — um .pptx pelo WhatsApp muita gente não consegue abrir.',
         porFazer:
-          'O pedido para o Claude Design está escrito em desenhos/vaidesign/apresentacao-pedido.md. Falta colá-lo lá e trazer o resultado.',
+          'Abrir o .pptx aqui em cima no Google Slides ou no PowerPoint e exportar para PDF. É um clique, e tem de ser aí: as letras da marca vêm dentro do ficheiro num formato que este servidor não sabe abrir, por isso um PDF feito daqui sairia com outra letra e com os títulos a passar para fora do ecrã.',
       },
     ],
   },
