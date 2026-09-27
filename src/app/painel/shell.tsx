@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { LogotipoDoPainel, SuporteDoPainel } from '@/components/painel/marca';
 import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -53,19 +54,18 @@ export function Shell({ children, sair }: { children: React.ReactNode; sair: Rea
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 shrink-0 overflow-y-auto border-r border-line bg-surf transition-transform lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col overflow-y-auto border-r border-line bg-surf transition-transform lg:static lg:translate-x-0 ${
           aberto ? 'translate-x-0' : '-translate-x-full lg:-translate-x-0'
         }`}
       >
-        <div className="flex items-center gap-2.5 px-4 pt-4 pb-3">
-          <div className="h-6.5 w-6.5 rounded-lg bg-linear-to-br from-acc to-acc2" />
-          <div>
-            <div className="text-sm font-bold tracking-wide">PRESENÇA</div>
-            <div className="font-mono text-[10px] tracking-[0.12em] text-ink3 uppercase">
-              agência · pt/br
-            </div>
-          </div>
-        </div>
+        {/* A marca, e não um quadrado de cor. O logótipo é o mesmo do site,
+            feito de letra e de um ponto — ver `components/painel/marca.tsx`. */}
+        <Link href="/painel" className="flex flex-col gap-1 px-4 pt-4 pb-3">
+          <LogotipoDoPainel />
+          <span className="text-ink3 font-mono text-[10px] tracking-[0.12em] uppercase">
+            agência · pt/br
+          </span>
+        </Link>
 
         <nav className="flex flex-col gap-0.5 px-2 pb-5">
           {MENU.map((seccao) => (
@@ -102,6 +102,8 @@ export function Shell({ children, sair }: { children: React.ReactNode; sair: Rea
             </div>
           ))}
         </nav>
+
+        <SuporteDoPainel />
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col">

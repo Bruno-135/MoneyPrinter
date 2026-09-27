@@ -20,6 +20,7 @@
   --color-ink: var(--ink);
   --color-ink2: var(--ink2);
   --color-ink3: var(--ink3);
+  --color-marca: var(--marca);
   --color-acc: var(--acc);
   --color-acc2: var(--acc2);
   --color-hot: var(--hot);
@@ -44,9 +45,14 @@
   --ink: oklch(0.97 0.005 255);
   --ink2: oklch(0.82 0.012 255);
   --ink3: oklch(0.66 0.015 255);
-  --acc: oklch(0.80 0.14 195);
-  --acc2: oklch(0.80 0.14 300);
-  --hot: oklch(0.75 0.17 35);
+  /* O laranja da marca, o mesmo do site: #EC5B13. É o acento do painel, e é
+     por isto que as trinta páginas passam a ser da agência com uma linha. */
+  --marca: oklch(0.645 0.185 41);
+  --acc: var(--marca);
+  --acc2: oklch(0.72 0.14 60);
+  /* Afastado para vermelho. Com o acento em laranja, o «quente» de antes era
+     quase a mesma cor, e duas cores quase iguais não distinguem nada. */
+  --hot: oklch(0.68 0.19 20);
   --warm: oklch(0.82 0.15 80);
   --cool: oklch(0.78 0.12 200);
   --ok: oklch(0.80 0.14 152);
@@ -71,9 +77,13 @@
     --ink: oklch(0.23 0.02 255);
     --ink2: oklch(0.42 0.02 255);
     --ink3: oklch(0.52 0.02 255);
-    --acc: oklch(0.52 0.14 225);
-    --acc2: oklch(0.50 0.17 300);
-    --hot: oklch(0.52 0.19 30);
+    /* O laranja de bloco continua a ser o da marca; o de TEXTO escurece para
+       o #BA4100 do site, que é o que o desenho já usa nos links sobre creme.
+       O mesmo laranja vivo, em letra pequena sobre branco, não se lê. */
+    --marca: oklch(0.52 0.17 42);
+    --acc: var(--marca);
+    --acc2: oklch(0.50 0.15 60);
+    --hot: oklch(0.50 0.19 22);
     --warm: oklch(0.52 0.14 65);
     --cool: oklch(0.50 0.12 215);
     --ok: oklch(0.50 0.14 152);
