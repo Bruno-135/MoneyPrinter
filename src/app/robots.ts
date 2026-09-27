@@ -3,8 +3,10 @@ import type { MetadataRoute } from 'next';
 /**
  * O que os motores de busca podem ler.
  *
- * O painel, a entrada e a página da assinatura ficam de fora: são trabalho
- * interno e não têm nada que apareça numa pesquisa. As páginas dos clientes em `/s/<código>` ficam de
+ * O painel, a entrada, a página da assinatura e os ficheiros da marca ficam
+ * de fora: são trabalho interno e não têm nada que apareça numa pesquisa. O
+ * cartão de visita tem o telefone escrito — está lá para ser dado a quem se
+ * quer, não para ser encontrado numa pesquisa. As páginas dos clientes em `/s/<código>` ficam de
  * dentro de propósito — cada uma é o site de um comércio real, e ser
  * encontrada no Google é metade do que o cliente está a comprar.
  *
@@ -18,7 +20,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/painel', '/entrar', '/api', '/assinatura'],
+      disallow: ['/painel', '/entrar', '/api', '/assinatura', '/vaidesign/marca'],
     },
   };
 }

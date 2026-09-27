@@ -31,6 +31,10 @@ export const MENU: readonly SeccaoDeMenu[] = [
       { href: '/painel/varrimento', label: 'Varrimento e custos' },
       { href: '/painel/paginas', label: 'Landing pages' },
       { href: '/painel/modelos', label: 'Modelos de site' },
+      // A sala da marca fica em «Vender» e não numa secção própria: o que lá
+      // está — o cartão, a apresentação, a proposta — é o que se manda a um
+      // cliente, e procura-se no momento de o mandar.
+      { href: '/painel/marca', label: 'Marca e materiais' },
     ],
   },
   {
@@ -65,6 +69,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/pedidos': ['Pedidos do site', 'quem nos procurou'],
   '/painel/contactar': ['Fila de contacto', 'um de cada vez, atrasados primeiro'],
   '/painel/comercios': ['Leads em base', 'tudo o que já se encontrou'],
+  '/painel/marca': ['Marca e materiais', 'o que se manda a um cliente'],
   '/painel/funil': ['Funil de vendas', '8 etapas'],
   '/painel/varrimento': ['Varrimento e custos', 'Google Places · dinheiro real'],
   '/painel/paginas': ['Landing pages', 'geradas, no ar e vendidas'],
