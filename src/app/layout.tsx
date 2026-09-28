@@ -27,7 +27,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             A regra é do pages router: no app router um <link> no layout raiz
             vale para todas as páginas, que é exactamente o que se quer. */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Barlow+Condensed:wght@800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Barlow+Condensed:wght@700;800&family=Hanken+Grotesk:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
         {/* Corre antes do primeiro desenho. Sem isto, quem escolheu claro via

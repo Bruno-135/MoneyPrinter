@@ -26,16 +26,12 @@ export default async function FunilPage() {
   const contagens = await listFacet(supabase, 'stage', {});
   const funil = montarFunil(new Map(contagens.map((c) => [c.value, c.count])));
 
+  // As margens negativas anulam o espaçamento do painel. O desenho é uma
+  // folha inteira, com a sua própria margem de 80px lá dentro; deixá-la a
+  // flutuar no meio de outra margem dava duas molduras à volta da mesma coisa.
   return (
-    <>
+    <div className="-m-3.5 sm:-m-7">
       <DesenhoDoFunil funil={funil} />
-
-      <p className="text-ink2 text-[13px]">
-        A largura de cada etapa é o número de leads que lá estão, e não uma forma fixa: quando o
-        funil entope a meio, vê-se na forma antes de se ler nos números. Sem linha em{' '}
-        <code className="font-mono">deals</code>, um lead conta como &ldquo;por contactar&rdquo; — a
-        linha só nasce quando se mexe nele pela primeira vez.
-      </p>
-    </>
+    </div>
   );
 }
