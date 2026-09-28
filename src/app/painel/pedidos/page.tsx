@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { haQuantoTempo } from '@/components/quando';
 import { pedidos } from '@/lib/vaidesign/pedidos/repository';
 import { ehEmail } from '@/lib/vaidesign/pedidos/campos';
-import { anotarPedido, marcarPedido } from './actions';
+import { anotarPedido, excluirPedido, marcarPedido } from './actions';
 
 /**
  * Os pedidos chegados pelo formulário do site.
@@ -28,7 +28,7 @@ const CORES: Record<string, string> = {
 
 const SEGUINTES: Record<string, { estado: string; label: string }[]> = {
   novo: [
-    { estado: 'respondido', label: 'Já respondi' },
+    { estado: 'respondido', label: 'Respondido' },
     { estado: 'perdido', label: 'Não dá' },
   ],
   respondido: [
@@ -52,8 +52,8 @@ export default async function PedidosPage() {
         <p className="text-lg font-bold">Ainda ninguém escreveu pelo site.</p>
         <p className="mx-auto mt-2 max-w-md text-[13px] text-ink2">
           Quando alguém preencher o formulário em{' '}
-          <span className="font-mono">vaidesign.net/contacto</span>, o pedido aparece aqui — e
-          chega um email a avisar.
+          <span className="font-mono">vaidesign.net/contacto</span>, o pedido aparece aqui — e chega
+          um email a avisar.
         </p>
       </div>
     );
@@ -75,9 +75,7 @@ export default async function PedidosPage() {
       <ul className="flex flex-col gap-3">
         {lista.map((p) => {
           const email = ehEmail(p.contacto);
-          const href = email
-            ? `mailto:${p.contacto}`
-            : `tel:${p.contacto.replace(/[^\d+]/g, '')}`;
+          const href = email ? `mailto:${p.contacto}` : `tel:${p.contacto.replace(/[^\d+]/g, '')}`;
           const zap = p.contacto.replace(/\D/g, '');
 
           return (
@@ -89,9 +87,7 @@ export default async function PedidosPage() {
                 >
                   {p.estado}
                 </span>
-                <span className="font-mono text-[11px] text-ink3">
-                  {haQuantoTempo(p.criadoEm)}
-                </span>
+                <span className="font-mono text-[11px] text-ink3">{haQuantoTempo(p.criadoEm)}</span>
                 {p.aviso && p.aviso !== 'enviado' && (
                   // Só aparece quando correu mal. Um pedido cujo aviso saiu não
                   // precisa de o dizer; um cujo aviso NÃO saiu precisa muito,
@@ -161,19 +157,50 @@ export default async function PedidosPage() {
                 </button>
               </form>
 
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="mt-2 flex flex-wrap items-center gap-2">
                 {(SEGUINTES[p.estado] ?? []).map((s) => (
                   <form action={marcarPedido} key={s.estado}>
                     <input type="hidden" name="id" value={p.id} />
                     <input type="hidden" name="estado" value={s.estado} />
                     <button
                       type="submit"
-                      className="h-9 rounded-lg border border-line px-3 text-[12px] font-semibold"
+                      className="border-line h-9 rounded-lg border px-3 text-[12px] font-semibold"
                     >
                       {s.label}
                     </button>
                   </form>
                 ))}
+
+                {/* Excluir em dois passos, e com um <details> e não com um
+                    `confirm()` do browser: assim funciona sem JavaScript e,
+                    mais importante, a frase que avisa que não há volta fica
+                    ESCRITA no ecrã em vez de aparecer numa caixa cinzenta que
+                    toda a gente despacha sem ler. */}
+                <details className="group ml-auto flex flex-wrap items-center justify-end gap-2">
+                  {/* O rótulo troca em vez de desaparecer. Escondido, ficava
+                      aberto para sempre: fechar um <details> é carregar no
+                      <summary>, e sem ele não havia maneira de desistir. */}
+                  <summary className="text-ink3 hover:text-bad flex h-9 cursor-pointer list-none items-center rounded-lg px-3 text-[12px] font-semibold">
+                    <span className="group-open:hidden">Excluir</span>
+                    <span className="hidden group-open:inline">Cancelar</span>
+                  </summary>
+                  <form
+                    action={excluirPedido}
+                    className="flex flex-wrap items-center justify-end gap-2"
+                  >
+                    <input type="hidden" name="id" value={p.id} />
+                    <span className="text-[12px] font-semibold" style={{ color: 'var(--bad)' }}>
+                      Apagar de vez? Não há como voltar atrás.
+                    </span>
+                    <button
+                      type="submit"
+                      className="h-9 rounded-lg px-3 text-[12px] font-semibold text-white"
+                      style={{ background: 'var(--bad)' }}
+                    >
+                      Sim, excluir
+                    </button>
+                  </form>
+                </details>
               </div>
             </li>
           );

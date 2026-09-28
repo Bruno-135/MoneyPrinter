@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import {
+  apagarPedido,
   guardarNotas,
   mudarEstado,
   type EstadoDoPedido,
@@ -31,5 +32,20 @@ export async function anotarPedido(dados: FormData): Promise<void> {
 
   const db = await createClient();
   await guardarNotas(db, id, notas);
+  revalidatePath('/painel/pedidos');
+}
+
+/**
+ * Apaga um pedido.
+ *
+ * Não tem confirmação nenhuma aqui dentro — a confirmação é o ecrã, e é lá
+ * que tem de estar: uma ação de servidor não pode perguntar nada a ninguém.
+ */
+export async function excluirPedido(dados: FormData): Promise<void> {
+  const id = String(dados.get('id') ?? '');
+  if (!id) throw new Error('falta o id do pedido a apagar');
+
+  const db = await createClient();
+  await apagarPedido(db, id);
   revalidatePath('/painel/pedidos');
 }

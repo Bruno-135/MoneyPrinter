@@ -120,6 +120,22 @@ export async function mudarEstado(
   if (error) throw new Error(`Não foi possível mudar o estado: ${error.message}`);
 }
 
+/**
+ * Apaga um pedido, de vez.
+ *
+ * Sem rede de segurança: não há lixeira nem coluna de «apagado». Quem carrega
+ * no botão já passou por uma confirmação que o diz por escrito, e guardar
+ * para sempre o que se pediu para apagar é pior do que apagar.
+ *
+ * Quem pode apagar é só o dono, e isso não se decide aqui: a política da
+ * tabela é `owner_id = auth.uid()` para tudo, por isso um pedido de outra
+ * pessoa não é encontrado e não desaparece nada.
+ */
+export async function apagarPedido(db: Db, id: string): Promise<void> {
+  const { error } = await db.from('pedidos').delete().eq('id', id);
+  if (error) throw new Error(`Não foi possível apagar o pedido: ${error.message}`);
+}
+
 export async function guardarNotas(db: Db, id: string, notas: string): Promise<void> {
   const { error } = await db
     .from('pedidos')

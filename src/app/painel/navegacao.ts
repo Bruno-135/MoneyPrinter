@@ -24,7 +24,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
     grupo: 'Vender',
     itens: [
       { href: '/painel', label: 'Painel' },
-      { href: '/painel/pedidos', label: 'Pedidos do site' },
+      { href: '/painel/pedidos', label: 'E-mails recebidos' },
       { href: '/painel/contactar', label: 'Fila de contacto' },
       { href: '/painel/comercios', label: 'Leads' },
       { href: '/painel/funil', label: 'Funil' },
@@ -67,7 +67,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
 /** Título e subtítulo do cabeçalho, por caminho. */
 const TITULOS: Record<string, [string, string]> = {
   '/painel': ['Painel de hoje', 'a quem ligar agora'],
-  '/painel/pedidos': ['Pedidos do site', 'quem nos procurou'],
+  '/painel/pedidos': ['E-mails recebidos', 'quem nos escreveu pelo site'],
   '/painel/contactar': ['Fila de contacto', 'um de cada vez, atrasados primeiro'],
   '/painel/comercios': ['Leads em base', 'tudo o que já se encontrou'],
   '/painel/marca': ['Marca e materiais', 'o que se manda a um cliente'],
