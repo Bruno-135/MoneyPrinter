@@ -58,6 +58,20 @@
   --ok: oklch(0.80 0.14 152);
   --bad: oklch(0.70 0.18 22);
 
+  /* A rampa do funil: do frio, no topo, ao laranja da marca, no bico. Uma cor
+     só, a ganhar força — «isto está a aquecer» — em vez de cinco cores
+     diferentes, que não diziam nada por nenhuma ordem. Verde e vermelho ficam
+     de fora de propósito: são o ganho e o perdido, e não uma etapa do meio.
+     A CLAREZA NÃO MUDA ao longo da rampa, só a cor: assim a mesma tinta
+     escura se lê por cima das cinco, e o número dentro da banda não precisa
+     de mudar de cor a meio do desenho. */
+  --funil-1: oklch(0.72 0.035 46);
+  --funil-2: oklch(0.72 0.075 45);
+  --funil-3: oklch(0.72 0.115 43);
+  --funil-4: oklch(0.72 0.155 42);
+  --funil-5: oklch(0.72 0.185 41);
+  --funil-tinta: oklch(0.2 0.025 45);
+
   --background: var(--bg);
   --foreground: var(--ink);
   color-scheme: dark;
@@ -88,6 +102,13 @@
     --cool: oklch(0.50 0.12 215);
     --ok: oklch(0.50 0.14 152);
     --bad: oklch(0.52 0.19 25);
+
+    --funil-1: oklch(0.7 0.035 46);
+    --funil-2: oklch(0.7 0.075 45);
+    --funil-3: oklch(0.7 0.115 43);
+    --funil-4: oklch(0.7 0.15 42);
+    --funil-5: oklch(0.7 0.175 41);
+    --funil-tinta: oklch(0.2 0.025 45);
     color-scheme: light;
   }
 }
@@ -100,13 +121,23 @@
   --ink: oklch(0.23 0.02 255);
   --ink2: oklch(0.42 0.02 255);
   --ink3: oklch(0.52 0.02 255);
-  --acc: oklch(0.52 0.14 225);
-  --acc2: oklch(0.50 0.17 300);
-  --hot: oklch(0.52 0.19 30);
+  /* Estas três ficaram azuis e roxas quando o painel passou a ser da agência:
+     o tema claro escolhido À MÃO não passa pelo @media acima, e ninguém deu
+     por isso porque quase toda a gente anda no tema do sistema. */
+  --marca: oklch(0.52 0.17 42);
+  --acc: var(--marca);
+  --acc2: oklch(0.50 0.15 60);
+  --hot: oklch(0.50 0.19 22);
   --warm: oklch(0.52 0.14 65);
   --cool: oklch(0.50 0.12 215);
   --ok: oklch(0.50 0.14 152);
   --bad: oklch(0.52 0.19 25);
+  --funil-1: oklch(0.7 0.035 46);
+  --funil-2: oklch(0.7 0.075 45);
+  --funil-3: oklch(0.7 0.115 43);
+  --funil-4: oklch(0.7 0.15 42);
+  --funil-5: oklch(0.7 0.175 41);
+  --funil-tinta: oklch(0.2 0.025 45);
   color-scheme: light;
 }
 

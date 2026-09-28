@@ -1,9 +1,8 @@
-import Link from 'next/link';
-import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { listFacet } from '@/lib/scoring/rank';
-import { STAGES } from '@/lib/deals/stages';
+import { montarFunil } from '@/lib/deals/funil';
+import { DesenhoDoFunil } from './desenho';
 
 /**
  * O funil, etapa a etapa.
@@ -11,6 +10,10 @@ import { STAGES } from '@/lib/deals/stages';
  * As contagens vêm da função `facet_counts` e não de contar linhas aqui: o
  * PostgREST corta as respostas às mil por omissão, e acima disso contar na
  * aplicação dava números errados sem dar erro nenhum.
+ *
+ * Esta página só vai buscar os números. As contas do desenho estão em
+ * `lib/deals/funil.ts` e o desenho em `desenho.tsx`, que corre no browser
+ * porque tem de saber onde está o rato.
  */
 
 export const dynamic = 'force-dynamic';
@@ -21,41 +24,17 @@ export default async function FunilPage() {
   if (!auth.user) redirect('/entrar');
 
   const contagens = await listFacet(supabase, 'stage', {});
-  const porEtapa = new Map(contagens.map((c) => [c.value, c.count]));
-  const total = contagens.reduce((s, c) => s + c.count, 0);
+  const funil = montarFunil(new Map(contagens.map((c) => [c.value, c.count])));
 
   return (
     <>
-      <div className="grid gap-2.5 [grid-template-columns:repeat(auto-fit,minmax(170px,1fr))]">
-        {STAGES.map(({ value: etapa, label, hint }) => {
-          const quantos = porEtapa.get(etapa) ?? 0;
-          const parte = total > 0 ? Math.round((quantos / total) * 100) : 0;
+      <DesenhoDoFunil funil={funil} />
 
-          return (
-            <Link
-              key={etapa}
-              href={`/painel/comercios?estado=${etapa}` as Route}
-              className="flex flex-col gap-1.5 rounded-2xl border border-line bg-surf p-3 transition-colors hover:border-acc/50"
-            >
-              <span className="font-mono text-[11px] tracking-[0.08em] text-ink3 uppercase">
-                {label}
-              </span>
-              <span className="font-mono text-2xl font-bold tabular-nums">{quantos}</span>
-              <div className="h-1.5 overflow-hidden rounded-md bg-surf2">
-                <div
-                  className={`h-full ${etapa === 'won' ? 'bg-ok' : etapa === 'lost' ? 'bg-bad' : 'bg-acc'}`}
-                  style={{ width: `${parte}%` }}
-                />
-              </div>
-              <span className="text-[11px] text-ink3">{hint}</span>
-            </Link>
-          );
-        })}
-      </div>
-
-      <p className="text-[13px] text-ink2">
-        Carrega numa etapa para ver os leads que estão nela. Sem linha em `deals`, um lead
-        conta como &ldquo;novo&rdquo;: a linha só nasce quando se mexe nele pela primeira vez.
+      <p className="text-ink2 text-[13px]">
+        A largura de cada etapa é o número de leads que lá estão, e não uma forma fixa: quando o
+        funil entope a meio, vê-se na forma antes de se ler nos números. Sem linha em{' '}
+        <code className="font-mono">deals</code>, um lead conta como &ldquo;por contactar&rdquo; — a
+        linha só nasce quando se mexe nele pela primeira vez.
       </p>
     </>
   );
