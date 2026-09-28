@@ -51,7 +51,7 @@ export function Abriram({ quem }: { quem: readonly AbriuAPagina[] }) {
           href="/painel/contactar"
           className="flex h-11 items-center justify-center rounded-xl border border-line bg-surf2 px-4 text-sm font-semibold"
         >
-          Fila de contacto
+          Leads a contactar
         </Link>
       </div>
 

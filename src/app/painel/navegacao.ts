@@ -25,7 +25,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
     itens: [
       { href: '/painel', label: 'Painel' },
       { href: '/painel/pedidos', label: 'E-mails recebidos' },
-      { href: '/painel/contactar', label: 'Fila de contacto' },
+      { href: '/painel/contactar', label: 'Leads a contactar' },
       { href: '/painel/comercios', label: 'Leads' },
       { href: '/painel/funil', label: 'Funil' },
       { href: '/painel/varrimento', label: 'Prospetar leads' },
@@ -68,7 +68,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
 const TITULOS: Record<string, [string, string]> = {
   '/painel': ['Painel de hoje', 'a quem ligar agora'],
   '/painel/pedidos': ['E-mails recebidos', 'quem nos escreveu pelo site'],
-  '/painel/contactar': ['Fila de contacto', 'um de cada vez, atrasados primeiro'],
+  '/painel/contactar': ['Leads a contactar', 'um de cada vez, atrasados primeiro'],
   '/painel/comercios': ['Leads em base', 'tudo o que já se encontrou'],
   '/painel/marca': ['Marca e materiais', 'o que se manda a um cliente'],
   '/painel/funil': ['Funil de vendas', '8 etapas'],
