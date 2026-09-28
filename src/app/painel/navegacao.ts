@@ -28,7 +28,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
       { href: '/painel/contactar', label: 'Fila de contacto' },
       { href: '/painel/comercios', label: 'Leads' },
       { href: '/painel/funil', label: 'Funil' },
-      { href: '/painel/varrimento', label: 'Varrimento e custos' },
+      { href: '/painel/varrimento', label: 'Prospetar leads' },
       { href: '/painel/paginas', label: 'Landing pages' },
       { href: '/painel/modelos', label: 'Modelos de site' },
       // A sala da marca fica em «Vender» e não numa secção própria: o que lá
@@ -71,7 +71,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/comercios': ['Leads em base', 'tudo o que já se encontrou'],
   '/painel/marca': ['Marca e materiais', 'o que se manda a um cliente'],
   '/painel/funil': ['Funil de vendas', '8 etapas'],
-  '/painel/varrimento': ['Varrimento e custos', 'Google Places · dinheiro real'],
+  '/painel/varrimento': ['Prospetar leads', 'Google Places · dinheiro real'],
   '/painel/paginas': ['Landing pages', 'geradas, no ar e vendidas'],
   '/painel/modelos': ['Modelos de site', 'o que se mostra antes de dizer o preço'],
   '/painel/robo': ['Conversas do robô', 'Instagram → WhatsApp'],
