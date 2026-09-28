@@ -29,12 +29,8 @@ export const MENU: readonly SeccaoDeMenu[] = [
       { href: '/painel/comercios', label: 'Leads' },
       { href: '/painel/funil', label: 'Funil' },
       { href: '/painel/varrimento', label: 'Prospetar leads' },
-      { href: '/painel/paginas', label: 'Landing pages' },
+      { href: '/painel/paginas', label: 'Sites criados' },
       { href: '/painel/modelos', label: 'Modelos de site' },
-      // A sala da marca fica em «Vender» e não numa secção própria: o que lá
-      // está — o cartão, a apresentação, a proposta — é o que se manda a um
-      // cliente, e procura-se no momento de o mandar.
-      { href: '/painel/marca', label: 'Marca e materiais' },
     ],
   },
   {
@@ -56,6 +52,11 @@ export const MENU: readonly SeccaoDeMenu[] = [
   {
     grupo: 'Agência',
     itens: [
+      // A sala da marca é da agência e não de uma venda: o cartão, a
+      // apresentação e o manual são nossos, e não mudam de cliente para
+      // cliente. Esteve em «Vender» por se procurar no momento de mandar uma
+      // coisa a alguém; está aqui porque é aqui que se vai procurá-la.
+      { href: '/painel/marca', label: 'Marca e materiais' },
       { href: '/painel/relatorios', label: 'Relatórios' },
       { href: '/painel/equipa', label: 'Equipa e permissões', porLigar: true },
       { href: '/painel/perfil', label: 'Perfil e progresso' },
@@ -72,7 +73,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/marca': ['Marca e materiais', 'o que se manda a um cliente'],
   '/painel/funil': ['Funil de vendas', '8 etapas'],
   '/painel/varrimento': ['Prospetar leads', 'Google Places · dinheiro real'],
-  '/painel/paginas': ['Landing pages', 'geradas, no ar e vendidas'],
+  '/painel/paginas': ['Sites criados', 'gerados, no ar e vendidos'],
   '/painel/modelos': ['Modelos de site', 'o que se mostra antes de dizer o preço'],
   '/painel/robo': ['Conversas do robô', 'Instagram → WhatsApp'],
   '/painel/whatsapp': ['Instâncias WhatsApp', 'oficiais e não oficiais'],
