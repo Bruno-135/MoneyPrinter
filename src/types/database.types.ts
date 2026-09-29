@@ -1548,6 +1548,19 @@ export type Database = {
       };
     };
     Functions: {
+      criar_acesso: {
+        Args: {
+          p_nome: string;
+          p_email: string;
+          p_senha: string;
+          p_permissoes: string[];
+        };
+        Returns: string;
+      };
+      mudar_senha_do_membro: {
+        Args: { p_membro: string; p_senha: string };
+        Returns: undefined;
+      };
       quem_sou: {
         Args: Record<PropertyKey, never>;
         Returns: {

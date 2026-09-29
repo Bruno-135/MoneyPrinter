@@ -2,10 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin';
-import { getServerEnv } from '@/lib/env';
 import { exigirSerDono } from '@/lib/equipa/quem-sou';
-import { juntarMembro, mudarAtivo, mudarPermissoes, tirarMembro } from '@/lib/equipa/repository';
+import { mudarAtivo, mudarPermissoes, tirarMembro } from '@/lib/equipa/repository';
 import { limparPermissoes } from '@/lib/equipa/permissoes';
 import type { EstadoDoConvite } from './estado';
 
@@ -14,7 +12,9 @@ import type { EstadoDoConvite } from './estado';
  *
  * Não é repetição por distração: uma acção de servidor é um endereço público
  * como outro qualquer, e quem souber o nome dela pode chamá-la sem passar pelo
- * ecrã. Esconder o botão no ecrã da equipa não fecha porta nenhuma.
+ * ecrã. Esconder o botão no ecrã da equipa não fecha porta nenhuma. E a base
+ * volta a verificar o mesmo por sua conta — duas fechaduras na mesma porta,
+ * porque esta abre contas de acesso.
  */
 
 /** As permissões vêm do formulário como uma caixa por área. */
@@ -23,89 +23,87 @@ function lerPermissoes(dados: FormData): string[] {
 }
 
 /**
+ * As mensagens que a base devolve já estão escritas para se lerem.
+ *
+ * Um `raise exception` do Postgres chega cá dentro de uma cápsula com o código
+ * do erro à frente. Mostrar isso a quem está a preencher um formulário é
+ * mostrar-lhe as entranhas; mas deitar fora e escrever "algo correu mal" é
+ * esconder a única coisa útil. Passa-se a frase e deita-se fora o resto.
+ */
+function frase(erro: string): string {
+  const limpa = erro.replace(/^.*?(?:ERROR|erro):\s*/i, '').trim();
+  return limpa.charAt(0).toUpperCase() + limpa.slice(1);
+}
+
+/**
  * Cria a conta de entrada e junta a pessoa à equipa.
  *
- * Precisa da chave de serviço do Supabase: criar um utilizador com senha é uma
- * operação de administração, e a chave que o navegador usa não chega lá. Se
- * ela faltar, isto DIZ-O. Já houve neste projecto um email que nunca saiu
- * porque uma chave não estava lá e nada o dizia; não se repete.
+ * Passa por `criar_acesso` na base e NÃO pela API de administração do
+ * Supabase. A diferença é uma chave: a API de administração precisa da
+ * SUPABASE_SERVICE_ROLE_KEY, que é a chave-mestra do projecto e teria de ficar
+ * a viver dentro da aplicação para se usar uma vez por mês. A função da base
+ * só sabe fazer isto, só o dono lhe chega, e não há chave nenhuma para
+ * guardar em lado nenhum.
  */
 export async function criarPessoa(
   _anterior: EstadoDoConvite,
   dados: FormData,
 ): Promise<EstadoDoConvite> {
-  const dono = await exigirSerDono();
+  await exigirSerDono();
 
   const nome = String(dados.get('nome') ?? '').trim();
   const email = String(dados.get('email') ?? '')
     .trim()
     .toLowerCase();
   const senha = String(dados.get('senha') ?? '');
-  const permissoes = lerPermissoes(dados);
 
+  // Os mesmos limites que a base impõe, verificados aqui para a pessoa saber
+  // logo o que falta em vez de esperar por uma ida ao servidor.
   if (!nome) return { fase: 'erro', mensagem: 'Falta o nome da pessoa.' };
   if (!email.includes('@')) return { fase: 'erro', mensagem: 'O email não parece um email.' };
   if (senha.length < 8) {
     return { fase: 'erro', mensagem: 'A senha tem de ter pelo menos 8 caracteres.' };
   }
 
-  if (!getServerEnv().SUPABASE_SERVICE_ROLE_KEY) {
-    return {
-      fase: 'erro',
-      mensagem:
-        'Falta a SUPABASE_SERVICE_ROLE_KEY nas variáveis do Vercel. Sem ela não é possível ' +
-        'criar contas a partir daqui — é a chave de administração do Supabase, e o painel ' +
-        'não a tem. Está em Supabase → Project Settings → API Keys → service_role.',
-    };
-  }
+  const db = await createClient();
+  const { error } = await db.rpc('criar_acesso', {
+    p_nome: nome,
+    p_email: email,
+    p_senha: senha,
+    p_permissoes: lerPermissoes(dados),
+  });
 
-  let userId: string;
-  try {
-    const admin = createAdminClient();
-    const { data, error } = await admin.auth.admin.createUser({
-      email,
-      password: senha,
-      // Sem confirmação por email: a senha foi dada em mão por quem convidou,
-      // e mandar um email de confirmação para uma caixa que talvez não exista
-      // deixava a conta criada mas sem poder entrar.
-      email_confirm: true,
-      user_metadata: { nome },
-    });
-    if (error || !data.user) {
-      const jaExiste = /already|registered|exists/i.test(error?.message ?? '');
-      return {
-        fase: 'erro',
-        mensagem: jaExiste
-          ? 'Já existe uma conta com esse email.'
-          : `Não foi possível criar a conta: ${error?.message ?? 'motivo desconhecido'}`,
-      };
-    }
-    userId = data.user.id;
-  } catch (erro) {
-    console.error('falhou a criação da conta de um membro', erro);
-    return { fase: 'erro', mensagem: 'Não foi possível criar a conta. Tenta outra vez.' };
-  }
-
-  try {
-    const db = await createClient();
-    await juntarMembro(db, { donoId: dono.userId, userId, nome, email, permissoes });
-  } catch (erro) {
-    // A conta ficou criada e a linha não. Apaga-se a conta para não ficar uma
-    // entrada órfã que dá para iniciar sessão e não leva a lado nenhum.
-    console.error('conta criada mas não ficou na equipa; a desfazer', erro);
-    try {
-      await createAdminClient().auth.admin.deleteUser(userId);
-    } catch (segundo) {
-      console.error('e também não foi possível apagar a conta', segundo);
-    }
-    return {
-      fase: 'erro',
-      mensagem: 'A conta foi criada mas não ficou na equipa. Tenta outra vez.',
-    };
+  if (error) {
+    console.error('não foi possível criar o acesso', error.message);
+    return { fase: 'erro', mensagem: frase(error.message) };
   }
 
   revalidatePath('/painel/equipa');
   return { fase: 'feito', mensagem: `${nome} já pode entrar com ${email}.` };
+}
+
+/** Troca a senha de alguém da equipa, para quando ela se perde. */
+export async function trocarSenha(
+  _anterior: EstadoDoConvite,
+  dados: FormData,
+): Promise<EstadoDoConvite> {
+  await exigirSerDono();
+
+  const id = String(dados.get('id') ?? '');
+  const senha = String(dados.get('senha') ?? '');
+  if (senha.length < 8) {
+    return { fase: 'erro', mensagem: 'A senha tem de ter pelo menos 8 caracteres.' };
+  }
+
+  const db = await createClient();
+  const { error } = await db.rpc('mudar_senha_do_membro', { p_membro: id, p_senha: senha });
+  if (error) {
+    console.error('não foi possível trocar a senha', error.message);
+    return { fase: 'erro', mensagem: frase(error.message) };
+  }
+
+  revalidatePath('/painel/equipa');
+  return { fase: 'feito', mensagem: 'Senha trocada. Passa-lhe a nova.' };
 }
 
 export async function guardarAcessos(dados: FormData): Promise<void> {

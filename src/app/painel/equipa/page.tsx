@@ -2,8 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { exigirSerDono } from '@/lib/equipa/quem-sou';
 import { membros } from '@/lib/equipa/repository';
 import { nomeDaArea, TODAS_AS_AREAS } from '@/lib/equipa/permissoes';
-import { getServerEnv } from '@/lib/env';
-import { CaixasDeAcesso, CriarPessoa } from './formulario';
+import { CaixasDeAcesso, CriarPessoa, TrocarSenha } from './formulario';
 import { guardarAcessos, suspenderPessoa, tirarPessoa } from './actions';
 
 /**
@@ -22,8 +21,6 @@ export default async function EquipaPage() {
   const db = await createClient();
   const equipa = await membros(db);
   const { data: auth } = await db.auth.getUser();
-
-  const temChave = Boolean(getServerEnv().SUPABASE_SERVICE_ROLE_KEY);
 
   return (
     <div className="flex flex-col gap-4">
@@ -44,25 +41,9 @@ export default async function EquipaPage() {
       <p className="text-ink2 text-[13px] leading-relaxed">
         Quem criares aqui entra no <strong>mesmo painel que tu</strong> — os mesmos leads, os mesmos
         sites, os mesmos clientes — e vê só as áreas que lhe marcares. As áreas que mexem em
-        dinheiro estão assinaladas.
+        dinheiro estão assinaladas. A conta é criada aqui mesmo — não é preciso ires ao Supabase nem
+        ao Vercel.
       </p>
-
-      {!temChave && (
-        <div
-          className="rounded-2xl border p-4 text-[13px] leading-relaxed"
-          style={{
-            borderColor: 'var(--warm)',
-            background: 'color-mix(in oklch, var(--warm) 10%, transparent)',
-          }}
-        >
-          <strong>Falta uma chave para poderes criar contas.</strong> Tudo o resto desta página já
-          funciona, mas o botão de criar vai recusar enquanto a{' '}
-          <span className="font-mono">SUPABASE_SERVICE_ROLE_KEY</span> não estiver nas variáveis do
-          Vercel. Vais buscá-la a Supabase → Project Settings → API Keys → <em>service_role</em>, e
-          colas em Vercel → Settings → Environment Variables, para Production e Preview. Não ma
-          mandes a mim.
-        </div>
-      )}
 
       <CriarPessoa />
 
@@ -117,6 +98,8 @@ export default async function EquipaPage() {
               </details>
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
+                <TrocarSenha membro={m.id} nome={m.nome} />
+
                 <form action={suspenderPessoa}>
                   <input type="hidden" name="id" value={m.id} />
                   <input type="hidden" name="ativo" value={m.ativo ? 'nao' : 'sim'} />

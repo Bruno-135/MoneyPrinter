@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react';
 import { AREAS } from '@/lib/equipa/permissoes';
-import { criarPessoa } from './actions';
+import { criarPessoa, trocarSenha } from './actions';
 import { CONVITE_PARADO } from './estado';
 
 /**
@@ -137,5 +137,51 @@ export function CaixasDeAcesso({ marcadas = [] }: { marcadas?: readonly string[]
         </fieldset>
       ))}
     </div>
+  );
+}
+
+/**
+ * Trocar a senha de alguém da equipa.
+ *
+ * Existe para a senha esquecida não obrigar a ir ao Supabase — que é
+ * exactamente o que esta página passou a evitar.
+ */
+export function TrocarSenha({ membro, nome }: { membro: string; nome: string }) {
+  const [estado, acao] = useActionState(trocarSenha, CONVITE_PARADO);
+
+  return (
+    <details className="group">
+      <summary className="border-line flex h-9 cursor-pointer list-none items-center rounded-lg border px-3 text-[12px] font-semibold">
+        <span className="group-open:hidden">Trocar senha</span>
+        <span className="hidden group-open:inline">Cancelar</span>
+      </summary>
+      <form action={acao} className="mt-2 flex flex-wrap items-center gap-2">
+        <input type="hidden" name="id" value={membro} />
+        <input
+          name="senha"
+          type="text"
+          minLength={8}
+          required
+          placeholder={`Nova senha de ${nome}`}
+          autoComplete="off"
+          className="border-line bg-surf2 h-9 min-w-[200px] rounded-lg border px-3 font-mono text-[12px]"
+        />
+        <button
+          type="submit"
+          className="border-line h-9 rounded-lg border px-3 text-[12px] font-semibold"
+        >
+          Guardar senha
+        </button>
+        {estado.mensagem && (
+          <span
+            role="alert"
+            className="text-[12px] font-semibold"
+            style={{ color: estado.fase === 'erro' ? 'var(--bad)' : 'var(--ok)' }}
+          >
+            {estado.mensagem}
+          </span>
+        )}
+      </form>
+    </details>
   );
 }
