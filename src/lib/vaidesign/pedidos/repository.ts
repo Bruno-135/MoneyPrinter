@@ -53,8 +53,11 @@ export async function registarPedido(db: Db, valores: PedidoLido): Promise<strin
     p_negocio: valores.negocio,
     p_contacto: valores.contacto,
     p_pedido: valores.pedido,
-    p_ramo: valores.ramo || null,
-    p_prazo: valores.prazo || null,
+    // `undefined` e nao `null`: estes dois argumentos tem valor por omissao
+    // na funcao SQL, e os tipos gerados dizem-no — passar `null` a letra
+    // deixou de compilar quando a base foi regerada.
+    p_ramo: valores.ramo || undefined,
+    p_prazo: valores.prazo || undefined,
   });
 
   if (error) throw new Error(`Não foi possível gravar o pedido: ${error.message}`);
@@ -77,7 +80,7 @@ export async function marcarAviso(
   const { error } = await db.rpc('marcar_aviso', {
     p_id: id,
     p_estado: estado,
-    p_detalhe: detalhe,
+    p_detalhe: detalhe ?? undefined,
   });
   if (error) console.error('não foi possível anotar o aviso do pedido', error.message);
 }

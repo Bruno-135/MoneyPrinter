@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { getSiteById, listMenuItems, formatPrice } from '@/lib/sites/repository';
 import { addItem, removeItem } from '../../../site-actions';
 
@@ -15,6 +16,7 @@ export default async function CardapioPage({ params }: { params: Promise<{ id: s
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('paginas');
 
   const site = await getSiteById(supabase, id);
   if (!site) notFound();

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { loadSite } from '@/lib/sites/load';
 import { getServerEnv } from '@/lib/env';
 import { arteUrl } from '@/lib/sites/imagens/arte';
@@ -46,6 +47,7 @@ export default async function ImagensPage({ params, searchParams }: Props) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('paginas');
 
   const loaded = await loadSite(supabase, id);
   if (!loaded) notFound();

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { ScanForm } from '../scan-form';
 
 /**
@@ -18,6 +19,7 @@ export default async function VarrimentoPage() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('varrimento');
 
   const [{ count: chamadas }, { count: faturadas }, { count: regioes }] = await Promise.all([
     supabase.from('region_searches').select('*', { count: 'exact', head: true }),

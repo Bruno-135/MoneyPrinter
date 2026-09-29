@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { cobrancaDoMes } from '@/lib/cobranca/repository';
 import { mover, nomeDoMes, totaisPorMoeda } from '@/lib/cobranca/meses';
 import { escreverValor } from '@/lib/deals/dinheiro';
@@ -30,6 +31,7 @@ export default async function CobrancaPage({
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('cobranca');
 
   const hoje = new Date();
   const params = await searchParams;

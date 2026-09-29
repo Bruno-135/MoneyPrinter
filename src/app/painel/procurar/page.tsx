@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { Route } from 'next';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { procurar, LIMITE } from '@/lib/busca/repository';
 import { findCategory } from '@/lib/places/categories';
 import { DIGITOS_MINIMOS } from '@/lib/busca/termo';
@@ -25,6 +26,7 @@ export default async function ProcurarPage({ searchParams }: Props) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('leads');
 
   const { q } = await searchParams;
   const termo = (q ?? '').trim();

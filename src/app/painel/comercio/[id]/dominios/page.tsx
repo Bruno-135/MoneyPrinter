@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { findCategory } from '@/lib/places/categories';
 import { candidatos, extensoes, registadorPara } from '@/lib/dominios/nomes';
 import { verificarVarios, type ResultadoDominio } from '@/lib/dominios/rdap';
@@ -62,6 +63,7 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('leads');
 
   const { data: comercio } = await supabase
     .from('businesses')

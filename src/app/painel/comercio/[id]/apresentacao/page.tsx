@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { listSites } from '@/lib/sites/repository';
 import { publicEnv } from '@/lib/env';
 import { findCategory } from '@/lib/places/categories';
@@ -33,6 +34,7 @@ export default async function ApresentacaoPage({ params }: { params: Promise<{ i
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('leads');
 
   const { data: business } = await supabase.from('businesses').select('*').eq('id', id).maybeSingle();
   if (!business) notFound();

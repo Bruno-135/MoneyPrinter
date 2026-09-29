@@ -5,7 +5,7 @@ import { LogotipoDoPainel, SuporteDoPainel } from '@/components/painel/marca';
 import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { MENU, estaAceso, tituloDoEcra } from './navegacao';
+import { estaAceso, tituloDoEcra, type SeccaoDeMenu } from './navegacao';
 
 /**
  * A moldura do painel: menu lateral retráctil e cabeçalho fixo.
@@ -14,7 +14,17 @@ import { MENU, estaAceso, tituloDoEcra } from './navegacao';
  * menu sempre aberto comia metade da largura útil. No computador abre-se com um
  * clique e fica aberto.
  */
-export function Shell({ children, sair }: { children: React.ReactNode; sair: React.ReactNode }) {
+export function Shell({
+  children,
+  sair,
+  menu,
+}: {
+  children: React.ReactNode;
+  sair: React.ReactNode;
+  /* Já filtrado por quem está a ver. O Shell corre no browser e não tem como
+     perguntar à base quem é — quem sabe isso é o layout, no servidor. */
+  menu: readonly SeccaoDeMenu[];
+}) {
   const caminho = usePathname();
   const [aberto, setAberto] = useState(false);
   const [titulo, subtitulo] = tituloDoEcra(caminho);
@@ -68,7 +78,7 @@ export function Shell({ children, sair }: { children: React.ReactNode; sair: Rea
         </Link>
 
         <nav className="flex flex-col gap-0.5 px-2 pb-5">
-          {MENU.map((seccao) => (
+          {menu.map((seccao) => (
             <div key={seccao.grupo}>
               <div className="px-2.5 pt-3 pb-1.5 font-mono text-[10px] tracking-[0.14em] text-ink3 uppercase">
                 {seccao.grupo}

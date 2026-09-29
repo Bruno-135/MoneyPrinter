@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { haQuantoTempo } from '@/components/quando';
 
 /**
@@ -17,6 +18,7 @@ export default async function PaginasPage() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('paginas');
 
   const { data: sites } = await supabase
     .from('generated_sites')

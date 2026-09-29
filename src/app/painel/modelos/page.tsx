@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { TEMPLATES } from '@/lib/sites/templates';
 import { PALETTES, FONTS } from '@/lib/sites/theme';
 import { STYLES } from '@/lib/sites/style';
@@ -26,6 +27,7 @@ export default async function ModelosPage() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('modelos');
 
   return (
     <>

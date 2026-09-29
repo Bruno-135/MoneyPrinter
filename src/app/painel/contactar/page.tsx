@@ -1,6 +1,7 @@
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { proximosContactos, quantosPorContactar } from '@/lib/deals/fila';
 import { CATEGORIES } from '@/lib/places/categories';
 import { ehCodigoPais } from '@/lib/places/paises';
@@ -25,6 +26,7 @@ export default async function ContactarPage({ searchParams }: Props) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('contactar');
 
   const params = await searchParams;
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { loadSite } from '@/lib/sites/load';
 import { FONTS, FONT_IDS, PALETTES, PALETTE_IDS } from '@/lib/sites/theme';
 import { saveSiteContent, detachPhoto } from '../../site-edit-actions';
@@ -36,6 +37,11 @@ export default async function EditarSitePage({ params }: Props) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  // O `donoId` e nao o `auth.user.id`: as fotografias vao para a pasta do
+  // DONO. Uma fotografia e do site, o site e do dono, e uma posta por um
+  // convidado tem de continuar la — e continuar a poder ser apagada — no dia
+  // em que esse convidado sair da equipa.
+  const quem = await exigirAcesso('paginas');
 
   const loaded = await loadSite(supabase, id);
   if (!loaded) notFound();
@@ -71,8 +77,8 @@ export default async function EditarSitePage({ params }: Props) {
         <div>
           <h2 className="text-lg font-semibold tracking-tight">Fotografias</h2>
           <p className="mt-1 text-sm opacity-60">
-            Peça-as ao dono do lead. Não se usam as fotos do Google: têm licença própria e
-            estas páginas são vendidas.
+            Peça-as ao dono do lead. Não se usam as fotos do Google: têm licença própria e estas
+            páginas são vendidas.
           </p>
           <p className="mt-2 text-sm">
             <Link
@@ -105,7 +111,7 @@ export default async function EditarSitePage({ params }: Props) {
           ) : (
             <PhotoUpload
               siteId={id}
-              ownerId={auth.user.id}
+              ownerId={quem.donoId}
               slot="cover"
               label="Escolher foto de capa"
             />
@@ -137,7 +143,7 @@ export default async function EditarSitePage({ params }: Props) {
           )}
           <PhotoUpload
             siteId={id}
-            ownerId={auth.user.id}
+            ownerId={quem.donoId}
             slot="gallery"
             label="Acrescentar à galeria"
           />
@@ -184,8 +190,8 @@ export default async function EditarSitePage({ params }: Props) {
             <span className="text-sm font-medium">Texto de apresentação</span>
             <textarea name="about" rows={5} defaultValue={content.about} className={field} />
             <span className="text-xs opacity-55">
-              O texto gerado é propositadamente vago porque não sabemos a história da casa.
-              Pergunta ao dono há quanto tempo abriu e o que faz melhor — e escreve isso aqui.
+              O texto gerado é propositadamente vago porque não sabemos a história da casa. Pergunta
+              ao dono há quanto tempo abriu e o que faz melhor — e escreve isso aqui.
             </span>
           </label>
         </section>
@@ -240,9 +246,7 @@ export default async function EditarSitePage({ params }: Props) {
                 placeholder="253 693 224"
                 className={field}
               />
-              <span className="text-xs opacity-55">
-                O que o visitante lê. Vazio usa o de cima.
-              </span>
+              <span className="text-xs opacity-55">O que o visitante lê. Vazio usa o de cima.</span>
             </label>
           </div>
 
@@ -270,9 +274,7 @@ export default async function EditarSitePage({ params }: Props) {
         <section className="flex flex-col gap-5 rounded-lg border border-black/10 p-5 dark:border-white/10">
           <div>
             <h2 className="text-lg font-semibold tracking-tight">Aparência</h2>
-            <p className="mt-1 text-sm opacity-60">
-              Guarda e vê o resultado na pré-visualização.
-            </p>
+            <p className="mt-1 text-sm opacity-60">Guarda e vê o resultado na pré-visualização.</p>
           </div>
 
           <fieldset className="flex flex-col gap-3">
@@ -331,10 +333,7 @@ export default async function EditarSitePage({ params }: Props) {
                     className="mt-1"
                   />
                   <span className="min-w-0 flex-1">
-                    <span
-                      style={{ fontFamily: FONTS[fontId].stack }}
-                      className="block font-medium"
-                    >
+                    <span style={{ fontFamily: FONTS[fontId].stack }} className="block font-medium">
                       {FONTS[fontId].label}
                     </span>
                     <span className="mt-0.5 block text-xs opacity-60">{FONTS[fontId].suits}</span>

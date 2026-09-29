@@ -1,6 +1,7 @@
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * Relatórios mensais de visitas e cliques.
@@ -37,6 +38,7 @@ export default async function RelatoriosPage() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('relatorios');
 
   const { data } = await supabase
     .from('monthly_site_report')

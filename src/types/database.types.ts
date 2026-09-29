@@ -20,7 +20,8 @@
  *
  * Pela mesma razão, a tabela `pedidos` e as funções `registar_pedido` e
  * `dono_da_agencia` (0033), as colunas `aviso`, `aviso_em` e `aviso_detalhe` e
- * a função `marcar_aviso` (0035) também foram acrescentadas à mão. Regerar tudo para
+ * a função `marcar_aviso` (0035), e a tabela `membros_da_equipa` com a função
+ * `quem_sou` (0036), também foram acrescentadas à mão. Regerar tudo para
  * as apanhar punha as colunas da vista `businesses_with_stage` todas como
  * anuláveis e partia a fila de contactos — o gerador não sabe o que numa vista
  * é obrigatório, e a correção acima existe precisamente por isso.
@@ -1260,6 +1261,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      membros_da_equipa: {
+        Row: {
+          id: string;
+          dono_id: string;
+          user_id: string;
+          nome: string;
+          email: string;
+          permissoes: string[];
+          ativo: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          dono_id: string;
+          user_id: string;
+          nome: string;
+          email: string;
+          permissoes?: string[];
+          ativo?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          dono_id?: string;
+          user_id?: string;
+          nome?: string;
+          email?: string;
+          permissoes?: string[];
+          ativo?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       pedidos: {
         Row: {
           id: string;
@@ -1514,6 +1548,16 @@ export type Database = {
       };
     };
     Functions: {
+      quem_sou: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          user_id: string;
+          dono_id: string;
+          eh_dono: boolean;
+          nome: string;
+          permissoes: string[];
+        }[];
+      };
       registar_pedido: {
         Args: {
           p_negocio: string;

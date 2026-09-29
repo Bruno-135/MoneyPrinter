@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { haQuantoTempo } from '@/components/quando';
 import { pedidos } from '@/lib/vaidesign/pedidos/repository';
 import { ehEmail } from '@/lib/vaidesign/pedidos/campos';
@@ -43,6 +44,7 @@ export default async function PedidosPage() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('pedidos');
 
   const lista = await pedidos(supabase);
 

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { caixaDeEntrada, contagens } from '@/lib/suporte/repository';
 import { carteira } from '@/lib/servicos/vendidos';
 import { Lista } from './lista';
@@ -22,6 +23,7 @@ export default async function SuportePage() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('suporte');
 
   const [pedidos, contas, clientes] = await Promise.all([
     caixaDeEntrada(supabase),

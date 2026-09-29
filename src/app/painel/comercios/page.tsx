@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import {
   DEFAULT_KINDS,
   WEBSITE_KIND_LABELS,
@@ -111,6 +112,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('leads');
 
   const params = await searchParams;
 

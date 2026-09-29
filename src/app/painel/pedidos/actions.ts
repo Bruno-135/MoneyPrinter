@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import {
   apagarPedido,
   guardarNotas,
@@ -18,6 +19,7 @@ function lerEstado(v: FormDataEntryValue | null): EstadoDoPedido {
 }
 
 export async function marcarPedido(dados: FormData): Promise<void> {
+  await exigirAcesso('pedidos');
   const id = String(dados.get('id') ?? '');
   const estado = lerEstado(dados.get('estado'));
 
@@ -27,6 +29,7 @@ export async function marcarPedido(dados: FormData): Promise<void> {
 }
 
 export async function anotarPedido(dados: FormData): Promise<void> {
+  await exigirAcesso('pedidos');
   const id = String(dados.get('id') ?? '');
   const notas = String(dados.get('notas') ?? '');
 
@@ -42,6 +45,7 @@ export async function anotarPedido(dados: FormData): Promise<void> {
  * que tem de estar: uma ação de servidor não pode perguntar nada a ninguém.
  */
 export async function excluirPedido(dados: FormData): Promise<void> {
+  await exigirAcesso('pedidos');
   const id = String(dados.get('id') ?? '');
   if (!id) throw new Error('falta o id do pedido a apagar');
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import type { Route } from 'next';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { loadSite } from '@/lib/sites/load';
 import { catalogo } from '@/lib/loja/repository';
 import { familiasDoCatalogo } from '@/lib/loja/peca';
@@ -27,6 +28,11 @@ export default async function PecasDaLoja({ params }: Props) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  // O `donoId` e nao o `auth.user.id`: as fotografias vao para a pasta do
+  // DONO. Uma fotografia e do site, o site e do dono, e uma posta por um
+  // convidado tem de continuar la — e continuar a poder ser apagada — no dia
+  // em que esse convidado sair da equipa.
+  const quem = await exigirAcesso('paginas');
 
   const { id } = await params;
   const loaded = await loadSite(supabase, id);
@@ -90,21 +96,20 @@ export default async function PecasDaLoja({ params }: Props) {
           </select>
         </label>
 
-        <button type="submit" className="h-11 rounded-md border border-line px-4 text-sm font-medium">
+        <button
+          type="submit"
+          className="h-11 rounded-md border border-line px-4 text-sm font-medium"
+        >
           Aplicar
         </button>
 
         <p className="w-full text-xs text-ink3">
-          Para o desenho escuro da loja, escolhe <strong>Neon</strong> com <strong>Grotesco</strong>.
+          Para o desenho escuro da loja, escolhe <strong>Neon</strong> com <strong>Grotesco</strong>
+          .
         </p>
       </form>
 
-      <Pecas
-        siteId={id}
-        ownerId={auth.user.id}
-        pecas={pecas}
-        familias={familiasDoCatalogo(pecas)}
-      />
+      <Pecas siteId={id} ownerId={quem.donoId} pecas={pecas} familias={familiasDoCatalogo(pecas)} />
     </div>
   );
 }

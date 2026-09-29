@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { findTemplate } from '@/lib/sites/templates';
 import { familiaParaRamo } from '@/lib/sites/imagens/arte';
 import { DocumentoRender } from '@/components/site/documento';
@@ -21,6 +22,7 @@ export default async function ModeloPage({ params }: { params: Promise<{ id: str
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('modelos');
 
   const { id } = await params;
   const modelo = findTemplate(id);

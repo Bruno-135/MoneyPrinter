@@ -18,6 +18,7 @@ import { PlacesClient } from '@/lib/places/client';
 import { avaliacoesDoComercio, type AvaliacaoReal } from '@/lib/places/avaliacoes';
 import { FONTE_IMAGEM_PADRAO, isFonteImagem } from '@/lib/sites/imagens/fonte';
 import { menuDoSite, paginasDoSite } from '@/lib/sites/paginas/repository';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * Geração de páginas por IA, a partir do ecrã.
@@ -73,6 +74,7 @@ export async function generateWithAi(
   _previous: AiActionState,
   formData: FormData,
 ): Promise<AiActionState> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
@@ -162,8 +164,12 @@ export async function generateWithAi(
         // preto. O tema não é decoração: é o que a página da loja lê para se
         // pintar, e é o que fica no PDF e na exportação.
         theme: escolhido
-          ? { ...loaded.theme, palette: escolhido.palette, font: escolhido.font,
-              imagem: escolhido.imagem ?? loaded.theme.imagem }
+          ? {
+              ...loaded.theme,
+              palette: escolhido.palette,
+              font: escolhido.font,
+              imagem: escolhido.imagem ?? loaded.theme.imagem,
+            }
           : loaded.theme,
         customHtml: result.value,
         model: result.model,
@@ -263,6 +269,7 @@ export async function generateWithAi(
 
 /** Deita fora o HTML gerado e volta à página por campos. */
 export async function revertToTemplate(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
@@ -290,6 +297,7 @@ export async function editarComIa(
   _anterior: AiActionState,
   form: FormData,
 ): Promise<AiActionState> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { ok: false, message: 'A sessão expirou. Entra outra vez.' };

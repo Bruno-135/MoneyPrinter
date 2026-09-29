@@ -10,6 +10,7 @@ import { findCategory } from '@/lib/places/categories';
 import { searchCities } from '@/lib/places/city-search';
 import type { CityMatch } from '@/lib/places/cities';
 import { clampRadius } from '@/lib/places/cities';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * Ações do painel.
@@ -46,11 +47,14 @@ export async function findCity(
   _previous: CityFormState,
   formData: FormData,
 ): Promise<CityFormState> {
+  await exigirAcesso('varrimento');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
 
-  const query = String(formData.get('cidade') ?? '').trim().slice(0, 120);
+  const query = String(formData.get('cidade') ?? '')
+    .trim()
+    .slice(0, 120);
   const pais = String(formData.get('pais') ?? 'PT').toUpperCase() === 'BR' ? 'BR' : 'PT';
 
   if (query === '') {
@@ -68,7 +72,11 @@ export async function findCity(
   return { cities: result.cities, fromCache: result.fromCache, query, error: result.error };
 }
 
-export async function runScan(_previous: ScanFormState, formData: FormData): Promise<ScanFormState> {
+export async function runScan(
+  _previous: ScanFormState,
+  formData: FormData,
+): Promise<ScanFormState> {
+  await exigirAcesso('varrimento');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { listFacet } from '@/lib/scoring/rank';
 import { montarFunil } from '@/lib/deals/funil';
 import { DesenhoDoFunil } from './desenho';
@@ -22,6 +23,7 @@ export default async function FunilPage() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('funil');
 
   const contagens = await listFacet(supabase, 'stage', {});
   const funil = montarFunil(new Map(contagens.map((c) => [c.value, c.count])));

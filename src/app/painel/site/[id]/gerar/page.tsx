@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { loadSite } from '@/lib/sites/load';
 import { hasApiKey } from '@/lib/ai/client';
 import { MODELS, isModelId } from '@/lib/ai/models';
@@ -47,6 +48,7 @@ export default async function GerarPage({ params }: Props) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('paginas');
 
   const loaded = await loadSite(supabase, id);
   if (!loaded) notFound();

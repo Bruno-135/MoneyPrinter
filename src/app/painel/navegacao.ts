@@ -7,9 +7,20 @@
  * exemplo. Um ecrã com dados inventados e SEM aviso é que seria um problema.
  */
 
+import { podeEntrar, type ChaveDeAcesso } from '@/lib/equipa/permissoes';
+
+/**
+ * Quem chega a esta entrada: uma área de acesso, só o dono, ou toda a gente
+ * com sessão. OBRIGATÓRIO de propósito — uma entrada nova sem isto não
+ * compila, e assim não há maneira de acrescentar uma página ao menu e
+ * esquecer quem a pode ver.
+ */
+export type QuemVe = ChaveDeAcesso | 'dono' | 'todos';
+
 export interface ItemDeMenu {
   href: string;
   label: string;
+  acesso: QuemVe;
   /** true quando o ecrã ainda não lê dados nenhuns. Marca-se no menu. */
   porLigar?: boolean;
 }
@@ -23,30 +34,40 @@ export const MENU: readonly SeccaoDeMenu[] = [
   {
     grupo: 'Vender',
     itens: [
-      { href: '/painel', label: 'Painel' },
-      { href: '/painel/pedidos', label: 'E-mails recebidos' },
-      { href: '/painel/contactar', label: 'Leads a contactar' },
-      { href: '/painel/comercios', label: 'Leads' },
-      { href: '/painel/funil', label: 'Funil' },
-      { href: '/painel/varrimento', label: 'Prospetar leads' },
-      { href: '/painel/paginas', label: 'Sites criados' },
-      { href: '/painel/modelos', label: 'Modelos de site' },
+      { href: '/painel', label: 'Painel', acesso: 'todos' },
+      { href: '/painel/pedidos', label: 'E-mails recebidos', acesso: 'pedidos' },
+      { href: '/painel/contactar', label: 'Leads a contactar', acesso: 'contactar' },
+      { href: '/painel/comercios', label: 'Leads', acesso: 'leads' },
+      { href: '/painel/funil', label: 'Funil', acesso: 'funil' },
+      { href: '/painel/varrimento', label: 'Prospetar leads', acesso: 'varrimento' },
+      { href: '/painel/paginas', label: 'Sites criados', acesso: 'paginas' },
+      { href: '/painel/modelos', label: 'Modelos de site', acesso: 'modelos' },
     ],
   },
   {
     grupo: 'Canais',
     itens: [
-      { href: '/painel/robo', label: 'Conversas do robô', porLigar: true },
-      { href: '/painel/whatsapp', label: 'Instâncias WhatsApp', porLigar: true },
+      { href: '/painel/robo', label: 'Conversas do robô', acesso: 'robo', porLigar: true },
+      {
+        href: '/painel/whatsapp',
+        label: 'Instâncias WhatsApp',
+        acesso: 'whatsapp',
+        porLigar: true,
+      },
     ],
   },
   {
     grupo: 'Clientes',
     itens: [
-      { href: '/painel/clientes', label: 'Carteira de clientes' },
-      { href: '/painel/conteudo', label: 'Calendário de conteúdo', porLigar: true },
-      { href: '/painel/suporte', label: 'Suporte' },
-      { href: '/painel/cobranca', label: 'Cobrança' },
+      { href: '/painel/clientes', label: 'Carteira de clientes', acesso: 'clientes' },
+      {
+        href: '/painel/conteudo',
+        label: 'Calendário de conteúdo',
+        acesso: 'conteudo',
+        porLigar: true,
+      },
+      { href: '/painel/suporte', label: 'Suporte', acesso: 'suporte' },
+      { href: '/painel/cobranca', label: 'Cobrança', acesso: 'cobranca' },
     ],
   },
   {
@@ -56,10 +77,10 @@ export const MENU: readonly SeccaoDeMenu[] = [
       // apresentação e o manual são nossos, e não mudam de cliente para
       // cliente. Esteve em «Vender» por se procurar no momento de mandar uma
       // coisa a alguém; está aqui porque é aqui que se vai procurá-la.
-      { href: '/painel/marca', label: 'Marca e materiais' },
-      { href: '/painel/relatorios', label: 'Relatórios' },
-      { href: '/painel/equipa', label: 'Equipa e permissões', porLigar: true },
-      { href: '/painel/perfil', label: 'Perfil e progresso' },
+      { href: '/painel/marca', label: 'Marca e materiais', acesso: 'marca' },
+      { href: '/painel/relatorios', label: 'Relatórios', acesso: 'relatorios' },
+      { href: '/painel/equipa', label: 'Equipa e permissões', acesso: 'dono' },
+      { href: '/painel/perfil', label: 'Perfil e progresso', acesso: 'todos' },
     ],
   },
 ];
@@ -92,7 +113,8 @@ export function tituloDoEcra(caminho: string): [string, string] {
   if (caminho.startsWith('/painel/comercio/')) {
     return ['Ficha do lead', 'tudo o que decide a chamada'];
   }
-  if (caminho.startsWith('/painel/modelos/')) return ['Modelo de site', 'como o comerciante o vai ver'];
+  if (caminho.startsWith('/painel/modelos/'))
+    return ['Modelo de site', 'como o comerciante o vai ver'];
   if (caminho.endsWith('/pecas') && caminho.startsWith('/painel/site/')) {
     return ['Peças da loja', 'o que aparece na montra'];
   }
@@ -115,4 +137,22 @@ export function estaAceso(item: ItemDeMenu, caminho: string): boolean {
   // A ficha de um comércio acende "Comércios", que é de onde se lá chega.
   if (item.href === '/painel/comercios' && caminho.startsWith('/painel/comercio/')) return true;
   return caminho.startsWith(`${item.href}/`);
+}
+
+/**
+ * O menu de quem está a ver.
+ *
+ * Esconder o que a pessoa não pode abrir não é segurança — a segurança está na
+ * guarda de cada página e nas políticas da base. É para não haver links que
+ * levam a portas fechadas, que é a maneira mais rápida de alguém pensar que o
+ * painel está avariado.
+ */
+export function menuPara(permissoes: readonly string[], ehDono: boolean): readonly SeccaoDeMenu[] {
+  const ve = (item: ItemDeMenu) =>
+    item.acesso === 'todos' ||
+    (item.acesso === 'dono' ? ehDono : podeEntrar(permissoes, item.acesso));
+
+  return MENU.map((seccao) => ({ ...seccao, itens: seccao.itens.filter(ve) })).filter(
+    (seccao) => seccao.itens.length > 0,
+  );
 }

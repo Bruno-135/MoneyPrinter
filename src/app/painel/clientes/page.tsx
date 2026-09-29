@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { carteira } from '@/lib/servicos/vendidos';
 import { escreverValor } from '@/lib/deals/dinheiro';
 import { TabelaCarteira } from './tabela';
@@ -24,6 +25,7 @@ export default async function ClientesPage() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('clientes');
 
   const clientes = await carteira(supabase);
 

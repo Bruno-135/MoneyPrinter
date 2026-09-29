@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { getDeal, getStageHistory } from '@/lib/deals/repository';
 import { STAGE_STYLE, stageDefinition, stageLabel } from '@/lib/deals/stages';
 import { scoreLabel } from '@/lib/scoring/score';
@@ -56,6 +57,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('leads');
 
   const { data: business } = await supabase
     .from('businesses')

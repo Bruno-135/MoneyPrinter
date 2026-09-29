@@ -1,3 +1,6 @@
+import { redirect } from 'next/navigation';
+import { lerQuemSou } from '@/lib/equipa/quem-sou';
+import { menuPara } from './navegacao';
 import { Shell } from './shell';
 import { signOut } from './actions';
 
@@ -7,7 +10,14 @@ import { signOut } from './actions';
  * O botão de sair vive aqui e não dentro do `Shell` porque é uma acção de
  * servidor, e o `Shell` é um componente de browser.
  */
-export default function PainelLayout({ children }: { children: React.ReactNode }) {
+export default async function PainelLayout({ children }: { children: React.ReactNode }) {
+  // Quem está a ver decide-se aqui, uma vez por navegação, e desce em forma de
+  // menu. As páginas voltam a perguntar por sua conta — esconder um link não é
+  // o mesmo que fechar a porta, e quem escreve o endereço à mão não passa pelo
+  // menu nenhum.
+  const quem = await lerQuemSou();
+  if (!quem) redirect('/entrar');
+
   const sair = (
     // `contents` para o botão ser filho directo do cabeçalho em flex: dentro de
     // um <form> normal ficava desalinhado dos outros botões.
@@ -21,5 +31,9 @@ export default function PainelLayout({ children }: { children: React.ReactNode }
     </form>
   );
 
-  return <Shell sair={sair}>{children}</Shell>;
+  return (
+    <Shell sair={sair} menu={menuPara(quem.permissoes, quem.ehDono)}>
+      {children}
+    </Shell>
+  );
 }

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import type { Route } from 'next';
 import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { loadSite } from '@/lib/sites/load';
 import { enderecoDaPagina, paginasDoSite } from '@/lib/sites/paginas/repository';
 import { ListaDePaginas } from './lista';
@@ -30,6 +31,7 @@ export default async function PaginasDoSite({ params }: Props) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
+  await exigirAcesso('paginas');
 
   const { id } = await params;
   const loaded = await loadSite(supabase, id);
