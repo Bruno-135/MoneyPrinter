@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
+import { useFormStatus } from 'react-dom';
 import {
   AREAS,
   PAPEIS,
@@ -8,7 +9,7 @@ import {
   papelDestasPermissoes,
   papelPorChave,
 } from '@/lib/equipa/permissoes';
-import { criarPessoa, trocarSenha } from './actions';
+import { criarPessoa, guardarAcessos, trocarSenha } from './actions';
 import { CONVITE_PARADO } from './estado';
 
 /**
@@ -243,6 +244,65 @@ export function TrocarSenha({ membro, nome }: { membro: string; nome: string }) 
             {estado.mensagem}
           </span>
         )}
+      </form>
+    </details>
+  );
+}
+
+/**
+ * O botão que diz que está a trabalhar.
+ *
+ * Num telemóvel com rede fraca, entre carregar e a página responder passam
+ * segundos em que não acontece nada à vista. `useFormStatus` só funciona
+ * dentro do formulário, por isso isto tem de ser um componente à parte.
+ */
+function BotaoGuardar({ children }: { children: React.ReactNode }) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="bg-marca h-9 rounded-lg px-4 text-[12px] font-bold text-[#141210] disabled:opacity-60"
+    >
+      {pending ? 'A guardar…' : children}
+    </button>
+  );
+}
+
+/** Mudar os acessos de quem já está na equipa. */
+export function MudarAcessos({
+  membro,
+  marcadas,
+}: {
+  membro: string;
+  marcadas: readonly string[];
+}) {
+  const [estado, acao] = useActionState(guardarAcessos, CONVITE_PARADO);
+
+  return (
+    <details className="mt-3">
+      <summary className="border-line inline-flex h-9 cursor-pointer list-none items-center rounded-lg border px-3 text-[12px] font-semibold">
+        Mudar acessos
+      </summary>
+      <form action={acao} className="mt-3 flex flex-col gap-3">
+        <input type="hidden" name="id" value={membro} />
+        {/* O `key` é o que está GRAVADO. Quando a gravação muda, estas caixas
+            nascem de novo já com o que ficou na base — sem isto, ficavam a
+            mostrar o que a pessoa tinha escolhido mesmo que a gravação
+            tivesse guardado outra coisa. */}
+        <CaixasDeAcesso key={marcadas.join(',')} marcadas={marcadas} />
+        <div className="flex flex-wrap items-center gap-3">
+          <BotaoGuardar>Guardar acessos</BotaoGuardar>
+          {estado.mensagem && (
+            <span
+              role="alert"
+              className="text-[12px] font-semibold"
+              style={{ color: estado.fase === 'erro' ? 'var(--bad)' : 'var(--ok)' }}
+            >
+              {estado.mensagem}
+            </span>
+          )}
+        </div>
       </form>
     </details>
   );

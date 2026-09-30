@@ -2,8 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { exigirSerDono } from '@/lib/equipa/quem-sou';
 import { membros } from '@/lib/equipa/repository';
 import { nomeDaArea, nomeDoPapel, TODAS_AS_AREAS } from '@/lib/equipa/permissoes';
-import { CaixasDeAcesso, CriarPessoa, TrocarSenha } from './formulario';
-import { guardarAcessos, suspenderPessoa, tirarPessoa } from './actions';
+import { CriarPessoa, MudarAcessos, TrocarSenha } from './formulario';
+import { suspenderPessoa, tirarPessoa } from './actions';
 
 /**
  * Equipa e permissões.
@@ -87,21 +87,7 @@ export default async function EquipaPage() {
                   : m.permissoes.map(nomeDaArea).join(' · ')}
               </p>
 
-              <details className="mt-3">
-                <summary className="border-line inline-flex h-9 cursor-pointer list-none items-center rounded-lg border px-3 text-[12px] font-semibold">
-                  Mudar acessos
-                </summary>
-                <form action={guardarAcessos} className="mt-3 flex flex-col gap-3">
-                  <input type="hidden" name="id" value={m.id} />
-                  <CaixasDeAcesso marcadas={m.permissoes} />
-                  <button
-                    type="submit"
-                    className="bg-marca h-9 self-start rounded-lg px-4 text-[12px] font-bold text-[#141210]"
-                  >
-                    Guardar acessos
-                  </button>
-                </form>
-              </details>
+              <MudarAcessos membro={m.id} marcadas={m.permissoes} />
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <TrocarSenha membro={m.id} nome={m.nome} />

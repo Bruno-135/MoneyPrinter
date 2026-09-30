@@ -107,12 +107,42 @@ export async function trocarSenha(
   return { fase: 'feito', mensagem: 'Senha trocada. Passa-lhe a nova.' };
 }
 
-export async function guardarAcessos(dados: FormData): Promise<void> {
+/**
+ * Guarda os acessos, e DIZ que guardou.
+ *
+ * Devolvia `void`. Gravava sempre — os registos do servidor mostravam os
+ * pedidos a chegar e a responder 204 — mas o ecrã ficava exactamente igual:
+ * a caixa aberta, as mesmas caixas marcadas, nem uma palavra. Quem carregava
+ * carregava outra vez, e outra, a pensar que o botão estava partido.
+ *
+ * Gravar e não dar sinal é, para quem está do outro lado, o mesmo que não
+ * gravar. Por isso devolve uma frase.
+ */
+export async function guardarAcessos(
+  _anterior: EstadoDoConvite,
+  dados: FormData,
+): Promise<EstadoDoConvite> {
   await exigirSerDono();
+
   const id = String(dados.get('id') ?? '');
+  const areas = lerPermissoes(dados);
   const db = await createClient();
-  await mudarPermissoes(db, id, lerPermissoes(dados), String(dados.get('papel') ?? ''));
+
+  try {
+    await mudarPermissoes(db, id, areas, String(dados.get('papel') ?? ''));
+  } catch (erro) {
+    console.error('não foi possível guardar os acessos', erro);
+    return { fase: 'erro', mensagem: frase(String(erro)) };
+  }
+
   revalidatePath('/painel/equipa');
+  return {
+    fase: 'feito',
+    mensagem:
+      areas.length === 0
+        ? 'Guardado — ficou sem acesso a nenhuma área.'
+        : `Guardado — ${areas.length} ${areas.length === 1 ? 'área' : 'áreas'}.`,
+  };
 }
 
 export async function suspenderPessoa(dados: FormData): Promise<void> {
