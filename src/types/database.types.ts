@@ -1265,6 +1265,7 @@ export type Database = {
         Row: {
           id: string;
           dono_id: string;
+          papel: string;
           user_id: string;
           nome: string;
           email: string;
@@ -1275,6 +1276,7 @@ export type Database = {
         Insert: {
           id?: string;
           dono_id: string;
+          papel?: string;
           user_id: string;
           nome: string;
           email: string;
@@ -1285,6 +1287,7 @@ export type Database = {
         Update: {
           id?: string;
           dono_id?: string;
+          papel?: string;
           user_id?: string;
           nome?: string;
           email?: string;
@@ -1554,6 +1557,7 @@ export type Database = {
           p_email: string;
           p_senha: string;
           p_permissoes: string[];
+          p_papel?: string;
         };
         Returns: string;
       };

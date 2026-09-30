@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { exigirSerDono } from '@/lib/equipa/quem-sou';
 import { membros } from '@/lib/equipa/repository';
-import { nomeDaArea, TODAS_AS_AREAS } from '@/lib/equipa/permissoes';
+import { nomeDaArea, nomeDoPapel, TODAS_AS_AREAS } from '@/lib/equipa/permissoes';
 import { CaixasDeAcesso, CriarPessoa, TrocarSenha } from './formulario';
 import { guardarAcessos, suspenderPessoa, tirarPessoa } from './actions';
 
@@ -61,6 +61,12 @@ export default async function EquipaPage() {
             <li key={m.id} className="border-line bg-surf2 rounded-2xl border p-4">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <h2 className="text-[15px] font-bold">{m.nome}</h2>
+                <span
+                  className="rounded-full border px-2.5 py-0.5 text-[11px] font-bold"
+                  style={{ borderColor: 'var(--marca)', color: 'var(--marca)' }}
+                >
+                  {nomeDoPapel(m.papel)}
+                </span>
                 <span className="text-ink3 font-mono text-[12px]">{m.email}</span>
                 {!m.ativo && (
                   <span

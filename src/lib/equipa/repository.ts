@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
-import { limparPermissoes, type ChaveDeAcesso } from './permissoes';
+import { limparPermissoes, PAPEL_POR_OMISSAO, type ChaveDeAcesso } from './permissoes';
 
 type Db = SupabaseClient<Database>;
 
@@ -10,6 +10,8 @@ export interface Membro {
   nome: string;
   email: string;
   permissoes: ChaveDeAcesso[];
+  /** A etiqueta: comercial, operacional, suporte ou personalizado. */
+  papel: string;
   ativo: boolean;
   criadoEm: string;
 }
@@ -21,6 +23,7 @@ function montar(linha: Database['public']['Tables']['membros_da_equipa']['Row'])
     nome: linha.nome,
     email: linha.email,
     permissoes: limparPermissoes(linha.permissoes ?? []),
+    papel: linha.papel || PAPEL_POR_OMISSAO,
     ativo: linha.ativo,
     criadoEm: linha.created_at,
   };
@@ -43,24 +46,15 @@ export async function membros(db: Db): Promise<Membro[]> {
   return (data ?? []).map(montar);
 }
 
-export async function juntarMembro(
+export async function mudarPermissoes(
   db: Db,
-  valores: { donoId: string; userId: string; nome: string; email: string; permissoes: string[] },
+  id: string,
+  permissoes: string[],
+  papel: string,
 ): Promise<void> {
-  const { error } = await db.from('membros_da_equipa').insert({
-    dono_id: valores.donoId,
-    user_id: valores.userId,
-    nome: valores.nome,
-    email: valores.email,
-    permissoes: limparPermissoes(valores.permissoes),
-  });
-  if (error) throw new Error(`Não foi possível juntar a pessoa à equipa: ${error.message}`);
-}
-
-export async function mudarPermissoes(db: Db, id: string, permissoes: string[]): Promise<void> {
   const { error } = await db
     .from('membros_da_equipa')
-    .update({ permissoes: limparPermissoes(permissoes) })
+    .update({ permissoes: limparPermissoes(permissoes), papel: papel || PAPEL_POR_OMISSAO })
     .eq('id', id);
   if (error) throw new Error(`Não foi possível mudar os acessos: ${error.message}`);
 }

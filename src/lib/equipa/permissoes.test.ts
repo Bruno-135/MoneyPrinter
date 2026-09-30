@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
   AREAS,
+  PAPEIS,
+  PAPEL_POR_OMISSAO,
   TODAS_AS_AREAS,
   TUDO,
   ehChaveDeAcesso,
   limparPermissoes,
   nomeDaArea,
+  nomeDoPapel,
+  papelDestasPermissoes,
+  papelPorChave,
   podeEntrar,
 } from './permissoes';
 import { MENU, menuPara } from '@/app/painel/navegacao';
@@ -132,5 +137,73 @@ describe('o menu de quem está a ver', () => {
     // um único link e sem perceber se tinha entrado.
     const hrefs = menuPara([], false).flatMap((s) => s.itens.map((i) => i.href));
     expect(hrefs).toEqual(['/painel', '/painel/perfil']);
+  });
+});
+
+describe('os papéis', () => {
+  it('não repete chaves e explica cada um', () => {
+    const chaves = PAPEIS.map((p) => p.chave);
+    expect(new Set(chaves).size).toBe(chaves.length);
+    for (const p of PAPEIS) {
+      expect(p.nome.trim(), p.chave).toBeTruthy();
+      expect(p.explica.trim().length, p.chave).toBeGreaterThan(20);
+    }
+  });
+
+  it('só propõe áreas que existem', () => {
+    for (const p of PAPEIS) {
+      for (const c of p.permissoes) expect(ehChaveDeAcesso(c), `${p.chave} → ${c}`).toBe(true);
+    }
+  });
+
+  it('nenhum papel dá as áreas de dinheiro por si', () => {
+    // Prospetar gasta no Google e a cobrança mostra o que os clientes pagam.
+    // São as únicas que custam ou expõem dinheiro, e dão-se à mão.
+    for (const p of PAPEIS) {
+      expect(p.permissoes, p.chave).not.toContain('varrimento');
+      expect(p.permissoes, p.chave).not.toContain('cobranca');
+    }
+  });
+
+  it('o personalizado não propõe nada', () => {
+    expect(papelPorChave(PAPEL_POR_OMISSAO).permissoes).toEqual([]);
+  });
+
+  it('reconhece o papel a partir das caixas marcadas', () => {
+    for (const p of PAPEIS) {
+      if (p.chave === PAPEL_POR_OMISSAO) continue;
+      expect(papelDestasPermissoes(p.permissoes), p.chave).toBe(p.chave);
+    }
+  });
+
+  it('mexer numa caixa faz o papel passar a personalizado', () => {
+    // É isto que impede a etiqueta de mentir: «Comercial» ao lado de alguém
+    // que já não tem os acessos de comercial seria pior do que etiqueta
+    // nenhuma.
+    const comercial = papelPorChave('comercial').permissoes;
+    expect(papelDestasPermissoes([...comercial, 'cobranca'])).toBe(PAPEL_POR_OMISSAO);
+    expect(papelDestasPermissoes(comercial.slice(1))).toBe(PAPEL_POR_OMISSAO);
+  });
+
+  it('não confunde dois papéis com o mesmo número de áreas', () => {
+    const porTamanho = new Map<number, string[]>();
+    for (const p of PAPEIS) {
+      if (p.chave === PAPEL_POR_OMISSAO) continue;
+      porTamanho.set(p.permissoes.length, [...(porTamanho.get(p.permissoes.length) ?? []), p.chave]);
+    }
+    for (const [, chaves] of porTamanho) {
+      for (const chave of chaves) {
+        expect(papelDestasPermissoes(papelPorChave(chave).permissoes)).toBe(chave);
+      }
+    }
+  });
+
+  it('sem caixas nenhumas é personalizado e não um papel vazio', () => {
+    expect(papelDestasPermissoes([])).toBe(PAPEL_POR_OMISSAO);
+  });
+
+  it('dá um nome legível, e para uma chave desconhecida não rebenta', () => {
+    expect(nomeDoPapel('comercial')).toBe('Comercial');
+    expect(nomeDoPapel('inventado')).toBe('Personalizado');
   });
 });

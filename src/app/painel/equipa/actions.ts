@@ -71,6 +71,7 @@ export async function criarPessoa(
     p_email: email,
     p_senha: senha,
     p_permissoes: lerPermissoes(dados),
+    p_papel: String(dados.get('papel') ?? ''),
   });
 
   if (error) {
@@ -110,7 +111,7 @@ export async function guardarAcessos(dados: FormData): Promise<void> {
   await exigirSerDono();
   const id = String(dados.get('id') ?? '');
   const db = await createClient();
-  await mudarPermissoes(db, id, lerPermissoes(dados));
+  await mudarPermissoes(db, id, lerPermissoes(dados), String(dados.get('papel') ?? ''));
   revalidatePath('/painel/equipa');
 }
 

@@ -161,3 +161,79 @@ export function podeEntrar(permissoes: readonly string[], chave: ChaveDeAcesso):
 export function nomeDaArea(chave: ChaveDeAcesso): string {
   return TODAS_AS_AREAS.find((a) => a.chave === chave)?.nome ?? chave;
 }
+
+/**
+ * Os papéis: uma etiqueta e um atalho.
+ *
+ * O PAPEL NÃO DECIDE NADA. Quem decide os acessos é sempre a lista de
+ * permissões; isto só diz que caixas marcar quando se escolhe, e que palavra
+ * mostrar ao lado do nome. Se o papel também mandasse, havia duas respostas
+ * para «o que é que esta pessoa pode fazer?» — e um dia discordavam.
+ *
+ * Nenhum traz as áreas de dinheiro — prospetar e cobrança. Essas dão-se à mão,
+ * uma pessoa de cada vez, porque são as únicas que custam ou expõem dinheiro.
+ */
+
+export interface Papel {
+  chave: string;
+  nome: string;
+  explica: string;
+  /** As caixas que este papel propõe. */
+  permissoes: ChaveDeAcesso[];
+}
+
+export const PAPEIS: Papel[] = [
+  {
+    chave: 'comercial',
+    nome: 'Comercial',
+    explica: 'Contacta, negoceia e fecha. Vê os leads e os sites que lhes mostra.',
+    permissoes: ['pedidos', 'contactar', 'leads', 'funil', 'paginas', 'modelos', 'marca'],
+  },
+  {
+    chave: 'operacional',
+    nome: 'Operacional',
+    explica: 'Faz e publica os sites, e trata do conteúdo dos clientes.',
+    permissoes: ['leads', 'paginas', 'modelos', 'marca', 'conteudo'],
+  },
+  {
+    chave: 'suporte',
+    nome: 'Suporte',
+    explica: 'Atende quem já é cliente e responde a quem escreve pelo site.',
+    permissoes: ['pedidos', 'suporte', 'clientes', 'conteudo', 'marca'],
+  },
+  {
+    chave: 'personalizado',
+    nome: 'Personalizado',
+    explica: 'Marcas tu as caixas, uma a uma.',
+    permissoes: [],
+  },
+];
+
+export const PAPEL_POR_OMISSAO = 'personalizado';
+
+export function papelPorChave(chave: string): Papel {
+  return PAPEIS.find((p) => p.chave === chave) ?? PAPEIS[PAPEIS.length - 1]!;
+}
+
+export function nomeDoPapel(chave: string): string {
+  return papelPorChave(chave).nome;
+}
+
+/**
+ * Que papel corresponde a estas permissões, se algum.
+ *
+ * Serve para a lista mostrar «Comercial» em vez de «Personalizado» a quem
+ * tem exactamente as caixas de comercial, mesmo que tenham sido marcadas à
+ * mão — e para a etiqueta deixar de mentir quando alguém mexe nas caixas
+ * depois de escolher o papel.
+ */
+export function papelDestasPermissoes(permissoes: readonly string[]): string {
+  const tem = new Set(permissoes);
+  const encontrado = PAPEIS.find(
+    (p) =>
+      p.chave !== PAPEL_POR_OMISSAO &&
+      p.permissoes.length === tem.size &&
+      p.permissoes.every((c) => tem.has(c)),
+  );
+  return encontrado?.chave ?? PAPEL_POR_OMISSAO;
+}

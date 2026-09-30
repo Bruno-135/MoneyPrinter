@@ -1,7 +1,13 @@
 'use client';
 
-import { useActionState } from 'react';
-import { AREAS } from '@/lib/equipa/permissoes';
+import { useActionState, useState } from 'react';
+import {
+  AREAS,
+  PAPEIS,
+  PAPEL_POR_OMISSAO,
+  papelDestasPermissoes,
+  papelPorChave,
+} from '@/lib/equipa/permissoes';
 import { criarPessoa, trocarSenha } from './actions';
 import { CONVITE_PARADO } from './estado';
 
@@ -92,10 +98,65 @@ export function CriarPessoa() {
   );
 }
 
-/** As caixas de cada área, agrupadas como no menu. */
+/**
+ * O papel e as caixas de cada área.
+ *
+ * Escolher um papel marca as caixas que costumam ir com ele. Mexer numa caixa
+ * à mão faz o papel saltar para «Personalizado» — senão a etiqueta ao lado do
+ * nome dizia «Comercial» a quem já não tem os acessos de comercial, e uma
+ * etiqueta que mente é pior do que nenhuma.
+ */
 export function CaixasDeAcesso({ marcadas = [] }: { marcadas?: readonly string[] }) {
+  const [escolhidas, setEscolhidas] = useState<string[]>([...marcadas]);
+  const papel = papelDestasPermissoes(escolhidas);
+
+  const trocarPapel = (chave: string) => {
+    if (chave === PAPEL_POR_OMISSAO) return;
+    setEscolhidas([...papelPorChave(chave).permissoes]);
+  };
+
+  const mexer = (chave: string, ligada: boolean) =>
+    setEscolhidas((antes) =>
+      ligada ? [...new Set([...antes, chave])] : antes.filter((c) => c !== chave),
+    );
+
   return (
     <div className="flex flex-col gap-3">
+      {/* O papel vai no formulário como campo escondido: é o que fica escrito
+          ao lado do nome. Não decide acessos — quem decide são as caixas. */}
+      <input type="hidden" name="papel" value={papel} />
+
+      <fieldset className="flex flex-col gap-1.5">
+        <legend className="text-ink3 font-mono text-[11px] tracking-[0.08em] uppercase">
+          Papel
+        </legend>
+        <div className="flex flex-wrap gap-1.5">
+          {PAPEIS.map((p) => {
+            const activo = papel === p.chave;
+            return (
+              <button
+                key={p.chave}
+                type="button"
+                onClick={() => trocarPapel(p.chave)}
+                title={p.explica}
+                aria-pressed={activo}
+                className={`h-9 rounded-lg border px-3 text-[12px] font-semibold ${
+                  activo ? 'border-marca text-marca' : 'border-line text-ink2'
+                }`}
+                style={
+                  activo
+                    ? { background: 'color-mix(in oklch, var(--marca) 12%, transparent)' }
+                    : undefined
+                }
+              >
+                {p.nome}
+              </button>
+            );
+          })}
+        </div>
+        <p className="text-ink3 text-[11px] leading-snug">{papelPorChave(papel).explica}</p>
+      </fieldset>
+
       {AREAS.map((grupo) => (
         <fieldset key={grupo.grupo} className="flex flex-col gap-1.5">
           <legend className="text-ink3 font-mono text-[11px] tracking-[0.08em] uppercase">
@@ -111,7 +172,8 @@ export function CaixasDeAcesso({ marcadas = [] }: { marcadas?: readonly string[]
                   type="checkbox"
                   name="acesso"
                   value={area.chave}
-                  defaultChecked={marcadas.includes(area.chave)}
+                  checked={escolhidas.includes(area.chave)}
+                  onChange={(e) => mexer(area.chave, e.target.checked)}
                   className="mt-0.5 size-4 shrink-0"
                 />
                 <span className="flex min-w-0 flex-col">
