@@ -795,9 +795,27 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       (`create or replace view` só deixa acrescentar); e o `apply_migration` do MCP
       expira aos 60 s em ficheiros grandes — correr aos bocados.
 
-- [ ] **Envio de e-mails** — recolher os e-mails dos sites já em base, domínio de envio
-      separado (`contacto.vaidesign.net`), aquecimento, ligação de cancelar subscrição e
-      estado aberto/respondido por webhook do Resend.
+- [~] **Envio de e-mails** — área própria `emails` (fora de todos os papéis: fala em nome
+      da agência, dá-se à mão).
+
+      FEITO: recolha dos e-mails dos sites (`src/lib/emails/`, ecrã `/painel/emails`).
+      Abre o site de cada lead com site próprio, mais até duas páginas de contactos do
+      mesmo domínio, e guarda o endereço que a empresa lá pôs (`businesses.email`,
+      `email_origem='site'`, `email_visto_em`). Nunca adivinha `info@`. Um site sem
+      e-mail também fica marcado como visto, senão voltava em cada lote. Um e-mail posto
+      à mão nunca é substituído. O servidor só fala com IPs públicos (o URL vem do
+      Google), em cada redirecionamento. Plataformas (iFood, wa.link…) são ignoradas.
+      Corre em lotes de 10, a partir do ecrã, com `maxDuration = 60`.
+
+      NÃO TESTADO contra sites reais: o sandbox de desenvolvimento devolve 403 a hosts
+      arbitrários, por isso só o extrator e a guarda de IPs têm testes. A primeira corrida
+      a sério é em produção — olhar para a percentagem de leads com e-mail.
+
+      POR FAZER: domínio de envio separado (`contacto.vaidesign.net`) com DNS no Resend,
+      ecrã de escrever/enviar com envio devagar (aquecimento, ~20–30/dia no início),
+      ligação de cancelar subscrição (alimenta `nao_contactar`) e estado
+      aberto/respondido por webhook do Resend em `emails_enviados`. RGPD: a empresas
+      aplica-se opt-out; a empresários em nome individual, consentimento.
 
 ---
 

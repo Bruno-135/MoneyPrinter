@@ -19,6 +19,7 @@ export type ChaveDeAcesso =
   | 'modelos'
   | 'robo'
   | 'whatsapp'
+  | 'emails'
   | 'clientes'
   | 'conteudo'
   | 'suporte'
@@ -96,6 +97,12 @@ export const AREAS: { grupo: string; areas: Area[] }[] = [
         nome: 'Instâncias WhatsApp',
         explica: 'Ligar e desligar os números de WhatsApp da agência.',
       },
+      {
+        chave: 'emails',
+        nome: 'Envio de e-mails',
+        explica:
+          'Recolher os e-mails dos leads e escrever aos que ainda não foram contactados. Cada e-mail que sai fala em nome da agência.',
+      },
     ],
   },
   {
@@ -170,7 +177,8 @@ export function nomeDaArea(chave: ChaveDeAcesso): string {
  * mostrar ao lado do nome. Se o papel também mandasse, havia duas respostas
  * para «o que é que esta pessoa pode fazer?» — e um dia discordavam.
  *
- * Nenhum traz as áreas de dinheiro — prospetar e cobrança. Essas dão-se à mão,
+ * Nenhum traz as áreas de dinheiro — prospetar e cobrança — nem o envio de
+ * e-mails, que fala em nome da agência. Essas dão-se à mão,
  * uma pessoa de cada vez, porque são as únicas que custam ou expõem dinheiro.
  */
 

@@ -18,7 +18,8 @@
  * proteção em todo o schema. Na próxima vez que correres `npm run db:types`
  * com o CLI, confirma que esses `never` continuam lá.
  *
- * Pela mesma razão, a tabela `pedidos` e as funções `registar_pedido` e
+ * Pela mesma razão, as colunas `email*` de `businesses` (e da vista) e as tabelas
+ * `nao_contactar` e `emails_enviados` (0040), e a tabela `pedidos` e as funções `registar_pedido` e
  * `dono_da_agencia` (0033), as colunas `aviso`, `aviso_em` e `aviso_detalhe` e
  * a função `marcar_aviso` (0035), e a tabela `membros_da_equipa` com a função
  * `quem_sou` (0036), também foram acrescentadas à mão. Regerar tudo para
@@ -64,6 +65,9 @@ export type Database = {
           phone_country_code: string | null
           phone_country: string | null
           website_url: string | null
+          email: string | null
+          email_origem: string | null
+          email_visto_em: string | null
           has_website: boolean | null
           social_links: Json
           has_social: boolean | null
@@ -117,6 +121,9 @@ export type Database = {
           phone_country_code?: string | null
           phone_country?: string | null
           website_url?: string | null
+          email?: string | null
+          email_origem?: string | null
+          email_visto_em?: string | null
           has_website?: never
           social_links?: Json
           has_social?: never
@@ -170,6 +177,9 @@ export type Database = {
           phone_country_code?: string | null
           phone_country?: string | null
           website_url?: string | null
+          email?: string | null
+          email_origem?: string | null
+          email_visto_em?: string | null
           has_website?: never
           social_links?: Json
           has_social?: never
@@ -1297,6 +1307,84 @@ export type Database = {
         };
         Relationships: [];
       };
+      nao_contactar: {
+        Row: {
+          id: string
+          owner_id: string
+          business_id: string | null
+          email: string | null
+          motivo: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id?: string
+          business_id?: string | null
+          email?: string | null
+          motivo?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          business_id?: string | null
+          email?: string | null
+          motivo?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      emails_enviados: {
+        Row: {
+          id: string
+          owner_id: string
+          business_id: string | null
+          para: string
+          assunto: string
+          corpo: string
+          campanha: string | null
+          estado: string
+          resend_id: string | null
+          enviado_em: string
+          entregue_em: string | null
+          aberto_em: string | null
+          respondeu_em: string | null
+          erro: string | null
+        }
+        Insert: {
+          id?: string
+          owner_id?: string
+          business_id?: string | null
+          para: string
+          assunto: string
+          corpo: string
+          campanha?: string | null
+          estado?: string
+          resend_id?: string | null
+          enviado_em?: string
+          entregue_em?: string | null
+          aberto_em?: string | null
+          respondeu_em?: string | null
+          erro?: string | null
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          business_id?: string | null
+          para?: string
+          assunto?: string
+          corpo?: string
+          campanha?: string | null
+          estado?: string
+          resend_id?: string | null
+          enviado_em?: string
+          entregue_em?: string | null
+          aberto_em?: string | null
+          respondeu_em?: string | null
+          erro?: string | null
+        }
+        Relationships: []
+      }
       pedidos: {
         Row: {
           id: string;
@@ -1529,6 +1617,12 @@ export type Database = {
           deal_notes: string | null
           has_site: boolean | null
           has_live_site: boolean | null
+          email: string | null
+          email_origem: string | null
+          email_visto_em: string | null
+          estado_do_contacto: string | null
+          falado_em: string | null
+          emailado_em: string | null
         };
         Relationships: [];
       };
