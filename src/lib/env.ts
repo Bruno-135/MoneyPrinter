@@ -52,6 +52,10 @@ const serverSchema = z.object({
   // Para onde vai o aviso. Sem isto, vai para o `geral@` da agência.
   EMAIL_DOS_AVISOS: z.string().email("EMAIL_DOS_AVISOS tem de ser um email válido").optional(),
 
+  // O segredo com que o Resend assina os avisos (entregue, devolvido, queixa).
+  // Sem ele a rota recusa tudo — nunca aceita um aviso que não possa verificar.
+  RESEND_WEBHOOK_SECRET: z.string().min(1).optional(),
+
   // Só a geração de páginas por IA precisa desta. Opcional de propósito: sem
   // ela, tudo o resto continua a funcionar — o varrimento, a lista, o editor,
   // o PDF — e só o botão de gerar por IA diz que falta a chave. Torná-la

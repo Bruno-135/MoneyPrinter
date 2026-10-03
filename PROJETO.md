@@ -395,6 +395,7 @@ limitada à "Places API (New)", mais uma quota diária de pedidos.
 | `REGION_SEARCH_CACHE_DAYS` | Só servidor | Não (30) | Dias até uma região pesquisada ser considerada velha |
 | `ANTHROPIC_API_KEY` | **Só servidor** | Não | Geração de páginas por IA. Sem ela, só esse botão avisa que falta |
 | `RESEND_API_KEY` | **Só servidor** | Não | Aviso por email quando alguém preenche o formulário do site. Sem ela o pedido grava-se na mesma e aparece no painel — só não há o toque |
+| `RESEND_WEBHOOK_SECRET` | **Só servidor** | Não | Segredo (`whsec_…`) do webhook do Resend em `/api/resend/webhook`: entregue, devolvido, queixa. Sem ele a rota recusa tudo |
 | `EMAIL_DOS_AVISOS` | **Só servidor** | Não | Para onde vai esse aviso. Por omissão, `geral@vaidesign.net` |
 | `PEXELS_API_KEY` | **Só servidor** | Não | Fotografias de banco grátis. Sem ela, as páginas usam as imagens geradas |
 
@@ -811,11 +812,31 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       arbitrários, por isso só o extrator e a guarda de IPs têm testes. A primeira corrida
       a sério é em produção — olhar para a percentagem de leads com e-mail.
 
-      POR FAZER: domínio de envio separado (`contacto.vaidesign.net`) com DNS no Resend,
-      ecrã de escrever/enviar com envio devagar (aquecimento, ~20–30/dia no início),
-      ligação de cancelar subscrição (alimenta `nao_contactar`) e estado
-      aberto/respondido por webhook do Resend em `emails_enviados`. RGPD: a empresas
-      aplica-se opt-out; a empresários em nome individual, consentimento.
+      ENVIO (migração 0041, nada enviado ainda): `/painel/emails` tem a mensagem
+      (assunto + texto com `{nome}` e `{cidade}`), pré-visualização, teste para a
+      própria caixa e o envio. Regras que o código faz cumprir:
+      - só sai com o texto APROVADO pelo dono; qualquer alteração apaga a aprovação
+        (`campanhas_email.aprovada_em`);
+      - envio por clique, com a lista exacta à vista, máximo 30 por clique e
+        `limite_diario` (25) numa janela de 24 h; pausa entre e-mails; pára à
+        primeira falha; sem agendamento nem «enviar tudo»;
+      - só a leads por contactar, com e-mail, fora de `nao_contactar`, e sem o
+        mesmo endereço já usado; um lead sem cidade (se o texto a usa) fica de fora;
+      - o rodapé com «não quero receber mais» não se pode tirar do texto;
+      - o registo em `emails_enviados` faz-se ANTES de enviar e apaga-se se falhar
+        (a vista conta qualquer linha como «e-mail enviado»).
+      Remetente `Bruno · VaiDesign <ola@contacto.vaidesign.net>`, respostas para
+      `geral@vaidesign.net` (`src/lib/vaidesign/agencia.ts`).
+      `/cancelar/[id]` (pública; só o POST cancela) e `/api/cancelar/[id]` (um clique,
+      RFC 8058) chamam `cancelar_subscricao`. `/api/resend/webhook` verifica a
+      assinatura Svix e chama `registar_evento_email`: devolvido e queixa vão para
+      `nao_contactar`.
+
+      POR FAZER (tarefas de Bruno): criar `contacto.vaidesign.net` no Resend e os DNS
+      no Cloudflare; criar o webhook no Resend para `/api/resend/webhook` e pôr
+      `RESEND_WEBHOOK_SECRET` no Vercel. Respostas não se detetam (chegam à caixa);
+      aberturas não são fiáveis e não se prometem. RGPD: a empresas aplica-se o
+      opt-out; a empresários em nome individual, consentimento.
 
 ---
 
