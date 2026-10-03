@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
 import type { WebsiteKind } from '@/lib/places/website';
 import type { DealStage } from '@/lib/deals/stages';
+import { ehEstadoDeContacto, type EstadoDoContacto } from '@/lib/deals/contacto';
 import { scoreLabel } from './score';
 import { DEFAULT_SORT, type ProspectSort } from './sort';
 
@@ -64,6 +65,12 @@ export interface RankOptions {
    * significar ao mesmo tempo "sem página" e "não filtrar por isto".
    */
   hasSite?: boolean | null;
+  /**
+   * Estados de contacto a mostrar. Vazio = todos. Ver `deals/contacto.ts`:
+   * quem chama traduz uma escolha do ecrã («WhatsApp enviado») nos estados que
+   * ela apanha, e é essa lista que chega aqui.
+   */
+  contactos?: readonly string[];
   locality?: string | null;
   /**
    * Mostra só os comércios que saíram de um varrimento.
@@ -111,6 +118,10 @@ export interface RankedBusiness {
   nextActionAt: string | null;
   /** true se já se gerou alguma landing page para este comércio. */
   hasSite: boolean;
+  /** Com quem já se falou e por onde. Ver `deals/contacto.ts`. */
+  contacto: EstadoDoContacto;
+  /** A última vez que se falou ou escreveu, por qualquer canal. */
+  contactadoEm: string | null;
 }
 
 export interface RankResult {
@@ -127,6 +138,8 @@ const SELECT = [
   // Vêm da vista, já resolvidos: sem linha em `deals`, o estado é 'new',
   // e `has_site` poupa uma segunda consulta a `generated_sites`.
   'stage', 'next_action_at', 'has_site',
+  // Calculados na vista: ver a migração 0040.
+  'estado_do_contacto', 'falado_em', 'emailado_em',
 ].join(',');
 
 /**
@@ -150,6 +163,7 @@ function applyFilters<T extends Filterable>(query: T, options: RankOptions): T {
     categories = [],
     countries = [],
     hasSite = null,
+    contactos = [],
     locality = null,
     regionId = null,
   } = options;
@@ -160,6 +174,7 @@ function applyFilters<T extends Filterable>(query: T, options: RankOptions): T {
   if (stages.length > 0) q = q.in('stage', stages);
   if (categories.length > 0) q = q.in('business_category', categories);
   if (countries.length > 0) q = q.in('country_code', countries);
+  if (contactos.length > 0) q = q.in('estado_do_contacto', contactos);
   // `!== null` e não um `if (hasSite)`: com o segundo, filtrar por "ainda sem
   // página" não filtrava nada, que é o pior tipo de erro num filtro — o
   // resultado parece plausível e está errado.
@@ -168,6 +183,13 @@ function applyFilters<T extends Filterable>(query: T, options: RankOptions): T {
   if (locality) q = q.ilike('locality', locality);
 
   return q;
+}
+
+/** A mais recente de duas datas ISO, ignorando as que faltam. */
+function maisRecente(a: unknown, b: unknown): string | null {
+  const datas = [a, b].filter((d): d is string => typeof d === 'string' && d !== '');
+  if (datas.length === 0) return null;
+  return datas.reduce((x, y) => (new Date(x) >= new Date(y) ? x : y));
 }
 
 export async function rankBusinesses(db: Db, options: RankOptions = {}): Promise<RankResult> {
@@ -244,6 +266,10 @@ export async function rankBusinesses(db: Db, options: RankOptions = {}): Promise
       stage: (row.stage ?? 'new') as DealStage,
       nextActionAt: (row.next_action_at as string | null) ?? null,
       hasSite: Boolean(row.has_site),
+      contacto: ehEstadoDeContacto(row.estado_do_contacto)
+        ? row.estado_do_contacto
+        : 'por_contactar',
+      contactadoEm: maisRecente(row.falado_em, row.emailado_em),
     })),
   };
 }
@@ -267,7 +293,8 @@ export type FacetField =
   | 'website_kind'
   | 'business_category'
   | 'country_code'
-  | 'has_site';
+  | 'has_site'
+  | 'estado_do_contacto';
 
 /**
  * A contagem faz-se na base de dados, e não aqui.
@@ -299,6 +326,7 @@ export async function listFacet(
     categories = [],
     countries = [],
     hasSite = null,
+    contactos = [],
     regionId = null,
   } = options;
 
@@ -313,6 +341,7 @@ export async function listFacet(
     p_countries: [...countries],
     p_has_site: hasSite,
     p_region_id: regionId,
+    p_contactos: [...contactos],
   });
 
   if (error) {

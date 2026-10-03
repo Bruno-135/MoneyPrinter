@@ -6,9 +6,10 @@ import { createClient } from '@/lib/supabase/server';
 import { setStage, setDealFields, registarDesfecho } from '@/lib/deals/repository';
 import { registarServico, cancelarServico, apagarServico } from '@/lib/servicos/vendidos';
 import { SERVICOS } from '@/lib/servicos/catalogo';
-import { ehDesfecho } from '@/lib/deals/desfechos';
+import { ehCanal, ehDesfecho } from '@/lib/deals/desfechos';
 import { lerValor, moedaDoPais } from '@/lib/deals/dinheiro';
 import { isValidStage } from '@/lib/deals/stages';
+import { exigirAcesso, exigirAlgum } from '@/lib/equipa/quem-sou';
 
 /** Ações do funil. Correm com a sessão do utilizador, portanto a RLS aplica-se. */
 
@@ -20,6 +21,7 @@ async function requireSession() {
 }
 
 export async function changeStage(formData: FormData): Promise<void> {
+  await exigirAlgum(['leads', 'contactar']);
   const supabase = await requireSession();
 
   const businessId = String(formData.get('businessId') ?? '');
@@ -34,6 +36,7 @@ export async function changeStage(formData: FormData): Promise<void> {
 }
 
 export async function saveNotes(formData: FormData): Promise<void> {
+  await exigirAlgum(['leads', 'contactar']);
   const supabase = await requireSession();
 
   const businessId = String(formData.get('businessId') ?? '');
@@ -61,6 +64,7 @@ export async function saveNotes(formData: FormData): Promise<void> {
  * novo.
  */
 export async function venderServico(formData: FormData): Promise<void> {
+  await exigirAlgum(['clientes', 'leads']);
   const supabase = await requireSession();
 
   const businessId = String(formData.get('businessId') ?? '');
@@ -113,6 +117,7 @@ export async function venderServico(formData: FormData): Promise<void> {
 
 /** O cliente deixou de pagar. A linha fica, marcada como cancelada. */
 export async function cancelarServicoVendido(formData: FormData): Promise<void> {
+  await exigirAlgum(['clientes', 'leads']);
   const supabase = await requireSession();
 
   const id = String(formData.get('id') ?? '');
@@ -127,6 +132,7 @@ export async function cancelarServicoVendido(formData: FormData): Promise<void> 
 
 /** Registou-se por engano. Apaga mesmo. */
 export async function apagarServicoVendido(formData: FormData): Promise<void> {
+  await exigirAlgum(['clientes', 'leads']);
   const supabase = await requireSession();
 
   const id = String(formData.get('id') ?? '');
@@ -150,12 +156,17 @@ export async function apagarServicoVendido(formData: FormData): Promise<void> {
  * voltar.
  */
 export async function marcarDesfecho(formData: FormData): Promise<void> {
+  await exigirAcesso('contactar');
   const supabase = await requireSession();
 
   const businessId = String(formData.get('businessId') ?? '');
   const desfecho = String(formData.get('desfecho') ?? '');
+  // Um canal que não se conheça vale `manual`, e não deita fora o contacto: o
+  // desfecho é o que importa, e perdê-lo por um campo a mais era pior.
+  const canalPedido = formData.get('canal');
+  const canal = ehCanal(canalPedido) ? canalPedido : 'manual';
 
   if (!businessId || !ehDesfecho(desfecho)) return;
 
-  await registarDesfecho(supabase, businessId, desfecho);
+  await registarDesfecho(supabase, businessId, desfecho, { canal });
 }

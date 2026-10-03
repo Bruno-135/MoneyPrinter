@@ -46,6 +46,11 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
   const [indice, setIndice] = useState(0);
   const [feitos, setFeitos] = useState(0);
   const [, startTransition] = useTransition();
+  // O id do item em que se tocou no WhatsApp, e não um «sim/não»: um booleano
+  // tinha de ser reposto a `false` a cada avanço, e repor estado ao mudar de
+  // item é exactamente o género de coisa que se esquece e dá um contacto
+  // gravado como WhatsApp no comércio seguinte.
+  const [whatsappAbertoEm, setWhatsappAbertoEm] = useState<string | null>(null);
 
   const item = itens[indice];
 
@@ -74,6 +79,7 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
     const data = new FormData();
     data.set('businessId', item!.id);
     data.set('desfecho', desfecho);
+    data.set('canal', whatsappAbertoEm === item!.id ? 'whatsapp' : 'manual');
 
     // Avança JÁ. A gravação segue atrás.
     setIndice((i) => i + 1);
@@ -135,6 +141,7 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
               href={mensagem ? `${whatsapp}?text=${encodeURIComponent(mensagem)}` : whatsapp}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => setWhatsappAbertoEm(item.id)}
               className="rounded-md bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white"
             >
               WhatsApp

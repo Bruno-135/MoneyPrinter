@@ -5,6 +5,12 @@
 -- era uma pergunta sem resposta — e sem resposta a essa pergunta, mandar
 -- emails é mandar às cegas, e a mesma pessoa leva três vezes a mesma coisa.
 --
+-- O CANAL VEM DO PAINEL. `contact_events.channel` já existia e valia `manual`
+-- para tudo — uma chamada, um «não atende», um «não quer». A fila passou a
+-- gravar `whatsapp` quando se toca no botão do WhatsApp antes de decidir; sem
+-- isso o estado «WhatsApp enviado» contava qualquer contacto, e os cinco que
+-- já existiam eram quatro «não atende» e um «não quer».
+--
 -- O estado é UM valor por lead, calculado e não guardado. Guardado, ficava
 -- velho na primeira vez que alguém esquecesse de o actualizar; calculado,
 -- nunca pode discordar dos factos que estão nas outras tabelas.
@@ -110,7 +116,7 @@ select
   b.email_origem,
   b.email_visto_em,
 
-  -- Um valor só, e os cinco são exclusivos entre si. A lista de não contactar
+  -- Um valor só, e os seis são exclusivos entre si. A lista de não contactar
   -- ganha sempre a tudo o resto: se a pessoa pediu para sair, não interessa
   -- por onde se lhe falou antes.
   case
@@ -120,12 +126,14 @@ select
           or (n.email is not null and b.email is not null and lower(n.email) = lower(b.email))
     ) then 'nao_contactar'
     when exists (select 1 from public.emails_enviados e where e.business_id = b.id)
-     and exists (select 1 from public.contact_events c where c.business_id = b.id and c.channel <> 'email')
+     and exists (select 1 from public.contact_events c where c.business_id = b.id and c.channel = 'whatsapp')
       then 'email_e_whatsapp'
+    when exists (select 1 from public.contact_events c where c.business_id = b.id and c.channel = 'whatsapp')
+      then 'whatsapp_enviado'
     when exists (select 1 from public.emails_enviados e where e.business_id = b.id)
       then 'email_enviado'
     when exists (select 1 from public.contact_events c where c.business_id = b.id)
-      then 'whatsapp_enviado'
+      then 'contactado'
     else 'por_contactar'
   end as estado_do_contacto,
 

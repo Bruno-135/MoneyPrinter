@@ -8,6 +8,7 @@ import {
   fecharPedido,
   reabrirPedido,
 } from '@/lib/suporte/repository';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * As acções da caixa de suporte.
@@ -32,6 +33,7 @@ export async function novoPedido(
   _anterior: EstadoDoPedido,
   form: FormData,
 ): Promise<EstadoDoPedido> {
+  await exigirAcesso('suporte');
   const businessId = String(form.get('businessId') ?? '');
   const titulo = String(form.get('titulo') ?? '').trim();
   const prazo = Number(form.get('prazo') ?? 2);
@@ -61,18 +63,21 @@ export async function novoPedido(
 }
 
 export async function marcarFeito(form: FormData): Promise<void> {
+  await exigirAcesso('suporte');
   const supabase = await createClient();
   await fecharPedido(supabase, String(form.get('id') ?? ''));
   refrescar(String(form.get('businessId') ?? '') || undefined);
 }
 
 export async function voltarAAbrir(form: FormData): Promise<void> {
+  await exigirAcesso('suporte');
   const supabase = await createClient();
   await reabrirPedido(supabase, String(form.get('id') ?? ''));
   refrescar(String(form.get('businessId') ?? '') || undefined);
 }
 
 export async function apagar(form: FormData): Promise<void> {
+  await exigirAcesso('suporte');
   const supabase = await createClient();
   await apagarPedido(supabase, String(form.get('id') ?? ''));
   refrescar(String(form.get('businessId') ?? '') || undefined);

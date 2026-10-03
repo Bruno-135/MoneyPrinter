@@ -362,6 +362,14 @@ Verificação rápida da ligação com a aplicação a correr: `GET /api/health`
 9. **Commits**: mensagem descritiva no imperativo, em inglês, com prefixo de tipo
    (`feat:`, `fix:`, `docs:`, `chore:`).
 10. **Branch de desenvolvimento**: `claude/commercial-prospecting-system-jwvvxk`.
+11. **Toda a acção de servidor e toda a rota do painel começa por uma guarda de
+    permissão** — `exigirAcesso('area')`, `exigirAlgum([...])` ou `exigirSerDono()` nas
+    acções; `lerQuemSou()` + `podeEntrar()` nas rotas. Esconder uma entrada do menu não
+    fecha porta nenhuma: uma acção é um endereço como outro qualquer. Esta regra já foi
+    quebrada uma vez (34 acções e 2 rotas ficaram a aceitar qualquer pessoa com sessão), e
+    é por isso que `src/app/painel/guardas.test.ts` lê o código e **falha** se faltar uma.
+    As permissões decidem as ÁREAS do painel; a RLS decide os DADOS — um membro com sessão
+    vê na base tudo o que é do dono, e o que o impede de abrir a cobrança é o painel.
 
 ---
 
@@ -749,6 +757,47 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       confiança de quem a usa.
 
 - [ ] **Fase 3** — sites de várias páginas, para clientes maiores.
+
+### Equipa, permissões e contacto
+
+- [x] **Equipa e permissões** — migrações 0036 a 0039.
+
+      Mais do que uma pessoa no mesmo painel. A costura é `current_owner_id()`, que
+      quase todas as políticas já usavam: devolve o dono de quem é MEMBRO (tabela
+      `membros_da_equipa`) ou o próprio utilizador. O dono não tem linha nenhuma na
+      tabela — quem não é membro de ninguém é dono do seu espaço, e uma linha "dono"
+      que alguém apagasse por engano deixava a conta sem dono. A 0037 alinhou as sete
+      tabelas que usavam `auth.uid()` à letra, e as fotografias (a pasta é o id do
+      DONO, não o de quem carrega).
+
+      Quinze áreas (`src/lib/equipa/permissoes.ts`), uma por entrada do menu, numa
+      lista só que o menu, as guardas e o ecrã leem; o teste exige que concordem. O
+      dono tem `*`. Quatro papéis (comercial, operacional, suporte, personalizado) são
+      etiqueta e atalho — **não decidem acessos**, quem decide é a lista de caixas — e
+      nenhum traz Prospetar nem Cobrança, que gastam ou expõem dinheiro.
+
+      As contas criam-se na base (`criar_acesso`, `mudar_senha_do_membro`, só o dono),
+      e não pela API de administração: assim não há `SUPABASE_SERVICE_ROLE_KEY` a viver
+      na aplicação. Escreve em `auth.users`; se o Supabase mudar essa tabela, a criação
+      falha a fazer barulho.
+
+- [x] **Estado de contacto** — migração 0040.
+
+      `estado_do_contacto` na vista `businesses_with_stage`: um valor por lead,
+      CALCULADO (por contactar, contactado, WhatsApp, e-mail, e-mail + WhatsApp, não
+      contactar). O ecrã mostra cinco escolhas, cada uma a união de alguns estados
+      (`src/lib/deals/contacto.ts`). A fila grava o canal (`whatsapp`) quando se toca no
+      botão antes de decidir; sem isso o painel não sabia por onde se falou. Prova que a
+      mensagem foi ABERTA, não que seguiu. Lista de não contactar permanente
+      (`nao_contactar`) e registo de cada e-mail (`emails_enviados`).
+
+      Duas armadilhas: a vista tem de listar as colunas uma a uma, com as novas no fim
+      (`create or replace view` só deixa acrescentar); e o `apply_migration` do MCP
+      expira aos 60 s em ficheiros grandes — correr aos bocados.
+
+- [ ] **Envio de e-mails** — recolher os e-mails dos sites já em base, domínio de envio
+      separado (`contacto.vaidesign.net`), aquecimento, ligação de cancelar subscrição e
+      estado aberto/respondido por webhook do Resend.
 
 ---
 

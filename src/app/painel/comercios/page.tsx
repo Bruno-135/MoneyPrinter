@@ -26,6 +26,14 @@ import {
 import { FilterBar } from '../filter-bar';
 import { ColumnFilter } from '../column-filter';
 import { STAGES, isValidStage, type DealStage } from '@/lib/deals/stages';
+import {
+  ESCOLHAS,
+  ETIQUETA_DO_CONTACTO,
+  ESTILO_DO_CONTACTO,
+  contarEscolha,
+  ehEscolhaDeContacto,
+  estadosDaEscolha,
+} from '@/lib/deals/contacto';
 import { googleMapsUrl } from '@/lib/places/links';
 import { StageSelect } from '../stage-select';
 import { Destaques, fotosDosDestaques } from '../destaques';
@@ -43,6 +51,7 @@ interface PainelProps {
     ramo?: string;
     pais?: string;
     pagina?: string;
+    contacto?: string;
   }>;
 }
 
@@ -67,6 +76,8 @@ interface PainelFilters {
   pais: string;
   /** 'sim' = já tem landing page, 'nao' = ainda não. Vazio = todos. */
   pagina: string;
+  /** Uma escolha de contacto ('por', 'ja', 'whatsapp', 'email', 'nao'). Vazio = todos. */
+  contacto: string;
   procura: string | null;
   ordem: string;
 }
@@ -86,6 +97,7 @@ function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Rou
   if (next.ramo.length > 0) params.set('ramo', next.ramo.join(','));
   if (next.pais) params.set('pais', next.pais);
   if (next.pagina) params.set('pagina', next.pagina);
+  if (next.contacto) params.set('contacto', next.contacto);
   if (next.estado.length > 0) params.set('estado', next.estado.join(','));
   if (next.site.length > 0) params.set('site', next.site.join(','));
 
@@ -150,19 +162,27 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const pagina = params.pagina === 'sim' || params.pagina === 'nao' ? params.pagina : '';
   const temPagina = pagina === '' ? null : pagina === 'sim';
 
+  // Uma escolha só, como a da página, e pelo mesmo motivo: «com quem já falei»
+  // é uma pergunta que se faz de cada vez. Traduz-se logo nos estados que
+  // apanha, que é o que a base entende.
+  const contacto = ehEscolhaDeContacto(params.contacto) ? params.contacto : '';
+  const contactos = estadosDaEscolha(contacto);
+
   // O país e a página entram em TODAS as facetas, inclusive nas suas próprias:
   // não são funis de coluna a calcular-se uns aos outros, são o âmbito dentro
   // do qual as colunas se contam.
   const ambito = { countries: paises, hasSite: temPagina };
 
-  const semRamo = { ...ambito, kinds, stages: estados, regionId: procura };
-  const semEstado = { ...ambito, kinds, categories: ramos, regionId: procura };
-  const semSite = { ...ambito, stages: estados, categories: ramos, regionId: procura };
+  const semRamo = { ...ambito, contactos, kinds, stages: estados, regionId: procura };
+  const semEstado = { ...ambito, contactos, kinds, categories: ramos, regionId: procura };
+  const semSite = { ...ambito, contactos, stages: estados, categories: ramos, regionId: procura };
+  // A caixa do contacto conta-se com os filtros das outras, e nunca com o dela.
+  const semContacto = { ...ambito, kinds, stages: estados, categories: ramos, regionId: procura };
 
   // A lista de países oferecida sai dos dados e não de uma constante: não vale
   // a pena oferecer "Brasil" a quem só tem comércios portugueses guardados.
-  const semPais = { hasSite: temPagina, kinds, stages: estados, categories: ramos, regionId: procura };
-  const semPagina = { countries: paises, kinds, stages: estados, categories: ramos, regionId: procura };
+  const semPais = { hasSite: temPagina, contactos, kinds, stages: estados, categories: ramos, regionId: procura };
+  const semPagina = { countries: paises, contactos, kinds, stages: estados, categories: ramos, regionId: procura };
 
   // As duas últimas são para a fila de números e não para os funis: contam
   // dentro da procura escolhida e fora dos filtros das colunas, para servirem
@@ -172,13 +192,22 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   // mesmo enquanto se mexe nele.
   const soProcura = { regionId: procura, countries: paises };
 
-  const [ramosFacet, estadosFacet, sitesFacet, paisesFacet, paginaFacet, sitesTotal, estadosTotal] =
-    await Promise.all([
+  const [
+    ramosFacet,
+    estadosFacet,
+    sitesFacet,
+    paisesFacet,
+    paginaFacet,
+    contactoFacet,
+    sitesTotal,
+    estadosTotal,
+  ] = await Promise.all([
       listFacet(supabase, 'business_category', semRamo),
       listFacet(supabase, 'stage', semEstado),
       listFacet(supabase, 'website_kind', semSite),
       listFacet(supabase, 'country_code', semPais),
       listFacet(supabase, 'has_site', semPagina),
+      listFacet(supabase, 'estado_do_contacto', semContacto),
       listFacet(supabase, 'website_kind', soProcura),
       listFacet(supabase, 'stage', soProcura),
     ]);
@@ -189,6 +218,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     ramo: ramos,
     pais,
     pagina,
+    contacto,
     procura,
     ordem,
   };
@@ -199,6 +229,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     categories: ramos,
     countries: paises,
     hasSite: temPagina,
+    contactos,
     regionId: procura,
     sort: ordem,
     limit: 100,
@@ -368,6 +399,21 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                   },
                 ]
               : []),
+            // Com quem já se falou. Fica antes da página porque é a pergunta
+            // de todos os dias: «quem é que ainda não contactei?». Cada opção
+            // diz quantos apanha dentro dos outros filtros.
+            {
+              label: 'Contacto',
+              current: contacto,
+              options: [
+                { value: '', label: 'Todos', href: painelHref(here, { contacto: '' }) },
+                ...ESCOLHAS.map((e) => ({
+                  value: e.value,
+                  label: `${e.label} (${contarEscolha(contactoFacet, e)})`,
+                  href: painelHref(here, { contacto: e.value }),
+                })),
+              ],
+            },
             {
               label: 'Landing page',
               current: pagina,
@@ -399,7 +445,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
 
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-line px-5 py-8 text-center text-sm text-ink2 opacity-100 dark:border-line">
-            {ramos.length > 0 || estados.length > 0 || sites.length > 0
+            {ramos.length > 0 || estados.length > 0 || sites.length > 0 || contacto !== ''
               ? 'Nenhum lead com estes filtros. Limpa um dos funis no cabeçalho da tabela.'
               : batch
                 ? `A procura ${batch.label} · ${batch.categoryLabel} não deu nenhum lead.`
@@ -452,6 +498,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                       />
                     </span>
                   </th>
+                  <th className="px-4 py-3 font-medium">Contacto</th>
                   <th className="px-4 py-3 font-medium">
                     <span className="inline-flex items-center gap-1">
                       Site
@@ -519,6 +566,21 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                     </td>
                     <td className="px-4 py-3">
                       <StageSelect businessId={b.id} stage={b.stage} />
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      {/* Quem ainda não foi tocado não leva selo nenhum: com
+                          cinco mil linhas, «por contactar» em todas era ruído, e
+                          o que se procura com o olho é o que JÁ foi feito. */}
+                      {b.contacto !== 'por_contactar' && (
+                        <span
+                          className={`rounded px-2 py-0.5 text-xs font-medium ${ESTILO_DO_CONTACTO[b.contacto]}`}
+                        >
+                          {ETIQUETA_DO_CONTACTO[b.contacto]}
+                        </span>
+                      )}
+                      {b.contactadoEm && (
+                        <span className="ml-2 text-xs text-ink3">{describeWhen(b.contactadoEm)}</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`rounded px-2 py-0.5 text-xs font-medium whitespace-nowrap ${SITE_STYLE[b.websiteKind] ?? ''}`}>

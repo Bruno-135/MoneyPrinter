@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
 import type { DealStage } from './stages';
-import { DIAS_PARA_VOLTAR_A_TENTAR, type Desfecho } from './desfechos';
+import { DIAS_PARA_VOLTAR_A_TENTAR, type Canal, type Desfecho } from './desfechos';
 
 /**
  * Leitura e escrita das negociações.
@@ -148,7 +148,7 @@ export async function registarDesfecho(
   db: Db,
   businessId: string,
   desfecho: Desfecho,
-  opcoes: { adiarDias?: number; razao?: string } = {},
+  opcoes: { adiarDias?: number; razao?: string; canal?: Canal } = {},
 ): Promise<void> {
   const agora = new Date();
 
@@ -197,7 +197,7 @@ export async function registarDesfecho(
   // meio de uma sessão de trinta chamadas.
   const { error: erroEvento } = await db
     .from('contact_events')
-    .insert({ business_id: businessId, outcome: desfecho });
+    .insert({ business_id: businessId, outcome: desfecho, channel: opcoes.canal ?? 'manual' });
 
   if (erroEvento) {
     console.error('Contacto registado, mas não entrou no histórico:', erroEvento.message);

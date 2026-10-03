@@ -72,6 +72,20 @@ export async function exigirAcesso(chave: ChaveDeAcesso): Promise<QuemSou> {
   return quem;
 }
 
+/**
+ * Entra quem tiver QUALQUER uma das áreas.
+ *
+ * Para as acções que servem mais do que um ecrã: mudar a etapa de um lead
+ * faz-se na lista, na ficha e na fila, e quem trabalha só na fila não pode
+ * ficar impedido de o fazer por não ter a lista toda.
+ */
+export async function exigirAlgum(chaves: readonly ChaveDeAcesso[]): Promise<QuemSou> {
+  const quem = await lerQuemSou();
+  if (!quem) redirect('/entrar');
+  if (!chaves.some((c) => podeEntrar(quem.permissoes, c))) redirect('/painel');
+  return quem;
+}
+
 /** Só o dono. Para a própria página da equipa. */
 export async function exigirSerDono(): Promise<QuemSou> {
   const quem = await lerQuemSou();

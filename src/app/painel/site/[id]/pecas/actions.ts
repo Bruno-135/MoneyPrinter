@@ -15,6 +15,7 @@ import type { Estado } from '@/lib/loja/peca';
 import { lerPreco, lerTamanhos } from '@/lib/loja/campos';
 import { filtrarEnderecos } from '@/lib/loja/imagem';
 import { isFontId, isPaletteId, parseTheme } from '@/lib/sites/theme';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * O cadastro das peças.
@@ -59,6 +60,7 @@ export async function gravarPeca(
   _previous: AiActionState,
   formData: FormData,
 ): Promise<AiActionState> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
@@ -90,6 +92,7 @@ export async function gravarPeca(
 }
 
 export async function apagarPecaDaLoja(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
@@ -103,6 +106,7 @@ export async function apagarPecaDaLoja(formData: FormData): Promise<void> {
 }
 
 export async function alternarEsgotada(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
@@ -124,6 +128,7 @@ export async function alternarEsgotada(formData: FormData): Promise<void> {
  * quem tem um site feito não tem de o pagar outra vez só para mudar a cor.
  */
 export async function aparenciaDaLoja(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');

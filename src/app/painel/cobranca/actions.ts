@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { desmarcar, marcar, type Estado } from '@/lib/cobranca/repository';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * Marcar e desmarcar um mês.
@@ -17,6 +18,7 @@ function numero(form: FormData, campo: string): number {
 }
 
 export async function marcarMes(form: FormData): Promise<void> {
+  await exigirAcesso('cobranca');
   const estado = String(form.get('estado') ?? '') as Estado;
   if (estado !== 'pago' && estado !== 'falhou' && estado !== 'pendente') return;
 
@@ -38,6 +40,7 @@ export async function marcarMes(form: FormData): Promise<void> {
 }
 
 export async function limparMes(form: FormData): Promise<void> {
+  await exigirAcesso('cobranca');
   const supabase = await createClient();
   await desmarcar(
     supabase,

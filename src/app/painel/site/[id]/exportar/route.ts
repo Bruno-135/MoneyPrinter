@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { lerQuemSou } from '@/lib/equipa/quem-sou';
+import { podeEntrar } from '@/lib/equipa/permissoes';
 import { loadSite } from '@/lib/sites/load';
 import { fontHref, themeVars } from '@/lib/sites/theme';
 
@@ -48,6 +50,13 @@ export async function GET(_pedido: Request, { params }: { params: Promise<{ id: 
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return new NextResponse('Entra primeiro.', { status: 401 });
+
+  // O mesmo que a página do site: sem a área dos sites criados não se leva o
+  // ficheiro, mesmo sabendo o endereço.
+  const quem = await lerQuemSou();
+  if (!quem || !podeEntrar(quem.permissoes, 'paginas')) {
+    return new NextResponse('Sem acesso aos sites.', { status: 403 });
+  }
 
   const { id } = await params;
   const loaded = await loadSite(supabase, id);

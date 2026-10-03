@@ -21,6 +21,7 @@ import {
   paginasDoSite,
   sugerirSlug,
 } from '@/lib/sites/paginas/repository';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * As páginas interiores de um site.
@@ -42,6 +43,7 @@ export async function criarPaginaDoSite(
   _previous: AiActionState,
   formData: FormData,
 ): Promise<AiActionState> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
@@ -86,6 +88,7 @@ export async function gerarPaginaDoSite(
   _previous: AiActionState,
   formData: FormData,
 ): Promise<AiActionState> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
@@ -168,6 +171,7 @@ ${brief.trim() || '(sem indicações — escreve o que esta página deve ter, pa
 }
 
 export async function apagarPaginaDoSite(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');

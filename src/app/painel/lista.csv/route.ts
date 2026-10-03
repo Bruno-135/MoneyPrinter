@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { lerQuemSou } from '@/lib/equipa/quem-sou';
+import { podeEntrar } from '@/lib/equipa/permissoes';
 import {
   DEFAULT_KINDS,
   isWebsiteKind,
@@ -9,6 +11,7 @@ import {
 import { CATEGORIES, findCategory } from '@/lib/places/categories';
 import { ehCodigoPais, nomeDoPais } from '@/lib/places/paises';
 import { isValidStage, stageLabel, type DealStage } from '@/lib/deals/stages';
+import { ETIQUETA_DO_CONTACTO, estadosDaEscolha } from '@/lib/deals/contacto';
 import { isProspectSort, DEFAULT_SORT } from '@/lib/scoring/sort';
 import { googleMapsUrl } from '@/lib/places/links';
 import { listSearchBatches } from '@/lib/places/searches';
@@ -47,6 +50,14 @@ export async function GET(request: Request) {
     return NextResponse.json({ erro: 'Sessão expirada.' }, { status: 401 });
   }
 
+  // Ter sessão não chega: esta lista tem os telefones todos, e quem não tem a
+  // área dos Leads não a pode levar para casa. A página já fecha a porta; uma
+  // rota é outro endereço, e fechar uma não fecha a outra.
+  const quem = await lerQuemSou();
+  if (!quem || !podeEntrar(quem.permissoes, 'leads')) {
+    return NextResponse.json({ erro: 'Sem acesso à lista de leads.' }, { status: 403 });
+  }
+
   const url = new URL(request.url);
   const p = url.searchParams;
 
@@ -56,6 +67,7 @@ export async function GET(request: Request) {
   const pais = ehCodigoPais(p.get('pais')) ? p.get('pais')! : '';
   const paginaParam = p.get('pagina');
   const temPagina = paginaParam === 'sim' ? true : paginaParam === 'nao' ? false : null;
+  const contactos = estadosDaEscolha(p.get('contacto'));
   const ordemPedida = p.get('ordem');
   const ordem = isProspectSort(ordemPedida) ? ordemPedida : DEFAULT_SORT;
 
@@ -70,6 +82,7 @@ export async function GET(request: Request) {
     categories: ramos,
     countries: pais ? [pais] : [],
     hasSite: temPagina,
+    contactos,
     regionId: batch?.regionId ?? null,
     sort: ordem,
     limit: MAXIMO,
@@ -87,6 +100,8 @@ export async function GET(request: Request) {
     'Nº de avaliações',
     'Presença online',
     'Estado',
+    'Contacto',
+    'Último contacto',
     'Já tem página',
     'Morada',
     'Google Maps',
@@ -111,6 +126,8 @@ export async function GET(request: Request) {
     b.reviewsCount ?? '',
     PRESENCA[b.websiteKind] ?? b.websiteKind,
     stageLabel(b.stage),
+    ETIQUETA_DO_CONTACTO[b.contacto],
+    b.contactadoEm ? b.contactadoEm.slice(0, 10) : '',
     b.hasSite ? 'Sim' : 'Não',
     b.address ?? '',
     googleMapsUrl({

@@ -3,6 +3,7 @@ import type { RankedBusiness } from '@/lib/scoring/rank';
 import { findCategory } from '@/lib/places/categories';
 import { googleMapsUrl } from '@/lib/places/links';
 import { dateShownFor, describeWhen, type ProspectSort } from '@/lib/scoring/sort';
+import { ESTILO_DO_CONTACTO, ETIQUETA_DO_CONTACTO } from '@/lib/deals/contacto';
 import { StageSelect } from './stage-select';
 
 /**
@@ -67,6 +68,13 @@ export function CartoesComercios({
             {b.hasSite && (
               <span className="shrink-0 rounded bg-brand-600/10 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-brand-600">
                 com página
+              </span>
+            )}
+            {b.contacto !== 'por_contactar' && (
+              <span
+                className={`shrink-0 rounded px-1.5 py-0.5 text-xs font-medium whitespace-nowrap ${ESTILO_DO_CONTACTO[b.contacto]}`}
+              >
+                {ETIQUETA_DO_CONTACTO[b.contacto]}
               </span>
             )}
             <a

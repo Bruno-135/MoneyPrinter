@@ -9,6 +9,7 @@ import { gerarAbordagem, ehTipoAbordagem } from '@/lib/ai/abordagem';
 import { describeAiError } from '@/lib/ai/client';
 import type { AiActionState } from '@/lib/ai/action-state';
 import { guardarAbordagem } from '@/lib/outreach/repository';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * Escrever a mensagem de primeiro contacto de um comércio.
@@ -21,6 +22,7 @@ export async function escreverAbordagem(
   _anterior: AiActionState,
   formData: FormData,
 ): Promise<AiActionState> {
+  await exigirAcesso('leads');
   const businessId = String(formData.get('businessId') ?? '');
   if (!businessId) return { ok: false, message: 'Faltou o lead.' };
 

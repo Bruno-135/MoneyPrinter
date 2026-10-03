@@ -12,6 +12,7 @@ import { getServerEnv } from '@/lib/env';
 import { escolherImagens } from '@/lib/sites/imagens/escolher';
 import { PlacesClient } from '@/lib/places/client';
 import { fotosDoComercio, lerFotosGuardadas, resolverUri } from '@/lib/places/fotos';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 /**
  * Gravação do editor.
@@ -59,6 +60,7 @@ function readHighlights(form: FormData): SiteHighlight[] {
 }
 
 export async function saveSiteContent(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const { supabase } = await requireSession();
 
   const siteId = text(formData, 'siteId');
@@ -124,6 +126,7 @@ export async function saveSiteContent(formData: FormData): Promise<void> {
  * Vercel. Aqui só entra o endereço final.
  */
 export async function attachPhoto(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const { supabase } = await requireSession();
 
   const siteId = text(formData, 'siteId');
@@ -155,6 +158,7 @@ export async function attachPhoto(formData: FormData): Promise<void> {
 
 /** Tira a fotografia da página e apaga o ficheiro do armazenamento. */
 export async function detachPhoto(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const { supabase, user } = await requireSession();
 
   const siteId = text(formData, 'siteId');
@@ -207,6 +211,7 @@ export async function detachPhoto(formData: FormData): Promise<void> {
  * qualquer dentro da página de um comerciante.
  */
 export async function usarFotoGratis(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const { supabase } = await requireSession();
 
   const siteId = text(formData, 'siteId');
@@ -255,6 +260,7 @@ export async function usarFotoGratis(formData: FormData): Promise<void> {
  * `detachPhoto`, que sabe distinguir os dois casos.
  */
 export async function usarImagemGerada(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const { supabase } = await requireSession();
 
   const siteId = text(formData, 'siteId');
@@ -288,6 +294,7 @@ export async function usarImagemGerada(formData: FormData): Promise<void> {
  * alguém, e um botão não desfaz decisões.
  */
 export async function escolherFotosPorMim(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const { supabase } = await requireSession();
 
   const siteId = text(formData, 'siteId');
@@ -341,6 +348,7 @@ export async function escolherFotosPorMim(formData: FormData): Promise<void> {
  * seguintes não custam nada.
  */
 export async function buscarFotosDoGoogle(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const { supabase } = await requireSession();
 
   const siteId = text(formData, 'siteId');
@@ -375,6 +383,7 @@ export async function buscarFotosDoGoogle(formData: FormData): Promise<void> {
  * forjado mandava-nos pagar consultas por fotos de qualquer sítio.
  */
 export async function usarFotoDoGoogle(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const { supabase } = await requireSession();
 
   const siteId = text(formData, 'siteId');

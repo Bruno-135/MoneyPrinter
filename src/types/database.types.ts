@@ -1606,6 +1606,7 @@ export type Database = {
           p_countries?: string[] | null;
           p_has_site?: boolean | null;
           p_region_id?: string | null;
+          p_contactos?: string[] | null;
         };
         Returns: {
           value: string;

@@ -13,6 +13,7 @@ import {
   deleteMenuItem,
   parsePrice,
 } from '@/lib/sites/repository';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
 
 async function requireSession() {
   const supabase = await createClient();
@@ -22,6 +23,7 @@ async function requireSession() {
 }
 
 export async function createSite(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await requireSession();
   const businessId = String(formData.get('businessId') ?? '');
   if (!businessId) return;
@@ -31,6 +33,7 @@ export async function createSite(formData: FormData): Promise<void> {
 }
 
 export async function publish(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await requireSession();
   const siteId = String(formData.get('siteId') ?? '');
   const businessId = String(formData.get('businessId') ?? '');
@@ -41,6 +44,7 @@ export async function publish(formData: FormData): Promise<void> {
 }
 
 export async function unpublish(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await requireSession();
   const siteId = String(formData.get('siteId') ?? '');
   const businessId = String(formData.get('businessId') ?? '');
@@ -51,6 +55,7 @@ export async function unpublish(formData: FormData): Promise<void> {
 }
 
 export async function removeSite(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await requireSession();
   const siteId = String(formData.get('siteId') ?? '');
   const businessId = String(formData.get('businessId') ?? '');
@@ -61,6 +66,7 @@ export async function removeSite(formData: FormData): Promise<void> {
 }
 
 export async function addItem(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await requireSession();
 
   const siteId = String(formData.get('siteId') ?? '');
@@ -79,6 +85,7 @@ export async function addItem(formData: FormData): Promise<void> {
 }
 
 export async function removeItem(formData: FormData): Promise<void> {
+  await exigirAcesso('paginas');
   const supabase = await requireSession();
 
   const itemId = String(formData.get('itemId') ?? '');
