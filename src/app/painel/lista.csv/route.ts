@@ -4,6 +4,7 @@ import { lerQuemSou } from '@/lib/equipa/quem-sou';
 import { podeEntrar } from '@/lib/equipa/permissoes';
 import {
   DEFAULT_KINDS,
+  WEBSITE_KINDS,
   isWebsiteKind,
   rankBusinesses,
   type WebsiteKindFilter,
@@ -12,6 +13,7 @@ import { CATEGORIES, findCategory } from '@/lib/places/categories';
 import { ehCodigoPais, nomeDoPais } from '@/lib/places/paises';
 import { isValidStage, stageLabel, type DealStage } from '@/lib/deals/stages';
 import { ETIQUETA_DO_CONTACTO, estadosDaEscolha } from '@/lib/deals/contacto';
+import { ETIQUETA_DO_EMAIL, ehEstadoDoEmail } from '@/lib/emails/estado-do-email';
 import { isProspectSort, DEFAULT_SORT } from '@/lib/scoring/sort';
 import { googleMapsUrl } from '@/lib/places/links';
 import { listSearchBatches } from '@/lib/places/searches';
@@ -68,6 +70,8 @@ export async function GET(request: Request) {
   const paginaParam = p.get('pagina');
   const temPagina = paginaParam === 'sim' ? true : paginaParam === 'nao' ? false : null;
   const contactos = estadosDaEscolha(p.get('contacto'));
+  const emailPedido = p.get('email');
+  const emailEstado = ehEstadoDoEmail(emailPedido) ? emailPedido : null;
   const ordemPedida = p.get('ordem');
   const ordem = isProspectSort(ordemPedida) ? ordemPedida : DEFAULT_SORT;
 
@@ -77,12 +81,18 @@ export async function GET(request: Request) {
   const batch = batches.find((b) => b.regionId === p.get('procura')) ?? null;
 
   const { businesses } = await rankBusinesses(supabase, {
-    kinds: sites.length > 0 ? sites : DEFAULT_KINDS,
+    kinds:
+      sites.length > 0
+        ? sites
+        : emailEstado && emailEstado !== 'sem_site'
+          ? [...WEBSITE_KINDS]
+          : DEFAULT_KINDS,
     stages: estados,
     categories: ramos,
     countries: pais ? [pais] : [],
     hasSite: temPagina,
     contactos,
+    emailEstado,
     regionId: batch?.regionId ?? null,
     sort: ordem,
     limit: MAXIMO,
@@ -100,6 +110,8 @@ export async function GET(request: Request) {
     'Nº de avaliações',
     'Presença online',
     'Estado',
+    'E-mail',
+    'Estado do e-mail',
     'Contacto',
     'Último contacto',
     'Já tem página',
@@ -126,6 +138,8 @@ export async function GET(request: Request) {
     b.reviewsCount ?? '',
     PRESENCA[b.websiteKind] ?? b.websiteKind,
     stageLabel(b.stage),
+    b.email ?? '',
+    ETIQUETA_DO_EMAIL[b.emailEstado],
     ETIQUETA_DO_CONTACTO[b.contacto],
     b.contactadoEm ? b.contactadoEm.slice(0, 10) : '',
     b.hasSite ? 'Sim' : 'Não',

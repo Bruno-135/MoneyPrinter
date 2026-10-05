@@ -54,7 +54,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
         acesso: 'whatsapp',
         porLigar: true,
       },
-      { href: '/painel/emails', label: 'Envio de e-mails', acesso: 'emails' },
+      { href: '/painel/emails', label: 'E-mails dos leads', acesso: 'emails' },
     ],
   },
   {
@@ -99,7 +99,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/modelos': ['Modelos de site', 'o que se mostra antes de dizer o preço'],
   '/painel/robo': ['Conversas do robô', 'Instagram → WhatsApp'],
   '/painel/whatsapp': ['Instâncias WhatsApp', 'oficiais e não oficiais'],
-  '/painel/emails': ['Envio de e-mails', 'recolher, escrever e enviar'],
+  '/painel/emails': ['E-mails dos leads', 'extraídos dos sites, como uma folha'],
   '/painel/clientes': ['Carteira de clientes', 'quem já comprou, e o quê'],
   '/painel/conteudo': ['Calendário de conteúdo', 'serviços recorrentes'],
   '/painel/suporte': ['Caixa de entrada do suporte', 'o que os clientes pedem'],

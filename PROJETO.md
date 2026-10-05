@@ -395,7 +395,6 @@ limitada à "Places API (New)", mais uma quota diária de pedidos.
 | `REGION_SEARCH_CACHE_DAYS` | Só servidor | Não (30) | Dias até uma região pesquisada ser considerada velha |
 | `ANTHROPIC_API_KEY` | **Só servidor** | Não | Geração de páginas por IA. Sem ela, só esse botão avisa que falta |
 | `RESEND_API_KEY` | **Só servidor** | Não | Aviso por email quando alguém preenche o formulário do site. Sem ela o pedido grava-se na mesma e aparece no painel — só não há o toque |
-| `RESEND_WEBHOOK_SECRET` | **Só servidor** | Não | Segredo (`whsec_…`) do webhook do Resend em `/api/resend/webhook`: entregue, devolvido, queixa. Sem ele a rota recusa tudo |
 | `EMAIL_DOS_AVISOS` | **Só servidor** | Não | Para onde vai esse aviso. Por omissão, `geral@vaidesign.net` |
 | `PEXELS_API_KEY` | **Só servidor** | Não | Fotografias de banco grátis. Sem ela, as páginas usam as imagens geradas |
 
@@ -796,47 +795,29 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       (`create or replace view` só deixa acrescentar); e o `apply_migration` do MCP
       expira aos 60 s em ficheiros grandes — correr aos bocados.
 
-- [~] **Envio de e-mails** — área própria `emails` (fora de todos os papéis: fala em nome
-      da agência, dá-se à mão).
+- [x] **E-mails dos leads** — `/painel/emails`, área `emails` (fora de todos os papéis:
+      dá-se à mão). SÓ extrai e mostra; NÃO envia e-mails (decisão do dono: o compositor
+      de envio foi feito, não agradou e foi retirado — migração 0042).
 
-      FEITO: recolha dos e-mails dos sites (`src/lib/emails/`, ecrã `/painel/emails`).
-      Abre o site de cada lead com site próprio, mais até duas páginas de contactos do
-      mesmo domínio, e guarda o endereço que a empresa lá pôs (`businesses.email`,
-      `email_origem='site'`, `email_visto_em`). Nunca adivinha `info@`. Um site sem
-      e-mail também fica marcado como visto, senão voltava em cada lote. Um e-mail posto
-      à mão nunca é substituído. O servidor só fala com IPs públicos (o URL vem do
-      Google), em cada redirecionamento. Plataformas (iFood, wa.link…) são ignoradas.
-      Corre em lotes de 10, a partir do ecrã, com `maxDuration = 60`.
+      O estado do e-mail é CALCULADO (`src/lib/emails/estado-do-email.ts`) a partir de
+      `email`, `email_origem`, `email_visto_em` e `website_kind`: `extraido`,
+      `nao_extraido`, `sem_email`, `nao_abriu`, `sem_site`. Um lead novo cai sozinho em
+      «não extraído» (tem site, sem data de visita) — nada o tem de pôr lá. O mesmo
+      estado serve de filtro (`filtro.ts`, com teste que o põe lado a lado com a função
+      que classifica) na folha, na lista de Leads (filtro «E-mail» + coluna), no CSV e
+      numa faixa em cada ficha de lead.
+
+      Regras: `email_origem` 'site' ou 'mao' vem SEMPRE com um e-mail; `nao-abriu` marca
+      os sites que não abriram (botão «voltar a tentar» repõe-nos em não extraído); um
+      e-mail posto à mão nunca é substituído; só se vê o site próprio (plataformas como
+      iFood são ignoradas); o servidor só fala com IPs públicos, também nos
+      redirecionamentos (o URL vem do Google). Corre em lotes de 10 a partir do ecrã
+      (`maxDuration = 60`). Escolher um estado «de site» na lista de Leads mostra também
+      os leads com site próprio, que a lista esconde por omissão.
 
       NÃO TESTADO contra sites reais: o sandbox de desenvolvimento devolve 403 a hosts
-      arbitrários, por isso só o extrator e a guarda de IPs têm testes. A primeira corrida
-      a sério é em produção — olhar para a percentagem de leads com e-mail.
-
-      ENVIO (migração 0041, nada enviado ainda): `/painel/emails` tem a mensagem
-      (assunto + texto com `{nome}` e `{cidade}`), pré-visualização, teste para a
-      própria caixa e o envio. Regras que o código faz cumprir:
-      - só sai com o texto APROVADO pelo dono; qualquer alteração apaga a aprovação
-        (`campanhas_email.aprovada_em`);
-      - envio por clique, com a lista exacta à vista, máximo 30 por clique e
-        `limite_diario` (25) numa janela de 24 h; pausa entre e-mails; pára à
-        primeira falha; sem agendamento nem «enviar tudo»;
-      - só a leads por contactar, com e-mail, fora de `nao_contactar`, e sem o
-        mesmo endereço já usado; um lead sem cidade (se o texto a usa) fica de fora;
-      - o rodapé com «não quero receber mais» não se pode tirar do texto;
-      - o registo em `emails_enviados` faz-se ANTES de enviar e apaga-se se falhar
-        (a vista conta qualquer linha como «e-mail enviado»).
-      Remetente `Bruno · VaiDesign <ola@contacto.vaidesign.net>`, respostas para
-      `geral@vaidesign.net` (`src/lib/vaidesign/agencia.ts`).
-      `/cancelar/[id]` (pública; só o POST cancela) e `/api/cancelar/[id]` (um clique,
-      RFC 8058) chamam `cancelar_subscricao`. `/api/resend/webhook` verifica a
-      assinatura Svix e chama `registar_evento_email`: devolvido e queixa vão para
-      `nao_contactar`.
-
-      POR FAZER (tarefas de Bruno): criar `contacto.vaidesign.net` no Resend e os DNS
-      no Cloudflare; criar o webhook no Resend para `/api/resend/webhook` e pôr
-      `RESEND_WEBHOOK_SECRET` no Vercel. Respostas não se detetam (chegam à caixa);
-      aberturas não são fiáveis e não se prometem. RGPD: a empresas aplica-se o
-      opt-out; a empresários em nome individual, consentimento.
+      externos. Só o extrator, o filtro e a guarda de IPs têm testes; a primeira corrida
+      a sério é em produção.
 
 ---
 

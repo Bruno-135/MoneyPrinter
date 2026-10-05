@@ -1,16 +1,9 @@
 export interface Lote {
+  /** Quantos sites se viram neste lote. */
   vistos: number;
+  /** Destes, quantos tinham e-mail. */
   comEmail: number;
-  porVer: number;
+  /** Quantos continuam por extrair depois deste lote; -1 se deu erro. */
+  porExtrair: number;
   erro?: string;
 }
-
-/** O que uma ação do envio responde ao ecrã. */
-export interface EstadoDeEnvio {
-  ok?: boolean;
-  mensagem?: string;
-  /** Linhas a mostrar por baixo: os que falharam, ou os que ficaram de fora. */
-  detalhes?: string[];
-}
-
-export const ENVIO_PARADO: EstadoDeEnvio = {};

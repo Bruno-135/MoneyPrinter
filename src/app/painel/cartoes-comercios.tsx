@@ -4,6 +4,7 @@ import { findCategory } from '@/lib/places/categories';
 import { googleMapsUrl } from '@/lib/places/links';
 import { dateShownFor, describeWhen, type ProspectSort } from '@/lib/scoring/sort';
 import { ESTILO_DO_CONTACTO, ETIQUETA_DO_CONTACTO } from '@/lib/deals/contacto';
+import { ESTILO_DO_EMAIL, ETIQUETA_DO_EMAIL } from '@/lib/emails/estado-do-email';
 import { StageSelect } from './stage-select';
 
 /**
@@ -77,6 +78,12 @@ export function CartoesComercios({
                 {ETIQUETA_DO_CONTACTO[b.contacto]}
               </span>
             )}
+            <span
+              className={`shrink-0 rounded px-1.5 py-0.5 text-xs font-medium whitespace-nowrap ${ESTILO_DO_EMAIL[b.emailEstado]}`}
+              title={b.email ?? undefined}
+            >
+              {ETIQUETA_DO_EMAIL[b.emailEstado]}
+            </span>
             <a
               href={googleMapsUrl({
                 googlePlaceId: b.googlePlaceId,

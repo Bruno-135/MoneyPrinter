@@ -26,6 +26,12 @@ import { atividadeDoComercio } from '@/lib/sites/atividade';
 import { oportunidades } from '@/lib/servicos/catalogo';
 import { Oportunidades } from '../oportunidades';
 import { AtividadeDaPagina } from '../atividade';
+import {
+  ESTILO_DO_EMAIL,
+  ETIQUETA_DO_EMAIL,
+  EXPLICACAO_DO_EMAIL,
+  estadoDoEmail,
+} from '@/lib/emails/estado-do-email';
 
 export const dynamic = 'force-dynamic';
 
@@ -256,6 +262,32 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
           </dl>
         </section>
       </div>
+
+      {/* O e-mail: já foi extraído? Aparece em TODA a ficha, tenha ou não, para
+          não ser preciso ir à lista para saber se falta ir buscá-lo. */}
+      {(() => {
+        const estadoEmail = estadoDoEmail(business);
+        return (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-line px-5 py-3">
+            <span className="text-xs tracking-wide uppercase text-ink3">E-mail</span>
+            <span
+              className={`rounded px-2 py-0.5 text-xs font-semibold whitespace-nowrap ${ESTILO_DO_EMAIL[estadoEmail]}`}
+            >
+              {ETIQUETA_DO_EMAIL[estadoEmail]}
+            </span>
+            {business.email ? (
+              <a
+                href={`mailto:${business.email}`}
+                className="font-mono text-sm text-brand-600 underline underline-offset-4"
+              >
+                {business.email}
+              </a>
+            ) : (
+              <span className="text-sm text-ink2">{EXPLICACAO_DO_EMAIL[estadoEmail]}</span>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Sinal de compra, e por isso em cima. Um comerciante que abriu a
           proposta há duas horas é a melhor chamada do dia; o mesmo na semana

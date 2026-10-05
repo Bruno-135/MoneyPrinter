@@ -1,147 +1,260 @@
+import Link from 'next/link';
+import type { Route } from 'next';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { exigirAcesso } from '@/lib/equipa/quem-sou';
-import { contagens } from '@/lib/emails/repository';
-import { Recolha } from './recolha';
-import { ConfirmarEnvio, EnviarTeste, FormularioDaMensagem } from './envio';
+import { contagens, folha, type OrdemDaFolha } from '@/lib/emails/repository';
 import {
-  MAXIMO_POR_ENVIO,
-  campanhaAtual,
-  candidatos,
-  enviadosNasUltimas24h,
-} from '@/lib/emails/envios';
-import { dadosDoLead, montar, preencher } from '@/lib/emails/modelo';
-import { ASSUNTO_PADRAO, CORPO_PADRAO } from '@/lib/emails/campanha-padrao';
+  ESTILO_DO_EMAIL,
+  ETIQUETA_DO_EMAIL,
+  ORDEM_NO_FILTRO,
+  ehEstadoDoEmail,
+  type EstadoDoEmail,
+} from '@/lib/emails/estado-do-email';
+import { nomeDoPais } from '@/lib/places/paises';
+import { haQuantoTempo } from '@/components/quando';
+import { Extrair } from './recolha';
 
 /**
- * Envio de e-mails. Por agora só o primeiro passo: saber a quem se pode
- * escrever. O ecrã de escrever e enviar vem depois, e só faz sentido com
- * endereços reais por baixo.
+ * Os e-mails dos leads, como uma folha.
+ *
+ * Uma linha por lead, com o e-mail (ou a razão de não o haver) e o estado:
+ * extraído, ainda por extrair, sem e-mail no site, site que não abriu, sem
+ * site. Os leads novos que se prospectam caem sozinhos em «Não extraídos» —
+ * o estado é calculado, não é preciso marcar nada.
  */
 
 export const dynamic = 'force-dynamic';
-// Cada lote abre dez sites; com a folga dos que respondem devagar.
+// Cada lote abre dez sites, com folga para os que respondem devagar.
 export const maxDuration = 60;
 
-export default async function EmailsPage() {
+const POR_PAGINA = 100;
+
+interface Params {
+  estado?: string;
+  q?: string;
+  ordem?: string;
+  pagina?: string;
+}
+
+function href(atual: Params, mudar: Partial<Params>): Route {
+  const p = new URLSearchParams();
+  const todos = { ...atual, ...mudar };
+  if (todos.estado) p.set('estado', todos.estado);
+  if (todos.q) p.set('q', todos.q);
+  if (todos.ordem && todos.ordem !== 'novos') p.set('ordem', todos.ordem);
+  if (todos.pagina && todos.pagina !== '1') p.set('pagina', todos.pagina);
+  const s = p.toString();
+  return (s ? `/painel/emails?${s}` : '/painel/emails') as Route;
+}
+
+export default async function EmailsPage({ searchParams }: { searchParams: Promise<Params> }) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/entrar');
-  const quem = await exigirAcesso('emails');
+  await exigirAcesso('emails');
 
-  const c = await contagens(supabase);
-  const campanha = await campanhaAtual(supabase);
-  const assunto = campanha?.assunto ?? ASSUNTO_PADRAO;
-  const corpo = campanha?.corpo ?? CORPO_PADRAO;
-  const aprovada = Boolean(campanha?.aprovadaEm);
+  const params = await searchParams;
+  const estado: EstadoDoEmail | null = ehEstadoDoEmail(params.estado) ? params.estado : null;
+  const ordem: OrdemDaFolha = params.ordem === 'nome' ? 'nome' : 'novos';
+  const procura = (params.q ?? '').trim();
+  const pagina = Math.max(1, Number.parseInt(params.pagina ?? '1', 10) || 1);
 
-  const jaEnviados = await enviadosNasUltimas24h(supabase);
-  const limite = campanha?.limiteDiario ?? 25;
-  const quota = Math.max(0, Math.min(limite - jaEnviados, MAXIMO_POR_ENVIO));
+  const [c, { linhas, total }] = await Promise.all([
+    contagens(supabase),
+    folha(supabase, {
+      estado,
+      procura,
+      ordem,
+      de: (pagina - 1) * POR_PAGINA,
+      quantos: POR_PAGINA,
+    }),
+  ]);
 
-  // Só entram na lista os leads cujo texto se consegue preencher: o que se
-  // mostra aqui é exactamente o que sairia.
-  const servem = (l: { name: string; locality: string | null }) =>
-    preencher(assunto, dadosDoLead(l)).ok && preencher(corpo, dadosDoLead(l)).ok;
-  const lista = aprovada ? await candidatos(supabase, quota, servem) : [];
-  const exemplo = lista[0] ?? (await candidatos(supabase, 1, servem))[0] ?? null;
+  const aqui: Params = {
+    estado: estado ?? undefined,
+    q: procura || undefined,
+    ordem,
+    pagina: String(pagina),
+  };
+  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
 
-  const dadosExemplo = dadosDoLead(exemplo ?? { name: 'Padaria Exemplo', locality: 'Lisboa' });
-  const a = preencher(assunto, dadosExemplo);
-  const b = preencher(corpo, dadosExemplo);
-  const previa =
-    a.ok && b.ok
-      ? montar(a.texto, b.texto, `${'https://…'}/cancelar/identificador-de-cada-e-mail`)
-      : null;
+  const csv = new URLSearchParams();
+  if (estado) csv.set('estado', estado);
+  if (procura) csv.set('q', procura);
+  csv.set('ordem', ordem);
 
   return (
     <div className="flex flex-col gap-4">
-      <section className="rounded-2xl border border-line bg-surf2 p-4 sm:p-5">
-        <h2 className="text-[17px] font-bold">1. Recolher os e-mails dos sites</h2>
-        <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-ink2">
-          Abre o site de cada lead que tem um e guarda o e-mail que a própria empresa lá pôs
-          (rodapé, página de contactos). Não adivinha endereços nem compra listas. Só vê leads com
-          site próprio — os que só têm Facebook ou nada não têm onde procurar.
-        </p>
-        <Recolha inicial={c} />
+      <section className="border-line bg-surf2 rounded-2xl border p-4 sm:p-5">
+        <Extrair porExtrair={c.nao_extraido} naoAbriram={c.nao_abriu} />
       </section>
 
-      <section className="rounded-2xl border border-line bg-surf2 p-4 sm:p-5">
-        <div className="flex flex-wrap items-baseline gap-x-3">
-          <h2 className="text-[17px] font-bold">2. A mensagem</h2>
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-              aprovada
-                ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                : 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
-            }`}
-          >
-            {aprovada ? 'Aprovada' : campanha ? 'Por aprovar' : 'Proposta — ainda não guardada'}
-          </span>
-        </div>
-        <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-ink2">
-          Este é o texto proposto. Lê, muda o que quiseres e guarda. Só depois de aprovado é que
-          pode sair um e-mail a um lead.
-        </p>
-
-        <div className="mt-4 grid gap-5 lg:grid-cols-2">
-          <FormularioDaMensagem
-            assunto={assunto}
-            corpo={corpo}
-            guardada={Boolean(campanha)}
-            aprovada={aprovada}
-            ehDono={quem.ehDono}
+      <div className="flex flex-wrap items-center gap-2">
+        <Chip
+          ativo={estado === null}
+          to={href(aqui, { estado: undefined, pagina: '1' })}
+          texto={`Todos (${c.total.toLocaleString('pt-PT')})`}
+        />
+        {ORDEM_NO_FILTRO.map((e) => (
+          <Chip
+            key={e}
+            ativo={estado === e}
+            to={href(aqui, { estado: e, pagina: '1' })}
+            texto={`${ETIQUETA_DO_EMAIL[e]} (${c[e].toLocaleString('pt-PT')})`}
           />
-          <div>
-            <p className="text-ink3 text-[11px] font-semibold">
-              Pré-visualização {exemplo ? `com ${exemplo.name}` : '(negócio inventado)'}
-            </p>
-            {previa ? (
-              <div className="border-line mt-1 rounded-xl border bg-white p-4 text-black">
-                <p className="mb-3 text-[13px]">
-                  <span className="opacity-60">Assunto:</span> <strong>{previa.assunto}</strong>
-                </p>
-                <div dangerouslySetInnerHTML={{ __html: previa.html }} />
-              </div>
-            ) : (
-              <p className="mt-1 text-[13px] text-red-600">
-                O texto tem marcadores que não se conseguem preencher.
-              </p>
-            )}
-          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <form action="/painel/emails" className="flex gap-2">
+          {estado && <input type="hidden" name="estado" value={estado} />}
+          {ordem === 'nome' && <input type="hidden" name="ordem" value="nome" />}
+          <input
+            name="q"
+            defaultValue={procura}
+            placeholder="Procurar por nome ou e-mail"
+            className="border-line bg-surf h-9 w-64 rounded-lg border px-3 text-[13px]"
+          />
+          <button className="border-line h-9 rounded-lg border px-3 text-[13px] font-semibold">
+            Procurar
+          </button>
+        </form>
+        <a
+          href={`/painel/emails/lista.csv?${csv.toString()}`}
+          className="border-line h-9 rounded-lg border px-3 text-[13px] leading-9 font-semibold"
+        >
+          Exportar para Excel
+        </a>
+        <span className="text-ink3 text-[12px]">
+          {total.toLocaleString('pt-PT')} {total === 1 ? 'lead' : 'leads'}
+        </span>
+      </div>
+
+      {linhas.length === 0 ? (
+        <div className="border-line rounded-2xl border border-dashed px-6 py-12 text-center text-[14px]">
+          Nenhum lead com este filtro.
         </div>
-      </section>
+      ) : (
+        <div className="border-line overflow-x-auto rounded-lg border">
+          <table className="w-full text-sm">
+            <thead className="bg-black/[0.03] text-left text-xs tracking-wide text-black/55 uppercase dark:bg-white/[0.04] dark:text-white/55">
+              <tr>
+                <th className="px-4 py-3 font-medium">
+                  <Link
+                    href={href(aqui, { ordem: 'nome', pagina: '1' })}
+                    className={ordem === 'nome' ? 'text-brand-600' : 'hover:text-brand-600'}
+                  >
+                    Lead ↓
+                  </Link>
+                </th>
+                <th className="px-4 py-3 font-medium">E-mail</th>
+                <th className="px-4 py-3 font-medium">Estado</th>
+                <th className="px-4 py-3 font-medium">Site</th>
+                <th className="px-4 py-3 font-medium">Cidade</th>
+                <th className="px-4 py-3 font-medium">
+                  <Link
+                    href={href(aqui, { ordem: 'novos', pagina: '1' })}
+                    className={ordem === 'novos' ? 'text-brand-600' : 'hover:text-brand-600'}
+                  >
+                    Extraído em ↓
+                  </Link>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {linhas.map((l) => (
+                <tr key={l.id} className="border-line border-t">
+                  <td className="px-4 py-2.5">
+                    <Link
+                      href={`/painel/comercio/${l.id}`}
+                      className="font-medium underline-offset-4 hover:underline"
+                    >
+                      {l.nome}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-2.5 font-mono text-[12px]">
+                    {l.email ? (
+                      <a href={`mailto:${l.email}`} className="hover:text-brand-600">
+                        {l.email}
+                      </a>
+                    ) : (
+                      <span className="text-ink3">—</span>
+                    )}
+                    {l.email && l.origem === 'mao' && (
+                      <span className="text-ink3 ml-1.5 font-sans text-[11px]">à mão</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5 whitespace-nowrap">
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${ESTILO_DO_EMAIL[l.estado]}`}
+                    >
+                      {ETIQUETA_DO_EMAIL[l.estado]}
+                    </span>
+                  </td>
+                  <td className="text-ink2 max-w-[14rem] truncate px-4 py-2.5 text-[12px]">
+                    {l.site ? (
+                      <a
+                        href={l.site}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-brand-600"
+                      >
+                        {l.site.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                      </a>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                  <td className="text-ink2 px-4 py-2.5 text-[12px]">
+                    {[l.cidade, nomeDoPais(l.pais)].filter(Boolean).join(' · ')}
+                  </td>
+                  <td className="text-ink3 px-4 py-2.5 text-[12px] whitespace-nowrap">
+                    {l.vistoEm ? haQuantoTempo(l.vistoEm) : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      <section className="rounded-2xl border border-line bg-surf2 p-4 sm:p-5">
-        <h2 className="text-[17px] font-bold">3. Enviar</h2>
-        <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-ink2">
-          Os e-mails saem de <span className="font-mono">ola@contacto.vaidesign.net</span> e as
-          respostas chegam a <span className="font-mono">geral@vaidesign.net</span>. Só recebem os
-          leads com e-mail que nunca foram contactados por nenhum canal e que não pediram para sair.
-        </p>
-
-        <div className="mt-4 flex flex-col gap-5">
-          {campanha && <EnviarTeste />}
-
-          {!campanha ? (
-            <p className="text-[13px] text-ink2">Guarda a mensagem para continuar.</p>
-          ) : !aprovada ? (
-            <p className="text-[13px] text-ink2">
-              Falta o dono aprovar a mensagem. Enquanto isso, nenhum e-mail pode ser enviado.
-            </p>
-          ) : quota === 0 ? (
-            <p className="text-[13px] font-semibold">
-              Limite das últimas 24 h atingido ({jaEnviados} de {limite}). Volta mais tarde.
-            </p>
-          ) : lista.length === 0 ? (
-            <p className="text-[13px] text-ink2">
-              Não há leads prontos: nenhum com e-mail e por contactar. Corre a recolha acima.
-            </p>
-          ) : (
-            <ConfirmarEnvio candidatos={lista} limite={limite} jaEnviados={jaEnviados} />
+      {paginas > 1 && (
+        <nav className="flex items-center gap-3 text-[13px]">
+          {pagina > 1 && (
+            <Link
+              href={href(aqui, { pagina: String(pagina - 1) })}
+              className="border-line rounded-lg border px-3 py-1.5 font-semibold"
+            >
+              ← Anterior
+            </Link>
           )}
-        </div>
-      </section>
+          <span className="text-ink2">
+            Página {pagina} de {paginas}
+          </span>
+          {pagina < paginas && (
+            <Link
+              href={href(aqui, { pagina: String(pagina + 1) })}
+              className="border-line rounded-lg border px-3 py-1.5 font-semibold"
+            >
+              Seguinte →
+            </Link>
+          )}
+        </nav>
+      )}
     </div>
+  );
+}
+
+function Chip({ ativo, to, texto }: { ativo: boolean; to: Route; texto: string }) {
+  return (
+    <Link
+      href={to}
+      className={`rounded-full border px-3 py-1 text-[12px] font-semibold ${
+        ativo ? 'bg-brand-600 border-brand-600 text-white' : 'border-line hover:border-brand-600'
+      }`}
+    >
+      {texto}
+    </Link>
   );
 }

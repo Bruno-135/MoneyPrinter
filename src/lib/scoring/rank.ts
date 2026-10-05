@@ -3,6 +3,12 @@ import type { Database } from '@/types/database.types';
 import type { WebsiteKind } from '@/lib/places/website';
 import type { DealStage } from '@/lib/deals/stages';
 import { ehEstadoDeContacto, type EstadoDoContacto } from '@/lib/deals/contacto';
+import {
+  ESTADOS_DO_EMAIL,
+  estadoDoEmail,
+  type EstadoDoEmail,
+} from '@/lib/emails/estado-do-email';
+import { aplicarEstadoDoEmail } from '@/lib/emails/filtro';
 import { scoreLabel } from './score';
 import { DEFAULT_SORT, type ProspectSort } from './sort';
 
@@ -71,6 +77,8 @@ export interface RankOptions {
    * ela apanha, e é essa lista que chega aqui.
    */
   contactos?: readonly string[];
+  /** Uma escolha só: o estado do e-mail. Vazio/nulo = todos. Ver `emails/estado-do-email.ts`. */
+  emailEstado?: EstadoDoEmail | null;
   locality?: string | null;
   /**
    * Mostra só os comércios que saíram de um varrimento.
@@ -122,6 +130,9 @@ export interface RankedBusiness {
   contacto: EstadoDoContacto;
   /** A última vez que se falou ou escreveu, por qualquer canal. */
   contactadoEm: string | null;
+  /** O e-mail extraído, se houver, e em que ponto está a extração. */
+  email: string | null;
+  emailEstado: EstadoDoEmail;
 }
 
 export interface RankResult {
@@ -140,6 +151,7 @@ const SELECT = [
   'stage', 'next_action_at', 'has_site',
   // Calculados na vista: ver a migração 0040.
   'estado_do_contacto', 'falado_em', 'emailado_em',
+  'email', 'email_origem', 'email_visto_em',
 ].join(',');
 
 /**
@@ -153,6 +165,8 @@ interface Filterable {
   in(column: string, values: readonly unknown[]): this;
   eq(column: string, value: unknown): this;
   ilike(column: string, pattern: string): this;
+  is(column: string, value: null): this;
+  not(column: string, operator: string, value: unknown): this;
 }
 
 /** Aplica os filtros comuns à lista e às caixas, para não divergirem. */
@@ -164,6 +178,7 @@ function applyFilters<T extends Filterable>(query: T, options: RankOptions): T {
     countries = [],
     hasSite = null,
     contactos = [],
+    emailEstado = null,
     locality = null,
     regionId = null,
   } = options;
@@ -175,6 +190,7 @@ function applyFilters<T extends Filterable>(query: T, options: RankOptions): T {
   if (categories.length > 0) q = q.in('business_category', categories);
   if (countries.length > 0) q = q.in('country_code', countries);
   if (contactos.length > 0) q = q.in('estado_do_contacto', contactos);
+  if (emailEstado) q = aplicarEstadoDoEmail(q, emailEstado);
   // `!== null` e não um `if (hasSite)`: com o segundo, filtrar por "ainda sem
   // página" não filtrava nada, que é o pior tipo de erro num filtro — o
   // resultado parece plausível e está errado.
@@ -270,6 +286,13 @@ export async function rankBusinesses(db: Db, options: RankOptions = {}): Promise
         ? row.estado_do_contacto
         : 'por_contactar',
       contactadoEm: maisRecente(row.falado_em, row.emailado_em),
+      email: (row.email as string | null) ?? null,
+      emailEstado: estadoDoEmail({
+        email: (row.email as string | null) ?? null,
+        email_origem: (row.email_origem as string | null) ?? null,
+        email_visto_em: (row.email_visto_em as string | null) ?? null,
+        website_kind: (row.website_kind as string | null) ?? null,
+      }),
     })),
   };
 }
@@ -353,4 +376,44 @@ export async function listFacet(
   return (data ?? [])
     .map((linha) => ({ value: linha.value, label: linha.value, count: Number(linha.count) }))
     .sort((a, b) => a.label.localeCompare(b.label, 'pt'));
+}
+
+
+/**
+ * Quantos leads há em cada estado do e-mail, dentro dos OUTROS filtros.
+ *
+ * Como as restantes caixas: o filtro do e-mail nunca se conta a si próprio, ou
+ * escolher «Extraído» deixava as outras opções a zero e ficava-se preso. Faz-se
+ * com uma contagem por estado e não com a função `facet_counts`, porque o
+ * estado do e-mail é um conjunto de condições sobre três colunas e não uma
+ * coluna — pô-lo na função era mexer numa função da base de dados a que a lista
+ * inteira recorre, por cinco contagens que isto faz bem.
+ */
+export async function contagensDoEmail(
+  db: Db,
+  options: RankOptions,
+): Promise<Record<EstadoDoEmail, number>> {
+  const semEmail = { ...options, emailEstado: null };
+  const resultados = await Promise.all(
+    ESTADOS_DO_EMAIL.map((estado) =>
+      applyFilters(
+        aplicarEstadoDoEmail(
+          db
+            .from('businesses_with_stage')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_archived', false),
+          estado,
+        ),
+        semEmail,
+      ),
+    ),
+  );
+
+  const contagens = {} as Record<EstadoDoEmail, number>;
+  ESTADOS_DO_EMAIL.forEach((estado, i) => {
+    const { count, error } = resultados[i]!;
+    if (error) throw new Error(`Não foi possível contar os e-mails: ${error.message}`);
+    contagens[estado] = count ?? 0;
+  });
+  return contagens;
 }

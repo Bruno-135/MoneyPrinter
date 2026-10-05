@@ -30,16 +30,3 @@ export const EMAIL_DA_AGENCIA = 'geral@vaidesign.net';
 
 /** A conta do Instagram, sem o arroba. */
 export const INSTAGRAM_DA_AGENCIA = 'agenciavaidesign';
-
-/**
- * De onde saem os e-mails comerciais.
- *
- * Um subdomínio e não o domínio principal: se alguém marcar um destes como
- * spam, o dano fica em `contacto.vaidesign.net` e o `geral@vaidesign.net` —
- * por onde chegam os pedidos dos clientes — continua a entregar.
- */
-export const ENVIO_DE_NOME = 'Bruno · VaiDesign';
-export const ENVIO_DE_EMAIL = 'ola@contacto.vaidesign.net';
-
-/** As respostas vão para a caixa de sempre, não para um endereço de envio. */
-export const ENVIO_RESPOSTAS_PARA = EMAIL_DA_AGENCIA;

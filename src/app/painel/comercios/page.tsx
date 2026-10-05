@@ -7,6 +7,7 @@ import {
   DEFAULT_KINDS,
   WEBSITE_KIND_LABELS,
   WEBSITE_KINDS,
+  contagensDoEmail,
   isWebsiteKind,
   listFacet,
   rankBusinesses,
@@ -35,6 +36,13 @@ import {
   estadosDaEscolha,
 } from '@/lib/deals/contacto';
 import { googleMapsUrl } from '@/lib/places/links';
+import {
+  ESTILO_DO_EMAIL,
+  ETIQUETA_DO_EMAIL,
+  ORDEM_NO_FILTRO,
+  ehEstadoDoEmail,
+  type EstadoDoEmail,
+} from '@/lib/emails/estado-do-email';
 import { StageSelect } from '../stage-select';
 import { Destaques, fotosDosDestaques } from '../destaques';
 import { Numeros, type Numero } from '../numeros';
@@ -52,6 +60,7 @@ interface PainelProps {
     pais?: string;
     pagina?: string;
     contacto?: string;
+    email?: string;
   }>;
 }
 
@@ -78,6 +87,8 @@ interface PainelFilters {
   pagina: string;
   /** Uma escolha de contacto ('por', 'ja', 'whatsapp', 'email', 'nao'). Vazio = todos. */
   contacto: string;
+  /** Um estado do e-mail ('extraido', 'nao_extraido', ...). Vazio = todos. */
+  email: string;
   procura: string | null;
   ordem: string;
 }
@@ -98,6 +109,7 @@ function painelHref(current: PainelFilters, change: Partial<PainelFilters>): Rou
   if (next.pais) params.set('pais', next.pais);
   if (next.pagina) params.set('pagina', next.pagina);
   if (next.contacto) params.set('contacto', next.contacto);
+  if (next.email) params.set('email', next.email);
   if (next.estado.length > 0) params.set('estado', next.estado.join(','));
   if (next.site.length > 0) params.set('site', next.site.join(','));
 
@@ -137,12 +149,20 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const procura = batch?.regionId ?? null;
   const ordem = isProspectSort(params.ordem) ? params.ordem : DEFAULT_SORT;
 
+  // O estado do e-mail, também uma escolha só. Os estados que falam de «site
+  // visto» só existem para leads com site próprio, e a lista por omissão
+  // esconde esses (ver `DEFAULT_KINDS`): sem isto, escolher «Não extraído»
+  // mostrava zero leads sem dizer porquê.
+  const email: EstadoDoEmail | '' = ehEstadoDoEmail(params.email) ? params.email : '';
+  const emailEstado = email || null;
+
   const estados = readList(params.estado, isValidStage) as DealStage[];
   const sites = readList(params.site, isWebsiteKind) as WebsiteKindFilter[];
 
   // Sem escolha nenhuma no filtro de site, mostram-se os prospetos. Quem já tem
   // site a sério não se vai contactar, e enchia a lista.
-  const kinds = sites.length > 0 ? sites : DEFAULT_KINDS;
+  const kinds =
+    sites.length > 0 ? sites : email && email !== 'sem_site' ? [...WEBSITE_KINDS] : DEFAULT_KINDS;
 
   // Cada caixa de filtro calcula-se com os filtros das OUTRAS, nunca com a
   // dela própria. É o que o Excel faz, e é a única maneira que funciona: uma
@@ -168,21 +188,24 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const contacto = ehEscolhaDeContacto(params.contacto) ? params.contacto : '';
   const contactos = estadosDaEscolha(contacto);
 
+
   // O país e a página entram em TODAS as facetas, inclusive nas suas próprias:
   // não são funis de coluna a calcular-se uns aos outros, são o âmbito dentro
   // do qual as colunas se contam.
   const ambito = { countries: paises, hasSite: temPagina };
 
-  const semRamo = { ...ambito, contactos, kinds, stages: estados, regionId: procura };
-  const semEstado = { ...ambito, contactos, kinds, categories: ramos, regionId: procura };
-  const semSite = { ...ambito, contactos, stages: estados, categories: ramos, regionId: procura };
+  const semRamo = { ...ambito, contactos, emailEstado, kinds, stages: estados, regionId: procura };
+  const semEstado = { ...ambito, contactos, emailEstado, kinds, categories: ramos, regionId: procura };
+  const semSite = { ...ambito, contactos, emailEstado, stages: estados, categories: ramos, regionId: procura };
   // A caixa do contacto conta-se com os filtros das outras, e nunca com o dela.
-  const semContacto = { ...ambito, kinds, stages: estados, categories: ramos, regionId: procura };
+  const semContacto = { ...ambito, emailEstado, kinds, stages: estados, categories: ramos, regionId: procura };
 
   // A lista de países oferecida sai dos dados e não de uma constante: não vale
   // a pena oferecer "Brasil" a quem só tem comércios portugueses guardados.
-  const semPais = { hasSite: temPagina, contactos, kinds, stages: estados, categories: ramos, regionId: procura };
-  const semPagina = { countries: paises, contactos, kinds, stages: estados, categories: ramos, regionId: procura };
+  // A caixa do e-mail, como a do contacto, conta-se sem o seu próprio filtro.
+  const semEmail = { ...ambito, contactos, kinds, stages: estados, categories: ramos, regionId: procura };
+  const semPais = { hasSite: temPagina, contactos, emailEstado, kinds, stages: estados, categories: ramos, regionId: procura };
+  const semPagina = { countries: paises, contactos, emailEstado, kinds, stages: estados, categories: ramos, regionId: procura };
 
   // As duas últimas são para a fila de números e não para os funis: contam
   // dentro da procura escolhida e fora dos filtros das colunas, para servirem
@@ -199,6 +222,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     paisesFacet,
     paginaFacet,
     contactoFacet,
+    emailContagens,
     sitesTotal,
     estadosTotal,
   ] = await Promise.all([
@@ -208,6 +232,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
       listFacet(supabase, 'country_code', semPais),
       listFacet(supabase, 'has_site', semPagina),
       listFacet(supabase, 'estado_do_contacto', semContacto),
+      contagensDoEmail(supabase, semEmail),
       listFacet(supabase, 'website_kind', soProcura),
       listFacet(supabase, 'stage', soProcura),
     ]);
@@ -219,6 +244,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     pais,
     pagina,
     contacto,
+    email,
     procura,
     ordem,
   };
@@ -230,6 +256,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     countries: paises,
     hasSite: temPagina,
     contactos,
+    emailEstado,
     regionId: procura,
     sort: ordem,
     limit: 100,
@@ -399,6 +426,19 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                   },
                 ]
               : []),
+            // O e-mail: já foi extraído? Os leads novos caem em «Não extraído».
+            {
+              label: 'E-mail',
+              current: email,
+              options: [
+                { value: '', label: 'Todos', href: painelHref(here, { email: '' }) },
+                ...ORDEM_NO_FILTRO.map((e) => ({
+                  value: e,
+                  label: `${ETIQUETA_DO_EMAIL[e]} (${emailContagens[e]})`,
+                  href: painelHref(here, { email: e }),
+                })),
+              ],
+            },
             // Com quem já se falou. Fica antes da página porque é a pergunta
             // de todos os dias: «quem é que ainda não contactei?». Cada opção
             // diz quantos apanha dentro dos outros filtros.
@@ -445,7 +485,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
 
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-line px-5 py-8 text-center text-sm text-ink2 opacity-100 dark:border-line">
-            {ramos.length > 0 || estados.length > 0 || sites.length > 0 || contacto !== ''
+            {ramos.length > 0 || estados.length > 0 || sites.length > 0 || contacto !== '' || email !== ''
               ? 'Nenhum lead com estes filtros. Limpa um dos funis no cabeçalho da tabela.'
               : batch
                 ? `A procura ${batch.label} · ${batch.categoryLabel} não deu nenhum lead.`
@@ -498,6 +538,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                       />
                     </span>
                   </th>
+                  <th className="px-4 py-3 font-medium">E-mail</th>
                   <th className="px-4 py-3 font-medium">Contacto</th>
                   <th className="px-4 py-3 font-medium">
                     <span className="inline-flex items-center gap-1">
@@ -566,6 +607,21 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                     </td>
                     <td className="px-4 py-3">
                       <StageSelect businessId={b.id} stage={b.stage} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`rounded px-2 py-0.5 text-xs font-medium whitespace-nowrap ${ESTILO_DO_EMAIL[b.emailEstado]}`}
+                      >
+                        {ETIQUETA_DO_EMAIL[b.emailEstado]}
+                      </span>
+                      {b.email && (
+                        <a
+                          href={`mailto:${b.email}`}
+                          className="mt-1 block font-mono text-[11px] text-ink2 hover:text-brand-600"
+                        >
+                          {b.email}
+                        </a>
+                      )}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       {/* Quem ainda não foi tocado não leva selo nenhum: com

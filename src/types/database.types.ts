@@ -19,8 +19,7 @@
  * com o CLI, confirma que esses `never` continuam lá.
  *
  * Pela mesma razão, as colunas `email*` de `businesses` (e da vista) e as tabelas
- * `nao_contactar`, `emails_enviados` (0040) e `campanhas_email` e as funções
- * `cancelar_subscricao` e `registar_evento_email` (0041), e a tabela `pedidos` e as funções `registar_pedido` e
+ * `nao_contactar` e `emails_enviados` (0040), e a tabela `pedidos` e as funções `registar_pedido` e
  * `dono_da_agencia` (0033), as colunas `aviso`, `aviso_em` e `aviso_detalhe` e
  * a função `marcar_aviso` (0035), e a tabela `membros_da_equipa` com a função
  * `quem_sou` (0036), também foram acrescentadas à mão. Regerar tudo para
@@ -1308,42 +1307,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      campanhas_email: {
-        Row: {
-          id: string
-          owner_id: string
-          nome: string
-          assunto: string
-          corpo: string
-          aprovada_em: string | null
-          limite_diario: number
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          owner_id?: string
-          nome: string
-          assunto: string
-          corpo: string
-          aprovada_em?: string | null
-          limite_diario?: number
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          owner_id?: string
-          nome?: string
-          assunto?: string
-          corpo?: string
-          aprovada_em?: string | null
-          limite_diario?: number
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       nao_contactar: {
         Row: {
           id: string
@@ -1691,14 +1654,6 @@ export type Database = {
           p_papel?: string;
         };
         Returns: string;
-      };
-      cancelar_subscricao: {
-        Args: { p_id: string };
-        Returns: boolean;
-      };
-      registar_evento_email: {
-        Args: { p_resend_id: string; p_evento: string };
-        Returns: boolean;
       };
       mudar_senha_do_membro: {
         Args: { p_membro: string; p_senha: string };
