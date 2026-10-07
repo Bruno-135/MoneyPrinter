@@ -819,6 +819,22 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       externos. Só o extrator, o filtro e a guarda de IPs têm testes; a primeira corrida
       a sério é em produção.
 
+- [x] **Lista de WhatsApp** — `/painel/whatsapp` (área `whatsapp`; antes era a maqueta
+      «Instâncias WhatsApp», com números inventados, que saiu). Todos os leads com
+      telefone, por omissão SÓ telemóveis, com filtros de país, ramo, score
+      (muito quente / quente / morno / frio, mesmos limiares que `scoreLabel`), contacto
+      e tipo de número. Cada caixa conta com os outros filtros e sem o seu.
+
+      «Tem WhatsApp» NÃO é um dado que tenhamos: o telemóvel é o palpite
+      (`ehMovel`: PT 91/92/93/96; BR código de área + nono dígito). Os fixos veem-se em
+      «Todos com telefone». Lê todas as linhas (páginas de 1000) e filtra em memória
+      (`src/lib/whatsapp/lista.ts`) para a lista e as contagens usarem a mesma função —
+      a rever se a base passar das dezenas de milhares. O botão abre o WhatsApp com a
+      conversa em branco e NÃO regista nada; as mensagens e o registo do envio ficam para
+      depois. Leads em «não contactar» não têm botão.
+
+      Não testado contra a base real: só a lógica tem testes.
+
 ---
 
 ## 9. Nota sobre o repositório

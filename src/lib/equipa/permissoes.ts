@@ -94,8 +94,9 @@ export const AREAS: { grupo: string; areas: Area[] }[] = [
       },
       {
         chave: 'whatsapp',
-        nome: 'Instâncias WhatsApp',
-        explica: 'Ligar e desligar os números de WhatsApp da agência.',
+        nome: 'Lista de WhatsApp',
+        explica:
+          'Ver os leads com telemóvel, filtrar por país, ramo e score, e abrir a conversa no WhatsApp.',
       },
       {
         chave: 'emails',
