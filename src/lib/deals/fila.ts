@@ -61,10 +61,7 @@ export interface OpcoesDaFila {
  * "seguinte" instantâneo: sem lote, cada contacto era uma ida ao servidor a
  * meio do trabalho, e a pausa é o que faz desistir ao décimo.
  */
-export async function proximosContactos(
-  db: Db,
-  opcoes: OpcoesDaFila = {},
-): Promise<ItemDaFila[]> {
+export async function proximosContactos(db: Db, opcoes: OpcoesDaFila = {}): Promise<ItemDaFila[]> {
   const { limite = 25, regionId = null, categories = [], countries = [] } = opcoes;
 
   let q = db
@@ -75,6 +72,8 @@ export async function proximosContactos(
     .eq('is_archived', false)
     .eq('stage', 'new')
     .in('website_kind', ['none', 'social_only'])
+    // Quem pediu para não ser contactado não entra na fila, por canal nenhum.
+    .neq('estado_do_contacto', 'nao_contactar')
     // Adiados ficam de fora até à data marcada. `or` e não dois filtros: quem
     // nunca foi adiado tem a coluna vazia e tem de entrar na mesma.
     .or(`next_action_at.is.null,next_action_at.lte.${new Date().toISOString()}`)
@@ -128,10 +127,7 @@ export async function proximosContactos(
 }
 
 /** Quantos ainda faltam contactar, para a fila poder dizer onde vai. */
-export async function quantosPorContactar(
-  db: Db,
-  opcoes: OpcoesDaFila = {},
-): Promise<number> {
+export async function quantosPorContactar(db: Db, opcoes: OpcoesDaFila = {}): Promise<number> {
   const { regionId = null, categories = [], countries = [] } = opcoes;
 
   let q = db
@@ -140,6 +136,8 @@ export async function quantosPorContactar(
     .eq('is_archived', false)
     .eq('stage', 'new')
     .in('website_kind', ['none', 'social_only'])
+    // Quem pediu para não ser contactado não entra na fila, por canal nenhum.
+    .neq('estado_do_contacto', 'nao_contactar')
     .or(`next_action_at.is.null,next_action_at.lte.${new Date().toISOString()}`);
 
   if (regionId) q = q.eq('region_id', regionId);

@@ -829,9 +829,20 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       (`ehMovel`: PT 91/92/93/96; BR código de área + nono dígito). Os fixos veem-se em
       «Todos com telefone». Lê todas as linhas (páginas de 1000) e filtra em memória
       (`src/lib/whatsapp/lista.ts`) para a lista e as contagens usarem a mesma função —
-      a rever se a base passar das dezenas de milhares. O botão abre o WhatsApp com a
-      conversa em branco e NÃO regista nada; as mensagens e o registo do envio ficam para
-      depois. Leads em «não contactar» não têm botão.
+      a rever se a base passar das dezenas de milhares.
+
+      Mensagem de abertura (`src/lib/whatsapp/mensagem.ts`), escolhida pelo dono: SEM
+      o nome do negócio (soa a lista), «bom dia / boa tarde / boa noite» pela hora do
+      país do lead, versão PT e versão BR. «Ainda não têm site» só a quem não tem; quem
+      só tem redes sociais ouve a variante; quem tem site próprio abre a conversa em
+      branco. Quem já recebeu abre sem mensagem («Abrir»), para continuar a conversa.
+
+      O botão grava um contacto `channel = 'whatsapp'` (lead passa a «WhatsApp
+      enviado») e uma próxima acção a 3 dias SEM mexer na etapa — sem isso a fila
+      «Leads a contactar» ligava no dia seguinte a quem acabou de receber a mensagem.
+      «desfazer» durante 24 h (migração 0043: política de apagar em `contact_events`
+      e dono por omissão `current_owner_id()`, que impedia contas de equipa de
+      registar contactos). A fila passou a excluir «não contactar», que deixava passar.
 
       Não testado contra a base real: só a lógica tem testes.
 

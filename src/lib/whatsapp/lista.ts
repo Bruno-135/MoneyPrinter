@@ -31,6 +31,8 @@ export interface LinhaWhatsapp {
   contacto: EstadoDoContacto;
   contactadoEm: string | null;
   adicionadoEm: string | null;
+  /** O que tem online: decide que mensagem recebe (ver `mensagem.ts`). */
+  presenca: 'none' | 'social_only' | 'real';
 }
 
 /**

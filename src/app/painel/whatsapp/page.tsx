@@ -27,6 +27,8 @@ import {
   type Ordem,
 } from '@/lib/whatsapp/lista';
 import { FilterBar } from '../filter-bar';
+import { mensagemDeAbertura } from '@/lib/whatsapp/mensagem';
+import { BotaoWhatsapp, Desfazer } from './botao';
 
 /**
  * A lista de WhatsApp: todos os leads com telemóvel, para abrir a conversa.
@@ -95,6 +97,8 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
   };
 
   const linhas = await lerLinhasWhatsapp(supabase);
+  // Uma hora só para a página toda: o «bom dia / boa tarde» de cada mensagem sai daqui.
+  const agora = new Date();
   const filtros: Filtros = {
     pais: atual.pais,
     ramo: atual.ramo,
@@ -125,7 +129,10 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
     <div className="flex flex-col gap-4">
       <p className="text-ink2 max-w-3xl text-[13px] leading-relaxed">
         Os leads com telemóvel, prontos para abrir no WhatsApp. Não há maneira de saber quem tem
-        WhatsApp — um telemóvel é o melhor palpite, e é o que a lista mostra por omissão.
+        WhatsApp — um telemóvel é o melhor palpite, e é o que a lista mostra por omissão. O botão
+        abre a conversa com a mensagem já escrita (a enviar és tu, no WhatsApp), marca o lead como
+        «WhatsApp enviado» e tira-o de «Leads a contactar» durante 3 dias, à espera de resposta.
+        Quem já tem site próprio abre a conversa em branco.
       </p>
 
       <FilterBar
@@ -238,7 +245,18 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
         <ul className="border-line divide-line divide-y rounded-lg border">
           {visiveis.map((l) => {
             const bloqueado = l.contacto === 'nao_contactar';
-            const ligacao = whatsappUrl(l.telefone);
+            const jaEnviado =
+              l.contacto === 'whatsapp_enviado' || l.contacto === 'email_e_whatsapp';
+            // A mensagem de abertura só se escreve uma vez: a quem já a recebeu
+            // abre-se a conversa como está, para continuar.
+            const mensagem = jaEnviado
+              ? null
+              : mensagemDeAbertura({ pais: l.pais, presenca: l.presenca, agora });
+            const ligacao = whatsappUrl(l.telefone, mensagem ?? undefined);
+            const recente =
+              jaEnviado &&
+              l.contactadoEm !== null &&
+              agora.getTime() - new Date(l.contactadoEm).getTime() < 86_400_000;
             return (
               <li key={l.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
                 <div className="w-20 shrink-0">
@@ -275,6 +293,12 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
                       {l.contactadoEm && (
                         <span className="text-ink3 mt-0.5 block text-[11px]">
                           {haQuantoTempo(l.contactadoEm)}
+                          {recente && (
+                            <>
+                              {' · '}
+                              <Desfazer businessId={l.id} />
+                            </>
+                          )}
                         </span>
                       )}
                     </>
@@ -287,15 +311,17 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
                   <span className="text-ink3 w-24 text-center text-[12px]">
                     {bloqueado ? 'não contactar' : '—'}
                   </span>
-                ) : (
+                ) : jaEnviado ? (
                   <a
                     href={ligacao}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-24 rounded-lg bg-emerald-600 px-3 py-1.5 text-center text-[13px] font-semibold text-white"
+                    className="w-24 rounded-lg border border-emerald-600 px-3 py-1.5 text-center text-[13px] font-semibold text-emerald-700 dark:text-emerald-300"
                   >
-                    WhatsApp
+                    Abrir
                   </a>
+                ) : (
+                  <BotaoWhatsapp businessId={l.id} href={ligacao} />
                 )}
               </li>
             );

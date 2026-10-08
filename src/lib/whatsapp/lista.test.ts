@@ -22,6 +22,7 @@ function lead(p: Partial<LinhaWhatsapp>): LinhaWhatsapp {
     contacto: 'por_contactar',
     contactadoEm: null,
     adicionadoEm: null,
+    presenca: 'none',
     ...p,
   };
 }
