@@ -114,3 +114,9 @@ uma ferramenta de prospeção comercial em Next.js + Supabase (`src/`, `supabase
 de cada etapa de trabalho sobre ele.** Tudo o que está acima neste ficheiro
 diz respeito ao MoneyPrinter (Python/Flask, `Backend/`, `Frontend/`) e não se
 aplica ao projeto de prospeção.
+
+## BateraLab (Next.js, `bateralab/`)
+
+Terceiro projeto independente: app de estudo de bateria (Next.js + Tone.js + VexFlow),
+com o seu próprio `package.json` em `bateralab/`. Instruções, comandos e arquitetura
+em [`bateralab/README.md`](bateralab/README.md). Excluído do `tsconfig`/ESLint da raiz.

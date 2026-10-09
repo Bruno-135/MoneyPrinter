@@ -1,0 +1,82 @@
+{
+  "id": "03-chimbal-aberto",
+  "title": "Groove com chimbal aberto no contratempo",
+  "description": "Bumbo nos quatro tempos, caixa no 2 e no 4, chimbal fechado no tempo e aberto no contratempo. O fechado corta o aberto.",
+  "bpm": 100,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 4, "piece": "kick", "velocity": 110},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 12, "piece": "kick", "velocity": 110},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatOpen", "velocity": 95}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 4, "piece": "kick", "velocity": 110},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 12, "piece": "kick", "velocity": 110},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatOpen", "velocity": 95}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 4, "piece": "kick", "velocity": 110},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 12, "piece": "kick", "velocity": 110},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatOpen", "velocity": 95}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 4, "piece": "kick", "velocity": 110},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatOpen", "velocity": 95},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 90},
+        {"tick": 12, "piece": "kick", "velocity": 110},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatOpen", "velocity": 95}
+      ]
+    }
+  ]
+}
