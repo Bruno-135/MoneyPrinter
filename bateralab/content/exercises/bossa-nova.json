@@ -1,0 +1,120 @@
+{
+  "id": "bossa-nova",
+  "generated": true,
+  "order": 20,
+  "title": "Bossa nova",
+  "description": "Bumbo \"tum . . tum\" contínuo, chimbal em colcheias e aro da caixa fazendo a clave da bossa.",
+  "level": "intermediario",
+  "category": "groove",
+  "style": "Bossa nova",
+  "tips": [
+    "Toque a caixa no aro (cross-stick), bem leve.",
+    "A clave pede tempo para \"entrar no ouvido\": ouça João Gilberto."
+  ],
+  "bpm": 60,
+  "goalBpm": 90,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"snare","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"snare","velocity":100},
+        {"tick":7,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":13,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"snare","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"snare","velocity":100},
+        {"tick":7,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":13,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"snare","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"snare","velocity":100},
+        {"tick":7,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":13,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"snare","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"snare","velocity":100},
+        {"tick":7,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":13,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    }
+  ]
+}

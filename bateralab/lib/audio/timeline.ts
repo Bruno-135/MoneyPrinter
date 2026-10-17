@@ -17,7 +17,7 @@
  * começa no compasso 3, a contagem acontece no slot 2 e as notas que lá
  * estariam (compasso 2) são silenciadas durante a contagem.
  */
-import { type DrumEvent, type DrumScore, ticksPerBeat, ticksPerMeasure } from "@/lib/score";
+import { beatsPerMeasure, type DrumEvent, type DrumScore, ticksPerBeat, ticksPerMeasure } from "@/lib/score";
 
 /** Pulsos por semínima do Transport. 192 divide-se por 2, 3, 4, 8, 16, 32 e 64. */
 export const TRANSPORT_PPQ = 192;
@@ -61,7 +61,7 @@ export function buildTimeline(score: DrumScore, ppq = TRANSPORT_PPQ): Timeline {
   }
   const measureTicks = ticksPerMeasure(score) * scoreTickTicks;
   const beatTicks = ticksPerBeat(score) * scoreTickTicks;
-  const beatsPerMeasure = score.timeSignature[0];
+  const beatCount = beatsPerMeasure(score);
 
   const steps: TimelineStep[] = [];
   score.measures.forEach((measure, mi) => {
@@ -85,7 +85,7 @@ export function buildTimeline(score: DrumScore, ppq = TRANSPORT_PPQ): Timeline {
 
   const beats: TimelineBeat[] = [];
   for (let slot = 0; slot <= score.measures.length; slot++) {
-    for (let beat = 0; beat < beatsPerMeasure; beat++) {
+    for (let beat = 0; beat < beatCount; beat++) {
       beats.push({ slot, beat, transportTicks: slot * measureTicks + beat * beatTicks });
     }
   }

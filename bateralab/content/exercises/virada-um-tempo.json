@@ -1,0 +1,91 @@
+{
+  "id": "virada-um-tempo",
+  "generated": true,
+  "order": 10,
+  "title": "Virada de um tempo",
+  "description": "Três compassos de rock e, no último tempo do 4º, quatro semicolcheias na caixa. Fecha com o prato de ataque.",
+  "level": "iniciante",
+  "category": "virada",
+  "style": "Rock",
+  "tips": [
+    "A virada não pode acelerar: conte \"4 e & a\".",
+    "Saia da virada direto no 1 com prato e bumbo juntos."
+  ],
+  "bpm": 75,
+  "goalBpm": 120,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":13,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":15,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"crash","velocity":100}
+      ]
+    }
+  ]
+}

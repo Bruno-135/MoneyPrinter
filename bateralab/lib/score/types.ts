@@ -27,20 +27,57 @@ export interface DrumEvent {
    */
   tick: number;
   piece: DrumPiece;
-  /** Intensidade MIDI, 1–127. */
+  /**
+   * Intensidade MIDI, 1–127. Na partitura: ≥ 118 (e acima da média) = acento;
+   * ≤ 45 = nota fantasma (entre parênteses).
+   */
   velocity: number;
+  /** Mão indicada (rudimentos/viradas): aparece por baixo da nota. */
+  sticking?: "R" | "L";
 }
 
 export interface DrumMeasure {
   events: DrumEvent[];
 }
 
+export const LEVELS = ["iniciante", "intermediario", "avancado"] as const;
+export type Level = (typeof LEVELS)[number];
+export const LEVEL_LABEL: Record<Level, string> = {
+  iniciante: "Iniciante",
+  intermediario: "Intermediário",
+  avancado: "Avançado",
+};
+
+export const CATEGORIES = ["groove", "rudimento", "virada", "leitura"] as const;
+export type Category = (typeof CATEGORIES)[number];
+export const CATEGORY_LABEL: Record<Category, string> = {
+  groove: "Ritmos",
+  rudimento: "Rudimentos",
+  virada: "Viradas",
+  leitura: "Leitura e coordenação",
+};
+
 export interface DrumScore {
   /** Identificador estável (slug). Nos exercícios é igual ao nome do arquivo. */
   id?: string;
   title: string;
   description?: string;
+  /** Metadados da escola (opcionais para partituras avulsas/importadas). */
+  level?: Level;
+  category?: Category;
+  /** Estilo musical, ex: "Rock", "Samba", "Funk". */
+  style?: string;
+  /** Dicas de estudo mostradas na tela do exercício. */
+  tips?: string[];
+  /** Andamento-alvo sugerido (o `bpm` é o andamento inicial). */
+  goalBpm?: number;
+  /**
+   * Andamento inicial em BATIDAS por minuto: semínimas em 2/4, 3/4, 4/4, 5/4;
+   * semínimas pontuadas em 6/8, 9/8 e 12/8 (o mesmo que o metrônomo conta).
+   */
   bpm: number;
+  /** Ordem dentro do catálogo (menor primeiro). */
+  order?: number;
   /** [batidas por compasso, figura da batida], ex: [4, 4]. */
   timeSignature: [number, number];
   /**
@@ -61,7 +98,27 @@ export function ticksPerMeasure(score: Pick<DrumScore, "timeSignature" | "resolu
   return (score.resolution * beats) / beatUnit;
 }
 
-/** Número de ticks numa batida (tempo do metrônomo). Ex: 4/4 resolution 16 → 4. */
+/** Compasso composto (6/8, 9/8, 12/8): a batida é a semínima pontuada. */
+export function isCompound(timeSignature: [number, number]): boolean {
+  const [beats, unit] = timeSignature;
+  return unit >= 8 && beats >= 6 && beats % 3 === 0;
+}
+
+/**
+ * Número de ticks numa batida (tempo do metrônomo e agrupamento de colchetes).
+ * Ex: 4/4 resolution 16 → 4; 12/8 resolution 16 → 6 (semínima pontuada).
+ */
 export function ticksPerBeat(score: Pick<DrumScore, "timeSignature" | "resolution">): number {
-  return score.resolution / score.timeSignature[1];
+  const unitTicks = score.resolution / score.timeSignature[1];
+  return isCompound(score.timeSignature) ? unitTicks * 3 : unitTicks;
+}
+
+/** Duração de uma batida em semínimas (1 em 4/4, 1,5 em 12/8). */
+export function quartersPerBeat(score: Pick<DrumScore, "timeSignature" | "resolution">): number {
+  return (ticksPerBeat(score) * 4) / score.resolution;
+}
+
+/** Batidas por compasso (12/8 → 4, 6/8 → 2, 4/4 → 4). */
+export function beatsPerMeasure(score: Pick<DrumScore, "timeSignature" | "resolution">): number {
+  return ticksPerMeasure(score) / ticksPerBeat(score);
 }

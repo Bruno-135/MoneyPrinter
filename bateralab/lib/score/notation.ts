@@ -36,6 +36,10 @@ export interface NotationItem {
   open: boolean;
   /** Acento (velocity alta e acima da média da voz). */
   accent: boolean;
+  /** Nota fantasma (velocity baixa) → cabeça entre parênteses. */
+  ghost: boolean;
+  /** Mão (R/L) a escrever por baixo, se indicada. */
+  sticking?: "R" | "L";
 }
 
 export interface MeasureNotation {
@@ -80,7 +84,7 @@ function voiceItems(
 
   if (events.length === 0) {
     // Compasso vazio nesta voz → pausa de compasso inteiro.
-    return [{ tick: 0, duration: "1", dots: 0, rest: true, keys: [restKey], pieces: [], open: false, accent: false }];
+    return [{ tick: 0, duration: "1", dots: 0, rest: true, keys: [restKey], pieces: [], open: false, accent: false, ghost: false }];
   }
 
   const byTick = new Map<number, DrumEvent[]>();
@@ -91,7 +95,7 @@ function voiceItems(
   const pushRest = (from: number, len: number) => {
     let t = from;
     for (const p of splitDuration(len, score.resolution)) {
-      items.push({ tick: t, ...p, rest: true, keys: [restKey], pieces: [], open: false, accent: false });
+      items.push({ tick: t, ...p, rest: true, keys: [restKey], pieces: [], open: false, accent: false, ghost: false });
       t += p.ticks;
     }
   };
@@ -117,11 +121,13 @@ function voiceItems(
         pieces,
         open: pieces.includes("hihatOpen"),
         accent: maxVelocity >= 118 && maxVelocity > avgVelocity + 10,
+        ghost: maxVelocity <= 45,
+        sticking: chord.find((e) => e.sticking)?.sticking,
       });
       // Se a duração não couber numa só figura, o resto vira pausa.
       let t = tick + first!.ticks;
       for (const p of rest) {
-        items.push({ tick: t, ...p, rest: true, keys: [restKey], pieces: [], open: false, accent: false });
+        items.push({ tick: t, ...p, rest: true, keys: [restKey], pieces: [], open: false, accent: false, ghost: false });
         t += p.ticks;
       }
       cursor = next;

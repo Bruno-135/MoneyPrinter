@@ -1,0 +1,83 @@
+{
+  "id": "rock-conducao",
+  "generated": true,
+  "order": 7,
+  "title": "Rock com prato de condução",
+  "description": "O mesmo rock básico, com a mão direita no prato de condução — comum em refrões.",
+  "level": "iniciante",
+  "category": "groove",
+  "style": "Rock",
+  "tips": [
+    "Toque no corpo do prato, não na borda, para um som definido."
+  ],
+  "bpm": 80,
+  "goalBpm": 120,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":2,"piece":"ride","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"ride","velocity":100},
+        {"tick":10,"piece":"ride","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"ride","velocity":100},
+        {"tick":14,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":2,"piece":"ride","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"ride","velocity":100},
+        {"tick":10,"piece":"ride","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"ride","velocity":100},
+        {"tick":14,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":2,"piece":"ride","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"ride","velocity":100},
+        {"tick":10,"piece":"ride","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"ride","velocity":100},
+        {"tick":14,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":2,"piece":"ride","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"ride","velocity":100},
+        {"tick":10,"piece":"ride","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"ride","velocity":100},
+        {"tick":14,"piece":"ride","velocity":100}
+      ]
+    }
+  ]
+}

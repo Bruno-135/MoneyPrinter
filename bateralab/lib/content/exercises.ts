@@ -9,17 +9,27 @@ import { type DrumScore, parseScore } from "@/lib/score";
 
 const DIR = join(process.cwd(), "content", "exercises");
 
-export function listExercises(): (DrumScore & { id: string })[] {
+export type Exercise = DrumScore & { id: string };
+
+const LEVEL_ORDER = { iniciante: 0, intermediario: 1, avancado: 2 } as const;
+
+/** Todos os exercícios, ordenados por nível e depois pela ordem do catálogo. */
+export function listExercises(): Exercise[] {
   return readdirSync(DIR)
     .filter((f) => f.endsWith(".json"))
-    .sort()
     .map((file) => {
       const id = file.replace(/\.json$/, "");
       const score = parseScore(JSON.parse(readFileSync(join(DIR, file), "utf8")), file);
       return { ...score, id };
-    });
+    })
+    .sort(
+      (a, b) =>
+        LEVEL_ORDER[a.level ?? "iniciante"] - LEVEL_ORDER[b.level ?? "iniciante"] ||
+        (a.order ?? 999) - (b.order ?? 999) ||
+        a.id.localeCompare(b.id),
+    );
 }
 
-export function getExercise(id: string): (DrumScore & { id: string }) | undefined {
+export function getExercise(id: string): Exercise | undefined {
   return listExercises().find((e) => e.id === id);
 }

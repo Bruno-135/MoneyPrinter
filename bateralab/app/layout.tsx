@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Batera<span className="text-sky-400">Lab</span>
             </Link>
             <div className="flex gap-4 text-sm text-zinc-400">
-              <Link href="/" className="hover:text-zinc-100">Exercícios</Link>
+              <Link href="/" className="hover:text-zinc-100">Escola</Link>
               <Link href="/musica" className="hover:text-zinc-100">Tocar junto</Link>
             </div>
           </nav>

@@ -1,0 +1,71 @@
+{
+  "id": "virada-tercinas",
+  "generated": true,
+  "order": 27,
+  "title": "Virada em tercinas (6/8)",
+  "description": "Três compassos de balada 6/8 e uma virada caixa → surdo em colcheias, fechando no prato.",
+  "level": "intermediario",
+  "category": "virada",
+  "style": "Balada",
+  "tips": [
+    "Cada grupo de três é uma \"tercina\": mantenha os três iguais."
+  ],
+  "bpm": 50,
+  "goalBpm": 70,
+  "timeSignature": [6, 8],
+  "resolution": 8,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":125},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":125},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":125},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":125},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":125},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":125},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"floorTom","velocity":125,"sticking":"L"},
+        {"tick":4,"piece":"floorTom","velocity":100,"sticking":"R"},
+        {"tick":5,"piece":"floorTom","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"crash","velocity":100}
+      ]
+    }
+  ]
+}

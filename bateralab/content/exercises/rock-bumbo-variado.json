@@ -1,0 +1,87 @@
+{
+  "id": "rock-bumbo-variado",
+  "generated": true,
+  "order": 8,
+  "title": "Rock com bumbo no \"e\" do 3",
+  "description": "Um bumbo a mais no contratempo do 3. Primeira variação de bumbo.",
+  "level": "iniciante",
+  "category": "groove",
+  "style": "Rock",
+  "tips": [
+    "O bumbo extra cai junto com o chimbal — não deixe o chimbal atrasar."
+  ],
+  "bpm": 80,
+  "goalBpm": 120,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    }
+  ]
+}

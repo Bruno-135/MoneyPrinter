@@ -1,0 +1,91 @@
+{
+  "id": "disco-chimbal-aberto",
+  "generated": true,
+  "order": 13,
+  "title": "Disco: chimbal aberto no contratempo",
+  "description": "Bumbo nos quatro tempos, caixa no 2 e no 4, chimbal fechado no tempo e aberto no contratempo. O fechado corta o aberto.",
+  "level": "intermediario",
+  "category": "groove",
+  "style": "Disco / Dance",
+  "tips": [
+    "Abra o chimbal com o pé exatamente no \"e\" e feche no tempo seguinte."
+  ],
+  "bpm": 100,
+  "goalBpm": 124,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatOpen","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"hihatOpen","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatOpen","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"hihatOpen","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatOpen","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"hihatOpen","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatOpen","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"hihatOpen","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatOpen","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"hihatOpen","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatOpen","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"hihatOpen","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatOpen","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"hihatOpen","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatOpen","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"hihatOpen","velocity":100}
+      ]
+    }
+  ]
+}

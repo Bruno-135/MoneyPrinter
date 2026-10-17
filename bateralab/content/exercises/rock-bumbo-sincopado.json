@@ -1,0 +1,100 @@
+{
+  "id": "rock-bumbo-sincopado",
+  "generated": true,
+  "order": 14,
+  "title": "Rock com bumbo sincopado",
+  "description": "Bumbo em semicolcheias fora do tempo, contra o chimbal em colcheias. Treina a independência do pé.",
+  "level": "intermediario",
+  "category": "groove",
+  "style": "Rock",
+  "tips": [
+    "Desligue o bumbo e toque só ele; depois só mãos.",
+    "O bumbo do \"a\" cai entre duas notas do chimbal."
+  ],
+  "bpm": 70,
+  "goalBpm": 110,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    }
+  ]
+}

@@ -10,7 +10,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import type { DrumEngine, LoopRange } from "@/lib/audio/engine";
-import { type DrumScore, measureToNotation } from "@/lib/score";
+import { type DrumScore, measureToNotation, ticksPerBeat } from "@/lib/score";
 
 type VexModule = typeof import("vexflow/bravura");
 
@@ -77,7 +77,7 @@ export default function ScoreView({ score, engine, loop, onMeasureClick }: Props
 
     loadVexFlow().then((VF) => {
       if (cancelled) return;
-      const { Renderer, Stave, StaveNote, Voice, Formatter, Beam, Dot, Annotation, Articulation, Fraction, BarlineType } = VF;
+      const { Renderer, Stave, StaveNote, Voice, Formatter, Beam, Dot, Annotation, Articulation, Fraction, BarlineType, Parenthesis } = VF;
       host.innerHTML = "";
       noteElements.current.clear();
 
@@ -122,6 +122,12 @@ export default function ScoreView({ score, engine, loop, onMeasureClick }: Props
             if (item.open) {
               note.addModifier(new Annotation("o").setVerticalJustification(Annotation.VerticalJustify.TOP));
             }
+            if (item.ghost) Parenthesis.buildAndAttach([note]);
+            if (item.sticking) {
+              note.addModifier(
+                new Annotation(item.sticking).setVerticalJustification(Annotation.VerticalJustify.BOTTOM),
+              );
+            }
             if (item.accent) {
               note.addModifier(new Articulation("a>").setPosition(stemDirection === 1 ? 3 : 4));
             }
@@ -136,8 +142,9 @@ export default function ScoreView({ score, engine, loop, onMeasureClick }: Props
             .addTickables(notes.map((n) => n.note));
         const voices = [makeVoice(hands), makeVoice(feet)];
 
-        // Colchetes agrupados por tempo, com a direção de haste de cada voz.
-        const group = [new Fraction(1, beatValue)];
+        // Colchetes agrupados por batida (semínima em 4/4, semínima pontuada em 12/8),
+        // com a direção de haste de cada voz.
+        const group = [new Fraction(ticksPerBeat(score), score.resolution)];
         const beams = [
           ...Beam.generateBeams(hands.map((n) => n.note), { groups: group, stemDirection: 1 }),
           ...Beam.generateBeams(feet.map((n) => n.note), { groups: group, stemDirection: -1 }),

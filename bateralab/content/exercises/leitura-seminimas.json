@@ -1,0 +1,53 @@
+{
+  "id": "leitura-seminimas",
+  "generated": true,
+  "order": 0,
+  "title": "Leitura: semínimas na caixa",
+  "description": "Quatro notas por compasso, uma em cada tempo. A base de tudo: tocar exatamente com o clique.",
+  "level": "iniciante",
+  "category": "leitura",
+  "style": "Técnica",
+  "tips": [
+    "Conte em voz alta \"1, 2, 3, 4\" enquanto toca.",
+    "Alterne as mãos (direita, esquerda) e mantenha as duas na mesma altura.",
+    "Só aumente o BPM quando tocar 4 compassos seguidos sem sair do clique."
+  ],
+  "bpm": 70,
+  "goalBpm": 120,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "id": "funk-ghost-notes",
+  "generated": true,
+  "order": 16,
+  "title": "Funk com notas fantasma",
+  "description": "Caixa forte no 2 e no 4 e notas fantasma (muito fracas) entre elas. Dá o \"swing\" do funk.",
+  "level": "intermediario",
+  "category": "groove",
+  "style": "Funk",
+  "tips": [
+    "Nota fantasma é quase um toque: a baqueta sobe só 1–2 cm.",
+    "O contraste entre fantasma e acento é o segredo do groove."
+  ],
+  "bpm": 70,
+  "goalBpm": 100,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":35},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"snare","velocity":35},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"snare","velocity":35}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":35},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"snare","velocity":35},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"snare","velocity":35}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":35},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"snare","velocity":35},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"snare","velocity":35}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":35},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"snare","velocity":35},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":15,"piece":"snare","velocity":35}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": "shuffle",
+  "generated": true,
+  "order": 22,
+  "title": "Shuffle",
+  "description": "Em 12/8: chimbal na 1ª e 3ª nota de cada tercina (o \"balanço\" do blues), bumbo no 1 e 3, caixa no 2 e 4.",
+  "level": "intermediario",
+  "category": "groove",
+  "style": "Blues",
+  "tips": [
+    "Diga \"tum-pa\" com o primeiro mais longo.",
+    "O BPM aqui conta semínimas pontuadas (cada grupo de 3)."
+  ],
+  "bpm": 60,
+  "goalBpm": 100,
+  "timeSignature": [12, 8],
+  "resolution": 8,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"hihatClosed","velocity":100}
+      ]
+    }
+  ]
+}

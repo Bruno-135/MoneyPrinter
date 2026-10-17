@@ -1,0 +1,84 @@
+{
+  "id": "drum-and-bass",
+  "generated": true,
+  "order": 29,
+  "title": "Drum and bass",
+  "description": "Groove de duas batidas muito rápido: bumbo no 1 e no \"e\" do 3, caixa no 2 e no 4.",
+  "level": "avancado",
+  "category": "groove",
+  "style": "Eletrônico",
+  "tips": [
+    "Comece a 120 e suba de 5 em 5 BPM.",
+    "Relaxe os ombros: velocidade vem de soltura."
+  ],
+  "bpm": 120,
+  "goalBpm": 170,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    }
+  ]
+}

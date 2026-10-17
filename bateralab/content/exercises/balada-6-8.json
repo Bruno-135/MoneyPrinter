@@ -1,0 +1,67 @@
+{
+  "id": "balada-6-8",
+  "generated": true,
+  "order": 23,
+  "title": "Balada em 6/8",
+  "description": "Seis colcheias por compasso em dois grupos de três. Bumbo no 1, caixa no 4.",
+  "level": "intermediario",
+  "category": "groove",
+  "style": "Balada",
+  "tips": [
+    "Conte \"1 2 3 4 5 6\" com peso no 1 e no 4."
+  ],
+  "bpm": 50,
+  "goalBpm": 70,
+  "timeSignature": [6, 8],
+  "resolution": 8,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":125},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":125},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":125},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":125},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":125},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":125},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":125},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":125},
+        {"tick":3,"piece":"snare","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100}
+      ]
+    }
+  ]
+}

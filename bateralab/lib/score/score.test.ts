@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildTimeline, ticksToSeconds, TRANSPORT_PPQ } from "@/lib/audio/timeline";
 import {
+  beatsPerMeasure,
   type DrumScore,
   DRUM_PIECES,
   measureToNotation,
@@ -10,8 +11,11 @@ import {
   midiToScore,
   parseScore,
   PIECE_TO_MIDI,
+  quartersPerBeat,
   scoreToMidi,
   splitDuration,
+  ticksPerBeat,
+  ticksPerMeasure,
 } from "@/lib/score";
 
 const rock: DrumScore = {
@@ -98,16 +102,52 @@ describe("notação", () => {
   });
 });
 
+describe("compassos compostos", () => {
+  const shuffle = { timeSignature: [12, 8] as [number, number], resolution: 8 };
+  it("12/8 tem 4 batidas de semínima pontuada", () => {
+    expect(ticksPerMeasure(shuffle)).toBe(12);
+    expect(ticksPerBeat(shuffle)).toBe(3);
+    expect(beatsPerMeasure(shuffle)).toBe(4);
+    expect(quartersPerBeat(shuffle)).toBe(1.5);
+  });
+  it("4/4 e 5/4 continuam a contar semínimas", () => {
+    expect(beatsPerMeasure({ timeSignature: [4, 4], resolution: 16 })).toBe(4);
+    expect(beatsPerMeasure({ timeSignature: [5, 4], resolution: 16 })).toBe(5);
+    expect(quartersPerBeat({ timeSignature: [4, 4], resolution: 16 })).toBe(1);
+  });
+  it("o metrônomo de 12/8 tem 4 cliques por compasso", () => {
+    const score: DrumScore = { title: "x", bpm: 60, ...shuffle, measures: [{ events: [] }] };
+    expect(buildTimeline(score).beats).toHaveLength(2 * 4);
+  });
+});
+
 describe("exercícios", () => {
   const dir = join(__dirname, "..", "..", "content", "exercises");
-  for (const file of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
-    it(`${file} é um DrumScore válido`, () => {
+  const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
+  it("o catálogo tem exercícios nos três níveis e nos quatro tipos", () => {
+    const all = files.map((f) => parseScore(JSON.parse(readFileSync(join(dir, f), "utf8")), f));
+    expect(new Set(all.map((e) => e.level))).toEqual(new Set(["iniciante", "intermediario", "avancado"]));
+    expect(new Set(all.map((e) => e.category))).toEqual(new Set(["groove", "rudimento", "virada", "leitura"]));
+  });
+  for (const file of files) {
+    it(`${file}: válido, notação fecha e é tocável`, () => {
       const score = parseScore(JSON.parse(readFileSync(join(dir, file), "utf8")), file);
-      expect(score.measures.length).toBeGreaterThan(0);
-      for (const m of score.measures) {
+      expect(score.level && score.category && score.style).toBeTruthy();
+      const len = ticksPerMeasure(score);
+      const sum = (items: { duration: string; dots: number }[]) =>
+        items.reduce((s, i) => s + (score.resolution / Number(i.duration)) * (i.dots ? 1.5 : 1), 0);
+      score.measures.forEach((m, mi) => {
         const n = measureToNotation(m, score);
-        expect(n.hands.length).toBeGreaterThan(0);
-      }
+        // Voz vazia = pausa de compasso inteiro (semibreve), que vale em qualquer fórmula.
+        const measureRest = (items: { rest: boolean; duration: string }[]) =>
+          items.length === 1 && items[0]!.rest && items[0]!.duration === "1";
+        if (!measureRest(n.hands)) expect(sum(n.hands), `compasso ${mi + 1} (mãos)`).toBe(len);
+        if (!measureRest(n.feet)) expect(sum(n.feet), `compasso ${mi + 1} (pé)`).toBe(len);
+        // No máximo duas mãos ao mesmo tempo.
+        const hands = new Map<number, number>();
+        for (const e of m.events) if (e.piece !== "kick") hands.set(e.tick, (hands.get(e.tick) ?? 0) + 1);
+        for (const [tick, count] of hands) expect(count, `compasso ${mi + 1}, tick ${tick}`).toBeLessThanOrEqual(2);
+      });
     });
   }
   it("parseScore rejeita peças desconhecidas", () => {

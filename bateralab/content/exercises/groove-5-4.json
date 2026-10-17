@@ -1,0 +1,95 @@
+{
+  "id": "groove-5-4",
+  "generated": true,
+  "order": 33,
+  "title": "Groove em 5/4",
+  "description": "Cinco tempos por compasso, agrupados 3+2. Caixa no 3 e no 5.",
+  "level": "avancado",
+  "category": "groove",
+  "style": "Progressivo",
+  "tips": [
+    "Conte \"1 2 3 1 2\" no início, depois \"1 2 3 4 5\"."
+  ],
+  "bpm": 70,
+  "goalBpm": 110,
+  "timeSignature": [5, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"snare","velocity":125},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"snare","velocity":125},
+        {"tick":18,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"snare","velocity":125},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"snare","velocity":125},
+        {"tick":18,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"snare","velocity":125},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"snare","velocity":125},
+        {"tick":18,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"snare","velocity":125},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"snare","velocity":125},
+        {"tick":18,"piece":"hihatClosed","velocity":100}
+      ]
+    }
+  ]
+}

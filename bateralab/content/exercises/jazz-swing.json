@@ -1,0 +1,84 @@
+{
+  "id": "jazz-swing",
+  "generated": true,
+  "order": 32,
+  "title": "Jazz: condução swing",
+  "description": "Prato de condução \"tim, tim-ga-tim\", chimbal (com o pé) no 2 e no 4 e bumbo bem leve em todos os tempos.",
+  "level": "avancado",
+  "category": "groove",
+  "style": "Jazz",
+  "tips": [
+    "O chimbal aqui representa o pedal: toque-o com o pé.",
+    "O bumbo é \"sentido, não ouvido\" (feathering)."
+  ],
+  "bpm": 80,
+  "goalBpm": 160,
+  "timeSignature": [12, 8],
+  "resolution": 8,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":35},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"kick","velocity":35},
+        {"tick":3,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"kick","velocity":35},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"kick","velocity":35},
+        {"tick":9,"piece":"ride","velocity":100},
+        {"tick":11,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":35},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"kick","velocity":35},
+        {"tick":3,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"kick","velocity":35},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"kick","velocity":35},
+        {"tick":9,"piece":"ride","velocity":100},
+        {"tick":11,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":35},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"kick","velocity":35},
+        {"tick":3,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"kick","velocity":35},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"kick","velocity":35},
+        {"tick":9,"piece":"ride","velocity":100},
+        {"tick":11,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":35},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"kick","velocity":35},
+        {"tick":3,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"kick","velocity":35},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"kick","velocity":35},
+        {"tick":9,"piece":"ride","velocity":100},
+        {"tick":11,"piece":"ride","velocity":100}
+      ]
+    }
+  ]
+}

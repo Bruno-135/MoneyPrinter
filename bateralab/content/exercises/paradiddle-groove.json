@@ -1,0 +1,108 @@
+{
+  "id": "paradiddle-groove",
+  "generated": true,
+  "order": 17,
+  "title": "Groove de paradiddle",
+  "description": "Paradiddle espalhado pelo kit: mão direita no chimbal, esquerda na caixa (forte no 2 e no 4, fantasma no resto).",
+  "level": "intermediario",
+  "category": "groove",
+  "style": "Funk",
+  "tips": [
+    "Aprenda primeiro o paradiddle simples na caixa.",
+    "Só as notas do 2 e do 4 são fortes."
+  ],
+  "bpm": 60,
+  "goalBpm": 95,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":2,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":5,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":8,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":10,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":13,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":15,"piece":"snare","velocity":35,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":2,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":5,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":8,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":10,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":13,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":15,"piece":"snare","velocity":35,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":2,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":5,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":8,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":10,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":13,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":15,"piece":"snare","velocity":35,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":2,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":5,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":8,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":10,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":13,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":15,"piece":"snare","velocity":35,"sticking":"L"}
+      ]
+    }
+  ]
+}

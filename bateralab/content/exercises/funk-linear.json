@@ -1,0 +1,100 @@
+{
+  "id": "funk-linear",
+  "generated": true,
+  "order": 28,
+  "title": "Funk linear",
+  "description": "Nenhuma peça toca junto com outra: bumbo, chimbal e caixa se revezam em semicolcheias.",
+  "level": "avancado",
+  "category": "groove",
+  "style": "Funk",
+  "tips": [
+    "Toque devagar dizendo o nome de cada peça.",
+    "Os acentos da caixa no 2 e no 4 continuam sendo o centro."
+  ],
+  "bpm": 60,
+  "goalBpm": 100,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"snare","velocity":35},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":5,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":11,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":13,"piece":"hihatClosed","velocity":100},
+        {"tick":14,"piece":"kick","velocity":100},
+        {"tick":15,"piece":"snare","velocity":35}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"snare","velocity":35},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":5,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":11,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":13,"piece":"hihatClosed","velocity":100},
+        {"tick":14,"piece":"kick","velocity":100},
+        {"tick":15,"piece":"snare","velocity":35}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"snare","velocity":35},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":5,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":11,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":13,"piece":"hihatClosed","velocity":100},
+        {"tick":14,"piece":"kick","velocity":100},
+        {"tick":15,"piece":"snare","velocity":35}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100},
+        {"tick":2,"piece":"snare","velocity":35},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":5,"piece":"hihatClosed","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"snare","velocity":35},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":11,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":13,"piece":"hihatClosed","velocity":100},
+        {"tick":14,"piece":"kick","velocity":100},
+        {"tick":15,"piece":"snare","velocity":35}
+      ]
+    }
+  ]
+}

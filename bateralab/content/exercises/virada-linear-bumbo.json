@@ -1,0 +1,77 @@
+{
+  "id": "virada-linear-bumbo",
+  "generated": true,
+  "order": 35,
+  "title": "Virada linear com bumbo",
+  "description": "Grupos de três notas (direita, esquerda, bumbo) pelos tambores. Soa muito mais rápido do que é.",
+  "level": "avancado",
+  "category": "virada",
+  "style": "Rock / Fusion",
+  "tips": [
+    "Toque o grupo R-L-pé em loop na caixa antes de espalhar pelos tons."
+  ],
+  "bpm": 60,
+  "goalBpm": 100,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"kick","velocity":100},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":5,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"tom1","velocity":100,"sticking":"R"},
+        {"tick":7,"piece":"tom1","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":9,"piece":"tom2","velocity":100,"sticking":"R"},
+        {"tick":10,"piece":"tom2","velocity":100,"sticking":"L"},
+        {"tick":11,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"floorTom","velocity":100,"sticking":"R"},
+        {"tick":13,"piece":"floorTom","velocity":100,"sticking":"L"},
+        {"tick":14,"piece":"kick","velocity":100},
+        {"tick":15,"piece":"floorTom","velocity":100,"sticking":"R"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"crash","velocity":100}
+      ]
+    }
+  ]
+}

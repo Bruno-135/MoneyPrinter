@@ -1,0 +1,68 @@
+{
+  "id": "leitura-colcheias",
+  "generated": true,
+  "order": 1,
+  "title": "Leitura: colcheias na caixa",
+  "description": "Duas notas por tempo: no tempo e no \"e\". Prepara para o chimbal em colcheias dos grooves.",
+  "level": "iniciante",
+  "category": "leitura",
+  "style": "Técnica",
+  "tips": [
+    "Conte \"1 e 2 e 3 e 4 e\".",
+    "As notas do \"e\" têm o mesmo volume que as do tempo."
+  ],
+  "bpm": 70,
+  "goalBpm": 130,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    }
+  ]
+}

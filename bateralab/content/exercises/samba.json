@@ -1,0 +1,84 @@
+{
+  "id": "samba",
+  "generated": true,
+  "order": 18,
+  "title": "Samba no kit",
+  "description": "Bumbo imitando o surdo (\"tum . . tum\") e chimbal em semicolcheias com acento na última de cada tempo.",
+  "level": "intermediario",
+  "category": "groove",
+  "style": "Samba",
+  "tips": [
+    "Em 2/4: conte \"1 e & a 2 e & a\".",
+    "O acento no \"a\" dá a cara do samba."
+  ],
+  "bpm": 70,
+  "goalBpm": 100,
+  "timeSignature": [2, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"hihatClosed","velocity":125,"sticking":"L"},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":7,"piece":"hihatClosed","velocity":125,"sticking":"L"},
+        {"tick":7,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"hihatClosed","velocity":125,"sticking":"L"},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":7,"piece":"hihatClosed","velocity":125,"sticking":"L"},
+        {"tick":7,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"hihatClosed","velocity":125,"sticking":"L"},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":7,"piece":"hihatClosed","velocity":125,"sticking":"L"},
+        {"tick":7,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":1,"piece":"hihatClosed","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"hihatClosed","velocity":125,"sticking":"L"},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":5,"piece":"hihatClosed","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"hihatClosed","velocity":100,"sticking":"R"},
+        {"tick":7,"piece":"hihatClosed","velocity":125,"sticking":"L"},
+        {"tick":7,"piece":"kick","velocity":100}
+      ]
+    }
+  ]
+}

@@ -68,6 +68,8 @@ export class DrumEngine {
 
   private state: PlaybackState = "stopped";
   private bpm = 100;
+  /** Semínimas por batida (1 em 4/4, 1,5 em 12/8): o Transport conta semínimas. */
+  private quartersPerBeat = 1;
   private muted = new Set<DrumPiece>();
   private metronome = true;
   private countIn = true;
@@ -119,7 +121,7 @@ export class DrumEngine {
       ctx.lookAhead = 0.05;
       const transport = Tone.getTransport();
       transport.PPQ = TRANSPORT_PPQ;
-      transport.bpm.value = this.bpm;
+      transport.bpm.value = this.bpm * this.quartersPerBeat;
       this.metronomeSynth = new Tone.Synth({
         oscillator: { type: "triangle" },
         envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.01 },
@@ -148,6 +150,8 @@ export class DrumEngine {
     if (this.state !== "stopped") this.stop();
     this.score = score;
     this.timeline = buildTimeline(score);
+    this.quartersPerBeat = this.timeline.beatTicks / TRANSPORT_PPQ;
+    this.setBpm(this.bpm);
     this.loop = { enabled: false, start: 0, end: score.measures.length - 1 };
     this.applyLoop();
     this.scheduleScore();
@@ -284,10 +288,13 @@ export class DrumEngine {
 
   // ── controles de estudo ────────────────────────────────────────────────────
 
-  /** Muda o andamento sem perder a sincronia (posições estão em ticks). */
+  /**
+   * Muda o andamento sem perder a sincronia (posições estão em ticks).
+   * `bpm` são batidas por minuto; o Transport recebe semínimas por minuto.
+   */
   setBpm(bpm: number): void {
     this.bpm = bpm;
-    if (this.Tone) this.Tone.getTransport().bpm.value = bpm;
+    if (this.Tone) this.Tone.getTransport().bpm.value = bpm * this.quartersPerBeat;
   }
 
   setMetronome(on: boolean): void {
@@ -338,7 +345,7 @@ export class DrumEngine {
       tick,
       audioTime,
       drawTime: this.Tone.getContext().currentTime,
-      bpm: this.Tone.getTransport().bpm.value,
+      bpm: this.Tone.getTransport().bpm.value / this.quartersPerBeat,
     });
   }
 

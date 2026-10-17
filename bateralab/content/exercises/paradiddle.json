@@ -1,0 +1,100 @@
+{
+  "id": "paradiddle",
+  "generated": true,
+  "order": 4,
+  "title": "Paradiddle simples",
+  "description": "RLRR LRLL, com acento na primeira nota de cada grupo. Mistura toque simples e duplo.",
+  "level": "iniciante",
+  "category": "rudimento",
+  "style": "Técnica",
+  "tips": [
+    "Diga \"pa-ra-di-dle\" enquanto toca.",
+    "O acento muda de mão a cada grupo: preste atenção na esquerda."
+  ],
+  "bpm": 60,
+  "goalBpm": 110,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":5,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":13,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":15,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":5,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":13,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":15,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":5,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":13,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":15,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":5,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":13,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":15,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    }
+  ]
+}

@@ -31,6 +31,7 @@ npm run lint
 npm run typecheck
 npm test             # testes unitários (formato, MIDI, timeline, notação, exercícios)
 npm run samples      # regenera public/samples/*.wav
+npm run exercises    # regenera content/exercises/*.json a partir do catálogo
 ```
 
 ### Deploy na Vercel
@@ -120,9 +121,10 @@ partitura, kit e (no futuro) a transcrição falam todos este formato.
   "id": "01-rock-basico",
   "title": "Rock básico",
   "description": "Texto opcional mostrado na lista",
-  "bpm": 90,                     // semínimas por minuto
+  "bpm": 90,                     // batidas por minuto (semínima; pontuada em 6/8 e 12/8)
   "timeSignature": [4, 4],
   "resolution": 16,              // grade: 16 = semicolcheias (potência de 2)
+  "level": "iniciante",          // opcionais: level, category, style, tips, goalBpm
   "measures": [
     { "events": [
       { "tick": 0, "piece": "kick",        "velocity": 110 },
@@ -145,13 +147,56 @@ crash 49, ride 51 (variantes GM comuns como 35, 40, 44, 57… também são aceit
 na entrada). `scoreToMidi()` exporta um `.mid` (formato 0); `midiToScore()` é
 um stub com o plano da etapa 4 em TODO.
 
+## Escola: banco de ritmos
+
+A página inicial é o catálogo da escola: **36 exercícios** em três níveis
+(Iniciante, Intermediário, Avançado) e quatro tipos (Ritmos, Rudimentos,
+Viradas, Leitura e coordenação), com filtro por estilo. Cada exercício tem
+andamento inicial, meta de BPM e dicas de estudo.
+
+Estilos incluídos: rock, pop, funk, disco, samba, baião, bossa nova, reggae,
+blues (shuffle), balada 6/8, jazz, metal, drum and bass e 5/4. Rudimentos:
+toque simples, toque duplo, paradiddle, duplo paradiddle, paradiddle-diddle e
+acentos. Viradas de 1 tempo, pelos tons, 3-3-2, em tercinas e linear com bumbo.
+
+Na partitura: acento (`>`) para notas fortes, **notas fantasma entre
+parênteses** e **mãos (R/L)** por baixo das notas quando indicadas. Em 6/8 e
+12/8 o BPM e o metrônomo contam semínimas pontuadas.
+
 ## Como adicionar um exercício
 
-1. Crie `content/exercises/05-meu-groove.json` no formato acima. O nome do arquivo
-   vira o endereço (`/exercicios/05-meu-groove`) e a ordem na lista é alfabética.
-2. Rode `npm test` — valida todos os JSON (peças, ticks dentro do compasso,
-   velocities) e verifica que a notação de cada compasso fecha.
-3. `npm run dev` e abra a página. Não é preciso registrar o arquivo em lugar nenhum.
+**Pelo catálogo (recomendado).** Acrescente um objeto em
+[`scripts/exercise-catalog.mjs`](scripts/exercise-catalog.mjs) e rode
+`npm run exercises`, que regenera `content/exercises/*.json`. Cada compasso é
+escrito como linhas de grade, um caractere por tick:
+
+```js
+{
+  id: "meu-groove",                 // vira /exercicios/meu-groove
+  title: "Meu groove",
+  level: "iniciante",               // iniciante | intermediario | avancado
+  category: "groove",               // groove | rudimento | virada | leitura
+  style: "Rock",
+  description: "…",
+  tips: ["…"],
+  bpm: 80, goalBpm: 120,
+  timeSignature: [4, 4], resolution: 16,
+  bars: [{
+    hh: "x-x- x-x- x-x- x-x-",       // 1 e & a | 2 e & a | …
+    sn: "---- X--- ---- X---",       // X = acento, g = fantasma
+    bd: "x--- ---- x--- ----",
+  }],
+}
+```
+
+Linhas: `hh` chimbal fechado, `ho` aberto, `sn` caixa, `bd` bumbo, `t1`, `t2`,
+`ft` surdo, `cr` ataque, `rd` condução e `st` (opcional): a mão de cada tick, `R`, `L` ou `-`, aplicada às notas das mãos nesse tick.
+
+**Ou à mão.** Crie um `.json` no formato `DrumScore` em `content/exercises/`
+(arquivos sem `"generated": true` não são apagados pelo gerador).
+
+Depois rode `npm test`: valida todos os exercícios, confere que a notação de
+cada compasso fecha e que nenhum momento pede mais de duas mãos.
 
 ## Sincronia (como funciona)
 
@@ -202,9 +247,9 @@ tempo real** com Tone.js: `MembraneSynth` (bumbo e tons), `NoiseSynth` (caixa) e
 
 ## Próximas etapas
 
-- **Etapa 2 — Aulas**: trilhas de exercícios por nível, texto/vídeo de explicação,
-  progresso do aluno, metas de BPM, avaliação do que o aluno toca (MIDI/teclado)
-  comparando com a partitura.
+- **Etapa 2 — Aulas**: o banco de ritmos já existe; faltam trilhas guiadas,
+  texto/vídeo de explicação, progresso do aluno (contas, banco de dados) e
+  avaliação do que o aluno toca (MIDI/teclado) comparando com a partitura.
 - **Etapa 3 — Separar a bateria**: o player de arquivo já existe (`/musica`, aba
   Arquivo); falta enviar o áudio a um backend com GPU (ex.: **Demucs** no Replicate)
   para tocar junto só com o resto da banda ou ouvir a bateria isolada.

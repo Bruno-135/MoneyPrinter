@@ -1,4 +1,4 @@
-import { type DrumPiece, type DrumScore, ticksPerMeasure } from "./types";
+import { type DrumPiece, type DrumScore, quartersPerBeat, ticksPerMeasure } from "./types";
 
 /** Nota General MIDI (canal 10) de cada peça. */
 export const PIECE_TO_MIDI: Record<DrumPiece, number> = {
@@ -69,7 +69,7 @@ export function scoreToMidi(score: DrumScore): Uint8Array {
   // Meta-eventos no tempo 0: nome, andamento e fórmula de compasso.
   const titleBytes = Array.from(new TextEncoder().encode(score.title));
   events.push({ time: 0, order: 0, bytes: [0xff, 0x03, ...varLen(titleBytes.length), ...titleBytes] });
-  const usPerQuarter = Math.round(60_000_000 / score.bpm);
+  const usPerQuarter = Math.round(60_000_000 / (score.bpm * quartersPerBeat(score)));
   events.push({
     time: 0,
     order: 0,
