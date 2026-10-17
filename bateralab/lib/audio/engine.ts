@@ -157,6 +157,18 @@ export class DrumEngine {
     this.scheduleScore();
   }
 
+  /** Partitura carregada (várias partituras podem estar na tela; só esta toca). */
+  getScore(): DrumScore | null {
+    return this.score;
+  }
+
+  /** Volta às opções padrão (sem peças silenciadas, metrônomo e contagem ligados). */
+  resetOptions(): void {
+    this.muted.clear();
+    this.metronome = true;
+    this.countIn = true;
+  }
+
   /** (Re)agenda todas as notas e batidas no Transport. */
   private scheduleScore() {
     const Tone = this.Tone;

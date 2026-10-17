@@ -91,7 +91,7 @@ por isso a posição é extrapolada com o relógio local enquanto toca
 ## Estrutura
 
 ```
-app/                      páginas (/, /exercicios/[id], /musica; /upload redireciona)
+app/                      páginas (/, /exercicios/[id], /aprender, /aprender/[slug], /musica)
 components/
   DrumKit.tsx             kit em SVG visto de cima, acende as peças
   ScoreView.tsx           partitura VexFlow + cursor + rolagem automática
@@ -105,6 +105,7 @@ lib/audio/
   kit.ts                  vozes: samples WAV ou síntese (fallback)
 lib/input/                atalhos de teclado e Web MIDI
 lib/practice/             tocar junto: player YouTube, arquivo local, forma de onda, preferências
+components/lessons/       aulas de leitura (exemplos tocáveis, teste)
 components/practice/      tela Tocar junto (linha do tempo, loop A–B, velocidade, marcações)
 content/exercises/        exercícios em JSON (formato DrumScore)
 public/samples/           samples WAV do kit
@@ -146,6 +147,26 @@ kick 36, snare 38, hihatClosed 42, hihatOpen 46, tom1 48, tom2 45, floorTom 43,
 crash 49, ride 51 (variantes GM comuns como 35, 40, 44, 57… também são aceitas
 na entrada). `scoreToMidi()` exporta um `.mid` (formato 0); `midiToScore()` é
 um stub com o plano da etapa 4 em TODO.
+
+## Aprender a ler partitura (`/aprender`)
+
+Curso curto em 9 aulas, com exemplos para ouvir — a partitura destaca a nota
+que está tocando e, em vários exemplos, a bateria acende junto:
+
+1. A pauta e a clave de percussão (mapa de onde fica cada peça, com botão "ouvir")
+2. Cabeças de nota, pratos e pés (bolinha × x, chimbal aberto, duas vozes)
+3. Figuras (semibreve → fusa)
+4. Pausas
+5. Compasso e contagem (4/4, 3/4, 2/4, 6/8, 12/8)
+6. Colchetes e ponto de aumento
+7. Acentos, notas fantasma e mãos (R/L)
+8. Lendo um groove passo a passo (método por camadas + desafio)
+9. Teste: "que peça é esta?" e "que figura é esta?", com perguntas sorteadas
+
+O conteúdo está em `components/lessons/content.tsx` (texto + partituras
+escritas com `gridScore()`/`sustained()` de `lib/score/grid.ts`). Para mostrar
+semibreves e mínimas, um evento pode ter `duration` (em ticks), que só afeta a
+partitura.
 
 ## Escola: banco de ritmos e exercícios
 

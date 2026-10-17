@@ -100,6 +100,41 @@ function voiceItems(
     }
   };
 
+  // Durações escritas explicitamente (aulas): layout linear, sem quebrar por tempo.
+  if (events.some((e) => e.duration)) {
+    let cursor = 0;
+    onsets.forEach((tick, i) => {
+      if (tick > cursor) pushRest(cursor, tick - cursor);
+      const chord = byTick.get(tick)!;
+      const next = onsets[i + 1] ?? measureLen;
+      const written = Math.max(...chord.map((e) => e.duration ?? 0));
+      const len = Math.min(written || next - tick, next - tick);
+      const pieces = [...new Set(chord.map((e) => e.piece))];
+      const keys = [...new Set(pieces.map((p) => `${PIECE_NOTATION[p].key}${PIECE_NOTATION[p].head === "x" ? "/x" : ""}`))];
+      const [first, ...rest] = splitDuration(len, score.resolution);
+      const maxVelocity = Math.max(...chord.map((e) => e.velocity));
+      items.push({
+        tick,
+        ...first!,
+        rest: false,
+        keys,
+        pieces,
+        open: pieces.includes("hihatOpen"),
+        accent: maxVelocity >= 118 && maxVelocity > avgVelocity + 10,
+        ghost: maxVelocity <= 45,
+        sticking: chord.find((e) => e.sticking)?.sticking,
+      });
+      let t = tick + first!.ticks;
+      for (const p of rest) {
+        items.push({ tick: t, ...p, rest: true, keys: [restKey], pieces: [], open: false, accent: false, ghost: false });
+        t += p.ticks;
+      }
+      cursor = tick + len;
+    });
+    if (cursor < measureLen) pushRest(cursor, measureLen - cursor);
+    return items;
+  }
+
   for (let beatStart = 0; beatStart < measureLen; beatStart += beatLen) {
     const beatEnd = beatStart + beatLen;
     const inBeat = onsets.filter((t) => t >= beatStart && t < beatEnd);

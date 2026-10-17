@@ -15,6 +15,7 @@ import {
   quartersPerBeat,
   scoreToMidi,
   splitDuration,
+  sustained,
   ticksPerBeat,
   ticksPerMeasure,
 } from "@/lib/score";
@@ -100,6 +101,21 @@ describe("notação", () => {
     expect(n.hands[0]!.keys).toEqual(["g/5/x"]);
     expect(n.hands.find((i) => i.tick === 6)!.open).toBe(true);
     expect(n.feet[0]!.keys).toEqual(["f/4"]);
+  });
+});
+
+describe("durações escritas (aulas)", () => {
+  const ts = { timeSignature: [4, 4] as [number, number], resolution: 16 };
+  const durations = (notes: [number, number][]) =>
+    measureToNotation(sustained("snare", notes), ts).hands.map((i) => `${i.duration}${i.dots ? "." : ""}${i.rest ? "r" : ""}`);
+  it("mostra semibreve, mínimas e semínima pontuada", () => {
+    expect(durations([[0, 16]])).toEqual(["1"]);
+    expect(durations([[0, 8], [8, 8]])).toEqual(["2", "2"]);
+    expect(durations([[0, 6], [6, 2], [8, 6], [14, 2]])).toEqual(["4.", "8", "4.", "8"]);
+  });
+  it("completa com pausas", () => {
+    expect(durations([[0, 4], [4, 4]])).toEqual(["4", "4", "2r"]);
+    expect(durations([[8, 4], [12, 4]])).toEqual(["2r", "4", "4"]);
   });
 });
 

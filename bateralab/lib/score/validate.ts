@@ -78,6 +78,11 @@ export function parseScore(input: unknown, source = "partitura"): DrumScore {
             if (ev.sticking !== "R" && ev.sticking !== "L") fail(`${where}: sticking precisa ser "R" ou "L"`);
             out.sticking = ev.sticking as "R" | "L";
           }
+          if (ev.duration !== undefined) {
+            const d = ev.duration as number;
+            if (!Number.isInteger(d) || d < 1 || out.tick + d > maxTick) fail(`${where}: duration inválida`);
+            out.duration = d;
+          }
           return out;
         })
         .sort((a, b) => a.tick - b.tick),

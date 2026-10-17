@@ -24,6 +24,14 @@ export default function HomePage() {
           Ritmos, rudimentos, viradas e leitura, do básico ao avançado. Ouça, diminua o andamento e toque junto.
         </p>
       </div>
+      <div className="grid gap-3 md:grid-cols-2">
+      <Link
+        href="/aprender"
+        className="flex flex-col gap-1 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 transition-colors hover:bg-emerald-500/15"
+      >
+        <span className="font-semibold text-emerald-200">Não sabe ler partitura? Comece aqui →</span>
+        <span className="text-sm text-zinc-400">9 aulas curtas: onde fica cada peça, figuras, pausas, compasso e um teste.</span>
+      </Link>
       <Link
         href="/musica"
         className="flex flex-col gap-1 rounded-xl border border-sky-500/40 bg-sky-500/10 p-4 transition-colors hover:bg-sky-500/15"
@@ -33,6 +41,7 @@ export default function HomePage() {
           Cole um link do YouTube ou abra um arquivo: loop de trechos, velocidade reduzida e marcações.
         </span>
       </Link>
+      </div>
       <ExerciseCatalog items={items} />
     </div>
   );

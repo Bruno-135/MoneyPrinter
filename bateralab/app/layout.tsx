@@ -21,8 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/" className="text-lg font-bold tracking-tight">
               Batera<span className="text-sky-400">Lab</span>
             </Link>
-            <div className="flex gap-4 text-sm text-zinc-400">
+            <div className="flex gap-3 text-sm text-zinc-400 sm:gap-4">
               <Link href="/" className="hover:text-zinc-100">Escola</Link>
+              <Link href="/aprender" className="hover:text-zinc-100">Ler partitura</Link>
               <Link href="/musica" className="hover:text-zinc-100">Tocar junto</Link>
             </div>
           </nav>

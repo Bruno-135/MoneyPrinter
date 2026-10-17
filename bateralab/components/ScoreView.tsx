@@ -20,6 +20,8 @@ interface Props {
   loop: LoopRange;
   /** Clique num compasso (para escolher o loop). */
   onMeasureClick?: (measure: number, extend: boolean) => void;
+  /** Exemplos curtos (aulas): sem altura máxima nem rolagem. */
+  compact?: boolean;
 }
 
 /** Geometria de cada compasso desenhado (para cursor, loop e scroll). */
@@ -46,7 +48,7 @@ function loadVexFlow(): Promise<VexModule> {
   return vexPromise;
 }
 
-export default function ScoreView({ score, engine, loop, onMeasureClick }: Props) {
+export default function ScoreView({ score, engine, loop, onMeasureClick, compact }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const svgHostRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -82,7 +84,10 @@ export default function ScoreView({ score, engine, loop, onMeasureClick }: Props
       noteElements.current.clear();
 
       const [beats, beatValue] = score.timeSignature;
-      const perRow = Math.max(1, Math.min(4, Math.floor((width - 10) / MIN_MEASURE_WIDTH)));
+      const perRow = Math.max(1, Math.min(4, score.measures.length, Math.floor((width - 10) / MIN_MEASURE_WIDTH)));
+      // Voz sem nenhuma nota na partitura inteira (ex: rudimentos sem bumbo) não é desenhada.
+      const hasFeet = score.measures.some((m) => m.events.some((e) => e.piece === "kick"));
+      const hasHands = score.measures.some((m) => m.events.some((e) => e.piece !== "kick"));
       const rows = Math.ceil(score.measures.length / perRow);
       const firstExtra = 50; // clave (+ fórmula no 1º sistema)
       const measureWidth = Math.floor((width - 10 - firstExtra) / perRow);
@@ -140,14 +145,16 @@ export default function ScoreView({ score, engine, loop, onMeasureClick }: Props
           new Voice({ numBeats: beats, beatValue })
             .setMode(Voice.Mode.SOFT)
             .addTickables(notes.map((n) => n.note));
-        const voices = [makeVoice(hands), makeVoice(feet)];
+        const voices = [hasHands || !hasFeet ? makeVoice(hands) : null, hasFeet ? makeVoice(feet) : null].filter(
+          (v): v is NonNullable<typeof v> => v !== null,
+        );
 
         // Colchetes agrupados por batida (semínima em 4/4, semínima pontuada em 12/8),
         // com a direção de haste de cada voz.
         const group = [new Fraction(ticksPerBeat(score), score.resolution)];
         const beams = [
-          ...Beam.generateBeams(hands.map((n) => n.note), { groups: group, stemDirection: 1 }),
-          ...Beam.generateBeams(feet.map((n) => n.note), { groups: group, stemDirection: -1 }),
+          ...(hasHands || !hasFeet ? Beam.generateBeams(hands.map((n) => n.note), { groups: group, stemDirection: 1 }) : []),
+          ...(hasFeet ? Beam.generateBeams(feet.map((n) => n.note), { groups: group, stemDirection: -1 }) : []),
         ];
 
         new Formatter().joinVoices(voices).format(voices, w - (stave.getNoteStartX() - x) - 15);
@@ -155,7 +162,7 @@ export default function ScoreView({ score, engine, loop, onMeasureClick }: Props
         beams.forEach((b) => b.setContext(ctx).draw());
 
         // Mapa (compasso, tick) → elementos, para o cursor.
-        for (const { note, item } of [...hands, ...feet]) {
+        for (const { note, item } of [...(hasHands || !hasFeet ? hands : []), ...(hasFeet ? feet : [])]) {
           if (item.rest) continue;
           const el = note.getSVGElement();
           if (!el) continue;
@@ -184,6 +191,8 @@ export default function ScoreView({ score, engine, loop, onMeasureClick }: Props
 
     return engine.subscribe((ev) => {
       if (ev.type !== "step") return;
+      // Com várias partituras na página (aulas), só reage a que está carregada.
+      if (engine.getScore() !== score) return;
       active.forEach((el) => el.classList.remove("is-playing"));
       active = [];
       if (ev.measure < 0) {
@@ -218,12 +227,12 @@ export default function ScoreView({ score, engine, loop, onMeasureClick }: Props
         }
       }
     });
-  }, [engine]);
+  }, [engine, score]);
 
   return (
     <div
       ref={scrollRef}
-      className="score-paper relative max-h-[42vh] overflow-y-auto rounded-xl bg-[#f6f3ec] lg:max-h-[60vh]"
+      className={`score-paper relative rounded-xl bg-[#f6f3ec] ${compact ? "" : "max-h-[42vh] overflow-y-auto lg:max-h-[60vh]"}`}
       aria-label={`Partitura: ${score.title}`}
     >
       <div className="relative">

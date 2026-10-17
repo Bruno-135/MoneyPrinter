@@ -34,6 +34,12 @@ export interface DrumEvent {
   velocity: number;
   /** Mão indicada (rudimentos/viradas): aparece por baixo da nota. */
   sticking?: "R" | "L";
+  /**
+   * Duração escrita, em ticks (só afeta a partitura; bateria não sustenta).
+   * Usada nas aulas para mostrar semibreve, mínima etc. Sem ela, cada nota
+   * dura até a próxima dentro do tempo.
+   */
+  duration?: number;
 }
 
 export interface DrumMeasure {
