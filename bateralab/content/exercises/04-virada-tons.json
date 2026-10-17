@@ -1,0 +1,80 @@
+{
+  "id": "04-virada-tons",
+  "title": "Virada simples nos tons",
+  "description": "Dois compassos de rock, virada em semicolcheias caixa → tom 1 → tom 2 → surdo e prato de ataque no tempo 1.",
+  "bpm": 85,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatClosed", "velocity": 75}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatClosed", "velocity": 75}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "snare", "velocity": 110},
+        {"tick": 0, "piece": "kick", "velocity": 100},
+        {"tick": 1, "piece": "snare", "velocity": 90},
+        {"tick": 2, "piece": "snare", "velocity": 90},
+        {"tick": 3, "piece": "snare", "velocity": 90},
+        {"tick": 4, "piece": "tom1", "velocity": 110},
+        {"tick": 5, "piece": "tom1", "velocity": 90},
+        {"tick": 6, "piece": "tom1", "velocity": 90},
+        {"tick": 7, "piece": "tom1", "velocity": 90},
+        {"tick": 8, "piece": "tom2", "velocity": 110},
+        {"tick": 8, "piece": "kick", "velocity": 100},
+        {"tick": 9, "piece": "tom2", "velocity": 90},
+        {"tick": 10, "piece": "tom2", "velocity": 90},
+        {"tick": 11, "piece": "tom2", "velocity": 90},
+        {"tick": 12, "piece": "floorTom", "velocity": 110},
+        {"tick": 13, "piece": "floorTom", "velocity": 90},
+        {"tick": 14, "piece": "floorTom", "velocity": 90},
+        {"tick": 15, "piece": "floorTom", "velocity": 90}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "crash", "velocity": 115},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatClosed", "velocity": 75}
+      ]
+    }
+  ]
+}

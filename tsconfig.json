@@ -39,6 +39,7 @@
   "exclude": [
     "node_modules",
     "Backend",
-    "Frontend"
+    "Frontend",
+    "bateralab"
   ]
 }

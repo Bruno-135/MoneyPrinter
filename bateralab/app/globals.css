@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: #09090b;
+  color: #f4f4f5;
+}
+
+/* ── Bateria virtual ─────────────────────────────────────────────── */
+.kit-shell { fill: #3f3f46; stroke: #18181b; stroke-width: 2; }
+.kit-head { fill: #e7e2d6; stroke: #a1a1aa; stroke-width: 1.5; }
+.kit-cymbal { fill: url(#cymbal); stroke: #6b4a0e; stroke-width: 1.5; }
+.kit-cymbal-groove { fill: none; stroke: rgb(107 74 14 / 0.35); stroke-width: 1; pointer-events: none; }
+.kit-cymbal-bell { fill: #d9ad4a; stroke: #6b4a0e; stroke-width: 1; pointer-events: none; }
+.kit-key {
+  font: 600 13px ui-monospace, monospace;
+  fill: #18181b;
+  pointer-events: none;
+}
+.kit-piece.is-muted .kit-flash { opacity: 0.55; }
+.kit-piece:hover .kit-flash { filter: brightness(1.08); }
+
+/* Golpe: brilho curto proporcional à velocity (--hit, 0.45–1). */
+.kit-piece.is-hit .kit-flash { animation: kit-hit 160ms ease-out; }
+@keyframes kit-hit {
+  0% { fill: #38bdf8; filter: drop-shadow(0 0 calc(var(--hit, 1) * 14px) #38bdf8); opacity: 1; }
+  100% { filter: none; }
+}
+/* Peça mutada na partitura: deixa a "deixa" para o aluno tocar. */
+.kit-piece.is-cue .kit-flash { animation: kit-cue 220ms ease-out; }
+@keyframes kit-cue {
+  0% { stroke: #fbbf24; stroke-width: 6; filter: drop-shadow(0 0 10px #fbbf24); }
+  100% { filter: none; }
+}
+
+/* ── Partitura ───────────────────────────────────────────────────── */
+.score-paper svg { display: block; }
+.score-paper .vf-stavenote.is-playing,
+.score-paper .vf-stavenote.is-playing * {
+  fill: #0284c7;
+  stroke: #0284c7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kit-piece.is-hit .kit-flash,
+  .kit-piece.is-cue .kit-flash { animation-duration: 1ms; }
+}

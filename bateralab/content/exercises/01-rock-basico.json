@@ -1,0 +1,74 @@
+{
+  "id": "01-rock-basico",
+  "title": "Rock básico",
+  "description": "Chimbal em colcheias, bumbo no 1 e no 3, caixa no 2 e no 4. O groove mais importante da bateria.",
+  "bpm": 90,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatClosed", "velocity": 75}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatClosed", "velocity": 75}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatClosed", "velocity": 75}
+      ]
+    },
+    {
+      "events": [
+        {"tick": 0, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 0, "piece": "kick", "velocity": 110},
+        {"tick": 2, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 4, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 4, "piece": "snare", "velocity": 110},
+        {"tick": 6, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 8, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 8, "piece": "kick", "velocity": 110},
+        {"tick": 10, "piece": "hihatClosed", "velocity": 75},
+        {"tick": 12, "piece": "hihatClosed", "velocity": 100},
+        {"tick": 12, "piece": "snare", "velocity": 110},
+        {"tick": 14, "piece": "hihatClosed", "velocity": 75}
+      ]
+    }
+  ]
+}
