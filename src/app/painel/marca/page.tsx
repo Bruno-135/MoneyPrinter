@@ -59,9 +59,9 @@ function Cartao({ peca }: { peca: Peca }) {
           </div>
         ) : (
           <div className="mt-3 flex gap-2">
-            {/* O .pptx nao tem "Abrir": nenhum browser o mostra, carregar ali
-                so o descarregava na mesma e com outro nome. */}
-            {peca.formato !== 'pptx' && (
+            {/* O .pptx e o .docx nao tem "Abrir": nenhum browser os mostra,
+                carregar ali so os descarregava na mesma e com outro nome. */}
+            {(peca.formato === 'html' || peca.formato === 'png') && (
               <a
                 href={peca.ficheiro}
                 target="_blank"
@@ -117,8 +117,9 @@ export default function MarcaPage() {
 
       <p className="text-ink3 border-line border-t pt-4 text-[12px] leading-relaxed">
         A proposta e o manual abrem no browser e imprimem-se para PDF com Ctrl+P — cada folha sai
-        numa página A4, e não precisam de internet depois de abertos. A apresentação descarrega-se e
-        abre no PowerPoint, no Keynote ou no Google Slides.
+        numa página A4, e não precisam de internet depois de abertos. A proposta em Word abre no
+        Word, no Pages ou no Google Docs; a apresentação no PowerPoint, no Keynote ou no Google
+        Slides.
       </p>
     </div>
   );

@@ -12,7 +12,7 @@
  * procurar; uma que o mostra diz o que há para fazer a seguir.
  */
 
-export type Formato = 'png' | 'html' | 'pptx';
+export type Formato = 'png' | 'html' | 'pptx' | 'docx';
 
 export interface Peca {
   id: string;
@@ -106,7 +106,7 @@ export const FAMILIAS: Familia[] = [
   },
   {
     titulo: 'Documentos',
-    nota: 'O que se manda a um cliente. Os dois primeiros abrem no browser e imprimem-se para PDF; a apresentação descarrega-se.',
+    nota: 'O que se manda a um cliente. A proposta e o manual abrem no browser e imprimem-se para PDF; o Word e a apresentação descarregam-se.',
     pecas: [
       {
         id: 'proposta',
@@ -114,6 +114,14 @@ export const FAMILIAS: Familia[] = [
         para: 'O que se envia depois de falar com o cliente, com o preço e o prazo.',
         ficheiro: MARCA + '/proposta.html',
         formato: 'html',
+      },
+      {
+        id: 'proposta-word',
+        nome: 'Modelo de proposta · Word',
+        para: 'A mesma proposta para editar à mão: o que muda de cliente para cliente está a amarelo. Abre no Word, no Pages ou no Google Docs; guarda-se uma cópia por cliente e exporta-se para PDF.',
+        ficheiro: MARCA + '/proposta.docx',
+        formato: 'docx',
+        medidas: '4 folhas · A4',
       },
       {
         id: 'manual',
