@@ -168,7 +168,7 @@ Texto:
 
 Contactos, grandes e legíveis:
 
-- WhatsApp **+351 913 014 170**
+- WhatsApp **+351 965 633 614**
 - **geral@vaidesign.net**
 - **vaidesign.net**
 - Instagram **@agenciavaidesign**

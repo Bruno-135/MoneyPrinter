@@ -3,8 +3,8 @@
  *
  * Ficam num sítio só para não andarem espalhados pelas cinco páginas. O
  * endereço de email já vem escrito no desenho (`geral@vaidesign.net`) e é esse
- * que está a receber; o número veio do manual de marca, da folha do cartão de
- * visita — é o número feito para ser impresso e lido por quem quiser ligar.
+ * que está a receber; o número é o do WhatsApp Business da agência (eSIM MEO),
+ * o mesmo do cartão de visita e da assinatura.
  */
 
 /**
@@ -18,10 +18,10 @@
  * Num email é outra coisa: aí o número é para ser visto e usado por quem o
  * recebeu.
  */
-export const WHATSAPP_DA_AGENCIA: string | null = '351913014170';
+export const WHATSAPP_DA_AGENCIA: string | null = '351965633614';
 
 /** O mesmo número, escrito como se lê em voz alta. Mesma regra. */
-export const TELEFONE_DA_AGENCIA = '+351 913 014 170';
+export const TELEFONE_DA_AGENCIA = '+351 965 633 614';
 
 /** A porta do WhatsApp no site. Não leva número nenhum. */
 export const PORTA_DO_WHATSAPP = '/wa';

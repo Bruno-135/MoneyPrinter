@@ -74,7 +74,7 @@ export function lerPedido(dados: FormData): PedidoLido {
  * um número de telefone.
  *
  * Não se valida o formato de um telefone a sério, e é de propósito: alguém
- * que escreva "913 014 170" ou "+351 913014170" ou "913014170 (chamar depois
+ * que escreva "965 633 614" ou "+351 965633614" ou "965633614 (chamar depois
  * das 18h)" quer ser contactado, e recusar-lhe o formulário por causa de um
  * espaço é perder um cliente para provar um ponto. Nove dígitos é o mínimo de
  * um número português.

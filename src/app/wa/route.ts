@@ -4,7 +4,7 @@ import { WHATSAPP_DA_AGENCIA } from '@/lib/vaidesign/agencia';
 /**
  * A porta do WhatsApp, para o número não andar escrito no site.
  *
- * Um botão que aponta directamente a `wa.me/351913014170` tem o número dentro
+ * Um botão que aponta directamente a `wa.me/351965633614` tem o número dentro
  * do HTML, e um robô que leia a página apanha-o tão bem como uma pessoa. Tirar
  * o número do texto visível e deixá-lo no `href` era esconder a chave debaixo
  * do tapete.

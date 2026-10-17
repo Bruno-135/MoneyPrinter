@@ -67,7 +67,7 @@ export function enderecoDeEmail(para: string, v: Partial<PedidoLido>): string {
  * O endereço do WhatsApp visto do SITE: a porta, e o recado de lado.
  *
  * Não leva número. O número só existe no servidor, atrás de `/wa` — um botão
- * com `wa.me/351913014170` dentro do HTML entrega o número a qualquer robô que
+ * com `wa.me/351965633614` dentro do HTML entrega o número a qualquer robô que
  * leia a página, e tirá-lo do texto visível deixando-o no link era esconder a
  * chave debaixo do tapete.
  */

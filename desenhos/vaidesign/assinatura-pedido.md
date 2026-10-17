@@ -50,12 +50,12 @@ O conteúdo, por esta ordem:
   Bruno Dias
   Sites e marketing para quem vive do seu negócio
 
-  WhatsApp +351 913 014 170
+  WhatsApp +351 965 633 614
   geral@vaidesign.net
   vaidesign.net
   @agenciavaidesign
 
-O WhatsApp é link para https://wa.me/351913014170
+O WhatsApp é link para https://wa.me/351965633614
 O email é link para mailto:geral@vaidesign.net
 O site é link para https://vaidesign.net
 O Instagram é link para https://instagram.com/agenciavaidesign

@@ -34,5 +34,5 @@ O manual traz três peças e só uma é código por agora — nenhuma.
   essa página, e o botão "Guardar contacto" devolve um ficheiro `.vcf` que o
   telemóvel abre na agenda. Por fazer.
 
-O número que está no cartão — `+351 913 014 170` — é o que os botões de
+O número que está no cartão — `+351 965 633 614` — é o que os botões de
 WhatsApp do site usam, em `src/lib/vaidesign/agencia.ts`.
