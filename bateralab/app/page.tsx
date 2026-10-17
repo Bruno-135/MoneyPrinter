@@ -9,6 +9,15 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold sm:text-3xl">Exercícios</h1>
         <p className="mt-1 text-zinc-400">Escolha um groove, ouça, diminua o andamento e toque junto.</p>
       </div>
+      <Link
+        href="/musica"
+        className="flex flex-col gap-1 rounded-xl border border-sky-500/40 bg-sky-500/10 p-4 transition-colors hover:bg-sky-500/15"
+      >
+        <span className="font-semibold text-sky-200">Tocar junto com uma música →</span>
+        <span className="text-sm text-zinc-400">
+          Cole um link do YouTube ou abra um arquivo: loop de trechos, velocidade reduzida e marcações.
+        </span>
+      </Link>
       <ul className="grid gap-3 sm:grid-cols-2">
         {exercises.map((ex, i) => (
           <li key={ex.id}>

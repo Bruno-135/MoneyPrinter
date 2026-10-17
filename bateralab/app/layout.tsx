@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
             <div className="flex gap-4 text-sm text-zinc-400">
               <Link href="/" className="hover:text-zinc-100">Exercícios</Link>
-              <Link href="/upload" className="hover:text-zinc-100">Enviar música</Link>
+              <Link href="/musica" className="hover:text-zinc-100">Tocar junto</Link>
             </div>
           </nav>
         </header>

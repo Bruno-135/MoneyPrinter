@@ -60,10 +60,37 @@ ambiente.
 
 O áudio só inicia depois do primeiro clique/tecla (exigência dos navegadores).
 
+### Tocar junto (`/musica`)
+
+Estudar uma música real por partes, com duas fontes:
+
+- **Link do YouTube** — o vídeo toca no player oficial do YouTube (IFrame API).
+  Não baixamos nem processamos o áudio: os termos do YouTube não permitem. Por
+  isso, com um link dá para navegar, fazer loop e mudar a velocidade, mas **não**
+  separar a bateria nem gerar partitura. Vídeos cujo dono bloqueia a incorporação
+  mostram um aviso.
+- **Arquivo** (MP3, WAV, M4A, OGG, FLAC) — tocado no navegador, nunca enviado a
+  servidor, com forma de onda na linha do tempo. É por aqui que vai entrar a
+  separação da bateria (botão "Separar bateria — em breve").
+
+Controles: tocar/pausar, ±5 s, clique/arraste na linha do tempo, **loop A–B**
+(marcar A e B, ajuste fino de ±0,1 s, ou Shift+arrastar na linha do tempo),
+**velocidade** sem mudar o tom (YouTube: 25–200% nos passos do player; arquivo:
+25–150% em passos de 5%) e **marcações** com nome (clique para ir; "loop" faz
+loop até a marcação seguinte). Loop, velocidade e marcações ficam guardados no
+navegador (localStorage) para cada música, e os links recentes aparecem na lista.
+
+Atalhos: Espaço tocar/pausar · ←/→ ±5 s · `[` marca A · `]` marca B · `L` loop ·
+`M` marcação · `−`/`=` velocidade · Home volta ao início (do loop).
+
+Precisão do loop no YouTube: o iframe só informa a posição de tempos em tempos,
+por isso a posição é extrapolada com o relógio local enquanto toca
+(`lib/practice/youtube.ts`), evitando que o loop passe muito do ponto B.
+
 ## Estrutura
 
 ```
-app/                      páginas (/, /exercicios/[id], /upload)
+app/                      páginas (/, /exercicios/[id], /musica; /upload redireciona)
 components/
   DrumKit.tsx             kit em SVG visto de cima, acende as peças
   ScoreView.tsx           partitura VexFlow + cursor + rolagem automática
@@ -76,6 +103,8 @@ lib/audio/
   engine.ts               motor Tone.js (agendamento, sincronia, loop, contagem)
   kit.ts                  vozes: samples WAV ou síntese (fallback)
 lib/input/                atalhos de teclado e Web MIDI
+lib/practice/             tocar junto: player YouTube, arquivo local, forma de onda, preferências
+components/practice/      tela Tocar junto (linha do tempo, loop A–B, velocidade, marcações)
 content/exercises/        exercícios em JSON (formato DrumScore)
 public/samples/           samples WAV do kit
 scripts/generate-samples.mjs   gerador dos samples
@@ -176,9 +205,9 @@ tempo real** com Tone.js: `MembraneSynth` (bumbo e tons), `NoiseSynth` (caixa) e
 - **Etapa 2 — Aulas**: trilhas de exercícios por nível, texto/vídeo de explicação,
   progresso do aluno, metas de BPM, avaliação do que o aluno toca (MIDI/teclado)
   comparando com a partitura.
-- **Etapa 3 — Upload de música** (`/upload`, hoje "em breve"): enviar um áudio e
-  separar a bateria com **Demucs** (backend com GPU/fila), para tocar junto só com
-  o resto da banda ou ouvir a bateria isolada.
+- **Etapa 3 — Separar a bateria**: o player de arquivo já existe (`/musica`, aba
+  Arquivo); falta enviar o áudio a um backend com GPU (ex.: **Demucs** no Replicate)
+  para tocar junto só com o resto da banda ou ouvir a bateria isolada.
 - **Etapa 4 — Transcrição automática**: rodar o **ADTOF** sobre a faixa de bateria
   separada para obter onsets por peça → MIDI → `midiToScore()` (quantização na
   grade, divisão em compassos, detecção de andamento) → `DrumScore` aberto na
