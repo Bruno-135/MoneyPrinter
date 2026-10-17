@@ -1,0 +1,87 @@
+{
+  "id": "virada-colcheias-tons",
+  "generated": true,
+  "order": 45,
+  "title": "Virada em colcheias pelos tons",
+  "description": "Duas colcheias em cada tambor: caixa, tom 1, tom 2, surdo. Ótima primeira virada pelo kit.",
+  "level": "iniciante",
+  "category": "virada",
+  "style": "Rock",
+  "tips": [
+    "Deixe o braço já ir para o próximo tambor enquanto toca o atual."
+  ],
+  "bpm": 70,
+  "goalBpm": 120,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"tom1","velocity":100,"sticking":"R"},
+        {"tick":6,"piece":"tom1","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"tom2","velocity":100,"sticking":"R"},
+        {"tick":10,"piece":"tom2","velocity":100,"sticking":"L"},
+        {"tick":12,"piece":"floorTom","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"floorTom","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"crash","velocity":100}
+      ]
+    }
+  ]
+}

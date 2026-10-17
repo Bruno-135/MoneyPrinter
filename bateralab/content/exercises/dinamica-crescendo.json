@@ -1,0 +1,68 @@
+{
+  "id": "dinamica-crescendo",
+  "generated": true,
+  "order": 41,
+  "title": "Dinâmica: crescendo",
+  "description": "Colcheias que começam muito fracas e terminam fortes ao longo de 4 compassos.",
+  "level": "iniciante",
+  "category": "rudimento",
+  "style": "Técnica",
+  "tips": [
+    "Controle o volume pela altura da baqueta, não pela força.",
+    "Faça também ao contrário (forte → fraco): é o diminuendo."
+  ],
+  "bpm": 70,
+  "goalBpm": 100,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":44,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":44,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":44,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":44,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":56,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":56,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":56,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":56,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":68,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":68,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":68,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":68,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":80,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":80,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":80,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":80,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":92,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":92,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":92,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":92,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":104,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":104,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":104,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":104,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":116,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":116,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":116,"sticking":"R"},
+        {"tick":6,"piece":"snare","velocity":116,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":127,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":127,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":127,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":127,"sticking":"L"}
+      ]
+    }
+  ]
+}

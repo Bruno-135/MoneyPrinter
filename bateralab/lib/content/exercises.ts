@@ -5,7 +5,7 @@
 import "server-only";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { type DrumScore, parseScore } from "@/lib/score";
+import { CATEGORIES, type DrumScore, parseScore } from "@/lib/score";
 
 const DIR = join(process.cwd(), "content", "exercises");
 
@@ -13,7 +13,7 @@ export type Exercise = DrumScore & { id: string };
 
 const LEVEL_ORDER = { iniciante: 0, intermediario: 1, avancado: 2 } as const;
 
-/** Todos os exercícios, ordenados por nível e depois pela ordem do catálogo. */
+/** Todos os exercícios, ordenados por nível, tipo e depois pela ordem do catálogo. */
 export function listExercises(): Exercise[] {
   return readdirSync(DIR)
     .filter((f) => f.endsWith(".json"))
@@ -25,6 +25,7 @@ export function listExercises(): Exercise[] {
     .sort(
       (a, b) =>
         LEVEL_ORDER[a.level ?? "iniciante"] - LEVEL_ORDER[b.level ?? "iniciante"] ||
+        CATEGORIES.indexOf(a.category ?? "groove") - CATEGORIES.indexOf(b.category ?? "groove") ||
         (a.order ?? 999) - (b.order ?? 999) ||
         a.id.localeCompare(b.id),
     );

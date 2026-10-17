@@ -1,0 +1,76 @@
+{
+  "id": "jazz-comping",
+  "generated": true,
+  "order": 63,
+  "title": "Jazz: condução + caixa livre (comping)",
+  "description": "Prato de condução swing e chimbal no 2 e 4 fixos; a caixa \"conversa\" em lugares diferentes a cada compasso.",
+  "level": "avancado",
+  "category": "coordenacao",
+  "style": "Jazz",
+  "tips": [
+    "A condução é a prioridade: nunca a deixe falhar por causa da caixa.",
+    "Caixa leve, como comentários."
+  ],
+  "bpm": 70,
+  "goalBpm": 140,
+  "timeSignature": [12, 8],
+  "resolution": 8,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":8,"piece":"snare","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"ride","velocity":100},
+        {"tick":11,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":2,"piece":"snare","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"ride","velocity":100},
+        {"tick":10,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"ride","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":5,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":8,"piece":"snare","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"ride","velocity":100},
+        {"tick":11,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":1,"piece":"snare","velocity":100},
+        {"tick":3,"piece":"hihatClosed","velocity":100},
+        {"tick":3,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"ride","velocity":100},
+        {"tick":6,"piece":"ride","velocity":100},
+        {"tick":7,"piece":"snare","velocity":100},
+        {"tick":9,"piece":"hihatClosed","velocity":100},
+        {"tick":9,"piece":"ride","velocity":100},
+        {"tick":11,"piece":"snare","velocity":100},
+        {"tick":11,"piece":"ride","velocity":100}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "id": "rulo-cinco-toques",
+  "generated": true,
+  "order": 49,
+  "title": "Rulo de cinco toques",
+  "description": "RRLL + R acentuado. Muito usado para terminar frases e viradas.",
+  "level": "intermediario",
+  "category": "rudimento",
+  "style": "Técnica",
+  "tips": [
+    "As quatro notas duplas são leves; só a última é forte.",
+    "Depois comece também pela esquerda: LLRR L."
+  ],
+  "bpm": 60,
+  "goalBpm": 100,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"L"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "id": "virada-fusas",
+  "generated": true,
+  "order": 65,
+  "title": "Virada com fusas",
+  "description": "Três tempos de groove e, no 4º tempo, oito fusas na caixa. Fecha no prato.",
+  "level": "avancado",
+  "category": "virada",
+  "style": "Rock / Metal",
+  "tips": [
+    "Treine a virada sozinha com o rulo duplo ou o toque simples rápido."
+  ],
+  "bpm": 60,
+  "goalBpm": 100,
+  "timeSignature": [4, 4],
+  "resolution": 32,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"kick","velocity":100},
+        {"tick":20,"piece":"hihatClosed","velocity":100},
+        {"tick":24,"piece":"hihatClosed","velocity":100},
+        {"tick":24,"piece":"snare","velocity":100},
+        {"tick":28,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"kick","velocity":100},
+        {"tick":20,"piece":"hihatClosed","velocity":100},
+        {"tick":24,"piece":"hihatClosed","velocity":100},
+        {"tick":24,"piece":"snare","velocity":100},
+        {"tick":28,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"snare","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"hihatClosed","velocity":100},
+        {"tick":16,"piece":"kick","velocity":100},
+        {"tick":20,"piece":"hihatClosed","velocity":100},
+        {"tick":24,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":25,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":26,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":27,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":28,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":29,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":30,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":31,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"crash","velocity":100}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "id": "bumbo-duplo-explosoes",
+  "generated": true,
+  "order": 64,
+  "title": "Bumbo duplo: explosões",
+  "description": "Condução nos tempos e caixa no 2 e 4; o bumbo dispara grupos de semicolcheias em lugares diferentes.",
+  "level": "avancado",
+  "category": "coordenacao",
+  "style": "Metal",
+  "tips": [
+    "Alterne os pés (direito, esquerdo) como no toque simples.",
+    "Comece e termine cada explosão exatamente no tempo."
+  ],
+  "bpm": 70,
+  "goalBpm": 140,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":1,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"kick","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":4,"piece":"ride","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"ride","velocity":100},
+        {"tick":9,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":11,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":12,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":1,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"kick","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"ride","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":12,"piece":"ride","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":4,"piece":"ride","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"ride","velocity":100},
+        {"tick":9,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":11,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"ride","velocity":100},
+        {"tick":13,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"kick","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"ride","velocity":100},
+        {"tick":1,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"kick","velocity":100},
+        {"tick":3,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"snare","velocity":125},
+        {"tick":4,"piece":"kick","velocity":100},
+        {"tick":4,"piece":"ride","velocity":100},
+        {"tick":5,"piece":"kick","velocity":100},
+        {"tick":6,"piece":"kick","velocity":100},
+        {"tick":7,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"ride","velocity":100},
+        {"tick":9,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"kick","velocity":100},
+        {"tick":11,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"snare","velocity":125},
+        {"tick":12,"piece":"kick","velocity":100},
+        {"tick":12,"piece":"ride","velocity":100},
+        {"tick":13,"piece":"kick","velocity":100},
+        {"tick":14,"piece":"kick","velocity":100},
+        {"tick":15,"piece":"kick","velocity":100}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": "leitura-colcheias-pausas",
+  "generated": true,
+  "order": 37,
+  "title": "Leitura: colcheias e pausas",
+  "description": "Combinações de colcheias, semínimas e pausas de colcheia (notas no \"e\").",
+  "level": "iniciante",
+  "category": "leitura",
+  "style": "Técnica",
+  "tips": [
+    "Conte sempre \"1 e 2 e 3 e 4 e\", mesmo quando não toca.",
+    "A nota no \"e\" sozinha é a mais difícil: não a antecipe."
+  ],
+  "bpm": 70,
+  "goalBpm": 120,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"R"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":12,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    }
+  ]
+}

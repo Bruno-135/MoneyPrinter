@@ -1,0 +1,79 @@
+{
+  "id": "virada-reversa",
+  "generated": true,
+  "order": 57,
+  "title": "Virada de volta: surdo → caixa",
+  "description": "Semicolcheias pelo kit no sentido contrário: surdo, tom 2, tom 1, caixa.",
+  "level": "intermediario",
+  "category": "virada",
+  "style": "Rock",
+  "tips": [
+    "Sentido contrário treina o corpo a girar para os dois lados."
+  ],
+  "bpm": 65,
+  "goalBpm": 110,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"hihatClosed","velocity":100},
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":2,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"hihatClosed","velocity":100},
+        {"tick":4,"piece":"snare","velocity":100},
+        {"tick":6,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"hihatClosed","velocity":100},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":10,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"hihatClosed","velocity":100},
+        {"tick":12,"piece":"snare","velocity":100},
+        {"tick":14,"piece":"hihatClosed","velocity":100}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"floorTom","velocity":125,"sticking":"R"},
+        {"tick":1,"piece":"floorTom","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"floorTom","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"floorTom","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"tom2","velocity":125,"sticking":"R"},
+        {"tick":5,"piece":"tom2","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"tom2","velocity":100,"sticking":"R"},
+        {"tick":7,"piece":"tom2","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"kick","velocity":100},
+        {"tick":8,"piece":"tom1","velocity":125,"sticking":"R"},
+        {"tick":9,"piece":"tom1","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"tom1","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"tom1","velocity":100,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":13,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":14,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":15,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"kick","velocity":100},
+        {"tick":0,"piece":"crash","velocity":100}
+      ]
+    }
+  ]
+}

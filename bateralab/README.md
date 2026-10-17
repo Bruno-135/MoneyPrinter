@@ -147,17 +147,25 @@ crash 49, ride 51 (variantes GM comuns como 35, 40, 44, 57… também são aceit
 na entrada). `scoreToMidi()` exporta um `.mid` (formato 0); `midiToScore()` é
 um stub com o plano da etapa 4 em TODO.
 
-## Escola: banco de ritmos
+## Escola: banco de ritmos e exercícios
 
-A página inicial é o catálogo da escola: **36 exercícios** em três níveis
-(Iniciante, Intermediário, Avançado) e quatro tipos (Ritmos, Rudimentos,
-Viradas, Leitura e coordenação), com filtro por estilo. Cada exercício tem
-andamento inicial, meta de BPM e dicas de estudo.
+A página inicial é o catálogo da escola: **66 exercícios** em três níveis
+(Iniciante, Intermediário, Avançado) e cinco tipos, com filtro por estilo.
+Cada exercício tem andamento inicial, meta de BPM e dicas de estudo.
 
-Estilos incluídos: rock, pop, funk, disco, samba, baião, bossa nova, reggae,
-blues (shuffle), balada 6/8, jazz, metal, drum and bass e 5/4. Rudimentos:
-toque simples, toque duplo, paradiddle, duplo paradiddle, paradiddle-diddle e
-acentos. Viradas de 1 tempo, pelos tons, 3-3-2, em tercinas e linear com bumbo.
+- **Leitura**: semínimas e pausas, colcheias, figuras de semicolcheia,
+  semicolcheias sincopadas, tercinas, mudança de figuras (semínima → fusa), síncopes.
+- **Técnica e rudimentos**: toque simples (pelas duas mãos e em tercinas), toque
+  duplo, paradiddle e inversões, duplo paradiddle, paradiddle-diddle, rulos de
+  5 e 6 toques, rulo duplo em fusas, acentos, acento × nota fantasma,
+  dinâmica (crescendo), troca de velocidade, paradiddle pelos tambores.
+- **Coordenação**: variações de bumbo (colcheias, semínimas, semicolcheias),
+  variações de caixa, chimbal aberto, bumbo de samba + leitura, comping de jazz,
+  explosões de bumbo duplo.
+- **Ritmos**: rock, pop, funk, disco, samba, baião, bossa nova, reggae, shuffle,
+  balada 6/8, jazz, metal, drum and bass, 5/4.
+- **Viradas**: de 1 e 2 tempos, em colcheias e semicolcheias pelos tons, de
+  volta (surdo → caixa), mãos + bumbo, 3-3-2, tercinas, linear e com fusas.
 
 Na partitura: acento (`>`) para notas fortes, **notas fantasma entre
 parênteses** e **mãos (R/L)** por baixo das notas quando indicadas. Em 6/8 e
@@ -175,7 +183,7 @@ escrito como linhas de grade, um caractere por tick:
   id: "meu-groove",                 // vira /exercicios/meu-groove
   title: "Meu groove",
   level: "iniciante",               // iniciante | intermediario | avancado
-  category: "groove",               // groove | rudimento | virada | leitura
+  category: "groove",               // leitura | rudimento | coordenacao | groove | virada
   style: "Rock",
   description: "…",
   tips: ["…"],
@@ -183,7 +191,7 @@ escrito como linhas de grade, um caractere por tick:
   timeSignature: [4, 4], resolution: 16,
   bars: [{
     hh: "x-x- x-x- x-x- x-x-",       // 1 e & a | 2 e & a | …
-    sn: "---- X--- ---- X---",       // X = acento, g = fantasma
+    sn: "---- X--- ---- X---",       // X = acento, g = fantasma, 1–9 = dinâmica
     bd: "x--- ---- x--- ----",
   }],
 }

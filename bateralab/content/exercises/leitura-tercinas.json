@@ -1,0 +1,69 @@
+{
+  "id": "leitura-tercinas",
+  "generated": true,
+  "order": 47,
+  "title": "Leitura: tercinas",
+  "description": "Em 12/8: grupos de três completos, com a do meio em pausa, com a última em pausa e com a primeira em pausa.",
+  "level": "intermediario",
+  "category": "leitura",
+  "style": "Técnica",
+  "tips": [
+    "Conte \"1-2-3\" em cada tempo.",
+    "O compasso 2 é o \"balanço\" do shuffle."
+  ],
+  "bpm": 50,
+  "goalBpm": 90,
+  "timeSignature": [12, 8],
+  "resolution": 8,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":5,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":7,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":100,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":5,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"R"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":3,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":7,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"R"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":1,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":2,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":5,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":7,"piece":"snare","velocity":100,"sticking":"R"},
+        {"tick":8,"piece":"snare","velocity":100,"sticking":"L"},
+        {"tick":9,"piece":"snare","velocity":100,"sticking":"R"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "id": "acento-e-fantasma",
+  "generated": true,
+  "order": 52,
+  "title": "Acento e nota fantasma",
+  "description": "Semicolcheias com um acento por tempo e todas as outras como notas fantasma. O acento anda pelo tempo.",
+  "level": "intermediario",
+  "category": "rudimento",
+  "style": "Técnica",
+  "tips": [
+    "Fantasma: baqueta a 2 cm da pele. Acento: baqueta alta.",
+    "Não deixe as fantasmas crescerem depois do acento."
+  ],
+  "bpm": 60,
+  "goalBpm": 100,
+  "timeSignature": [4, 4],
+  "resolution": 16,
+  "measures": [
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":5,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":7,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":13,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":14,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":15,"piece":"snare","velocity":35,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":5,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":7,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":13,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":14,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":15,"piece":"snare","velocity":35,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":5,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":7,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":13,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":14,"piece":"snare","velocity":125,"sticking":"R"},
+        {"tick":15,"piece":"snare","velocity":35,"sticking":"L"}
+      ]
+    },
+    {
+      "events": [
+        {"tick":0,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":1,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":2,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":3,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":4,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":5,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":6,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":7,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":8,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":9,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":10,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":11,"piece":"snare","velocity":125,"sticking":"L"},
+        {"tick":12,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":13,"piece":"snare","velocity":35,"sticking":"L"},
+        {"tick":14,"piece":"snare","velocity":35,"sticking":"R"},
+        {"tick":15,"piece":"snare","velocity":125,"sticking":"L"}
+      ]
+    }
+  ]
+}

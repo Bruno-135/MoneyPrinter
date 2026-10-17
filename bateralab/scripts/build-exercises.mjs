@@ -8,6 +8,7 @@
  *
  *   x  nota normal (velocity 100)      X  acento (125)
  *   g  nota fantasma (35)              -  ou .  pausa
+ *   1–9  intensidade graduada (1 = 32 … 9 = 127), para exercícios de dinâmica
  *
  * Linhas: hh (chimbal fechado), ho (chimbal aberto), sn (caixa), bd (bumbo),
  * t1, t2, ft (surdo), cr (ataque), rd (condução) e st (mãos: R/L/-).
@@ -34,6 +35,7 @@ const LANES = {
   rd: "ride",
 };
 const VELOCITY = { x: 100, X: 125, g: 35 };
+for (let d = 1; d <= 9; d++) VELOCITY[String(d)] = Math.min(127, 20 + 12 * d);
 const clean = (s) => s.replace(/[\s|]/g, "");
 
 function ticksPerMeasure([beats, unit], resolution) {

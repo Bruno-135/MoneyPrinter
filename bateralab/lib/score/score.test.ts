@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { buildTimeline, ticksToSeconds, TRANSPORT_PPQ } from "@/lib/audio/timeline";
 import {
   beatsPerMeasure,
+  CATEGORIES,
   type DrumScore,
   DRUM_PIECES,
   measureToNotation,
@@ -124,10 +125,10 @@ describe("compassos compostos", () => {
 describe("exercícios", () => {
   const dir = join(__dirname, "..", "..", "content", "exercises");
   const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
-  it("o catálogo tem exercícios nos três níveis e nos quatro tipos", () => {
+  it("o catálogo tem exercícios em todos os níveis e tipos", () => {
     const all = files.map((f) => parseScore(JSON.parse(readFileSync(join(dir, f), "utf8")), f));
     expect(new Set(all.map((e) => e.level))).toEqual(new Set(["iniciante", "intermediario", "avancado"]));
-    expect(new Set(all.map((e) => e.category))).toEqual(new Set(["groove", "rudimento", "virada", "leitura"]));
+    expect(new Set(all.map((e) => e.category))).toEqual(new Set(CATEGORIES));
   });
   for (const file of files) {
     it(`${file}: válido, notação fecha e é tocável`, () => {

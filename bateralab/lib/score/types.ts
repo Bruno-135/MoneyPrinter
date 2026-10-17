@@ -48,13 +48,15 @@ export const LEVEL_LABEL: Record<Level, string> = {
   avancado: "Avançado",
 };
 
-export const CATEGORIES = ["groove", "rudimento", "virada", "leitura"] as const;
+/** Tipos de exercício, na ordem em que aparecem dentro de cada nível. */
+export const CATEGORIES = ["leitura", "rudimento", "coordenacao", "groove", "virada"] as const;
 export type Category = (typeof CATEGORIES)[number];
 export const CATEGORY_LABEL: Record<Category, string> = {
+  leitura: "Leitura",
+  rudimento: "Técnica e rudimentos",
+  coordenacao: "Coordenação",
   groove: "Ritmos",
-  rudimento: "Rudimentos",
   virada: "Viradas",
-  leitura: "Leitura e coordenação",
 };
 
 export interface DrumScore {
