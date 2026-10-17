@@ -118,7 +118,7 @@ export const FAMILIAS: Familia[] = [
       {
         id: 'proposta-word',
         nome: 'Modelo de proposta · Word',
-        para: 'A mesma proposta para editar à mão: o que muda de cliente para cliente está a amarelo. Abre no Word, no Pages ou no Google Docs; guarda-se uma cópia por cliente e exporta-se para PDF.',
+        para: 'A mesma proposta, igual ao desenho, para editar no Word: troca-se o nome, o pedido e os valores, guarda-se uma cópia por cliente e exporta-se para PDF. As letras da marca vão dentro do ficheiro.',
         ficheiro: MARCA + '/proposta.docx',
         formato: 'docx',
         medidas: '4 folhas · A4',
