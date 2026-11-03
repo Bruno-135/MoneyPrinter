@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ICONES_DA_AGENCIA } from '@/lib/vaidesign/icones';
 import './globals.css';
 
 /**
@@ -12,6 +13,10 @@ import './globals.css';
 export const metadata: Metadata = {
   title: { default: 'VaiDesign', template: '%s · VaiDesign' },
   description: 'Sites para comércio local. Feitos em dias, não em meses.',
+  // Sem isto o Google mostrava um globo vazio ao lado do vaidesign.net nos
+  // resultados. As páginas dos clientes em `/s/<código>` tiram-no: o separador
+  // de um site de cliente não leva a marca da agência.
+  icons: ICONES_DA_AGENCIA,
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
