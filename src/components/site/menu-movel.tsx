@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import {
   EMAIL_DA_AGENCIA,
+  FACEBOOK_DA_AGENCIA,
   INSTAGRAM_DA_AGENCIA,
   PORTA_DO_WHATSAPP,
 } from '@/lib/vaidesign/agencia';
@@ -210,9 +211,9 @@ export function MenuMovel() {
         >
           {EMAIL_DA_AGENCIA}
         </a>
-        {/* O Instagram fica aqui e não entre os botões: é para quem quer ver
-            trabalho, não para quem quer falar connosco. Dar-lhe o mesmo peso
-            que ao WhatsApp era desviar quem já decidiu contactar. */}
+        {/* O Instagram e o Facebook ficam aqui e não entre os botões: são para
+            quem quer ver trabalho, não para quem quer falar connosco. Dar-lhes
+            o mesmo peso que ao WhatsApp era desviar quem já decidiu contactar. */}
         <p
           style={{
             margin: '6px 0 0',
@@ -228,6 +229,15 @@ export function MenuMovel() {
             style={{ color: '#BA4100', textDecoration: 'none', fontWeight: 600 }}
           >
             @{INSTAGRAM_DA_AGENCIA}
+          </a>
+          {' · '}
+          <a
+            href={FACEBOOK_DA_AGENCIA}
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: '#BA4100', textDecoration: 'none', fontWeight: 600 }}
+          >
+            Facebook
           </a>
           <br />
           Dias úteis, das 9h às 19h

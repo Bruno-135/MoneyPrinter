@@ -30,3 +30,13 @@ export const EMAIL_DA_AGENCIA = 'geral@vaidesign.net';
 
 /** A conta do Instagram, sem o arroba. */
 export const INSTAGRAM_DA_AGENCIA = 'agenciavaidesign';
+
+/**
+ * A página do Facebook.
+ *
+ * É o link de partilha que o Facebook dá (sem o `mibextid` de rastreio), não o
+ * endereço final da página: daqui não se chega ao Facebook para o descobrir, e
+ * este leva lá na mesma. Quando a página tiver nome de utilizador, troca-se
+ * aqui e muda em todo o lado.
+ */
+export const FACEBOOK_DA_AGENCIA = 'https://www.facebook.com/share/1E5jcB5TL8/';

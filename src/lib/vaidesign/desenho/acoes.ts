@@ -254,6 +254,23 @@ export function ligarInstagram(html: string, conta: string): string {
 }
 
 /**
+ * O Facebook do rodapé, logo a seguir ao Instagram.
+ *
+ * O desenho só tinha lugar para o Instagram, porque a página do Facebook não
+ * existia. Entra como mais uma linha da coluna de contactos, com o mesmo
+ * estilo, e por isso corre depois de `ligarInstagram`: procura o link que ele
+ * deixou e põe-se a seguir. Sem página, não acrescenta nada.
+ */
+export function ligarFacebook(html: string, conta: string, pagina: string | null): string {
+  if (!pagina) return html;
+  const link = `<a href="${pagina}" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:none">Facebook</a>`;
+
+  return html
+    .replace(`Instagram @${conta}</a>`, `Instagram @${conta}</a>${link}`)
+    .replace(`Instagram</a></div>`, `Instagram</a>${link}</div>`);
+}
+
+/**
  * O «Copiar exemplo», ao lado da mensagem de exemplo.
  *
  * É mais um botão que o desenho desenhou e que não fazia nada — e esta marca

@@ -3,6 +3,7 @@ import { PAGINAS, paginaDaVaiDesign, type Pagina } from './pagina';
 import { ROTAS } from './links';
 import {
   EMAIL_DA_AGENCIA,
+  FACEBOOK_DA_AGENCIA,
   INSTAGRAM_DA_AGENCIA,
   PORTA_DO_WHATSAPP,
   WHATSAPP_DA_AGENCIA,
@@ -25,12 +26,13 @@ import { RAMOS_DO_FORMULARIO } from './dados';
 const LARGURAS = [390, 1440] as const;
 const destinos = { whatsapp: WHATSAPP_DA_AGENCIA };
 
-/** Os destinos que valem: as rotas do site, o WhatsApp, o email e as âncoras. */
+/** Os destinos que valem: as rotas do site, o WhatsApp, o email, as redes e as âncoras. */
 const DESTINOS_BONS = [
   ...Object.values(ROTAS),
   PORTA_DO_WHATSAPP,
   `mailto:${EMAIL_DA_AGENCIA}`,
   `https://instagram.com/${INSTAGRAM_DA_AGENCIA}`,
+  FACEBOOK_DA_AGENCIA,
   '#',
 ];
 
@@ -233,6 +235,20 @@ describe('o Instagram do rodapé', () => {
         // no rodapé manda o cliente a uma conta que não é a nossa.
         expect(html).not.toContain('@vaidesign<');
         expect(html).not.toContain('<span>Instagram</span>');
+      });
+    }
+  }
+});
+
+describe('o Facebook do rodapé', () => {
+  for (const pagina of PAGINAS) {
+    for (const largura of LARGURAS) {
+      it(`${pagina} · ${largura}: vem logo a seguir ao Instagram`, () => {
+        const html = paginaCompleta(pagina, largura);
+        const instagram = html.indexOf(`https://instagram.com/${INSTAGRAM_DA_AGENCIA}`);
+        const facebook = html.indexOf(`href="${FACEBOOK_DA_AGENCIA}"`);
+        expect(facebook).toBeGreaterThan(instagram);
+        expect(instagram).toBeGreaterThan(-1);
       });
     }
   }

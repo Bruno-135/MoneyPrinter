@@ -8,6 +8,7 @@ import {
   apontarPorEtiqueta,
   juntarOsAtalhos,
   dizerGratis,
+  ligarFacebook,
   ligarInstagram,
   ligarRodapeMovel,
   marcarCopiarExemplo,
@@ -15,7 +16,7 @@ import {
   marcarMenuMovel,
   perguntarORamo,
 } from './acoes';
-import { EMAIL_DA_AGENCIA, INSTAGRAM_DA_AGENCIA } from '../agencia';
+import { EMAIL_DA_AGENCIA, FACEBOOK_DA_AGENCIA, INSTAGRAM_DA_AGENCIA } from '../agencia';
 import { PREFIXO, REGIAO_POR_OMISSAO, regionalizar, type Regiao } from '../regiao';
 import {
   FORMULARIO_VAZIO,
@@ -123,6 +124,7 @@ export function paginaDaVaiDesign(
   let vivo = apontarPorEtiqueta(comLinks, comRegiao, EMAIL_DA_AGENCIA);
   vivo = ligarRodapeMovel(vivo, comRegiao, EMAIL_DA_AGENCIA);
   vivo = ligarInstagram(vivo, INSTAGRAM_DA_AGENCIA);
+  vivo = ligarFacebook(vivo, INSTAGRAM_DA_AGENCIA, FACEBOOK_DA_AGENCIA);
   vivo = marcarMenuMovel(vivo);
   vivo = marcarEnviarPeloWhatsApp(vivo);
   vivo = marcarCopiarExemplo(vivo);
