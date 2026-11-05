@@ -1,3 +1,5 @@
+import { O_QUE_LEVA, segmentoDoRamo } from './segmentos';
+
 /**
  * A primeira mensagem de WhatsApp.
  *
@@ -56,11 +58,14 @@ const ASSINATURA = 'Atenciosamente,\nBruno Dias';
 export function mensagemDeAbertura(args: {
   pais: string;
   presenca: Presenca;
+  /** Slug do ramo: escolhe o que o site leva e o que o botão faz. */
+  ramo?: string | null;
   agora?: Date;
 }): string | null {
   if (args.presenca === 'real') return null;
   const s = saudacao(args.pais, args.agora);
   const soRedes = args.presenca === 'social_only';
+  const leva = O_QUE_LEVA[segmentoDoRamo(args.ramo)];
 
   if (args.pais === 'BR') {
     const situacao = soRedes
@@ -69,7 +74,7 @@ export function mensagemDeAbertura(args: {
     return [
       `Oi, ${s}! Tudo bem? Me chamo Bruno e trabalho com criação de sites.`,
       `Achei vocês no Google Maps e ${situacao}, que é onde muita gente procura quando pesquisa no Google.`,
-      'Queria fazer uma proposta: eu monto o site primeiro, com cardápio ou serviços, horário, localização e botão pra falar pelo WhatsApp. Vocês veem pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.',
+      `Queria fazer uma proposta: eu monto o site primeiro, ${leva.BR}. Vocês veem pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.`,
       `Esse é o meu site: ${SITE.BR}`,
       'Desculpa se esse não for o número de quem cuida dessa parte. Se preferir, me passa o contato da pessoa certa ou um e-mail que eu falo por lá.',
       'Querem que eu prepare um pra vocês verem como fica?',
@@ -83,7 +88,7 @@ export function mensagemDeAbertura(args: {
   return [
     `Olá, ${s}! Chamo-me Bruno e trabalho com criação de sites.`,
     `Encontrei o vosso negócio no Google Maps e ${situacao}, que é onde muita gente procura quando pesquisa no Google.`,
-    'Queria fazer-vos uma proposta: eu monto o site primeiro, com ementa ou serviços, horário, localização e botão para falar pelo WhatsApp. Veem-no pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.',
+    `Queria fazer-vos uma proposta: eu monto o site primeiro, ${leva.PT}. Veem-no pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.`,
     `Este é o meu site: ${SITE.PT}`,
     'Peço desculpa se este não for o número de quem trata desta parte. Se preferir, passe-me o contacto da pessoa certa ou um e-mail e falo por lá.',
     'Querem que prepare um para verem como fica?',

@@ -251,7 +251,7 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
             // abre-se a conversa como está, para continuar.
             const mensagem = jaEnviado
               ? null
-              : mensagemDeAbertura({ pais: l.pais, presenca: l.presenca, agora });
+              : mensagemDeAbertura({ pais: l.pais, presenca: l.presenca, ramo: l.ramo, agora });
             const ligacao = whatsappUrl(l.telefone, mensagem ?? undefined);
             const recente =
               jaEnviado &&
