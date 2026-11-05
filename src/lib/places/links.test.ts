@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { googleMapsUrl, whatsappUrl } from './links';
+import { googleMapsUrl, whatsappUrl, whatsappWebUrl } from './links';
 
 /**
  * O formato antigo — `/maps/place/?q=place_id:…` — funcionava no computador e
@@ -79,3 +79,22 @@ describe('whatsappUrl', () => {
   });
 });
 
+describe('whatsappWebUrl', () => {
+  it('leva a mesma conversa e a mesma mensagem para o WhatsApp Web', () => {
+    const waMe = whatsappUrl('+351965633614', 'Olá, boa tarde!\n\nPosso avançar?')!;
+    const web = new URL(whatsappWebUrl(waMe)!);
+    expect(web.origin + web.pathname).toBe('https://web.whatsapp.com/send');
+    expect(web.searchParams.get('phone')).toBe('351965633614');
+    expect(web.searchParams.get('text')).toBe('Olá, boa tarde!\n\nPosso avançar?');
+  });
+  it('sem mensagem, abre só a conversa', () => {
+    expect(whatsappWebUrl('https://wa.me/351965633614')).toBe(
+      'https://web.whatsapp.com/send?phone=351965633614',
+    );
+  });
+  it('recusa o que não é um link do wa.me', () => {
+    expect(whatsappWebUrl('https://example.com/351965633614')).toBeNull();
+    expect(whatsappWebUrl('não é um link')).toBeNull();
+    expect(whatsappWebUrl('https://wa.me/123')).toBeNull();
+  });
+});

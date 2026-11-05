@@ -66,6 +66,33 @@ export function whatsappUrl(phoneE164: string | null, message?: string): string 
   return `https://wa.me/${digits}${query}`;
 }
 
+/**
+ * A mesma conversa, mas no WhatsApp Web.
+ *
+ * No computador, o wa.me passa por uma página intermédia («Continuar para a
+ * conversa») e abre um separador novo de cada vez. O `web.whatsapp.com/send`
+ * vai direto à conversa na sessão que já lá está aberta. Recebe o link do
+ * wa.me e não o número, para não haver dois sítios a decidir o que é um número
+ * válido. Devolve null para qualquer outra coisa.
+ */
+export function whatsappWebUrl(waMe: string): string | null {
+  let url: URL;
+  try {
+    url = new URL(waMe);
+  } catch {
+    return null;
+  }
+  if (url.hostname !== 'wa.me') return null;
+
+  const phone = url.pathname.replace(/[^\d]/g, '');
+  if (phone.length < 8) return null;
+
+  const params = new URLSearchParams({ phone });
+  const text = url.searchParams.get('text');
+  if (text) params.set('text', text);
+  return `https://web.whatsapp.com/send?${params.toString()}`;
+}
+
 /*
  * Houve aqui uma `firstContactMessage` — uma frase feita com o nome do comércio
  * lá dentro, para o botão de WhatsApp. Saiu quando as mensagens passaram a ser
