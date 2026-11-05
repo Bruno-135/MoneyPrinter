@@ -329,6 +329,28 @@ export function dizerGratis(html: string): string {
   let saida = html;
   for (const [de, para] of SELOS) saida = saida.split(de).join(para);
 
+  // «Até ver a proposta» lia-se como «depois da proposta, paga-se». A oferta é
+  // outra: o site monta-se primeiro e só se paga se o cliente gostar. Em duas
+  // linhas que cabem no círculo pequeno do telemóvel.
+  saida = saida.split('até ver<br>a proposta').join('até ver o<br>site pronto');
+  // O mesmo no bloco dos números, mais abaixo: «Grátis · até ver o site pronto
+  // · Só paga se gostar», em vez de «· até ver a proposta · Por escrito».
+  saida = saida
+    .split('>até ver a proposta</span>')
+    .join('>até ver o site pronto</span>')
+    .split('>Por escrito, com o preço fechado.</span>')
+    .join('>Só paga se gostar.</span>')
+    .split('>Por escrito.</span>')
+    .join('>Só paga se gostar.</span>');
+
+  // O selo balança devagar (`vd-balanca`, no movimento.css). Uma volta inteira,
+  // como a do selo «Feito à sua medida», punha o «Grátis» de pernas para o ar
+  // metade do tempo — e é a palavra que se quer que se leia.
+  saida = saida.replace(
+    /<div style="([^"]*transform:rotate\(-10deg\);text-align:center)">/g,
+    '<div class="vd-balanca" style="$1">',
+  );
+
   // Fora dos selos o «0 €» aparece em texto corrido, onde não há tamanho que
   // acertar: troca-se a seco.
   return saida.split('>0 €').join('>Grátis');

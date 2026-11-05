@@ -72,6 +72,10 @@
   /* Selo: uma volta em 20 s, velocidade constante */
   .vd-gira { transform-box: view-box; transform-origin: 50% 50%; animation: vd-gira 20s linear infinite; }
 
+  /* Selo «Grátis»: balança entre −16° e −4°, 3 s para cada lado. Não dá a
+     volta inteira: de pernas para o ar, o «Grátis» deixava de se ler. */
+  .vd-balanca { animation: vd-balanca 3s ease-in-out infinite alternate; }
+
   /* Serviços: hover 250 ms */
   .vd-svc { transition: transform 250ms cubic-bezier(.25,.8,.25,1); }
   .vd-svc:hover { transform: translateY(-4px); }
@@ -106,6 +110,7 @@
 @keyframes vd-respira { from { transform: scale(1); } to { transform: scale(1.03); } }
 @keyframes vd-fita { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes vd-gira { to { transform: rotate(360deg); } }
+@keyframes vd-balanca { from { transform: rotate(-16deg); } to { transform: rotate(-4deg) scale(1.03); } }
 @keyframes vd-desliza { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes vd-desenha { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
 @keyframes vd-n7 { from { --vd-n: 0; } to { --vd-n: 7; } }

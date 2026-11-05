@@ -254,6 +254,23 @@ describe('o Facebook do rodapé', () => {
   }
 });
 
+describe('o selo «Grátis» da página inicial', () => {
+  for (const largura of LARGURAS) {
+    it(`inicio · ${largura}: diz que é grátis até ver o site pronto, e balança`, () => {
+      const html = paginaCompleta('inicio', largura);
+      expect(html).toContain('>Grátis</span>');
+      expect(html).toContain('até ver o<br>site pronto');
+      // «Até ver a proposta» dava a entender que se pagava depois da proposta.
+      expect(html).not.toContain('a proposta</span>');
+      expect(html).toContain('class="vd-balanca"');
+      // O bloco dos números diz o mesmo que o selo.
+      expect(html).toContain('>até ver o site pronto</span>');
+      expect(html).toContain('>Só paga se gostar.</span>');
+      expect(html).not.toContain('>Por escrito');
+    });
+  }
+});
+
 describe('o ponto da marca', () => {
   for (const pagina of PAGINAS) {
     for (const largura of LARGURAS) {
