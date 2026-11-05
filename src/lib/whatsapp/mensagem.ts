@@ -39,7 +39,10 @@ const SITE: Record<string, string> = {
   BR: 'https://vaidesign.net/br',
 };
 
-/** Fecha como uma carta, com o nome todo: é o que o Bruno escreveria. */
+/**
+ * Fecha como uma carta, com o nome todo. Antes dela, uma pergunta a que basta
+ * responder «sim»: sem pergunta no fim, a mensagem não pede resposta nenhuma.
+ */
 const ASSINATURA = 'Atenciosamente,\nBruno Dias';
 
 /**
@@ -69,6 +72,7 @@ export function mensagemDeAbertura(args: {
       'Queria fazer uma proposta: eu monto o site primeiro, com cardápio ou serviços, horário, localização e botão pra falar pelo WhatsApp. Vocês veem pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.',
       `Esse é o meu site: ${SITE.BR}`,
       'Desculpa se esse não for o número de quem cuida dessa parte. Se preferir, me passa o contato da pessoa certa ou um e-mail que eu falo por lá.',
+      'Querem que eu prepare um pra vocês verem como fica?',
       ASSINATURA,
     ].join('\n\n');
   }
@@ -82,6 +86,7 @@ export function mensagemDeAbertura(args: {
     'Queria fazer-vos uma proposta: eu monto o site primeiro, com ementa ou serviços, horário, localização e botão para falar pelo WhatsApp. Veem-no pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.',
     `Este é o meu site: ${SITE.PT}`,
     'Peço desculpa se este não for o número de quem trata desta parte. Se preferir, passe-me o contacto da pessoa certa ou um e-mail e falo por lá.',
+    'Querem que prepare um para verem como fica?',
     ASSINATURA,
   ].join('\n\n');
 }

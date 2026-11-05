@@ -47,7 +47,7 @@ describe('mensagemDeAbertura', () => {
     }
   });
   it('vem em parágrafos, como se escreve no WhatsApp', () => {
-    for (const m of todas) expect(m.split('\n\n')).toHaveLength(6);
+    for (const m of todas) expect(m.split('\n\n')).toHaveLength(7);
   });
   it('Portugal, sem site, fala como em Portugal e manda para o site de cá', () => {
     const m = mensagemDeAbertura({ pais: 'PT', presenca: 'none', agora: TARDE })!;
@@ -56,6 +56,7 @@ describe('mensagemDeAbertura', () => {
     expect(m).toMatch(/ementa ou serviços/);
     expect(m).toMatch(/https:\/\/vaidesign\.net(?!\/br)/);
     expect(m).toContain('Este é o meu site: https://vaidesign.net\n');
+    expect(m).toContain('\n\nQuerem que prepare um para verem como fica?\n\nAtenciosamente,');
     expect(m.endsWith('Atenciosamente,\nBruno Dias')).toBe(true);
   });
   it('Brasil fala como no Brasil e manda para o site de lá', () => {
@@ -64,6 +65,9 @@ describe('mensagemDeAbertura', () => {
     expect(m).toMatch(/cardápio ou serviços/);
     expect(m).toMatch(/https:\/\/vaidesign\.net\/br/);
     expect(m).toContain('Esse é o meu site: https://vaidesign.net/br\n');
+    expect(m).toContain(
+      '\n\nQuerem que eu prepare um pra vocês verem como fica?\n\nAtenciosamente,',
+    );
     expect(m.endsWith('Atenciosamente,\nBruno Dias')).toBe(true);
   });
   it('quem só tem redes sociais ouve a variante', () => {
