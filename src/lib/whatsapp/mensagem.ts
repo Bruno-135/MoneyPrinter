@@ -1,4 +1,4 @@
-import { O_QUE_LEVA, segmentoDoRamo } from './segmentos';
+import { O_QUE_LEVA, PORQUE, segmentoDoRamo } from './segmentos';
 
 /**
  * A primeira mensagem de WhatsApp.
@@ -48,6 +48,50 @@ const SITE: Record<string, string> = {
 const ASSINATURA = 'Atenciosamente,\nBruno Dias';
 
 /**
+ * Três versões de cada mensagem. A mesma mensagem, letra por letra, enviada
+ * trinta vezes por dia é um dos sinais que o WhatsApp usa para bloquear um
+ * número; três versões por segmento já não são a mesma mensagem. Mudam a
+ * apresentação, o porquê e a pergunta — sempre os três da mesma versão, para
+ * a mensagem se ler como uma só.
+ */
+const APRESENTACAO = {
+  PT: [
+    (s: string) => `Olá, ${s}! Chamo-me Bruno e trabalho com criação de sites.`,
+    (s: string) => `Olá, ${s}! O meu nome é Bruno e faço sites para pequenos negócios.`,
+    (s: string) => `Olá, ${s}! Aqui é o Bruno, trabalho com criação de sites.`,
+  ],
+  BR: [
+    (s: string) => `Oi, ${s}! Tudo bem? Me chamo Bruno e trabalho com criação de sites.`,
+    (s: string) => `Oi, ${s}! Tudo bem? Meu nome é Bruno e faço sites pra pequenos negócios.`,
+    (s: string) => `Oi, ${s}! Aqui é o Bruno, tudo bem? Trabalho com criação de sites.`,
+  ],
+} as const;
+
+const PERGUNTA = {
+  PT: [
+    'Querem que prepare um para verem como fica?',
+    'Posso preparar uma versão para verem como fica?',
+    'Querem ver como ficaria o vosso?',
+  ],
+  BR: [
+    'Querem que eu prepare um pra vocês verem como fica?',
+    'Posso preparar uma versão pra vocês verem como fica?',
+    'Querem ver como ficaria o de vocês?',
+  ],
+} as const;
+
+/**
+ * A versão de um lead: sempre a mesma para o mesmo lead (a que se lê no painel
+ * é a que vai), e espalhada pelas três ao longo da lista. Sem chave, a primeira.
+ */
+export function versaoDe(chave: string | null | undefined): 0 | 1 | 2 {
+  if (!chave) return 0;
+  let h = 0;
+  for (let i = 0; i < chave.length; i++) h = (h * 31 + chave.charCodeAt(i)) >>> 0;
+  return (h % 3) as 0 | 1 | 2;
+}
+
+/**
  * Sem preço, de propósito. O que convence quem não nos conhece é «só paga se
  * gostar»; o valor diz-se quando responderem, já interessados. Com o número à
  * cabeça, a pessoa decidia pelo número antes de perceber o que recebia.
@@ -60,24 +104,28 @@ export function mensagemDeAbertura(args: {
   presenca: Presenca;
   /** Slug do ramo: escolhe o que o site leva e o que o botão faz. */
   ramo?: string | null;
+  /** O id do lead: escolhe qual das três versões ele recebe. */
+  chave?: string | null;
   agora?: Date;
 }): string | null {
   if (args.presenca === 'real') return null;
   const s = saudacao(args.pais, args.agora);
   const soRedes = args.presenca === 'social_only';
-  const leva = O_QUE_LEVA[segmentoDoRamo(args.ramo)];
+  const segmento = segmentoDoRamo(args.ramo);
+  const leva = O_QUE_LEVA[segmento];
+  const v = versaoDe(args.chave);
 
   if (args.pais === 'BR') {
     const situacao = soRedes
       ? 'vi que vocês estão só nas redes sociais e ainda não têm um site próprio'
       : 'vi que vocês ainda não têm um site próprio';
     return [
-      `Oi, ${s}! Tudo bem? Me chamo Bruno e trabalho com criação de sites.`,
-      `Achei vocês no Google Maps e ${situacao}, que é onde muita gente procura quando pesquisa no Google.`,
+      APRESENTACAO.BR[v](s),
+      `Achei vocês no Google Maps e ${situacao}. ${PORQUE[segmento].BR[v]}`,
       `Queria fazer uma proposta: eu monto o site primeiro, ${leva.BR}. Vocês veem pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.`,
       `Esse é o meu site: ${SITE.BR}`,
       'Desculpa se esse não for o número de quem cuida dessa parte. Se preferir, me passa o contato da pessoa certa ou um e-mail que eu falo por lá.',
-      'Querem que eu prepare um pra vocês verem como fica?',
+      PERGUNTA.BR[v],
       ASSINATURA,
     ].join('\n\n');
   }
@@ -86,12 +134,12 @@ export function mensagemDeAbertura(args: {
     ? 'reparei que estão só nas redes sociais e ainda não têm site próprio'
     : 'reparei que ainda não têm site próprio';
   return [
-    `Olá, ${s}! Chamo-me Bruno e trabalho com criação de sites.`,
-    `Encontrei o vosso negócio no Google Maps e ${situacao}, que é onde muita gente procura quando pesquisa no Google.`,
+    APRESENTACAO.PT[v](s),
+    `Encontrei o vosso negócio no Google Maps e ${situacao}. ${PORQUE[segmento].PT[v]}`,
     `Queria fazer-vos uma proposta: eu monto o site primeiro, ${leva.PT}. Veem-no pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.`,
     `Este é o meu site: ${SITE.PT}`,
     'Peço desculpa se este não for o número de quem trata desta parte. Se preferir, passe-me o contacto da pessoa certa ou um e-mail e falo por lá.',
-    'Querem que prepare um para verem como fica?',
+    PERGUNTA.PT[v],
     ASSINATURA,
   ].join('\n\n');
 }

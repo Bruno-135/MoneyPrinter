@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { mensagemDeAbertura, saudacao } from './mensagem';
-import { O_QUE_LEVA, SEGMENTOS, SEGMENTO_DO_RAMO, segmentoDoRamo } from './segmentos';
+import { mensagemDeAbertura, saudacao, versaoDe } from './mensagem';
+import { O_QUE_LEVA, PORQUE, SEGMENTOS, SEGMENTO_DO_RAMO, segmentoDoRamo } from './segmentos';
 import { categorySlugs } from '@/lib/places/categories';
 
 // 10:00 UTC = 11h em Lisboa (verão) e 7h em São Paulo.
@@ -152,5 +152,54 @@ describe('segmentos', () => {
     expect(segmentoDoRamo('barbearia')).toBe('beleza');
     expect(segmentoDoRamo(undefined)).toBe('geral');
     expect(segmentoDoRamo('')).toBe('geral');
+  });
+});
+
+describe('as três versões', () => {
+  // Três chaves que caem cada uma numa versão diferente.
+  const chaves = ['a', 'b', 'c'];
+
+  it('versaoDe é sempre a mesma para o mesmo lead, e usa as três', () => {
+    expect(versaoDe('lead-123')).toBe(versaoDe('lead-123'));
+    expect(new Set(chaves.map(versaoDe))).toEqual(new Set([0, 1, 2]));
+    expect(versaoDe(null)).toBe(0);
+  });
+
+  it('as três versões de um segmento são mensagens diferentes', () => {
+    for (const pais of ['PT', 'BR'])
+      for (const ramo of ['restaurante', 'cabeleireiro', 'canalizador', null]) {
+        const tres = chaves.map(
+          (chave) => mensagemDeAbertura({ pais, presenca: 'none', ramo, chave, agora: TARDE })!,
+        );
+        expect(new Set(tres).size, `${pais} ${ramo}`).toBe(3);
+        for (const m of tres) {
+          expect(m.split('\n\n')).toHaveLength(7);
+          expect(m).not.toMatch(/€|\d+ ?euros?/i);
+          expect(m.endsWith('Atenciosamente,\nBruno Dias')).toBe(true);
+        }
+      }
+  });
+
+  it('o porquê de um restaurante fala de comer, o de um canalizador de orçamento', () => {
+    const tres = (ramo: string) =>
+      chaves.map(
+        (chave) => mensagemDeAbertura({ pais: 'PT', presenca: 'none', ramo, chave, agora: TARDE })!,
+      );
+    for (const m of tres('restaurante')) expect(m).toMatch(/ementa/);
+    for (const m of tres('canalizador')) expect(m).toMatch(/orçamento|trabalhos feitos/);
+  });
+
+  it('cada segmento tem três porquês diferentes, nos dois países', () => {
+    for (const seg of SEGMENTOS)
+      for (const pais of ['PT', 'BR'] as const) {
+        expect(new Set(PORQUE[seg][pais]).size, `${seg} ${pais}`).toBe(3);
+        for (const f of PORQUE[seg][pais]) expect(f).toMatch(/\.$/);
+      }
+  });
+
+  it('o Brasil não leva palavras de Portugal', () => {
+    for (const seg of SEGMENTOS)
+      for (const f of [...PORQUE[seg].BR, O_QUE_LEVA[seg].BR])
+        expect(f, seg).not.toMatch(/\b(telemóvel|vosso|vossos|vos|equipa|marcar consulta)\b/);
   });
 });
