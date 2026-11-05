@@ -55,14 +55,16 @@ describe('mensagemDeAbertura', () => {
     expect(m).toMatch(/reparei que ainda não têm site próprio/);
     expect(m).toMatch(/ementa ou serviços/);
     expect(m).toMatch(/https:\/\/vaidesign\.net(?!\/br)/);
-    expect(m.endsWith('Posso avançar?')).toBe(true);
+    expect(m).toContain('Este é o meu site: https://vaidesign.net\n');
+    expect(m.endsWith('Atenciosamente,\nBruno Dias')).toBe(true);
   });
   it('Brasil fala como no Brasil e manda para o site de lá', () => {
     const m = mensagemDeAbertura({ pais: 'BR', presenca: 'none', agora: TARDE })!;
     expect(m.startsWith('Oi, boa tarde! Tudo bem?')).toBe(true);
     expect(m).toMatch(/cardápio ou serviços/);
     expect(m).toMatch(/https:\/\/vaidesign\.net\/br/);
-    expect(m.endsWith('Posso fazer?')).toBe(true);
+    expect(m).toContain('Esse é o meu site: https://vaidesign.net/br\n');
+    expect(m.endsWith('Atenciosamente,\nBruno Dias')).toBe(true);
   });
   it('quem só tem redes sociais ouve a variante', () => {
     expect(mensagemDeAbertura({ pais: 'PT', presenca: 'social_only', agora: TARDE })).toMatch(
