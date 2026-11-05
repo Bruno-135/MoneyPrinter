@@ -27,33 +27,49 @@ describe('saudacao — pela hora do país do lead, não do servidor', () => {
 });
 
 describe('mensagemDeAbertura', () => {
+  const todas = ['PT', 'BR'].flatMap((pais) =>
+    (['none', 'social_only'] as const).map(
+      (presenca) => mensagemDeAbertura({ pais, presenca, agora: TARDE })!,
+    ),
+  );
+
   it('nunca leva o nome do negócio nem marcadores por preencher', () => {
-    for (const pais of ['PT', 'BR'])
-      for (const presenca of ['none', 'social_only'] as const) {
-        const m = mensagemDeAbertura({ pais, presenca, agora: TARDE })!;
-        expect(m).not.toMatch(/[{}]/);
-        expect(m).toMatch(/Bruno/);
-        expect(m).toMatch(/Sem compromisso nenhum\.$/);
-      }
+    for (const m of todas) {
+      expect(m).not.toMatch(/[{}[\]]/);
+      expect(m).toMatch(/Bruno/);
+    }
   });
-  it('Portugal, sem site', () => {
-    expect(mensagemDeAbertura({ pais: 'PT', presenca: 'none', agora: TARDE })).toBe(
-      'Olá, boa tarde! Aqui é o Bruno. Encontrei o vosso negócio no Google Maps e reparei que ainda não têm site. ' +
-        'Trabalho precisamente com isso, sites e redes sociais, e fiz um exemplo de como o vosso podia ficar. ' +
-        'Quer que lhe envie para ver? Sem compromisso nenhum.',
-    );
+  it('não diz o preço: o valor fica para quando responderem', () => {
+    for (const m of todas) {
+      expect(m).not.toMatch(/€|\beuros?\b|\d+ ?€/i);
+      expect(m).toMatch(/só pagam se gostarem/);
+      expect(m).toMatch(/Sem mensalidade e sem compromisso\./);
+    }
   });
-  it('Brasil fala como no Brasil', () => {
+  it('vem em parágrafos, como se escreve no WhatsApp', () => {
+    for (const m of todas) expect(m.split('\n\n')).toHaveLength(6);
+  });
+  it('Portugal, sem site, fala como em Portugal e manda para o site de cá', () => {
+    const m = mensagemDeAbertura({ pais: 'PT', presenca: 'none', agora: TARDE })!;
+    expect(m.startsWith('Olá, boa tarde! Chamo-me Bruno')).toBe(true);
+    expect(m).toMatch(/reparei que ainda não têm site próprio/);
+    expect(m).toMatch(/ementa ou serviços/);
+    expect(m).toMatch(/https:\/\/vaidesign\.net(?!\/br)/);
+    expect(m.endsWith('Posso avançar?')).toBe(true);
+  });
+  it('Brasil fala como no Brasil e manda para o site de lá', () => {
     const m = mensagemDeAbertura({ pais: 'BR', presenca: 'none', agora: TARDE })!;
     expect(m.startsWith('Oi, boa tarde! Tudo bem?')).toBe(true);
-    expect(m).toMatch(/te mande pra dar uma olhada/);
+    expect(m).toMatch(/cardápio ou serviços/);
+    expect(m).toMatch(/https:\/\/vaidesign\.net\/br/);
+    expect(m.endsWith('Posso fazer?')).toBe(true);
   });
   it('quem só tem redes sociais ouve a variante', () => {
     expect(mensagemDeAbertura({ pais: 'PT', presenca: 'social_only', agora: TARDE })).toMatch(
       /estão só nas redes sociais e ainda não têm site próprio/,
     );
     expect(mensagemDeAbertura({ pais: 'BR', presenca: 'social_only', agora: TARDE })).toMatch(
-      /estão só nas redes sociais e ainda não têm site próprio/,
+      /estão só nas redes sociais e ainda não têm um site próprio/,
     );
   });
   it('quem já tem site não recebe esta mensagem', () => {

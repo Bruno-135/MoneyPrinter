@@ -33,6 +33,20 @@ export function saudacao(pais: string, agora: Date = new Date()): string {
   return 'boa noite';
 }
 
+/** O site da agência, na versão do país do lead. */
+const SITE: Record<string, string> = {
+  PT: 'https://vaidesign.net',
+  BR: 'https://vaidesign.net/br',
+};
+
+/**
+ * Sem preço, de propósito. O que convence quem não nos conhece é «só paga se
+ * gostar»; o valor diz-se quando responderem, já interessados. Com o número à
+ * cabeça, a pessoa decidia pelo número antes de perceber o que recebia.
+ *
+ * Vários parágrafos, como se escreve no WhatsApp: o `encodeURIComponent` de
+ * `whatsappUrl` leva as quebras de linha intactas até à caixa de texto.
+ */
 export function mensagemDeAbertura(args: {
   pais: string;
   presenca: Presenca;
@@ -44,21 +58,27 @@ export function mensagemDeAbertura(args: {
 
   if (args.pais === 'BR') {
     const situacao = soRedes
-      ? 'vi que vocês estão só nas redes sociais e ainda não têm site próprio'
-      : 'vi que ainda não têm site';
-    return (
-      `Oi, ${s}! Tudo bem? Aqui é o Bruno. Achei vocês no Google Maps e ${situacao}. ` +
-      'Eu trabalho justamente com isso, sites e redes sociais, e fiz um exemplo de como o de vocês poderia ficar. ' +
-      'Quer que eu te mande pra dar uma olhada? Sem compromisso nenhum.'
-    );
+      ? 'vi que vocês estão só nas redes sociais e ainda não têm um site próprio'
+      : 'vi que vocês ainda não têm um site próprio';
+    return [
+      `Oi, ${s}! Tudo bem? Me chamo Bruno e trabalho com criação de sites.`,
+      `Achei vocês no Google Maps e ${situacao}, que é onde muita gente procura quando pesquisa no Google.`,
+      'Queria fazer uma proposta: eu monto o site primeiro, com cardápio ou serviços, horário, localização e botão pra falar pelo WhatsApp. Vocês veem pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.',
+      `Esse é o meu site, se quiser dar uma olhada: ${SITE.BR}`,
+      'Desculpa se esse não for o número de quem cuida dessa parte. Se preferir, me passa o contato da pessoa certa ou um e-mail que eu falo por lá.',
+      'Posso fazer?',
+    ].join('\n\n');
   }
 
   const situacao = soRedes
     ? 'reparei que estão só nas redes sociais e ainda não têm site próprio'
-    : 'reparei que ainda não têm site';
-  return (
-    `Olá, ${s}! Aqui é o Bruno. Encontrei o vosso negócio no Google Maps e ${situacao}. ` +
-    'Trabalho precisamente com isso, sites e redes sociais, e fiz um exemplo de como o vosso podia ficar. ' +
-    'Quer que lhe envie para ver? Sem compromisso nenhum.'
-  );
+    : 'reparei que ainda não têm site próprio';
+  return [
+    `Olá, ${s}! Chamo-me Bruno e trabalho com criação de sites.`,
+    `Encontrei o vosso negócio no Google Maps e ${situacao}, que é onde muita gente procura quando pesquisa no Google.`,
+    'Queria fazer-vos uma proposta: eu monto o site primeiro, com ementa ou serviços, horário, localização e botão para falar pelo WhatsApp. Veem-no pronto e só pagam se gostarem. Sem mensalidade e sem compromisso.',
+    `Este é o meu site, se quiser dar uma vista de olhos: ${SITE.PT}`,
+    'Peço desculpa se este não for o número de quem trata desta parte. Se preferir, passe-me o contacto da pessoa certa ou um e-mail e falo por lá.',
+    'Posso avançar?',
+  ].join('\n\n');
 }
