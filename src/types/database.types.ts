@@ -1645,6 +1645,10 @@ export type Database = {
       };
     };
     Functions: {
+      cancelar_subscricao: {
+        Args: { p_id: string };
+        Returns: boolean;
+      };
       criar_acesso: {
         Args: {
           p_nome: string;

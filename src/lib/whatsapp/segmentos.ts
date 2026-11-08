@@ -262,3 +262,20 @@ export const PORQUE: Record<Segmento, { PT: Tres; BR: Tres }> = {
     ],
   },
 };
+
+/** Como se chama o segmento numa frase: «Ver o exemplo para restaurantes». */
+export const NOME_DO_SEGMENTO: Record<Segmento, { PT: string; BR: string }> = {
+  restauracao: { PT: 'restaurantes e padarias', BR: 'restaurantes e padarias' },
+  beleza: { PT: 'salões e estética', BR: 'salões e estética' },
+  saude: { PT: 'clínicas e saúde', BR: 'clínicas e saúde' },
+  fitness: { PT: 'ginásios e estúdios', BR: 'academias e estúdios' },
+  ensino: { PT: 'escolas e cursos', BR: 'escolas e cursos' },
+  orcamento: { PT: 'obras e serviços técnicos', BR: 'obras e serviços técnicos' },
+  escritorio: { PT: 'escritórios e consultoria', BR: 'escritórios e consultoria' },
+  loja: { PT: 'lojas', BR: 'lojas' },
+  geral: { PT: 'pequenos negócios', BR: 'pequenos negócios' },
+};
+
+export function ehSegmento(valor: string): valor is Segmento {
+  return (SEGMENTOS as readonly string[]).includes(valor);
+}

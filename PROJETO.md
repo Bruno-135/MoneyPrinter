@@ -796,8 +796,27 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       expira aos 60 s em ficheiros grandes — correr aos bocados.
 
 - [x] **E-mails dos leads** — `/painel/emails`, área `emails` (fora de todos os papéis:
-      dá-se à mão). SÓ extrai e mostra; NÃO envia e-mails (decisão do dono: o compositor
-      de envio foi feito, não agradou e foi retirado — migração 0042).
+      dá-se à mão). Extrai, mostra e, desde a migração 0044, ENVIA o e-mail de abordagem
+      — um lead de cada vez, só quando se carrega em «Enviar» (o primeiro compositor
+      foi retirado na 0042; este substitui-o).
+
+      **E-mail de abordagem** (`/painel/emails/[id]`, botão «Ver e-mail →» na folha):
+      `src/lib/emails/abordagem.ts` monta assunto, HTML e texto por SEGMENTO (os mesmos
+      de `whatsapp/segmentos.ts`) e PAÍS (PT/BR), em 3 versões estáveis por lead
+      (`versaoDe`). O pitch é MELHORAR o site atual (os leads com e-mail têm site), sem
+      preço, com a imagem e o link do exemplo do mesmo ramo (`/exemplos/[segmento]`,
+      `src/lib/sites/templates/exemplos.ts`, imagens em `public/vaidesign/exemplos/`).
+      A página mostra o e-mail tal como sai (iframe sem scripts) antes do botão.
+      Regras (`abordagens.ts`, com teste): tem e-mail; não está em `nao_contactar`;
+      nunca recebeu nenhum (UM e-mail por lead); no máximo 30 nas últimas 24 h. Envio
+      pela Resend (`envio.ts`), de `geral@vaidesign.net`, com `List-Unsubscribe` de um
+      clique. A linha de `emails_enviados` grava-se ANTES do envio (o link de sair leva
+      o id dela) e apaga-se se a Resend falhar. Depois: contacto pelo canal `email` e
+      próxima acção daqui a 5 dias, sem mexer na etapa.
+
+      **Sair** (`/cancelar/[id]` para a pessoa, `/api/cancelar/[id]` para o Gmail):
+      função `cancelar_subscricao` (0044), `security definer`, que põe o ENDEREÇO em
+      `nao_contactar`. Sem chave de serviço. Se a função faltar na base, o envio recusa.
 
       O estado do e-mail é CALCULADO (`src/lib/emails/estado-do-email.ts`) a partir de
       `email`, `email_origem`, `email_visto_em` e `website_kind`: `extraido`,

@@ -184,6 +184,14 @@ export default async function EmailsPage({ searchParams }: { searchParams: Promi
                     {l.email && l.origem === 'mao' && (
                       <span className="text-ink3 ml-1.5 font-sans text-[11px]">à mão</span>
                     )}
+                    {l.email && (
+                      <Link
+                        href={`/painel/emails/${l.id}`}
+                        className="text-brand-600 ml-2 font-sans text-[12px] font-semibold whitespace-nowrap underline-offset-4 hover:underline"
+                      >
+                        Ver e-mail →
+                      </Link>
+                    )}
                   </td>
                   <td className="px-4 py-2.5 whitespace-nowrap">
                     <span
