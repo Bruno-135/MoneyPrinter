@@ -1,6 +1,10 @@
 import { versaoDe } from '@/lib/whatsapp/mensagem';
 import { NOME_DO_SEGMENTO, PORQUE, segmentoDoRamo, type Segmento } from '@/lib/whatsapp/segmentos';
-import { EMAIL_DA_AGENCIA, TELEFONE_DA_AGENCIA } from '@/lib/vaidesign/agencia';
+import {
+  EMAIL_DA_AGENCIA,
+  TELEFONE_DA_AGENCIA,
+  WHATSAPP_DA_AGENCIA,
+} from '@/lib/vaidesign/agencia';
 
 /**
  * O e-mail de abordagem: a mesma ideia da mensagem de WhatsApp, para outro
@@ -211,6 +215,7 @@ const TEXTOS: Record<
     proposta: string;
     responder: string;
     botaoWhatsapp: string;
+    recado: (dominio: string) => string;
     sair: { antes: string; link: string };
   }
 > = {
@@ -224,6 +229,7 @@ const TEXTOS: Record<
       'Se quiserem, preparo uma versão nova do vosso site para compararem com o atual. Só pagam se gostarem, sem mensalidade e sem fidelização, e o site fica em vosso nome.',
     responder: 'Basta responder a este e-mail ou falar comigo pelo WhatsApp.',
     botaoWhatsapp: 'Falar pelo WhatsApp',
+    recado: (d) => `Olá Bruno! Recebi o seu e-mail sobre o site${d ? ` ${d}` : ''}.`,
     sair: {
       antes:
         'Escrevo-vos porque este endereço está publicado no vosso site. Se não quiserem receber mais mensagens minhas,',
@@ -240,6 +246,7 @@ const TEXTOS: Record<
       'Se quiserem, preparo uma versão nova do site de vocês pra compararem com o atual. Só pagam se gostarem, sem mensalidade e sem fidelidade, e o site fica no nome de vocês.',
     responder: 'É só responder este e-mail ou falar comigo pelo WhatsApp.',
     botaoWhatsapp: 'Falar pelo WhatsApp',
+    recado: (d) => `Olá Bruno! Recebi seu e-mail sobre o site${d ? ` ${d}` : ''}.`,
     sair: {
       antes:
         'Escrevo porque este endereço está publicado no site de vocês. Se não quiserem receber mais mensagens minhas,',
@@ -286,7 +293,17 @@ export function emailDeAbordagem(d: DadosDoEmail): EmailMontado {
   const exemplo = `${base}/exemplos/${segmento}`;
   const imagem = `${base}/vaidesign/exemplos/${segmento}.jpg`;
   const logo = `${base}/vaidesign/email/logo.png`;
-  const whatsapp = `${base}/wa`;
+  // Direto ao wa.me, sem passar por `/wa`: aberto a partir do e-mail (no browser
+  // de dentro do Outlook, do Gmail…), um reencaminhamento a meio já não abre a
+  // aplicação do WhatsApp e a pessoa fica numa página em branco. O recado já
+  // vai escrito, com o site, para se saber de que lead se trata.
+  const whatsapp = WHATSAPP_DA_AGENCIA
+    ? `https://wa.me/${WHATSAPP_DA_AGENCIA}?text=${encodeURIComponent(t.recado(dominio))}`
+    : `${base}/wa`;
+  const whatsappNoTexto = WHATSAPP_DA_AGENCIA ? `https://wa.me/${WHATSAPP_DA_AGENCIA}` : whatsapp;
+  // O número é de Portugal: no Brasil, escrito por baixo, assusta mais do que
+  // ajuda. Lá fica só o botão.
+  const telefone = pais === 'BR' ? '' : ` · ${TELEFONE_DA_AGENCIA}`;
   const site = pais === 'BR' ? `${base}/br` : base;
   const siteVisivel = site.replace(/^https?:\/\//, '');
 
@@ -298,8 +315,8 @@ export function emailDeAbordagem(d: DadosDoEmail): EmailMontado {
     `${t.exemplo(nome)}: ${exemplo}`,
     t.proposta,
     `${pergunta} ${t.responder}`,
-    `WhatsApp: ${whatsapp}`,
-    `Atenciosamente,\nBruno Dias\nVaiDesign · ${siteVisivel} · ${TELEFONE_DA_AGENCIA}`,
+    `WhatsApp: ${whatsappNoTexto}`,
+    `Atenciosamente,\nBruno Dias\nVaiDesign · ${siteVisivel}${telefone}`,
     '—',
     `${t.sair.antes} ${t.sair.link}: ${d.sair}`,
   ].join('\n\n');
@@ -340,7 +357,7 @@ ${p(`<strong>${escapar(pergunta)}</strong> ${escapar(t.responder)}`)}
 </td></tr>
 <tr><td style="padding:0 32px 24px">${botao(whatsapp, t.botaoWhatsapp, '#25D366', '#141210')}</td></tr>
 <tr><td style="padding:0 32px 28px;border-top:1px solid #EFE6D8">
-<p style="margin:20px 0 0;font:400 15px/1.5 Arial,Helvetica,sans-serif;color:#141210">Atenciosamente,<br><strong>Bruno Dias</strong><br><span style="color:#5A5249">VaiDesign · <a href="${escapar(site)}" style="color:#BA4100">${escapar(siteVisivel)}</a> · ${escapar(TELEFONE_DA_AGENCIA)}</span></p>
+<p style="margin:20px 0 0;font:400 15px/1.5 Arial,Helvetica,sans-serif;color:#141210">Atenciosamente,<br><strong>Bruno Dias</strong><br><span style="color:#5A5249">VaiDesign · <a href="${escapar(site)}" style="color:#BA4100">${escapar(siteVisivel)}</a>${escapar(telefone)}</span></p>
 </td></tr>
 </table>
 <p style="max-width:560px;margin:16px auto 0;font:400 12px/1.5 Arial,Helvetica,sans-serif;color:#7A7066">${escapar(t.sair.antes)} <a href="${escapar(d.sair)}" style="color:#7A7066">${escapar(t.sair.link)}</a>.<br>VaiDesign · ${escapar(EMAIL_DA_AGENCIA)}</p>

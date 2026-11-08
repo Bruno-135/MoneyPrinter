@@ -30,6 +30,23 @@ describe('emailDeAbordagem', () => {
     expect(e.texto).not.toMatch(/\b(vosso|telemóvel|equipa)\b/);
   });
 
+  it('o WhatsApp vai direto ao wa.me, com o recado e o site; o Brasil não leva o número', () => {
+    const pt = emailDeAbordagem({ ...base, pais: 'PT', ramo: 'padaria', chave: null });
+    expect(pt.html).toContain(
+      `https://wa.me/351965633614?text=${encodeURIComponent('Olá Bruno! Recebi o seu e-mail sobre o site padariacentral.pt.')}`,
+    );
+    expect(pt.html).toContain('+351 965 633 614');
+    expect(pt.texto).toContain('WhatsApp: https://wa.me/351965633614');
+
+    const br = emailDeAbordagem({ ...base, pais: 'BR', ramo: 'padaria', chave: null });
+    expect(br.html).toContain(
+      `https://wa.me/351965633614?text=${encodeURIComponent('Olá Bruno! Recebi seu e-mail sobre o site padariacentral.pt.')}`,
+    );
+    expect(br.html).not.toContain('+351');
+    expect(br.texto).not.toContain('+351');
+    expect(br.texto).toMatch(/VaiDesign · vaidesign\.net\/br\n/);
+  });
+
   it('nunca diz que não têm site, nem diz preço', () => {
     for (const ramo of [...Object.keys(SEGMENTO_DO_RAMO), null])
       for (const pais of ['PT', 'BR'])

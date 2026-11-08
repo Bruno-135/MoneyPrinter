@@ -810,6 +810,9 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       «Enviar teste para mim» manda o mesmo e-mail (assunto com «[Teste]») a um endereço
       qualquer, sem gravar nada nem tocar no lead. Botões em tabela com `bgcolor` e cores
       de meio-tom: um botão preto sumia no modo escuro do telemóvel.
+      O botão do WhatsApp vai DIRETO ao `wa.me` com o recado escrito (não por `/wa`: a
+      partir do e-mail, o reencaminhamento a meio não abria a aplicação). No Brasil a
+      assinatura não leva o número de Portugal — só o botão.
       Regras (`abordagens.ts`, com teste): tem e-mail; não está em `nao_contactar`;
       nunca recebeu nenhum (UM e-mail por lead); no máximo 30 nas últimas 24 h. Envio
       pela Resend (`envio.ts`), de `geral@vaidesign.net`, com `List-Unsubscribe` de um
