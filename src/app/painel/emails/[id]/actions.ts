@@ -81,3 +81,42 @@ export async function enviarAbordagem(businessId: string): Promise<ResultadoDoBo
   revalidatePath(`/painel/emails/${lead.id}`);
   return { ok: true, mensagem: `E-mail enviado para ${lead.email}.` };
 }
+
+const EMAIL_VALIDO = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
+
+/**
+ * O mesmo e-mail, pela Resend, para quem está a testar — para se ver como
+ * chega de verdade (remetente, imagens, modo escuro do telemóvel).
+ *
+ * Não grava nada: não conta para o limite do dia, não marca o lead como
+ * contactado e o link de sair é o de exemplo, que não faz nada.
+ */
+export async function enviarTeste(businessId: string, para: string): Promise<ResultadoDoBotao> {
+  await exigirAcesso('emails');
+  const destino = para.trim();
+  if (!EMAIL_VALIDO.test(destino)) return { ok: false, mensagem: 'Esse e-mail não parece certo.' };
+
+  const supabase = await createClient();
+  const lead = await carregarLead(supabase, businessId);
+  if (!lead) return { ok: false, mensagem: 'Este lead já não existe.' };
+
+  const base = publicEnv.NEXT_PUBLIC_SITE_URL;
+  const sair = ligacoesParaSair(base, 'exemplo');
+  const montado = emailDeAbordagem({
+    pais: lead.pais,
+    ramo: lead.ramo,
+    chave: lead.id,
+    site: lead.site,
+    base,
+    sair: sair.pagina,
+  });
+
+  const resultado = await enviarEmail({
+    para: destino,
+    montado: { ...montado, assunto: `[Teste] ${montado.assunto}` },
+    umClique: sair.umClique,
+  });
+  return resultado.ok
+    ? { ok: true, mensagem: `Teste enviado para ${destino}. O lead não foi contactado.` }
+    : { ok: false, mensagem: `A Resend recusou o teste (${resultado.erro}).` };
+}

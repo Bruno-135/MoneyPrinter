@@ -306,12 +306,15 @@ export function emailDeAbordagem(d: DadosDoEmail): EmailMontado {
 
   const p = (conteudo: string, extra = '') =>
     `<p style="margin:0 0 16px;font:400 16px/1.6 Arial,Helvetica,sans-serif;color:#141210;${extra}">${conteudo}</p>`;
+  // Botões em tabela, com a cor também em `bgcolor`: é o que o Outlook respeita.
+  // Cores de meio-tom, de propósito: no modo escuro do telemóvel um botão preto
+  // some no fundo (já aconteceu), e um laranja ou verde continua a ver-se.
   const botao = (href: string, rotulo: string, fundo: string, cor: string) =>
-    `<a href="${escapar(href)}" style="display:inline-block;padding:13px 22px;background:${fundo};color:${cor};border-radius:999px;font:700 15px/1.35 Arial,Helvetica,sans-serif;text-decoration:none">${escapar(rotulo)}</a>`;
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="${fundo}" style="background:${fundo};border-radius:999px"><a href="${escapar(href)}" style="display:inline-block;padding:13px 22px;color:${cor};border-radius:999px;font:700 15px/1.35 Arial,Helvetica,sans-serif;text-decoration:none">${escapar(rotulo)}</a></td></tr></table>`;
 
   const html = `<!doctype html>
 <html lang="${pais === 'BR' ? 'pt-BR' : 'pt-PT'}">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapar(assunto)}</title></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"><title>${escapar(assunto)}</title></head>
 <body style="margin:0;padding:0;background:#F6EFE4">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${escapar(porque)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6EFE4">
@@ -330,12 +333,12 @@ ${itens.map((i) => `<li style="margin:0 0 4px">${escapar(i)}</li>`).join('\n')}
 <tr><td style="padding:0 32px 8px">
 <a href="${escapar(exemplo)}" style="text-decoration:none"><img src="${escapar(imagem)}" width="536" alt="${escapar(t.exemplo(nome))}" style="display:block;width:100%;max-width:536px;height:auto;border:1px solid #DDD2C0;border-radius:10px"></a>
 </td></tr>
-<tr><td style="padding:12px 32px 20px">${botao(exemplo, t.exemplo(nome), '#141210', '#F6EFE4')}</td></tr>
+<tr><td style="padding:12px 32px 20px">${botao(exemplo, t.exemplo(nome), '#EC5B13', '#141210')}</td></tr>
 <tr><td style="padding:4px 32px 4px">
 ${p(escapar(t.proposta))}
 ${p(`<strong>${escapar(pergunta)}</strong> ${escapar(t.responder)}`)}
 </td></tr>
-<tr><td style="padding:0 32px 24px">${botao(whatsapp, t.botaoWhatsapp, '#EC5B13', '#141210')}</td></tr>
+<tr><td style="padding:0 32px 24px">${botao(whatsapp, t.botaoWhatsapp, '#25D366', '#141210')}</td></tr>
 <tr><td style="padding:0 32px 28px;border-top:1px solid #EFE6D8">
 <p style="margin:20px 0 0;font:400 15px/1.5 Arial,Helvetica,sans-serif;color:#141210">Atenciosamente,<br><strong>Bruno Dias</strong><br><span style="color:#5A5249">VaiDesign · <a href="${escapar(site)}" style="color:#BA4100">${escapar(siteVisivel)}</a> · ${escapar(TELEFONE_DA_AGENCIA)}</span></p>
 </td></tr>

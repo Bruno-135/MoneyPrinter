@@ -13,7 +13,7 @@ import {
 import { NOME_DO_SEGMENTO } from '@/lib/whatsapp/segmentos';
 import { nomeDoPais } from '@/lib/places/paises';
 import { haQuantoTempo } from '@/components/quando';
-import { EnviarEmail } from './enviar';
+import { EnviarEmail, EnviarTeste } from './enviar';
 
 /**
  * O e-mail de um lead, tal como vai sair, e o botão para o enviar.
@@ -88,6 +88,9 @@ export default async function EmailDoLeadPage({ params }: { params: Promise<{ id
           <span className="text-ink3 text-[11px]">
             {hoje} de {LIMITE_POR_DIA} enviados nas últimas 24 h
           </span>
+          <div className="border-line mt-3 border-t pt-3">
+            <EnviarTeste businessId={lead.id} emailDefeito={auth.user.email ?? ''} />
+          </div>
         </div>
       </section>
 

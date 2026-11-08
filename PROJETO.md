@@ -807,6 +807,9 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       preço, com a imagem e o link do exemplo do mesmo ramo (`/exemplos/[segmento]`,
       `src/lib/sites/templates/exemplos.ts`, imagens em `public/vaidesign/exemplos/`).
       A página mostra o e-mail tal como sai (iframe sem scripts) antes do botão.
+      «Enviar teste para mim» manda o mesmo e-mail (assunto com «[Teste]») a um endereço
+      qualquer, sem gravar nada nem tocar no lead. Botões em tabela com `bgcolor` e cores
+      de meio-tom: um botão preto sumia no modo escuro do telemóvel.
       Regras (`abordagens.ts`, com teste): tem e-mail; não está em `nao_contactar`;
       nunca recebeu nenhum (UM e-mail por lead); no máximo 30 nas últimas 24 h. Envio
       pela Resend (`envio.ts`), de `geral@vaidesign.net`, com `List-Unsubscribe` de um
