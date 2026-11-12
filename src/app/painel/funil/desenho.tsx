@@ -227,9 +227,14 @@ export function DesenhoDoFunil({ funil }: { funil: Funil }) {
 
   return (
     <div style={{ background: CREME, color: TINTA, fontFamily: HANKEN }}>
-      {/* ---------------- Computador ---------------- */}
+      {/* ---------------- Computador ----------------
+          Só a partir de 1536px de ecrã (2xl) e não de 1280 (xl): o painel tem
+          256px de menu ao lado, e entre 1280 e 1536 a lista ficava com menos
+          de 200px — os títulos partiam em duas linhas e montavam-se uns em
+          cima dos outros. Abaixo disso usa-se o desenho do telemóvel, cone em
+          cima e lista por baixo, que cabe em qualquer largura. */}
       <div
-        className="hidden xl:flex"
+        className="hidden 2xl:flex"
         style={{ flexDirection: 'column', gap: 48, padding: '72px 80px 88px' }}
       >
         <Cabecalho funil={funil} grande />
@@ -246,7 +251,8 @@ export function DesenhoDoFunil({ funil }: { funil: Funil }) {
                 // O desenho diz «640px 1fr». Aqui é minmax para a coluna do
                 // cone poder encolher num ecrã mais pequeno em vez de empurrar
                 // a lista para fora; a 1440 dá exactamente os 640 do ficheiro.
-                gridTemplateColumns: 'minmax(0,640px) minmax(0,1fr)',
+                // A lista nunca desce dos 440px: quem encolhe é o cone.
+                gridTemplateColumns: 'minmax(0,640px) minmax(440px,1fr)',
                 gap: 48,
                 alignItems: 'center',
                 height: 104,
@@ -278,7 +284,7 @@ export function DesenhoDoFunil({ funil }: { funil: Funil }) {
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '40px 1fr 140px',
+                  gridTemplateColumns: '40px minmax(0,1fr) auto',
                   gap: 16,
                   alignItems: 'center',
                   height: '100%',
@@ -296,7 +302,14 @@ export function DesenhoDoFunil({ funil }: { funil: Funil }) {
                     {banda.descricao}
                   </span>
                 </div>
-                <span style={{ font: `500 13px/1.3 ${MONO}`, color: CINZA, textAlign: 'right' }}>
+                <span
+                  style={{
+                    font: `500 13px/1.3 ${MONO}`,
+                    color: CINZA,
+                    textAlign: 'right',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {banda.taxa}
                 </span>
               </div>
@@ -325,7 +338,7 @@ export function DesenhoDoFunil({ funil }: { funil: Funil }) {
 
       {/* ---------------- Telemóvel ---------------- */}
       <div
-        className="flex xl:hidden"
+        className="flex 2xl:hidden"
         style={{ flexDirection: 'column', gap: 28, padding: '32px 20px 48px' }}
       >
         <Cabecalho funil={funil} grande={false} />

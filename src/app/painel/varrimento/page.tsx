@@ -21,19 +21,26 @@ export default async function VarrimentoPage() {
   if (!auth.user) redirect('/entrar');
   await exigirAcesso('varrimento');
 
-  const [{ count: chamadas }, { count: faturadas }, { count: regioes }] = await Promise.all([
-    supabase.from('region_searches').select('*', { count: 'exact', head: true }),
-    // Faturada é a que a Google respondeu com 200: um 400 por tipo inválido
-    // não é cobrado, e contá-lo aqui inflacionava o custo.
-    supabase
-      .from('region_searches')
-      .select('*', { count: 'exact', head: true })
-      .eq('http_status', 200),
-    supabase.from('searched_regions').select('*', { count: 'exact', head: true }),
-  ]);
+  const [{ count: chamadas }, { count: faturadas }, { count: regioes }, { count: leads }] =
+    await Promise.all([
+      supabase.from('region_searches').select('*', { count: 'exact', head: true }),
+      // Faturada é a que a Google respondeu com 200: um 400 por tipo inválido
+      // não é cobrado, e contá-lo aqui inflacionava o custo.
+      supabase
+        .from('region_searches')
+        .select('*', { count: 'exact', head: true })
+        .eq('http_status', 200),
+      supabase.from('searched_regions').select('*', { count: 'exact', head: true }),
+      // Todos os leads que as procuras trouxeram, arquivados incluídos: também
+      // esses foram pagos.
+      supabase.from('businesses').select('id', { count: 'exact', head: true }),
+    ]);
 
   const gasto = (faturadas ?? 0) * USD_POR_CHAMADA;
   const poupadas = (chamadas ?? 0) - (faturadas ?? 0);
+  // O gasto dividido pelos leads. Cêntimos de dólar: com duas casas aparecia
+  // «0.00 $», por isso três.
+  const porLead = leads ? gasto / leads : null;
 
   return (
     <>
@@ -55,7 +62,21 @@ export default async function VarrimentoPage() {
 
       <div className="grid gap-2.5 [grid-template-columns:repeat(auto-fit,minmax(152px,1fr))]">
         <Cartao rotulo="Gasto até hoje" valor={`${gasto.toFixed(2)} $`} nota="chamadas faturadas" />
-        <Cartao rotulo="Chamadas faturadas" valor={String(faturadas ?? 0)} nota="ao Google Places" />
+        <Cartao
+          rotulo="Custo médio por lead"
+          valor={porLead === null ? '—' : `${porLead.toFixed(3)} $`}
+          nota={
+            porLead === null
+              ? 'ainda sem leads'
+              : `${(porLead * 1000).toFixed(2)} $ por mil · ${(leads ?? 0).toLocaleString('pt-PT')} leads`
+          }
+          tom="text-acc"
+        />
+        <Cartao
+          rotulo="Chamadas faturadas"
+          valor={String(faturadas ?? 0)}
+          nota="ao Google Places"
+        />
         <Cartao
           rotulo="Poupadas pela cache"
           valor={String(poupadas)}

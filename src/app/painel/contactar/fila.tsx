@@ -90,8 +90,11 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
   }
 
   const ramo = findCategory(item.category)?.label ?? item.category;
-  const mensagem = item.mensagens[0]?.texto ?? '';
-  const whatsapp = whatsappUrl(item.phone);
+  // A escrita à mão para este lead, se houver; senão a do segmento e do país,
+  // a mesma da Lista de WhatsApp. Antes, sem uma escrita à mão, o botão abria
+  // a conversa em branco.
+  const mensagem = item.mensagens[0]?.texto || item.abertura;
+  const whatsapp = whatsappUrl(item.phone, mensagem);
 
   return (
     <div className="flex flex-col gap-5">
@@ -138,7 +141,7 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
 
           {whatsapp && (
             <a
-              href={mensagem ? `${whatsapp}?text=${encodeURIComponent(mensagem)}` : whatsapp}
+              href={whatsapp}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setWhatsappAbertoEm(item.id)}
@@ -171,21 +174,11 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
           </Link>
         </div>
 
-        {/* A mensagem, quando já foi escrita. Só de leitura: quem está a
-            contactar não vem aqui rever textos, vem mandá-los. */}
-        {mensagem ? (
-          <p className="rounded-lg bg-black/[0.03] px-4 py-3 text-sm leading-relaxed dark:bg-white/[0.04]">
-            {mensagem}
-          </p>
-        ) : (
-          <p className="rounded-lg border border-dashed border-line px-4 py-3 text-sm text-ink3 opacity-100 dark:border-line">
-            Ainda não há mensagem escrita para este.{' '}
-            <Link href={`/painel/comercio/${item.id}`} className="underline underline-offset-4">
-              Escrever na ficha
-            </Link>
-            .
-          </p>
-        )}
+        {/* A mensagem que vai no botão. Só de leitura: quem está a contactar
+            não vem aqui rever textos, vem mandá-los. */}
+        <p className="rounded-lg bg-black/[0.03] px-4 py-3 text-sm leading-relaxed whitespace-pre-line dark:bg-white/[0.04]">
+          {mensagem}
+        </p>
       </article>
 
       {/* Os três desfechos. Grandes e lado a lado: é o gesto que se repete

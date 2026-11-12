@@ -9,9 +9,9 @@ import { O_QUE_LEVA, PORQUE, segmentoDoRamo } from './segmentos';
  * falar de cada país.
  *
  * A frase «ainda não têm site» só se diz a quem de facto não tem. Quem só tem
- * Instagram ou Facebook ouve uma variante; quem já tem site próprio não recebe
- * esta mensagem (devolve null) — dizer-lhe que não tem site era a maneira mais
- * rápida de perder a conversa.
+ * Instagram ou Facebook ouve uma variante. Quem já tem site próprio ouve outra
+ * conversa — a de melhorar o site que tem, como no e-mail de abordagem —, e
+ * nunca que não tem site: era a maneira mais rápida de perder a conversa.
  */
 
 export type Presenca = 'none' | 'social_only' | 'real';
@@ -80,6 +80,20 @@ const PERGUNTA = {
   ],
 } as const;
 
+/** A pergunta para quem já tem site: ver a versão nova ao lado da atual. */
+const PERGUNTA_COM_SITE = {
+  PT: [
+    'Querem que prepare uma para compararem com o atual?',
+    'Posso preparar uma versão nova para compararem?',
+    'Querem ver como ficaria a versão nova?',
+  ],
+  BR: [
+    'Querem que eu prepare uma pra vocês compararem com o atual?',
+    'Posso preparar uma versão nova pra vocês compararem?',
+    'Querem ver como ficaria a versão nova?',
+  ],
+} as const;
+
 /**
  * A versão de um lead: sempre a mesma para o mesmo lead (a que se lê no painel
  * é a que vai), e espalhada pelas três ao longo da lista. Sem chave, a primeira.
@@ -107,13 +121,36 @@ export function mensagemDeAbertura(args: {
   /** O id do lead: escolhe qual das três versões ele recebe. */
   chave?: string | null;
   agora?: Date;
-}): string | null {
-  if (args.presenca === 'real') return null;
+}): string {
   const s = saudacao(args.pais, args.agora);
   const soRedes = args.presenca === 'social_only';
   const segmento = segmentoDoRamo(args.ramo);
   const leva = O_QUE_LEVA[segmento];
   const v = versaoDe(args.chave);
+
+  // Já tem site: a conversa é melhorá-lo, com a versão nova ao lado da atual.
+  if (args.presenca === 'real') {
+    if (args.pais === 'BR') {
+      return [
+        APRESENTACAO.BR[v](s),
+        `Achei vocês no Google Maps e dei uma olhada no site de vocês: acho que ele pode trazer mais clientes. ${PORQUE[segmento].BR[v]}`,
+        `Queria fazer uma proposta: eu preparo uma versão nova do site, ${leva.BR}, pra vocês compararem com o atual. Só pagam se gostarem. Sem mensalidade e sem compromisso.`,
+        `Esse é o meu site: ${SITE.BR}`,
+        'Desculpa se esse não for o número de quem cuida dessa parte. Se preferir, me passa o contato da pessoa certa ou um e-mail que eu falo por lá.',
+        PERGUNTA_COM_SITE.BR[v],
+        ASSINATURA,
+      ].join('\n\n');
+    }
+    return [
+      APRESENTACAO.PT[v](s),
+      `Encontrei o vosso negócio no Google Maps e estive a ver o vosso site: acho que ele vos pode trazer mais clientes. ${PORQUE[segmento].PT[v]}`,
+      `Queria fazer-vos uma proposta: eu preparo uma versão nova do site, ${leva.PT}, para compararem com o atual. Só pagam se gostarem. Sem mensalidade e sem compromisso.`,
+      `Este é o meu site: ${SITE.PT}`,
+      'Peço desculpa se este não for o número de quem trata desta parte. Se preferir, passe-me o contacto da pessoa certa ou um e-mail e falo por lá.',
+      PERGUNTA_COM_SITE.PT[v],
+      ASSINATURA,
+    ].join('\n\n');
+  }
 
   if (args.pais === 'BR') {
     const situacao = soRedes

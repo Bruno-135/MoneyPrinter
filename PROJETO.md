@@ -859,8 +859,13 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       Mensagem de abertura (`src/lib/whatsapp/mensagem.ts`), escolhida pelo dono: SEM
       o nome do negócio (soa a lista), «bom dia / boa tarde / boa noite» pela hora do
       país do lead, versão PT e versão BR. «Ainda não têm site» só a quem não tem; quem
-      só tem redes sociais ouve a variante; quem tem site próprio abre a conversa em
+      só tem redes sociais ouve a variante; quem tem site próprio ouve a de MELHORAR o
+      site (versão nova ao lado da atual, como o e-mail de abordagem) — antes abria em
       branco. Quem já recebeu abre sem mensagem («Abrir»), para continuar a conversa.
+      A fila «Leads a contactar» usa a mesma mensagem quando não há uma escrita à mão
+      para o lead (antes o botão abria em branco), e o cartão «Por contactar» do painel
+      leva à fila, que conta com a mesma função (levava à lista de todos os leads novos,
+      com site incluído, e os números não batiam).
 
       O botão grava um contacto `channel = 'whatsapp'` (lead passa a «WhatsApp
       enviado») e uma próxima acção a 3 dias SEM mexer na etapa — sem isso a fila

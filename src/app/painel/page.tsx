@@ -69,8 +69,12 @@ export default async function PainelPage() {
     {
       label: 'Por contactar',
       valor: porContactar,
-      href: '/painel/comercios?estado=new',
-      nota: atrasados > 0 ? `${atrasados} seguimentos atrasados` : 'à espera na fila',
+      // A fila conta-se com a mesma função: sem site ou só com redes sociais,
+      // ainda sem contacto e sem próxima acção para mais tarde. Antes levava à
+      // lista de TODOS os leads novos (com site incluído) e os números não batiam.
+      href: '/painel/contactar',
+      nota:
+        atrasados > 0 ? `${atrasados} seguimentos atrasados` : 'sem site, à espera na fila',
       tom: porContactar > 0 ? 'acc' : 'normal',
     },
     {

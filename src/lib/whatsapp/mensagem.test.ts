@@ -81,9 +81,28 @@ describe('mensagemDeAbertura', () => {
       /estão só nas redes sociais e ainda não têm um site próprio/,
     );
   });
-  it('quem já tem site não recebe esta mensagem', () => {
-    expect(mensagemDeAbertura({ pais: 'PT', presenca: 'real' })).toBeNull();
-    expect(mensagemDeAbertura({ pais: 'BR', presenca: 'real' })).toBeNull();
+  it('quem já tem site ouve falar de melhorar o site, nunca que não tem', () => {
+    const pt = mensagemDeAbertura({
+      pais: 'PT',
+      presenca: 'real',
+      ramo: 'advogados',
+      agora: TARDE,
+    });
+    const br = mensagemDeAbertura({
+      pais: 'BR',
+      presenca: 'real',
+      ramo: 'advogados',
+      agora: TARDE,
+    });
+    expect(pt).toMatch(/estive a ver o vosso site/);
+    expect(pt).toMatch(/versão nova do site/);
+    expect(br).toMatch(/dei uma olhada no site de vocês/);
+    expect(br).toMatch(/compararem com o atual/);
+    for (const m of [pt, br]) {
+      expect(m).not.toMatch(/não têm (um )?site/);
+      expect(m.split('\n\n')).toHaveLength(7);
+      expect(m.endsWith('Atenciosamente,\nBruno Dias')).toBe(true);
+    }
   });
 });
 

@@ -3,6 +3,7 @@ import type { Database } from '@/types/database.types';
 import { scoreLabel } from '@/lib/scoring/score';
 import { lerMensagens } from '@/lib/outreach/repository';
 import type { MensagemAbordagem } from '@/lib/ai/abordagem-texto';
+import { mensagemDeAbertura, type Presenca } from '@/lib/whatsapp/mensagem';
 
 /**
  * A fila de contacto: quem se vai ligar a seguir.
@@ -45,6 +46,11 @@ export interface ItemDaFila {
   countryCode: string;
   /** As mensagens já escritas para este comércio, se houver. */
   mensagens: MensagemAbordagem[];
+  /**
+   * A mensagem de abertura do segmento e do país, a mesma da Lista de WhatsApp.
+   * É a que vai no botão quando ninguém escreveu uma à mão para este lead.
+   */
+  abertura: string;
 }
 
 export interface OpcoesDaFila {
@@ -105,6 +111,7 @@ export async function proximosContactos(db: Db, opcoes: OpcoesDaFila = {}): Prom
     (escritas ?? []).map((m) => [m.business_id, lerMensagens(m.variants)]),
   );
 
+  const agora = new Date();
   return linhas.map((b) => ({
     id: b.id,
     name: b.name,
@@ -123,6 +130,13 @@ export async function proximosContactos(db: Db, opcoes: OpcoesDaFila = {}): Prom
     longitude: b.longitude,
     countryCode: b.country_code,
     mensagens: porComercio.get(b.id) ?? [],
+    abertura: mensagemDeAbertura({
+      pais: b.country_code,
+      presenca: (b.website_kind ?? 'none') as Presenca,
+      ramo: b.business_category,
+      chave: b.id,
+      agora,
+    }),
   }));
 }
 
