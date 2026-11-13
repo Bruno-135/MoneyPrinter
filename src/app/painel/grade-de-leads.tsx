@@ -6,7 +6,7 @@ import { whatsappUrl } from '@/lib/places/links';
 import { scoreLabel } from '@/lib/scoring/score';
 import { mensagemDeAbertura } from '@/lib/whatsapp/mensagem';
 import { ESTILO_DO_CONTACTO, ETIQUETA_DO_CONTACTO } from '@/lib/deals/contacto';
-import { corDoLead, inicialDe, porqueDoLead, type CartaoDeLead } from '@/lib/leads/cartao';
+import { porqueDoLead, type CartaoDeLead } from '@/lib/leads/cartao';
 import { BotaoWhatsapp } from './whatsapp/botao';
 import type { FotoDeCartao } from './destaques';
 
@@ -19,9 +19,39 @@ import type { FotoDeCartao } from './destaques';
  *
  * A FOTO SÓ APARECE QUANDO JÁ ESTÁ PAGA. Cada fotografia do Google custa, e
  * pedi-la para cada cartão gastava dinheiro só por abrir a lista. Os leads
- * cujas fotos já se foram buscar (para fazer o site, ou na ficha) mostram-na;
- * os outros mostram a inicial, na cor do ramo. Ver `fotosDosDestaques`.
+ * cujas fotos já se foram buscar (para fazer o site, na ficha, ou com o botão
+ * «Carregar fotos») mostram-na; os outros mostram o mesmo fundo claro com o
+ * logótipo da VaiDesign, apagado. Ver `fotosDosDestaques` e `BotaoFotos`.
  */
+
+/** O lugar da foto que ainda não há: igual em todos, para não distrair. */
+function SemFoto() {
+  return (
+    <span
+      aria-hidden
+      className="flex h-full w-full items-center justify-center bg-[#F3ECE1] dark:bg-white/[0.04]"
+    >
+      <span className="inline-flex items-baseline text-[44px] text-[#141210] opacity-20 dark:text-[#F6EFE4]">
+        <span
+          className="relative block"
+          style={{ font: "800 1em/.78 'Barlow Condensed', sans-serif", letterSpacing: '-.02em' }}
+        >
+          vaı
+          <span
+            className="absolute rounded-full bg-[#EC5B13]"
+            style={{ right: '-.3em', top: '-.02em', width: '.19em', height: '.19em' }}
+          />
+        </span>
+        <span
+          className="ml-[.34em] uppercase"
+          style={{ font: "500 .3em/1 'JetBrains Mono', monospace", letterSpacing: '.3em' }}
+        >
+          design
+        </span>
+      </span>
+    </span>
+  );
+}
 
 const SITE: Record<CartaoDeLead['presenca'], { texto: string; estilo: string }> = {
   none: { texto: 'Sem site', estilo: 'bg-amber-500/15 text-amber-800 dark:text-amber-300' },
@@ -74,13 +104,7 @@ export function GradeDeLeads({
                 // eslint-disable-next-line @next/next/no-img-element -- endereço do Google, já pago e com validade; o otimizador do Next voltava a pedi-lo.
                 <img src={foto.url} alt="" className="h-full w-full object-cover" loading="lazy" />
               ) : (
-                <span
-                  aria-hidden
-                  className="flex h-full w-full items-center justify-center text-5xl font-bold text-white/90"
-                  style={{ background: corDoLead(c.ramo) }}
-                >
-                  {inicialDe(c.nome)}
-                </span>
+                <SemFoto />
               )}
             </Link>
 

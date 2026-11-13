@@ -50,8 +50,12 @@ import { CartoesComercios, SITE_LABEL, SITE_STYLE } from '../cartoes-comercios';
 import { lerVista } from '../vista';
 import { VistaToggle } from '../vista-toggle';
 import { GradeDeLeads } from '../grade-de-leads';
+import { BotaoFotos } from '../botao-fotos';
+import { pedidoDeFotos } from '@/lib/places/fotos';
 
 export const dynamic = 'force-dynamic';
+// O «Carregar fotos» dos cartões pode levar uns segundos: duas consultas à Google por lead.
+export const maxDuration = 60;
 
 interface PainelProps {
   searchParams: Promise<{
@@ -277,6 +281,10 @@ export default async function PainelPage({ searchParams }: PainelProps) {
   const vista = await lerVista();
   const fotosDosCartoes =
     vista === 'cartoes' ? await fotosDosDestaques(supabase, businesses) : new Map<string, never>();
+  const fotosPorCarregar =
+    vista === 'cartoes'
+      ? await pedidoDeFotos(supabase, businesses.map((b) => b.id), new Set(fotosDosCartoes.keys()))
+      : { ids: [], custoUsd: 0 };
 
   // Quantos estão mesmo à espera: por contactar e não adiados para depois. É
   // diferente do cartão "Por contactar", que conta todos — e a diferença é
@@ -492,7 +500,10 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           ]}
         />
 
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          {vista === 'cartoes' && (
+            <BotaoFotos ids={fotosPorCarregar.ids} custoUsd={fotosPorCarregar.custoUsd} />
+          )}
           <VistaToggle atual={vista} />
         </div>
 

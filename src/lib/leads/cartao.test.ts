@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { corDoLead, inicialDe, porqueDoLead, type CartaoDeLead } from './cartao';
+import { porqueDoLead, type CartaoDeLead } from './cartao';
 
 const lead: CartaoDeLead = {
   id: 'x',
@@ -32,16 +32,5 @@ describe('porqueDoLead', () => {
     expect(porqueDoLead({ ...lead, avaliacoes: 6, nota: 5 })).toBe(
       'Não tem site · telemóvel (WhatsApp)',
     );
-  });
-});
-
-describe('inicialDe e corDoLead', () => {
-  it('a primeira letra a sério, em maiúscula', () => {
-    expect(inicialDe('  «art» café')).toBe('A');
-    expect(inicialDe('')).toBe('?');
-  });
-  it('uma cor por segmento, e o ramo desconhecido cai no geral', () => {
-    expect(corDoLead('restaurante')).toBe('#B4471B');
-    expect(corDoLead('qualquer-coisa')).toBe('#6B5E4E');
   });
 });

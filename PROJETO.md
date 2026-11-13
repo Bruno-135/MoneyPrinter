@@ -851,8 +851,12 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       (`src/lib/leads/cartao.ts`, feito dos dados e não das frases do score) e quatro
       botões — WhatsApp com a mensagem, Ligar, Criar site (`/painel/comercio/[id]#site`) e
       Ficha. A FOTO SÓ APARECE SE JÁ FOI PAGA (`fotosDosDestaques`, endereços já guardados);
-      sem ela, a inicial na cor do segmento. Pedir uma foto por cartão gastava dinheiro só
-      por abrir a lista.
+      sem ela, o mesmo fundo claro com o logótipo da VaiDesign apagado, em todos. Pedir uma
+      foto por cartão gastava dinheiro só por abrir a lista. O botão «Carregar fotos (N ·
+      ~X $)» (`botao-fotos.tsx`, `fotos-actions.ts`) busca a primeira foto dos leads da
+      página que ainda não a têm, depois de dizer o custo e perguntar; estimativa em
+      `pedidoDeFotos` (lista de fotos ~0,02 $, endereço ~0,007 $), deixando de fora quem a
+      Google já disse que não tem fotos. As duas páginas têm `maxDuration = 60` por isso.
 
 - [x] **Contactos de cada procura** — em `/painel/varrimento`, por baixo dos cartões:
       as procuras feitas (botões) e os contactos da escolhida, os 100 com melhor nota,

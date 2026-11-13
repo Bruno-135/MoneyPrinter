@@ -32,6 +32,8 @@ import { BotaoWhatsapp, Desfazer } from './botao';
 import { lerVista } from '../vista';
 import { VistaToggle } from '../vista-toggle';
 import { GradeDeLeads } from '../grade-de-leads';
+import { BotaoFotos } from '../botao-fotos';
+import { pedidoDeFotos } from '@/lib/places/fotos';
 import { fotosDosDestaques } from '../destaques';
 
 /**
@@ -46,6 +48,8 @@ import { fotosDosDestaques } from '../destaques';
  */
 
 export const dynamic = 'force-dynamic';
+// O «Carregar fotos» dos cartões pode levar uns segundos: duas consultas à Google por lead.
+export const maxDuration = 60;
 
 const POR_PAGINA = 100;
 
@@ -120,6 +124,10 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
   const vista = await lerVista();
   const fotos =
     vista === 'cartoes' ? await fotosDosDestaques(supabase, visiveis) : new Map<string, never>();
+  const fotosPorCarregar =
+    vista === 'cartoes'
+      ? await pedidoDeFotos(supabase, visiveis.map((l) => l.id), new Set(fotos.keys()))
+      : { ids: [], custoUsd: 0 };
 
   // Cada caixa conta com os filtros das outras, e nunca com o dela.
   const porPais = contar(linhas, filtros, 'pais');
@@ -223,6 +231,9 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
         <VistaToggle atual={vista} />
+        {vista === 'cartoes' && (
+          <BotaoFotos ids={fotosPorCarregar.ids} custoUsd={fotosPorCarregar.custoUsd} />
+        )}
         <span className="font-semibold">
           {passam.length.toLocaleString('pt-PT')} {passam.length === 1 ? 'lead' : 'leads'}
         </span>

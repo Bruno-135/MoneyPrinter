@@ -159,3 +159,45 @@ export async function resolverUri(
 
   return { uri: resposta.uri, doCache: false, erro: null };
 }
+
+/**
+ * Preços por consulta, em USD, para estimar o «Carregar fotos» antes de se
+ * carregar. A lista de fotos é uma consulta de detalhes com o campo `photos`
+ * (escalão mais caro, ~20 $/1000); cada endereço de foto, ~7 $/1000. A Google
+ * dá uma parte grátis por mês a cada um, por isso a conta real pode ser menor.
+ */
+export const USD_LISTA_DE_FOTOS = 0.02;
+export const USD_ENDERECO_DE_FOTO = 0.007;
+
+/**
+ * Dos leads de uma página, os que ainda não têm foto para o cartão, e quanto
+ * custaria ir buscá-las. `comFoto` são os que já a têm (ver
+ * `fotosDosDestaques`). Ficam de fora os que a Google já disse que não têm
+ * fotos: perguntar outra vez era pagar pela mesma resposta.
+ */
+export async function pedidoDeFotos(
+  db: Db,
+  ids: readonly string[],
+  comFoto: ReadonlySet<string>,
+): Promise<{ ids: string[]; custoUsd: number }> {
+  const faltam = ids.filter((id) => !comFoto.has(id));
+  if (faltam.length === 0) return { ids: [], custoUsd: 0 };
+
+  const { data } = await db
+    .from('businesses')
+    .select('id, google_photos, photos_fetched_at')
+    .in('id', faltam);
+
+  let custo = 0;
+  const pedir: string[] = [];
+  for (const c of data ?? []) {
+    if (!c.photos_fetched_at) {
+      custo += USD_LISTA_DE_FOTOS + USD_ENDERECO_DE_FOTO;
+      pedir.push(c.id);
+    } else if (lerFotosGuardadas(c.google_photos).length > 0) {
+      custo += USD_ENDERECO_DE_FOTO;
+      pedir.push(c.id);
+    }
+  }
+  return { ids: pedir, custoUsd: custo };
+}

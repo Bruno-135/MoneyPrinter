@@ -1,6 +1,5 @@
 import type { EstadoDoContacto } from '@/lib/deals/contacto';
 import { ehMovel } from '@/lib/whatsapp/lista';
-import { segmentoDoRamo, type Segmento } from '@/lib/whatsapp/segmentos';
 
 /**
  * Um lead em forma de cartão: o que se mostra na vista «Cartões» da lista de
@@ -65,30 +64,4 @@ export function porqueDoLead(c: CartaoDeLead): string {
  */
 function milhares(n: number): string {
   return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
-/** A letra que fica no lugar da foto. */
-export function inicialDe(nome: string): string {
-  const letra = nome.trim().match(/[\p{L}\p{N}]/u)?.[0];
-  return (letra ?? '?').toUpperCase();
-}
-
-/**
- * A cor do quadrado sem foto, pelo segmento: uma lista de cabeleireiros não
- * parece igual a uma de oficinas, mesmo sem fotografias.
- */
-export const COR_DO_SEGMENTO: Record<Segmento, string> = {
-  restauracao: '#B4471B',
-  beleza: '#9D4E6E',
-  saude: '#2F6B4F',
-  fitness: '#1D5FA8',
-  ensino: '#5B4B8A',
-  orcamento: '#8A5A1F',
-  escritorio: '#3F4A5A',
-  loja: '#0E7490',
-  geral: '#6B5E4E',
-};
-
-export function corDoLead(ramo: string): string {
-  return COR_DO_SEGMENTO[segmentoDoRamo(ramo)];
 }
