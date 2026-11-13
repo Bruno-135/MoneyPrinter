@@ -51,13 +51,13 @@ function NovaPagina({ siteId }: { siteId: string }) {
           name="titulo"
           placeholder="Nome no menu — ex.: Mulher"
           maxLength={60}
-          className="h-11 min-w-0 flex-1 rounded-md border border-line bg-surf px-3 text-base"
+          className="h-11 min-w-0 flex-1 basis-48 rounded-md border border-line bg-surf px-3 text-base"
         />
         <input
           name="slug"
           placeholder="endereço (opcional)"
           maxLength={40}
-          className="h-11 min-w-0 flex-1 rounded-md border border-line bg-surf px-3 font-mono text-sm"
+          className="h-11 min-w-0 flex-1 basis-40 rounded-md border border-line bg-surf px-3 font-mono text-sm"
         />
         <Botao>Criar</Botao>
       </div>

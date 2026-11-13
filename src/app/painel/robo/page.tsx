@@ -8,7 +8,9 @@ import { PorLigar } from '../por-ligar';
  * isso é o que está marcado a cor em cada conversa.
  */
 
-export const dynamic = 'force-static';
+// Dinâmica como as outras: estática, a moldura do painel era desenhada sem
+// sessão no build e mandava toda a gente para o ecrã de entrada.
+export const dynamic = 'force-dynamic';
 
 interface Conversa {
   perfil: string;

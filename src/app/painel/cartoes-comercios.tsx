@@ -62,8 +62,11 @@ export function CartoesComercios({
             </span>
           </div>
 
-          <div className="mt-1.5 flex items-baseline gap-2">
-            <Link href={`/painel/comercio/${b.id}`} className="font-medium underline-offset-4">
+          <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <Link
+              href={`/painel/comercio/${b.id}`}
+              className="min-w-0 font-medium break-words underline-offset-4"
+            >
               {b.name}
             </Link>
             {b.hasSite && (

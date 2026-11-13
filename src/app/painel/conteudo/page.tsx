@@ -8,7 +8,9 @@ import { PorLigar } from '../por-ligar';
  * lado do cliente e o trabalho pára.
  */
 
-export const dynamic = 'force-static';
+// Dinâmica como as outras: estática, a moldura do painel era desenhada sem
+// sessão no build e mandava toda a gente para o ecrã de entrada.
+export const dynamic = 'force-dynamic';
 
 const SEMANA = [
   { dia: 'Seg 15', posts: [ { cliente: 'Brasa Velha', texto: 'Prato do dia · foto nova', estado: 'publicado' }, { cliente: 'Forno di Pietra', texto: 'Promoção terça 2x1', estado: 'aprovar' } ] },

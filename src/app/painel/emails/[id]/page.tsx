@@ -79,9 +79,11 @@ export default async function EmailDoLeadPage({ params }: { params: Promise<{ id
           )}
         </div>
 
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex w-full flex-col gap-1 sm:w-auto sm:items-end">
           {motivo ? (
-            <p className="max-w-xs text-right text-[13px] font-semibold text-red-600">{motivo}</p>
+            <p className="max-w-xs text-[13px] font-semibold text-red-600 sm:text-right">
+              {motivo}
+            </p>
           ) : (
             <EnviarEmail businessId={lead.id} para={lead.email!} />
           )}

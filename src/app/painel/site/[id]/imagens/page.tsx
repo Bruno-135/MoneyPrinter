@@ -99,7 +99,7 @@ export default async function ImagensPage({ params, searchParams }: Props) {
   const usaGerada = content.cover === null;
 
   return (
-    <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-12">
+    <div className="mx-auto flex w-full min-w-0 max-w-4xl flex-col gap-8 sm:px-6 sm:py-6">
       <div>
         <Link
           href={`/painel/site/${id}/editar`}
@@ -355,6 +355,6 @@ export default async function ImagensPage({ params, searchParams }: Props) {
           </>
         )}
       </section>
-    </main>
+    </div>
   );
 }

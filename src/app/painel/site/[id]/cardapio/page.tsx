@@ -34,7 +34,7 @@ export default async function CardapioPage({ params }: { params: Promise<{ id: s
   const currency = site.whatsapp_country === 'BR' ? 'BRL' : 'EUR';
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12">
+    <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-8 sm:px-6 sm:py-6">
       <div>
         <Link
           href={`/painel/comercio/${site.business_id}`}
@@ -123,6 +123,6 @@ export default async function CardapioPage({ params }: { params: Promise<{ id: s
           )}
         </>
       )}
-    </main>
+    </div>
   );
 }

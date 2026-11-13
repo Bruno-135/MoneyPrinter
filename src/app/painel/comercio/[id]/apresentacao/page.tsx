@@ -64,7 +64,7 @@ export default async function ApresentacaoPage({ params }: { params: Promise<{ i
         <BotaoImprimir label="Guardar em PDF" />
       </div>
 
-      <main className="folha mx-auto my-8 max-w-3xl rounded-lg border border-black/10 bg-white p-12 text-[#17150f] shadow-sm dark:border-white/10">
+      <main className="folha mx-auto my-2 w-full max-w-3xl rounded-lg border border-black/10 bg-white p-5 sm:my-8 sm:p-12 text-[#17150f] shadow-sm dark:border-white/10">
         <header className="border-b-2 border-current pb-5">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase opacity-55">Proposta de presença online</p>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight text-balance">{business.name}</h1>
@@ -77,7 +77,7 @@ export default async function ApresentacaoPage({ params }: { params: Promise<{ i
         {/* ---- O que encontrámos ---- */}
         <section className="mt-9">
           <h2 className="text-lg font-semibold">A situação hoje</h2>
-          <dl className="mt-4 grid grid-cols-3 gap-px overflow-hidden rounded-md border border-black/10 bg-black/10">
+          <dl className="mt-4 grid grid-cols-1 gap-px sm:grid-cols-3 overflow-hidden rounded-md border border-black/10 bg-black/10">
             <Facto rotulo="Presença online" valor={SITE_LABEL[business.website_kind ?? 'none'] ?? '—'} />
             <Facto
               rotulo="Avaliação no Google"

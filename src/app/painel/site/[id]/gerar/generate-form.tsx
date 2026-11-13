@@ -126,7 +126,7 @@ export function GenerateForm({
               const escolhido = modelos.find((m) => m.id === e.target.value);
               if (escolhido?.fonteImagens) setFonte(escolhido.fonteImagens);
             }}
-            className="h-11 rounded-md border border-black/12 px-3 dark:border-white/12"
+            className="h-11 w-full min-w-0 rounded-md border border-black/12 px-3 dark:border-white/12"
           >
             <option value="">Sem modelo — a IA desenha à sua maneira</option>
             {modelos.map((m) => (

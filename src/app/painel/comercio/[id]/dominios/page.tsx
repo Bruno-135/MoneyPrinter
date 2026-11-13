@@ -93,7 +93,7 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
   const livres = resultados.filter((r) => r.estado === 'livre');
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12">
+    <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-8 sm:px-6 sm:py-6">
       <div>
         <Link
           href={`/painel/comercio/${id}`}
@@ -126,16 +126,16 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
             {[...porNome.entries()].map(([nome, lista]) => (
               <section
                 key={nome}
-                className="flex flex-col gap-3 rounded-lg border border-black/10 p-5 dark:border-white/10"
+                className="flex flex-col gap-3 rounded-lg border border-black/10 p-4 sm:p-5 dark:border-white/10"
               >
-                <h2 className="font-mono text-sm opacity-70">{nome}</h2>
+                <h2 className="font-mono text-sm break-all opacity-70">{nome}</h2>
                 <ul className="flex flex-col divide-y divide-black/[0.07] dark:divide-white/[0.07]">
                   {lista.map((resultado) => (
                     <li
                       key={resultado.dominio}
                       className="flex flex-wrap items-center justify-between gap-2 py-2.5"
                     >
-                      <span className="font-medium">{resultado.dominio}</span>
+                      <span className="min-w-0 font-medium break-all">{resultado.dominio}</span>
                       <span className="flex items-center gap-3">
                         <Estado resultado={resultado} />
                         {resultado.estado !== 'ocupado' && (
@@ -179,6 +179,6 @@ export default async function DominiosPage({ params }: { params: Promise<{ id: s
           </div>
         </>
       )}
-    </main>
+    </div>
   );
 }

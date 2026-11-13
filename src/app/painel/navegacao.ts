@@ -112,6 +112,7 @@ export function tituloDoEcra(caminho: string): [string, string] {
   if (caminho.startsWith('/painel/comercio/')) {
     return ['Ficha do lead', 'tudo o que decide a chamada'];
   }
+  if (caminho.startsWith('/painel/emails/')) return ['E-mail do lead', 'ver antes de enviar'];
   if (caminho.startsWith('/painel/modelos/'))
     return ['Modelo de site', 'como o comerciante o vai ver'];
   if (caminho.endsWith('/pecas') && caminho.startsWith('/painel/site/')) {

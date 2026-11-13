@@ -116,7 +116,7 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
   const breakdown = (business.score_breakdown ?? {}) as unknown as Record<string, Factor>;
 
   return (
-    <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-12">
+    <div className="mx-auto flex w-full min-w-0 max-w-4xl flex-col gap-8 sm:px-6 sm:py-6">
       {/* ---------------- Cabeçalho da ficha ----------------
           Uma caixa só, com a fotografia por cima: é o mesmo lead que se
           viu no cartão do painel, e ver a loja outra vez ao abrir a ficha
@@ -589,6 +589,6 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
           ))}
         </ul>
       </section>
-    </main>
+    </div>
   );
 }

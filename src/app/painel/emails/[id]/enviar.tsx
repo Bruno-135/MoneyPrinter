@@ -31,7 +31,7 @@ export function EnviarEmail({ businessId, para }: { businessId: string; para: st
             if (r.ok) router.refresh();
           });
         }}
-        className="bg-brand-600 rounded-lg px-5 py-2.5 text-[14px] font-semibold text-white disabled:opacity-50"
+        className="bg-brand-600 rounded-lg px-5 py-2.5 text-[14px] font-semibold [overflow-wrap:anywhere] text-white disabled:opacity-50"
       >
         {aEnviar ? 'A enviar…' : resultado?.ok ? 'Enviado' : `Enviar ao cliente (${para})`}
       </button>
@@ -62,20 +62,20 @@ export function EnviarTeste({
 
   return (
     <form
-      className="flex flex-col items-end gap-1"
+      className="flex flex-col gap-1 sm:items-end"
       onSubmit={(e) => {
         e.preventDefault();
         iniciar(async () => setResultado(await enviarTeste(businessId, para)));
       }}
     >
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <input
           type="email"
           required
           value={para}
           onChange={(e) => setPara(e.target.value)}
           placeholder="o-seu@email.com"
-          className="border-line bg-surf h-9 w-56 rounded-lg border px-3 text-[13px]"
+          className="border-line bg-surf h-9 min-w-0 flex-1 rounded-lg border px-3 text-[13px] sm:w-56 sm:flex-none"
         />
         <button
           disabled={aEnviar}

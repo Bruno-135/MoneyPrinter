@@ -20,6 +20,11 @@ export function FotoDoCartao({ url, children }: { url: string; children: ReactNo
       alt=""
       className="h-full w-full object-cover"
       loading="lazy"
+      // A imagem pode falhar ANTES de o React ligar o onError (a página vem
+      // desenhada do servidor). Nesse caso já está «completa» e sem largura.
+      ref={(img) => {
+        if (img?.complete && img.naturalWidth === 0) setPartida(true);
+      }}
       onError={() => setPartida(true)}
     />
   );
