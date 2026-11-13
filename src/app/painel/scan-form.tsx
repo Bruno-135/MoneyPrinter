@@ -1,6 +1,8 @@
 'use client';
 
-import { startTransition, useActionState, useState } from 'react';
+import { startTransition, useActionState, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import { useFormStatus } from 'react-dom';
 import { findCity, runScan, type CityFormState, type ScanFormState } from './actions';
 import { CATEGORIES, categoriesByGroup } from '@/lib/places/categories';
@@ -77,6 +79,15 @@ function ScanButtons({ ready, pending }: { ready: boolean; pending: boolean }) {
 
 export function ScanForm() {
   const [scanState, scanAction, aProcurar] = useActionState(runScan, SCAN_IDLE);
+  const router = useRouter();
+
+  // Acabou uma procura a sério: a página passa a mostrar, por baixo, os
+  // contactos que ela trouxe (e os cartões do gasto atualizam-se).
+  const feita = scanState.summary;
+  const regiaoFeita = feita && !feita.dryRun ? feita.region.regionId : null;
+  useEffect(() => {
+    if (regiaoFeita) router.replace(`/painel/varrimento?busca=${regiaoFeita}` as Route, { scroll: false });
+  }, [regiaoFeita, router]);
   const [cityState, cityAction] = useActionState(findCity, CITY_IDLE);
 
   const [pais, setPais] = useState<'PT' | 'BR'>('PT');

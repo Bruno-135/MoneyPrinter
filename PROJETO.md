@@ -844,6 +844,15 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       externos. Só o extrator, o filtro e a guarda de IPs têm testes; a primeira corrida
       a sério é em produção.
 
+- [x] **Contactos de cada procura** — em `/painel/varrimento`, por baixo dos cartões:
+      as procuras feitas (botões) e os contactos da escolhida, os 100 com melhor nota,
+      com ligação para a lista de Leads filtrada por ela (`?procura=`). Depois de uma
+      procura a sério, o formulário leva para `?busca=<região>` e a lista aparece
+      sozinha. Os leads são os mesmos de todas as outras páginas (mesma tabela).
+      O formulário de varrimento usa `onSubmit` e não `action`: a limpeza automática do
+      React repunha o ramo em «Restaurante» depois de simular, sem o estado saber, e o
+      «Procurar a sério» procurou no ramo errado.
+
 - [x] **Lista de WhatsApp** — `/painel/whatsapp` (área `whatsapp`; antes era a maqueta
       «Instâncias WhatsApp», com números inventados, que saiu). Todos os leads com
       telefone, por omissão SÓ telemóveis, com filtros de país, ramo, score
