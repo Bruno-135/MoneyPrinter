@@ -23,6 +23,8 @@ function lead(p: Partial<LinhaWhatsapp>): LinhaWhatsapp {
     contactadoEm: null,
     adicionadoEm: null,
     presenca: 'none',
+    nota: null,
+    avaliacoes: null,
     ...p,
   };
 }

@@ -11,7 +11,7 @@ const PAGINA = 1000;
 const MAXIMO_DE_LINHAS = 50_000;
 
 const COLUNAS =
-  'id, name, business_category, country_code, locality, score, phone_e164, estado_do_contacto, falado_em, emailado_em, first_seen_at, website_kind';
+  'id, name, business_category, country_code, locality, score, phone_e164, estado_do_contacto, falado_em, emailado_em, first_seen_at, website_kind, rating, reviews_count';
 
 function maisRecente(a: string | null, b: string | null): string | null {
   if (a && b) return new Date(a) >= new Date(b) ? a : b;
@@ -51,6 +51,8 @@ export async function lerLinhasWhatsapp(db: Db): Promise<LinhaWhatsapp[]> {
         adicionadoEm: r.first_seen_at,
         presenca:
           r.website_kind === 'real' || r.website_kind === 'social_only' ? r.website_kind : 'none',
+        nota: r.rating,
+        avaliacoes: r.reviews_count,
       });
     }
     if ((data ?? []).length < PAGINA) break;

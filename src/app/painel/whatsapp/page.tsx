@@ -29,6 +29,10 @@ import {
 import { FilterBar } from '../filter-bar';
 import { mensagemDeAbertura } from '@/lib/whatsapp/mensagem';
 import { BotaoWhatsapp, Desfazer } from './botao';
+import { lerVista } from '../vista';
+import { VistaToggle } from '../vista-toggle';
+import { GradeDeLeads } from '../grade-de-leads';
+import { fotosDosDestaques } from '../destaques';
 
 /**
  * A lista de WhatsApp: todos os leads com telemóvel, para abrir a conversa.
@@ -111,6 +115,11 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
   const paginas = Math.max(1, Math.ceil(passam.length / POR_PAGINA));
   const pagina = Math.min(atual.pagina, paginas);
   const visiveis = passam.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
+
+  // Em cartões, as fotos que já foram pagas (só as desta página): ver `grade-de-leads.tsx`.
+  const vista = await lerVista();
+  const fotos =
+    vista === 'cartoes' ? await fotosDosDestaques(supabase, visiveis) : new Map<string, never>();
 
   // Cada caixa conta com os filtros das outras, e nunca com o dela.
   const porPais = contar(linhas, filtros, 'pais');
@@ -213,6 +222,7 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
       />
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
+        <VistaToggle atual={vista} />
         <span className="font-semibold">
           {passam.length.toLocaleString('pt-PT')} {passam.length === 1 ? 'lead' : 'leads'}
         </span>
@@ -241,6 +251,25 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
         <div className="border-line rounded-2xl border border-dashed px-6 py-12 text-center text-[14px]">
           Nenhum lead com estes filtros.
         </div>
+      ) : vista === 'cartoes' ? (
+        <GradeDeLeads
+          agora={agora}
+          fotos={fotos}
+          cartoes={visiveis.map((l) => ({
+            id: l.id,
+            nome: l.nome,
+            ramo: l.ramo,
+            cidade: l.cidade,
+            pais: l.pais,
+            score: l.score,
+            nota: l.nota,
+            avaliacoes: l.avaliacoes,
+            presenca: l.presenca,
+            telefone: l.telefone,
+            contacto: l.contacto,
+            contactadoEm: l.contactadoEm,
+          }))}
+        />
       ) : (
         <ul className="border-line divide-line divide-y rounded-lg border">
           {visiveis.map((l) => {

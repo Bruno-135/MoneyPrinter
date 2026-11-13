@@ -388,8 +388,9 @@ export default async function ComercioPage({ params }: { params: Promise<{ id: s
         />
       )}
 
-      {/* ---------------- Landing pages ---------------- */}
-      <section className="flex flex-col gap-4">
+      {/* ---------------- Landing pages ----------------
+          `id="site"`: é para aqui que leva o «Criar site» dos cartões. */}
+      <section id="site" className="flex scroll-mt-20 flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold tracking-tight">Landing page</h2>
           <div className="flex flex-wrap gap-2.5">

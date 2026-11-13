@@ -47,6 +47,9 @@ import { StageSelect } from '../stage-select';
 import { Destaques, fotosDosDestaques } from '../destaques';
 import { Numeros, type Numero } from '../numeros';
 import { CartoesComercios, SITE_LABEL, SITE_STYLE } from '../cartoes-comercios';
+import { lerVista } from '../vista';
+import { VistaToggle } from '../vista-toggle';
+import { GradeDeLeads } from '../grade-de-leads';
 
 export const dynamic = 'force-dynamic';
 
@@ -269,6 +272,12 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     ordem === 'score' ? businesses.filter((b) => b.stage === 'new').slice(0, 3) : [];
   const fotosDestaques = await fotosDosDestaques(supabase, destaques);
 
+  // Lista ou cartões. Em cartões, as fotos que já foram pagas destes 100: ver
+  // `grade-de-leads.tsx`.
+  const vista = await lerVista();
+  const fotosDosCartoes =
+    vista === 'cartoes' ? await fotosDosDestaques(supabase, businesses) : new Map<string, never>();
+
   // Quantos estão mesmo à espera: por contactar e não adiados para depois. É
   // diferente do cartão "Por contactar", que conta todos — e a diferença é
   // exatamente quem já se tentou e não atendeu.
@@ -483,6 +492,10 @@ export default async function PainelPage({ searchParams }: PainelProps) {
           ]}
         />
 
+        <div className="flex justify-end">
+          <VistaToggle atual={vista} />
+        </div>
+
         {businesses.length === 0 ? (
           <p className="rounded-lg border border-dashed border-line px-5 py-8 text-center text-sm text-ink2 opacity-100 dark:border-line">
             {ramos.length > 0 || estados.length > 0 || sites.length > 0 || contacto !== '' || email !== ''
@@ -491,6 +504,24 @@ export default async function PainelPage({ searchParams }: PainelProps) {
                 ? `A procura ${batch.label} · ${batch.categoryLabel} não deu nenhum lead.`
                 : 'Ainda não há leads. Faz uma simulação primeiro para ver o custo, e depois procura a sério.'}
           </p>
+        ) : vista === 'cartoes' ? (
+          <GradeDeLeads
+            fotos={fotosDosCartoes}
+            cartoes={businesses.map((b) => ({
+              id: b.id,
+              nome: b.name,
+              ramo: b.category,
+              cidade: b.locality,
+              pais: b.countryCode,
+              score: b.score,
+              nota: b.rating,
+              avaliacoes: b.reviewsCount,
+              presenca: b.websiteKind,
+              telefone: b.phone,
+              contacto: b.contacto,
+              contactadoEm: b.contactadoEm,
+            }))}
+          />
         ) : (
           <>
             {/* Cartões no telemóvel, tabela no computador. Sete colunas não

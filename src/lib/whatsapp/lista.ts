@@ -33,6 +33,9 @@ export interface LinhaWhatsapp {
   adicionadoEm: string | null;
   /** O que tem online: decide que mensagem recebe (ver `mensagem.ts`). */
   presenca: 'none' | 'social_only' | 'real';
+  /** Nota e número de avaliações no Google, para os cartões. */
+  nota: number | null;
+  avaliacoes: number | null;
 }
 
 /**

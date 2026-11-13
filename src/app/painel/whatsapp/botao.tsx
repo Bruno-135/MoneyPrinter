@@ -43,7 +43,16 @@ function useEhComputador(): boolean {
  * No computador abre o WhatsApp Web, sempre no mesmo separador; no telemóvel,
  * a app, pelo wa.me.
  */
-export function BotaoWhatsapp({ businessId, href }: { businessId: string; href: string }) {
+export function BotaoWhatsapp({
+  businessId,
+  href,
+  largo = false,
+}: {
+  businessId: string;
+  href: string;
+  /** Ocupa a largura toda, como nos cartões. */
+  largo?: boolean;
+}) {
   const router = useRouter();
   const [, iniciar] = useTransition();
   const web = useEhComputador() ? whatsappWebUrl(href) : null;
@@ -62,7 +71,7 @@ export function BotaoWhatsapp({ businessId, href }: { businessId: string; href: 
           router.refresh();
         })
       }
-      className="w-24 rounded-lg bg-emerald-600 px-3 py-1.5 text-center text-[13px] font-semibold text-white"
+      className={`${largo ? 'w-full' : 'w-24'} rounded-lg bg-emerald-600 px-3 py-1.5 text-center text-[13px] font-semibold text-white`}
     >
       WhatsApp
     </a>

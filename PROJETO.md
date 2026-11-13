@@ -844,6 +844,16 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       externos. Só o extrator, o filtro e a guarda de IPs têm testes; a primeira corrida
       a sério é em produção.
 
+- [x] **Lista ou cartões** — botão «Lista | Cartões» na lista de Leads e na Lista de
+      WhatsApp; a escolha fica no cookie `vd-vista` (lido no servidor, para a página não
+      saltar de uma vista para a outra). Cada cartão (`grade-de-leads.tsx`): foto, nota no
+      Google, temperatura, situação do site, estado do contacto, o porquê numa linha
+      (`src/lib/leads/cartao.ts`, feito dos dados e não das frases do score) e quatro
+      botões — WhatsApp com a mensagem, Ligar, Criar site (`/painel/comercio/[id]#site`) e
+      Ficha. A FOTO SÓ APARECE SE JÁ FOI PAGA (`fotosDosDestaques`, endereços já guardados);
+      sem ela, a inicial na cor do segmento. Pedir uma foto por cartão gastava dinheiro só
+      por abrir a lista.
+
 - [x] **Contactos de cada procura** — em `/painel/varrimento`, por baixo dos cartões:
       as procuras feitas (botões) e os contactos da escolhida, os 100 com melhor nota,
       com ligação para a lista de Leads filtrada por ela (`?procura=`). Depois de uma
