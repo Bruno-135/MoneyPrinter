@@ -283,7 +283,7 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     vista === 'cartoes' ? await fotosDosDestaques(supabase, businesses) : new Map<string, never>();
   const fotosPorCarregar =
     vista === 'cartoes'
-      ? await pedidoDeFotos(supabase, businesses.map((b) => b.id), new Set(fotosDosCartoes.keys()))
+      ? await pedidoDeFotos(supabase, businesses.map((b) => b.id))
       : { ids: [], custoUsd: 0 };
 
   // Quantos estão mesmo à espera: por contactar e não adiados para depois. É

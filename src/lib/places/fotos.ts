@@ -170,31 +170,57 @@ export const USD_LISTA_DE_FOTOS = 0.02;
 export const USD_ENDERECO_DE_FOTO = 0.007;
 
 /**
- * Dos leads de uma página, os que ainda não têm foto para o cartão, e quanto
- * custaria ir buscá-las. `comFoto` são os que já a têm (ver
- * `fotosDosDestaques`). Ficam de fora os que a Google já disse que não têm
- * fotos: perguntar outra vez era pagar pela mesma resposta.
+ * A partir de quantos dias um endereço de foto guardado se dá por vencido nos
+ * cartões. A Google não diz quando expira; os que tinham semanas já não abriam.
+ */
+const DIAS_ATE_RENOVAR = 7;
+
+/**
+ * Dos leads de uma página, os que precisam de foto para o cartão, e quanto
+ * custaria ir buscá-las: os que nunca tiveram (lista de fotos + endereço) e os
+ * que têm um endereço com mais de `DIAS_ATE_RENOVAR` dias (só o endereço).
+ * Ficam de fora os que a Google já disse que não têm fotos: perguntar outra
+ * vez era pagar pela mesma resposta.
  */
 export async function pedidoDeFotos(
   db: Db,
   ids: readonly string[],
-  comFoto: ReadonlySet<string>,
 ): Promise<{ ids: string[]; custoUsd: number }> {
-  const faltam = ids.filter((id) => !comFoto.has(id));
-  if (faltam.length === 0) return { ids: [], custoUsd: 0 };
+  if (ids.length === 0) return { ids: [], custoUsd: 0 };
 
-  const { data } = await db
+  const { data: comercios } = await db
     .from('businesses')
     .select('id, google_photos, photos_fetched_at')
-    .in('id', faltam);
+    .in('id', [...ids]);
+
+  const primeiras = new Map<string, string>();
+  for (const c of comercios ?? []) {
+    const primeira = c.photos_fetched_at ? lerFotosGuardadas(c.google_photos)[0] : undefined;
+    if (primeira) primeiras.set(c.id, primeira.name);
+  }
+
+  const { data: enderecos } = primeiras.size
+    ? await db
+        .from('google_photo_uris')
+        .select('photo_name, fetched_at')
+        .eq('max_width_px', LARGURA_FOTO)
+        .in('photo_name', [...primeiras.values()])
+    : { data: [] };
+  const desde = new Map((enderecos ?? []).map((e) => [e.photo_name, e.fetched_at]));
+  const limite = Date.now() - DIAS_ATE_RENOVAR * 86_400_000;
 
   let custo = 0;
   const pedir: string[] = [];
-  for (const c of data ?? []) {
+  for (const c of comercios ?? []) {
     if (!c.photos_fetched_at) {
       custo += USD_LISTA_DE_FOTOS + USD_ENDERECO_DE_FOTO;
       pedir.push(c.id);
-    } else if (lerFotosGuardadas(c.google_photos).length > 0) {
+      continue;
+    }
+    const nome = primeiras.get(c.id);
+    if (!nome) continue; // a Google disse que não tem fotos
+    const quando = desde.get(nome);
+    if (!quando || new Date(quando).getTime() < limite) {
       custo += USD_ENDERECO_DE_FOTO;
       pedir.push(c.id);
     }

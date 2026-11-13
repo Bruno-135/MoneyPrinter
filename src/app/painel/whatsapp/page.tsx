@@ -126,7 +126,7 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
     vista === 'cartoes' ? await fotosDosDestaques(supabase, visiveis) : new Map<string, never>();
   const fotosPorCarregar =
     vista === 'cartoes'
-      ? await pedidoDeFotos(supabase, visiveis.map((l) => l.id), new Set(fotos.keys()))
+      ? await pedidoDeFotos(supabase, visiveis.map((l) => l.id))
       : { ids: [], custoUsd: 0 };
 
   // Cada caixa conta com os filtros das outras, e nunca com o dela.

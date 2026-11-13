@@ -8,6 +8,7 @@ import { mensagemDeAbertura } from '@/lib/whatsapp/mensagem';
 import { ESTILO_DO_CONTACTO, ETIQUETA_DO_CONTACTO } from '@/lib/deals/contacto';
 import { porqueDoLead, type CartaoDeLead } from '@/lib/leads/cartao';
 import { BotaoWhatsapp } from './whatsapp/botao';
+import { FotoDoCartao } from './foto-do-cartao';
 import type { FotoDeCartao } from './destaques';
 
 /**
@@ -101,8 +102,9 @@ export function GradeDeLeads({
           >
             <Link href={`/painel/comercio/${c.id}` as Route} className="block h-36 shrink-0">
               {foto ? (
-                // eslint-disable-next-line @next/next/no-img-element -- endereço do Google, já pago e com validade; o otimizador do Next voltava a pedi-lo.
-                <img src={foto.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                <FotoDoCartao url={foto.url}>
+                  <SemFoto />
+                </FotoDoCartao>
               ) : (
                 <SemFoto />
               )}
