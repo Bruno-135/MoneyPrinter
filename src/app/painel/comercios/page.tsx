@@ -44,7 +44,7 @@ import {
   type EstadoDoEmail,
 } from '@/lib/emails/estado-do-email';
 import { StageSelect } from '../stage-select';
-import { Destaques, fotosDosDestaques } from '../destaques';
+import { fotosDosDestaques } from '../destaques';
 import { Numeros, type Numero } from '../numeros';
 import { CartoesComercios, SITE_LABEL, SITE_STYLE } from '../cartoes-comercios';
 import { lerVista } from '../vista';
@@ -269,13 +269,6 @@ export default async function PainelPage({ searchParams }: PainelProps) {
     limit: 100,
   });
 
-  // Os três por onde começar: melhor pontuação, ainda por contactar, dentro
-  // dos filtros que estiverem postos. Só se a lista estiver por pontuação —
-  // noutra ordem, "os três primeiros" não quer dizer "os três melhores".
-  const destaques =
-    ordem === 'score' ? businesses.filter((b) => b.stage === 'new').slice(0, 3) : [];
-  const fotosDestaques = await fotosDosDestaques(supabase, destaques);
-
   // Lista ou cartões. Em cartões, as fotos que já foram pagas destes 100: ver
   // `grade-de-leads.tsx`.
   const vista = await lerVista();
@@ -372,8 +365,6 @@ export default async function PainelPage({ searchParams }: PainelProps) {
       {/* Os números ficam aqui e não no painel: são atalhos para filtros
           DESTA tabela, e um atalho longe daquilo que filtra não se percebe. */}
       <Numeros numeros={numeros} />
-
-      <Destaques destaques={destaques} fotos={fotosDestaques} />
 
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">

@@ -1,27 +1,17 @@
-import Link from 'next/link';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
-import type { RankedBusiness } from '@/lib/scoring/rank';
-import { findCategory } from '@/lib/places/categories';
-import { arteUrl, familiaParaRamo } from '@/lib/sites/imagens/arte';
 import { lerFotosGuardadas, LARGURA_FOTO } from '@/lib/places/fotos';
 
 /**
- * Os três por onde começar hoje.
+ * As fotografias dos cartões de leads, só do que já está pago e guardado.
  *
- * Uma lista de novecentos comércios ordenada por pontuação é verdadeira e
- * inútil: ninguém abre um painel para ler novecentas linhas. Estes três são a
- * mesma lista com uma pergunta feita por ela — "por qual começo?" — e a
- * resposta em três cartões que se veem de uma vez.
+ * Aqui viviam também os três cartões «Comece por estes» da lista de Leads,
+ * que saíram a pedido do dono: a lista em cartões (`grade-de-leads.tsx`) faz o
+ * mesmo para a página toda.
  *
- * São os três de melhor pontuação que ainda não foram contactados, dentro dos
- * filtros que estiverem postos. Mudam sozinhos à medida que se vai
- * contactando: quem passa a "contactado" sai daqui e entra o seguinte.
- *
- * As fotografias saem do cache e NUNCA da Google. Este ecrã abre-se dezenas de
- * vezes por dia; ir buscar fotos aqui era transformar uma lista em despesa
- * recorrente. Quem ainda não tem foto guardada mostra a imagem gerada do ramo,
- * que não custa nada e nunca falha.
+ * As fotografias saem do cache e NUNCA da Google. Estes ecrãs abrem-se dezenas
+ * de vezes por dia; ir buscar fotos aqui era transformar uma lista em despesa
+ * recorrente. Quem quer fotos novas carrega no «Carregar fotos».
  */
 
 type Db = SupabaseClient<Database>;
@@ -81,72 +71,4 @@ export async function fotosDosDestaques(
   }
 
   return porComercio;
-}
-
-export function Destaques({
-  destaques,
-  fotos,
-}: {
-  destaques: readonly RankedBusiness[];
-  fotos: Map<string, FotoDeCartao>;
-}) {
-  if (destaques.length === 0) return null;
-
-  return (
-    <section className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h2 className="text-sm font-semibold tracking-wide text-brand-600 uppercase">
-          Comece por estes
-        </h2>
-        <p className="text-sm text-ink3 opacity-100">
-          Melhor pontuação, ainda por contactar. Saem daqui assim que os contactares.
-        </p>
-      </div>
-
-      <ul className="grid gap-4 sm:grid-cols-3">
-        {destaques.map((b) => {
-          const foto = fotos.get(b.id);
-          const imagem = foto?.url ?? arteUrl(familiaParaRamo(b.category), b.id);
-
-          return (
-            <li
-              key={b.id}
-              className="overflow-hidden rounded-xl border border-line"
-            >
-              <Link href={`/painel/comercio/${b.id}`} className="block">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imagem}
-                  alt={foto?.real ? `Fotografia de ${b.name}` : ''}
-                  className="aspect-16/10 w-full bg-black/10 object-cover"
-                  loading="lazy"
-                />
-                <div className="flex flex-col gap-1.5 p-4">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-lg font-semibold tabular-nums">{b.score}</span>
-                    {b.rating !== null && (
-                      <span className="text-sm tabular-nums text-ink2 opacity-100">
-                        {b.rating.toFixed(1).replace('.', ',')} ★
-                        {b.reviewsCount !== null && ` · ${b.reviewsCount}`}
-                      </span>
-                    )}
-                  </div>
-                  <p className="font-medium">{b.name}</p>
-                  <p className="text-sm text-ink2 opacity-100">
-                    {findCategory(b.category)?.label ?? b.category}
-                    {b.locality && ` · ${b.locality}`}
-                  </p>
-                  {!foto?.real && (
-                    <p className="text-xs opacity-45">
-                      Sem fotografia ainda — vai-se buscá-la ao fazer o site.
-                    </p>
-                  )}
-                </div>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-  );
 }
