@@ -844,6 +844,18 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       externos. Só o extrator, o filtro e a guarda de IPs têm testes; a primeira corrida
       a sério é em produção.
 
+- [x] **Lista de Instagram** — `/painel/instagram` (área `whatsapp`: são os dois canais de
+      mensagem). Os leads com perfil de Instagram (`social_links.instagram`, ou o próprio
+      site se for um Instagram; `src/lib/instagram/perfil.ts`). O Instagram NÃO aceita texto
+      no endereço, por isso o botão copia a mensagem, abre o Direct (`ig.me/m/<utilizador>`)
+      e grava um contacto `channel = 'instagram'` (texto livre, sem migração) com espera de
+      3 dias; «desfazer» 24 h. Mensagem curta e SEM LINK (`instagram/mensagem.ts`), 3
+      versões por segmento e país. LIGADA AO WHATSAPP: quem já recebeu o WhatsApp tem aviso
+      na linha e a mensagem diz que é o segundo contacto; a Lista de WhatsApp mostra
+      «Instagram enviado». Na vista `businesses_with_stage` um lead só com Instagram fica em
+      «contactado» (o estado só conhece WhatsApp e e-mail pelo nome). Envio sempre à mão:
+      o Instagram limita contas que mandam em massa — sugestão de 20 por dia, com contador.
+
 - [x] **Lista ou cartões** — botão «Lista | Cartões» na lista de Leads e na Lista de
       WhatsApp; a escolha fica no cookie `vd-vista` (lido no servidor, para a página não
       saltar de uma vista para a outra). Cada cartão (`grade-de-leads.tsx`): foto, nota no

@@ -16,6 +16,7 @@ import {
 } from '@/lib/deals/contacto';
 import { haQuantoTempo } from '@/components/quando';
 import { lerLinhasWhatsapp } from '@/lib/whatsapp/repository';
+import { instagramEnviados } from '@/lib/instagram/contacto';
 import {
   FAIXAS_DE_SCORE,
   contar,
@@ -104,7 +105,11 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
     pagina: Math.max(1, Number.parseInt(p.pagina ?? '1', 10) || 1),
   };
 
-  const linhas = await lerLinhasWhatsapp(supabase);
+  // Quem já recebeu pelo Instagram: aparece na linha, para não se mandar às cegas pelos dois canais.
+  const [linhas, porInstagram] = await Promise.all([
+    lerLinhasWhatsapp(supabase),
+    instagramEnviados(supabase),
+  ]);
   // Uma hora só para a página toda: o «bom dia / boa tarde» de cada mensagem sai daqui.
   const agora = new Date();
   const filtros: Filtros = {
@@ -329,6 +334,11 @@ export default async function WhatsappPage({ searchParams }: { searchParams: Pro
                 </div>
 
                 <div className="w-36 shrink-0">
+                  {porInstagram.has(l.id) && (
+                    <span className="mb-1 block w-fit rounded bg-fuchsia-500/15 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-fuchsia-700 dark:text-fuchsia-300">
+                      Instagram enviado
+                    </span>
+                  )}
                   {l.contacto !== 'por_contactar' ? (
                     <>
                       <span
