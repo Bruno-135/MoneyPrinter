@@ -93,6 +93,34 @@ export function whatsappWebUrl(waMe: string): string | null {
   return `https://web.whatsapp.com/send?${params.toString()}`;
 }
 
+/**
+ * A mesma conversa, na app do WhatsApp do computador (Mac ou Windows).
+ *
+ * É o que os botões usam no computador. O WhatsApp Web parecia a escolha
+ * natural, mas não deixa reaproveitar o separador (cada clique abria um
+ * separador novo, e um WhatsApp Web aberto em dois separadores fica parado no
+ * «o WhatsApp está aberto noutra janela», sem mostrar a conversa). A app abre
+ * direto na conversa, com a mensagem escrita, e não mexe nos separadores.
+ *
+ * O texto vai com `encodeURIComponent` e não com `URLSearchParams`: este
+ * escreve os espaços como `+`, e a app mostra-os como `+`.
+ */
+export function whatsappAppUrl(waMe: string): string | null {
+  let url: URL;
+  try {
+    url = new URL(waMe);
+  } catch {
+    return null;
+  }
+  if (url.hostname !== 'wa.me') return null;
+
+  const phone = url.pathname.replace(/[^\d]/g, '');
+  if (phone.length < 8) return null;
+
+  const text = url.searchParams.get('text');
+  return `whatsapp://send?phone=${phone}${text ? `&text=${encodeURIComponent(text)}` : ''}`;
+}
+
 /*
  * Houve aqui uma `firstContactMessage` — uma frase feita com o nome do comércio
  * lá dentro, para o botão de WhatsApp. Saiu quando as mensagens passaram a ser

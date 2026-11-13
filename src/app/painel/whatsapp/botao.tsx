@@ -2,17 +2,10 @@
 
 import { useSyncExternalStore, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { whatsappWebUrl } from '@/lib/places/links';
+import { whatsappAppUrl } from '@/lib/places/links';
 import { anularWhatsapp, marcarWhatsapp } from './actions';
 
-/**
- * O nome do separador do WhatsApp Web. Todos os botões abrem NESTE separador:
- * o primeiro clique cria-o, os seguintes reaproveitam-no, já com a sessão
- * aberta. Sem nome, cada lead era um separador novo.
- */
-const SEPARADOR_DO_WHATSAPP = 'vaidesign-whatsapp';
-
-/** Rato: um computador, onde o WhatsApp é o Web e não a app. */
+/** Rato: um computador, onde se abre a app do WhatsApp em vez do wa.me. */
 const COMPUTADOR = '(hover: hover) and (pointer: fine)';
 
 function subscrever(avisar: () => void): () => void {
@@ -25,7 +18,7 @@ function subscrever(avisar: () => void): () => void {
  * O servidor não sabe se é telemóvel ou computador: responde «não» e a página
  * chega com o wa.me, que serve aos dois. No browser troca-se logo a seguir.
  */
-function useEhComputador(): boolean {
+export function useEhComputador(): boolean {
   return useSyncExternalStore(
     subscrever,
     () => window.matchMedia(COMPUTADOR).matches,
@@ -34,14 +27,17 @@ function useEhComputador(): boolean {
 }
 
 /**
- * O botão de WhatsApp da lista.
+ * O botão de WhatsApp da lista e dos cartões.
  *
  * É um link a sério (abre o WhatsApp mesmo que o registo falhe) e, ao mesmo
  * tempo, grava o contacto. Abrir primeiro e gravar depois: um WhatsApp que não
  * abre por o servidor estar lento seria pior do que um registo que falta.
  *
- * No computador abre o WhatsApp Web, sempre no mesmo separador; no telemóvel,
- * a app, pelo wa.me.
+ * No computador abre a APP do WhatsApp, direto na conversa (`whatsapp://`);
+ * no telemóvel, a app pelo wa.me. Antes, no computador, abria o WhatsApp Web
+ * num separador com nome, para o reaproveitar — mas o WhatsApp Web corta essa
+ * ligação, e cada clique abria um separador novo parado em «o WhatsApp está
+ * aberto noutra janela». Ver `whatsappAppUrl`.
  */
 export function BotaoWhatsapp({
   businessId,
@@ -55,16 +51,15 @@ export function BotaoWhatsapp({
 }) {
   const router = useRouter();
   const [, iniciar] = useTransition();
-  const web = useEhComputador() ? whatsappWebUrl(href) : null;
+  const app = useEhComputador() ? whatsappAppUrl(href) : null;
 
   return (
     <a
-      href={web ?? href}
-      // Sem `noopener` no WhatsApp Web: com ele, o browser ignora o nome e abre
-      // sempre um separador novo, que é o que se quer evitar. É o próprio
-      // WhatsApp do outro lado, não um site qualquer.
-      target={web ? SEPARADOR_DO_WHATSAPP : '_blank'}
-      rel={web ? undefined : 'noopener noreferrer'}
+      href={app ?? href}
+      // A app abre-se pelo esquema `whatsapp://`, que não abre separador
+      // nenhum; o wa.me, no telemóvel, abre num separador novo.
+      target={app ? undefined : '_blank'}
+      rel={app ? undefined : 'noopener noreferrer'}
       onClick={() =>
         iniciar(async () => {
           await marcarWhatsapp(businessId);

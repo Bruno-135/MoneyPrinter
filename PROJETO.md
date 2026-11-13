@@ -886,6 +886,11 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       leva à fila, que conta com a mesma função (levava à lista de todos os leads novos,
       com site incluído, e os números não batiam).
 
+      No computador o botão abre a APP do WhatsApp (`whatsapp://send`, ver
+      `whatsappAppUrl`), não o WhatsApp Web: o Web corta a ligação ao separador com nome,
+      e cada clique abria um separador novo parado em «aberto noutra janela». Vale para a
+      lista, os cartões e a fila «Leads a contactar». No telemóvel continua o wa.me.
+
       O botão grava um contacto `channel = 'whatsapp'` (lead passa a «WhatsApp
       enviado») e uma próxima acção a 3 dias SEM mexer na etapa — sem isso a fila
       «Leads a contactar» ligava no dia seguinte a quem acabou de receber a mensagem.

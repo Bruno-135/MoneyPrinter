@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { googleMapsUrl, whatsappUrl, whatsappWebUrl } from './links';
+import { googleMapsUrl, whatsappAppUrl, whatsappUrl, whatsappWebUrl } from './links';
 
 /**
  * O formato antigo — `/maps/place/?q=place_id:…` — funcionava no computador e
@@ -76,6 +76,21 @@ describe('whatsappUrl', () => {
     expect(whatsappUrl(null)).toBeNull();
     expect(whatsappUrl('')).toBeNull();
     expect(whatsappUrl('+351')).toBeNull();
+  });
+});
+
+describe('whatsappAppUrl', () => {
+  it('abre a app na conversa, com a mensagem e os espaços como %20', () => {
+    const waMe = whatsappUrl('+351912345678', 'Olá, bom dia!\n\nTudo bem?')!;
+    expect(whatsappAppUrl(waMe)).toBe(
+      'whatsapp://send?phone=351912345678&text=Ol%C3%A1%2C%20bom%20dia!%0A%0ATudo%20bem%3F',
+    );
+    expect(whatsappAppUrl('https://wa.me/351965633614')).toBe('whatsapp://send?phone=351965633614');
+  });
+  it('só aceita links do wa.me com número', () => {
+    expect(whatsappAppUrl('https://example.com/351965633614')).toBeNull();
+    expect(whatsappAppUrl('não é um link')).toBeNull();
+    expect(whatsappAppUrl('https://wa.me/123')).toBeNull();
   });
 });
 

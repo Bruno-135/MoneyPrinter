@@ -4,7 +4,8 @@ import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import type { ItemDaFila } from '@/lib/deals/fila';
 import { findCategory } from '@/lib/places/categories';
-import { googleMapsUrl, whatsappUrl } from '@/lib/places/links';
+import { googleMapsUrl, whatsappAppUrl, whatsappUrl } from '@/lib/places/links';
+import { useEhComputador } from '../whatsapp/botao';
 import { DIAS_PARA_VOLTAR_A_TENTAR, type Desfecho } from '@/lib/deals/desfechos';
 import { marcarDesfecho } from '../deal-actions';
 
@@ -51,6 +52,8 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
   // item é exactamente o género de coisa que se esquece e dá um contacto
   // gravado como WhatsApp no comércio seguinte.
   const [whatsappAbertoEm, setWhatsappAbertoEm] = useState<string | null>(null);
+  // No computador, a app do WhatsApp (ver `whatsappAppUrl`); no telemóvel, o wa.me.
+  const computador = useEhComputador();
 
   const item = itens[indice];
 
@@ -94,7 +97,8 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
   // a mesma da Lista de WhatsApp. Antes, sem uma escrita à mão, o botão abria
   // a conversa em branco.
   const mensagem = item.mensagens[0]?.texto || item.abertura;
-  const whatsapp = whatsappUrl(item.phone, mensagem);
+  const waMe = whatsappUrl(item.phone, mensagem);
+  const whatsapp = waMe && computador ? (whatsappAppUrl(waMe) ?? waMe) : waMe;
 
   return (
     <div className="flex flex-col gap-5">
@@ -142,8 +146,8 @@ export function Fila({ itens, total }: { itens: ItemDaFila[]; total: number }) {
           {whatsapp && (
             <a
               href={whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={computador ? undefined : '_blank'}
+              rel={computador ? undefined : 'noopener noreferrer'}
               onClick={() => setWhatsappAbertoEm(item.id)}
               className="rounded-md bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white"
             >
