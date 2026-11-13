@@ -29,8 +29,11 @@ import type { PlaceResult } from './types';
  * calcula a grelha e se estima o custo.
  */
 
-/** Preço por chamada no escalão Enterprise, em USD. Só para estimar. */
-const USD_PER_CALL = 0.035;
+/**
+ * Preço por chamada no escalão Enterprise, em USD. Serve a estimativa da
+ * simulação e o «gasto até hoje» do painel: um número só, para os dois baterem.
+ */
+export const USD_PER_CALL = 0.035;
 
 export interface ScanRequest {
   /** Nome da zona. Ex.: "Braga centro". */

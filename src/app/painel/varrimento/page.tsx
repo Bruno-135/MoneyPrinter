@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { ScanForm } from '../scan-form';
+import { USD_PER_CALL } from '@/lib/places/scan';
 
 /**
  * Varrimento e custos.
@@ -12,8 +13,6 @@ import { ScanForm } from '../scan-form';
  */
 
 export const dynamic = 'force-dynamic';
-
-const USD_POR_CHAMADA = 0.032;
 
 export default async function VarrimentoPage() {
   const supabase = await createClient();
@@ -36,7 +35,7 @@ export default async function VarrimentoPage() {
       supabase.from('businesses').select('id', { count: 'exact', head: true }),
     ]);
 
-  const gasto = (faturadas ?? 0) * USD_POR_CHAMADA;
+  const gasto = (faturadas ?? 0) * USD_PER_CALL;
   const poupadas = (chamadas ?? 0) - (faturadas ?? 0);
   // O gasto dividido pelos leads. Cêntimos de dólar: com duas casas aparecia
   // «0.00 $», por isso três.
