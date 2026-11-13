@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { startTransition, useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { findCity, runScan, type CityFormState, type ScanFormState } from './actions';
 import { CATEGORIES, categoriesByGroup } from '@/lib/places/categories';
@@ -18,6 +18,13 @@ import type { CityMatch } from '@/lib/places/cities';
  * TODOS os campos são controlados. Quando se passa uma função ao `action` de um
  * formulário, o React limpa-o sozinho assim que a ação termina — e com campos
  * não controlados isso apagava a cidade escolhida a cada simulação.
+ *
+ * O formulário do varrimento NÃO usa `action`, usa `onSubmit`, por causa disso
+ * mesmo: a limpeza automática repunha as caixas de escolha na primeira opção
+ * («Restaurante», «2000») sem o estado do React saber. O ecrã continuava a
+ * dizer «Vais procurar Oficina» e o «Procurar a sério» mandava «Restaurante» —
+ * aconteceu, e gastou-se uma procura no ramo errado. Agora não há limpeza, e o
+ * ramo e a célula que seguem vêm do estado, que é o que o ecrã mostra.
  *
  * A procura da cidade vive num formulário SEPARADO do varrimento. Se fosse o
  * mesmo, "Procurar cidade" e "Procurar a sério" seriam dois botões do mesmo
@@ -43,8 +50,7 @@ function CityButton() {
   );
 }
 
-function ScanButtons({ ready }: { ready: boolean }) {
-  const { pending } = useFormStatus();
+function ScanButtons({ ready, pending }: { ready: boolean; pending: boolean }) {
   return (
     <div className="flex flex-wrap gap-3 pt-1">
       <button
@@ -70,7 +76,7 @@ function ScanButtons({ ready }: { ready: boolean }) {
 }
 
 export function ScanForm() {
-  const [scanState, scanAction] = useActionState(runScan, SCAN_IDLE);
+  const [scanState, scanAction, aProcurar] = useActionState(runScan, SCAN_IDLE);
   const [cityState, cityAction] = useActionState(findCity, CITY_IDLE);
 
   const [pais, setPais] = useState<'PT' | 'BR'>('PT');
@@ -161,7 +167,18 @@ export function ScanForm() {
         )}
       </form>
 
-      <form action={scanAction} className="flex flex-col gap-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const botao = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+          const dados = new FormData(e.currentTarget);
+          dados.set('confirmar', botao?.value === 'sim' ? 'sim' : 'nao');
+          dados.set('ramo', ramo);
+          dados.set('celula', celula);
+          startTransition(() => scanAction(dados));
+        }}
+        className="flex flex-col gap-4"
+      >
         <input type="hidden" name="latitude" value={cidade?.latitude ?? ''} />
         <input type="hidden" name="longitude" value={cidade?.longitude ?? ''} />
         <input type="hidden" name="raio" value={cidade?.radiusMeters ?? ''} />
@@ -258,7 +275,7 @@ export function ScanForm() {
           </div>
         </details>
 
-        <ScanButtons ready={cidade !== null} />
+        <ScanButtons ready={cidade !== null} pending={aProcurar} />
 
         {cidade === null && (
           <p className="text-sm opacity-50">
