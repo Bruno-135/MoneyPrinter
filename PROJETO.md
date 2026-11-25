@@ -322,6 +322,12 @@ mensal e isolamento entre donos.
 
 Verificação rápida da ligação com a aplicação a correr: `GET /api/health`.
 
+A mesma rota é chamada **todos os dias pela Vercel** (`crons` em `vercel.json`, 06:17 UTC).
+Não é só monitorização: o plano grátis do Supabase pausa o projeto ao fim de alguns dias
+sem atividade, e com o banco pausado o painel fica lento e perde a sessão. A rota faz uma
+consulta real a `businesses` (sem devolver linhas), que conta como atividade. No plano
+Hobby da Vercel cada cron corre no máximo uma vez por dia, o que chega.
+
 ---
 
 ## 6. Regras de trabalho
