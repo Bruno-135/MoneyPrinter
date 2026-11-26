@@ -1,0 +1,360 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import type { Route } from 'next';
+import type { Database } from '@/types/database.types';
+import { createClient } from '@/lib/supabase/server';
+import { exigirAcesso } from '@/lib/equipa/quem-sou';
+import { publicEnv } from '@/lib/env';
+import {
+  configurarWebhook,
+  enviarTexto,
+  estadoDaInstancia,
+  listarInstancias,
+} from '@/lib/whatsapp/evolution';
+import { normalizarNumero, paisDoNumero } from '@/lib/whatsapp/disparos';
+import { lerPedido, selecionar } from '@/lib/whatsapp/painel-disparos';
+
+/**
+ * As acções do ecrã de disparos. Todas com a sessão de quem carrega (a RLS
+ * decide o que cada um toca) e com a guarda da área `whatsapp`.
+ *
+ * Os erros voltam na própria página, por `?erro=` — o ecrã é um formulário
+ * simples e não vale a pena um estado de cliente só para mostrar uma frase.
+ */
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const CAMINHO = '/painel/disparos';
+
+function texto(form: FormData, chave: string): string {
+  const v = form.get(chave);
+  return typeof v === 'string' ? v.trim() : '';
+}
+
+function voltarComErro(erro: string, caminho: string = CAMINHO): never {
+  redirect(`${caminho}?erro=${encodeURIComponent(erro)}` as Route);
+}
+
+function estadoDoChip(estadoEvolution: string): 'ligado' | 'a_ligar' | 'desligado' {
+  return estadoEvolution === 'open'
+    ? 'ligado'
+    : estadoEvolution === 'connecting'
+      ? 'a_ligar'
+      : 'desligado';
+}
+
+function urlDoWebhook(token: string): string {
+  return `${publicEnv.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, '')}/api/whatsapp/webhook/${token}`;
+}
+
+// ---------- chips ----------
+
+export async function adicionarChip(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const instancia = texto(form, 'instancia');
+  const jaAquecido = texto(form, 'aquecido') === 'sim';
+  if (!/^[A-Za-z0-9_-]{1,60}$/.test(instancia)) voltarComErro('Escolha a instância.');
+
+  const lista = await listarInstancias();
+  if (!lista.ok) voltarComErro(lista.erro);
+  const daEvolution = lista.dados.find((i) => i.nome === instancia);
+  if (!daEvolution) voltarComErro('Essa instância não existe na Evolution.');
+
+  const db = await createClient();
+  const hoje = new Date();
+  const { data: chip, error } = await db
+    .from('whatsapp_chips')
+    .insert({
+      instancia,
+      nome: daEvolution.perfil ?? instancia,
+      numero: daEvolution.numero,
+      pais: daEvolution.numero ? paisDoNumero(daEvolution.numero) : 'PT',
+      estado: estadoDoChip(daEvolution.estado),
+      // Um número antigo, com conversas, já está aquecido: começa na fase de manutenção.
+      aquecimento_desde: jaAquecido
+        ? new Date(hoje.getTime() - 14 * 86_400_000).toISOString().slice(0, 10)
+        : hoje.toISOString().slice(0, 10),
+    })
+    .select('webhook_token')
+    .single();
+  if (error) {
+    voltarComErro(
+      error.code === '23505'
+        ? 'Esse chip já está ligado ao sistema.'
+        : `Não foi possível gravar: ${error.message}`,
+    );
+  }
+
+  const webhook = await configurarWebhook(instancia, urlDoWebhook(chip.webhook_token));
+  revalidatePath(CAMINHO);
+  if (!webhook.ok) voltarComErro(`Chip gravado, mas o webhook não ficou: ${webhook.erro}`);
+}
+
+export async function atualizarChip(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const id = texto(form, 'id');
+  if (!UUID.test(id)) return;
+  const db = await createClient();
+  const { data: chip } = await db
+    .from('whatsapp_chips')
+    .select('instancia, webhook_token')
+    .eq('id', id)
+    .maybeSingle();
+  if (!chip) return;
+
+  const [estado, lista] = await Promise.all([
+    estadoDaInstancia(chip.instancia),
+    listarInstancias(),
+  ]);
+  if (!estado.ok) voltarComErro(estado.erro);
+  const info = lista.ok ? lista.dados.find((i) => i.nome === chip.instancia) : undefined;
+  await db
+    .from('whatsapp_chips')
+    .update({
+      estado: estadoDoChip(estado.dados),
+      ...(info?.numero ? { numero: info.numero, pais: paisDoNumero(info.numero) } : {}),
+      ...(info?.perfil ? { nome: info.perfil } : {}),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id);
+  const webhook = await configurarWebhook(chip.instancia, urlDoWebhook(chip.webhook_token));
+  revalidatePath(CAMINHO);
+  if (!webhook.ok) voltarComErro(`Estado atualizado, mas o webhook não ficou: ${webhook.erro}`);
+}
+
+export async function mudarChip(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const id = texto(form, 'id');
+  const acao = texto(form, 'acao');
+  if (!UUID.test(id)) return;
+  const db = await createClient();
+  const agora = new Date();
+
+  const mudancas: Database['public']['Tables']['whatsapp_chips']['Update'] = {
+    updated_at: agora.toISOString(),
+  };
+  if (acao === 'pausar') mudancas.ativo = false;
+  else if (acao === 'retomar') mudancas.ativo = true;
+  else if (acao === 'destravar')
+    Object.assign(mudancas, { travado_motivo: null, falhas_seguidas: 0 });
+  else if (acao === 'aquecer')
+    Object.assign(mudancas, {
+      aquecer: true,
+      proximo_aquecimento_em: agora.toISOString(),
+    });
+  else if (acao === 'parar_aquecimento') mudancas.aquecer = false;
+  else if (acao === 'aquecido')
+    mudancas.aquecimento_desde = new Date(agora.getTime() - 14 * 86_400_000)
+      .toISOString()
+      .slice(0, 10);
+  else if (acao === 'recomecar') mudancas.aquecimento_desde = agora.toISOString().slice(0, 10);
+  else if (acao === 'ritmo') {
+    const limite = Number.parseInt(texto(form, 'limite'), 10);
+    const intervalo = Number.parseInt(texto(form, 'intervalo'), 10);
+    if (!(limite >= 1 && limite <= 200) || !(intervalo >= 2 && intervalo <= 120)) {
+      voltarComErro('Limite entre 1 e 200 por dia; intervalo entre 2 e 120 minutos.');
+    }
+    Object.assign(mudancas, {
+      limite_diario: limite,
+      intervalo_min: intervalo,
+    });
+  } else if (acao === 'remover') {
+    await db.from('whatsapp_chips').delete().eq('id', id);
+    revalidatePath(CAMINHO);
+    return;
+  } else return;
+
+  await db.from('whatsapp_chips').update(mudancas).eq('id', id);
+  revalidatePath(CAMINHO);
+}
+
+// ---------- números de confiança (aquecimento) ----------
+
+export async function adicionarNumeroDeAquecimento(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const numero = normalizarNumero(
+    texto(form, 'numero'),
+    texto(form, 'pais') === 'BR' ? 'BR' : 'PT',
+  );
+  if (!numero)
+    voltarComErro('Esse número não parece certo. Escreva com o indicativo (+351 ou +55).');
+  const db = await createClient();
+  const { error } = await db.from('whatsapp_aquecimento_numeros').insert({
+    numero,
+    nome: texto(form, 'nome').slice(0, 80),
+    pais: paisDoNumero(numero),
+  });
+  if (error && error.code !== '23505') voltarComErro(`Não foi possível gravar: ${error.message}`);
+  revalidatePath(CAMINHO);
+}
+
+export async function removerNumeroDeAquecimento(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const id = texto(form, 'id');
+  if (!UUID.test(id)) return;
+  const db = await createClient();
+  await db.from('whatsapp_aquecimento_numeros').delete().eq('id', id);
+  revalidatePath(CAMINHO);
+}
+
+// ---------- disparos ----------
+
+/** Refaz a seleção da pré-visualização e põe tudo na fila do motor. */
+export async function criarDisparo(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const params: Record<string, string | string[]> = {};
+  for (const [k, v] of form.entries()) {
+    if (typeof v !== 'string') continue;
+    const atual = params[k];
+    params[k] = atual === undefined ? v : Array.isArray(atual) ? [...atual, v] : [atual, v];
+  }
+  const pedido = lerPedido(params);
+  const db = await createClient();
+  const selecao = await selecionar(db, pedido);
+  if (selecao.erro) voltarComErro(selecao.erro, `${CAMINHO}/nova`);
+
+  const { data: campanha, error } = await db
+    .from('whatsapp_campanhas')
+    .insert({
+      nome: pedido.nome,
+      chips: pedido.chips,
+      hora_inicio: pedido.horaInicio,
+      hora_fim: pedido.horaFim,
+    })
+    .select('id')
+    .single();
+  if (error) voltarComErro(`Não foi possível criar o disparo: ${error.message}`, `${CAMINHO}/nova`);
+
+  const linhas = selecao.destinatarios.map((d, i) => ({
+    campanha_id: campanha.id,
+    business_id: d.businessId,
+    numero: d.numero,
+    pais: d.pais,
+    nome: d.nome || null,
+    texto: d.texto,
+    ordem: i,
+  }));
+  for (let i = 0; i < linhas.length; i += 500) {
+    const { error: e2 } = await db.from('whatsapp_envios').insert(linhas.slice(i, i + 500));
+    if (e2) {
+      // Sem fila completa não há disparo: apaga a campanha (e o que já entrou, em cascata).
+      await db.from('whatsapp_campanhas').delete().eq('id', campanha.id);
+      voltarComErro(`Não foi possível pôr na fila: ${e2.message}`, `${CAMINHO}/nova`);
+    }
+  }
+  revalidatePath(CAMINHO);
+  redirect(`${CAMINHO}/${campanha.id}` as Route);
+}
+
+export async function mudarDisparo(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const id = texto(form, 'id');
+  const acao = texto(form, 'acao');
+  if (!UUID.test(id)) return;
+  const db = await createClient();
+  const agora = new Date().toISOString();
+  if (acao === 'pausar') {
+    await db
+      .from('whatsapp_campanhas')
+      .update({ estado: 'pausada', updated_at: agora })
+      .eq('id', id)
+      .eq('estado', 'a_correr');
+  } else if (acao === 'retomar') {
+    await db
+      .from('whatsapp_campanhas')
+      .update({ estado: 'a_correr', updated_at: agora })
+      .eq('id', id)
+      .eq('estado', 'pausada');
+  } else if (acao === 'cancelar') {
+    await db
+      .from('whatsapp_campanhas')
+      .update({ estado: 'cancelada', terminada_em: agora, updated_at: agora })
+      .eq('id', id)
+      .in('estado', ['a_correr', 'pausada']);
+    await db
+      .from('whatsapp_envios')
+      .update({ estado: 'cancelado', erro: 'disparo cancelado' })
+      .eq('campanha_id', id)
+      .eq('estado', 'pendente');
+  }
+  revalidatePath(CAMINHO);
+  revalidatePath(`${CAMINHO}/${id}`);
+}
+
+// ---------- conversas ----------
+
+export async function responder(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const numero = texto(form, 'numero');
+  const mensagem = texto(form, 'texto').slice(0, 4000);
+  const caminho = `${CAMINHO}/conversas?n=${numero}`;
+  if (!/^[1-9][0-9]{7,14}$/.test(numero) || !mensagem) return;
+
+  const db = await createClient();
+  // Responde pelo chip por onde a conversa estava a correr.
+  const { data: ultima } = await db
+    .from('whatsapp_mensagens')
+    .select('chip_id, business_id, owner_id')
+    .eq('numero', numero)
+    .order('enviada_em', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!ultima) redirect(caminho as Route);
+  const { data: chip } = await db
+    .from('whatsapp_chips')
+    .select('instancia')
+    .eq('id', ultima.chip_id)
+    .maybeSingle();
+  if (!chip)
+    redirect(
+      `${caminho}&erro=${encodeURIComponent('O chip desta conversa já não está no sistema.')}` as Route,
+    );
+
+  const enviado = await enviarTexto(chip.instancia, numero, mensagem, 1200);
+  if (!enviado.ok) redirect(`${caminho}&erro=${encodeURIComponent(enviado.erro)}` as Route);
+
+  await db.from('whatsapp_mensagens').insert({
+    owner_id: ultima.owner_id,
+    chip_id: ultima.chip_id,
+    numero,
+    business_id: ultima.business_id,
+    de_mim: true,
+    texto: mensagem,
+    mensagem_id: enviado.dados.id,
+    lida: true,
+  });
+  revalidatePath(`${CAMINHO}/conversas`);
+  redirect(caminho as Route);
+}
+
+export async function naoContactarNumero(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  // O dono por extenso: o valor por omissão desta tabela é `auth.uid()`, que
+  // para uma conta da equipa não é o dono do espaço. (A segunda leitura não
+  // vai à base: `lerQuemSou` guarda a resposta durante o pedido.)
+  const quem = await exigirAcesso('whatsapp');
+  const numero = texto(form, 'numero');
+  if (!/^[1-9][0-9]{7,14}$/.test(numero)) return;
+  const db = await createClient();
+  const { data: ultima } = await db
+    .from('whatsapp_mensagens')
+    .select('business_id')
+    .eq('numero', numero)
+    .not('business_id', 'is', null)
+    .limit(1)
+    .maybeSingle();
+  await db.from('nao_contactar').insert({
+    owner_id: quem.donoId,
+    telefone: numero,
+    business_id: ultima?.business_id ?? null,
+    motivo: 'marcado na caixa de conversas',
+  });
+  await db
+    .from('whatsapp_envios')
+    .update({ estado: 'cancelado', erro: 'marcado como não contactar' })
+    .eq('numero', numero)
+    .eq('estado', 'pendente');
+  revalidatePath(`${CAMINHO}/conversas`);
+  redirect(`${CAMINHO}/conversas?n=${numero}` as Route);
+}

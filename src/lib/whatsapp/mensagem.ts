@@ -121,8 +121,14 @@ export function mensagemDeAbertura(args: {
   /** O id do lead: escolhe qual das três versões ele recebe. */
   chave?: string | null;
   agora?: Date;
+  /**
+   * Põe esta palavra no lugar do «bom dia / boa tarde». Os disparos passam
+   * `{saudacao}`, que a base troca na hora do envio: a mensagem fica na fila
+   * horas, e o «bom dia» de quando se criou já seria mentira quando saísse.
+   */
+  saudacao?: string;
 }): string {
-  const s = saudacao(args.pais, args.agora);
+  const s = args.saudacao ?? saudacao(args.pais, args.agora);
   const soRedes = args.presenca === 'social_only';
   const segmento = segmentoDoRamo(args.ramo);
   const leva = O_QUE_LEVA[segmento];

@@ -19,7 +19,8 @@
  * com o CLI, confirma que esses `never` continuam lá.
  *
  * Pela mesma razão, as colunas `email*` de `businesses` (e da vista) e as tabelas
- * `nao_contactar` e `emails_enviados` (0040), e a tabela `pedidos` e as funções `registar_pedido` e
+ * `nao_contactar` e `emails_enviados` (0040), as tabelas `whatsapp_*` e as
+ * funções `whatsapp_reclamar`, `whatsapp_resultado` e `whatsapp_receber` (0045), e a tabela `pedidos` e as funções `registar_pedido` e
  * `dono_da_agencia` (0033), as colunas `aviso`, `aviso_em` e `aviso_detalhe` e
  * a função `marcar_aviso` (0035), e a tabela `membros_da_equipa` com a função
  * `quem_sou` (0036), também foram acrescentadas à mão. Regerar tudo para
@@ -1314,6 +1315,7 @@ export type Database = {
           business_id: string | null
           email: string | null
           motivo: string | null
+          telefone: string | null
           created_at: string
         }
         Insert: {
@@ -1322,6 +1324,7 @@ export type Database = {
           business_id?: string | null
           email?: string | null
           motivo?: string | null
+          telefone?: string | null
           created_at?: string
         }
         Update: {
@@ -1330,6 +1333,256 @@ export type Database = {
           business_id?: string | null
           email?: string | null
           motivo?: string | null
+          telefone?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_chips: {
+        Row: {
+          id: string
+          owner_id: string
+          instancia: string
+          nome: string
+          numero: string | null
+          pais: string
+          estado: string
+          ativo: boolean
+          limite_diario: number
+          intervalo_min: number
+          proximo_envio_em: string
+          falhas_seguidas: number
+          travado_motivo: string | null
+          aquecer: boolean
+          aquecimento_desde: string
+          proximo_aquecimento_em: string
+          webhook_token: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id?: string
+          instancia: string
+          nome?: string
+          numero?: string | null
+          pais?: string
+          estado?: string
+          ativo?: boolean
+          limite_diario?: number
+          intervalo_min?: number
+          proximo_envio_em?: string
+          falhas_seguidas?: number
+          travado_motivo?: string | null
+          aquecer?: boolean
+          aquecimento_desde?: string
+          proximo_aquecimento_em?: string
+          webhook_token?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          instancia?: string
+          nome?: string
+          numero?: string | null
+          pais?: string
+          estado?: string
+          ativo?: boolean
+          limite_diario?: number
+          intervalo_min?: number
+          proximo_envio_em?: string
+          falhas_seguidas?: number
+          travado_motivo?: string | null
+          aquecer?: boolean
+          aquecimento_desde?: string
+          proximo_aquecimento_em?: string
+          webhook_token?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_campanhas: {
+        Row: {
+          id: string
+          owner_id: string
+          nome: string
+          tipo: string
+          estado: string
+          chips: string[]
+          hora_inicio: number
+          hora_fim: number
+          criada_por: string | null
+          terminada_em: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id?: string
+          nome: string
+          tipo?: string
+          estado?: string
+          chips?: string[]
+          hora_inicio?: number
+          hora_fim?: number
+          criada_por?: string | null
+          terminada_em?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          nome?: string
+          tipo?: string
+          estado?: string
+          chips?: string[]
+          hora_inicio?: number
+          hora_fim?: number
+          criada_por?: string | null
+          terminada_em?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_envios: {
+        Row: {
+          id: string
+          owner_id: string
+          campanha_id: string
+          business_id: string | null
+          chip_id: string | null
+          numero: string
+          pais: string
+          nome: string | null
+          texto: string
+          ordem: number
+          estado: string
+          erro: string | null
+          mensagem_id: string | null
+          tentado_em: string | null
+          enviado_em: string | null
+          respondeu_em: string | null
+          aquecimento: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id?: string
+          campanha_id: string
+          business_id?: string | null
+          chip_id?: string | null
+          numero: string
+          pais?: string
+          nome?: string | null
+          texto: string
+          ordem?: number
+          estado?: string
+          erro?: string | null
+          mensagem_id?: string | null
+          tentado_em?: string | null
+          enviado_em?: string | null
+          respondeu_em?: string | null
+          aquecimento?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          campanha_id?: string
+          business_id?: string | null
+          chip_id?: string | null
+          numero?: string
+          pais?: string
+          nome?: string | null
+          texto?: string
+          ordem?: number
+          estado?: string
+          erro?: string | null
+          mensagem_id?: string | null
+          tentado_em?: string | null
+          enviado_em?: string | null
+          respondeu_em?: string | null
+          aquecimento?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_mensagens: {
+        Row: {
+          id: string
+          owner_id: string
+          chip_id: string
+          numero: string
+          business_id: string | null
+          de_mim: boolean
+          texto: string | null
+          tipo: string
+          nome_contacto: string | null
+          mensagem_id: string | null
+          enviada_em: string
+          lida: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id: string
+          chip_id: string
+          numero: string
+          business_id?: string | null
+          de_mim: boolean
+          texto?: string | null
+          tipo?: string
+          nome_contacto?: string | null
+          mensagem_id?: string | null
+          enviada_em?: string
+          lida?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          chip_id?: string
+          numero?: string
+          business_id?: string | null
+          de_mim?: boolean
+          texto?: string | null
+          tipo?: string
+          nome_contacto?: string | null
+          mensagem_id?: string | null
+          enviada_em?: string
+          lida?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_aquecimento_numeros: {
+        Row: {
+          id: string
+          owner_id: string
+          numero: string
+          nome: string
+          pais: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id?: string
+          numero: string
+          nome?: string
+          pais?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          numero?: string
+          nome?: string
+          pais?: string
           created_at?: string
         }
         Relationships: []
@@ -1645,6 +1898,31 @@ export type Database = {
       };
     };
     Functions: {
+      whatsapp_reclamar: {
+        Args: { p_token: string };
+        Returns: {
+          envio_id: string;
+          instancia: string;
+          numero: string;
+          texto: string;
+          aquecimento: boolean;
+        }[];
+      };
+      whatsapp_resultado: {
+        Args: {
+          p_token: string;
+          p_envio: string;
+          p_ok: boolean;
+          p_mensagem_id?: string | null;
+          p_erro?: string | null;
+          p_culpa_do_chip?: boolean;
+        };
+        Returns: undefined;
+      };
+      whatsapp_receber: {
+        Args: { p_token: string; p_evento: Json };
+        Returns: string;
+      };
       cancelar_subscricao: {
         Args: { p_id: string };
         Returns: boolean;

@@ -77,6 +77,12 @@ const serverSchema = z.object({
   // acabamento.
   PEXELS_API_KEY: z.string().min(1).optional(),
 
+  // O servidor da Evolution API (WhatsApp por QR, Hostinger) e a chave global
+  // dele. Só os disparos e a caixa de conversas precisam: sem elas o resto do
+  // painel continua igual e o ecrã de disparos diz o que falta.
+  EVOLUTION_API_URL: z.string().url("EVOLUTION_API_URL tem de ser um URL válido").optional(),
+  EVOLUTION_API_KEY: z.string().min(1).optional(),
+
   PUBLIC_SITE_DEFAULT_TTL_DAYS: z.coerce.number().int().positive().default(30),
   REGION_SEARCH_CACHE_DAYS: z.coerce.number().int().positive().default(30),
 });

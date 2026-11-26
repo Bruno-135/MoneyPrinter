@@ -403,6 +403,8 @@ limitada à "Places API (New)", mais uma quota diária de pedidos.
 | `RESEND_API_KEY` | **Só servidor** | Não | Aviso por email quando alguém preenche o formulário do site. Sem ela o pedido grava-se na mesma e aparece no painel — só não há o toque |
 | `EMAIL_DOS_AVISOS` | **Só servidor** | Não | Para onde vai esse aviso. Por omissão, `geral@vaidesign.net` |
 | `PEXELS_API_KEY` | **Só servidor** | Não | Fotografias de banco grátis. Sem ela, as páginas usam as imagens geradas |
+| `EVOLUTION_API_URL` | **Só servidor** | Não | Servidor da Evolution API (WhatsApp por QR, Hostinger). Sem ela, o ecrã de disparos diz o que falta |
+| `EVOLUTION_API_KEY` | **Só servidor** | Não | Chave global da Evolution — abre TODOS os números. Só na Vercel, como *Secret*; nunca na base nem no browser |
 
 Na Vercel, as mesmas variáveis são definidas em **Project Settings → Environment Variables**
 para Production, Preview e Development.
@@ -921,6 +923,54 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       registar contactos). A fila passou a excluir «não contactar», que deixava passar.
 
       Não testado contra a base real: só a lógica tem testes.
+
+- [x] **Disparos de WhatsApp e aquecimento** — `/painel/disparos` (área `whatsapp`),
+      migração 0045. Servidor próprio da Evolution API na Hostinger (KVM 1, Paris),
+      `https://evolution-api-roe4.srv2203143.hstgr.cloud` (o HTTPS já vem da Hostinger).
+      Cada número é uma «instância» da Evolution ligada por QR; no painel liga-se a
+      instância ao sistema (`whatsapp_chips`), e o sistema aponta-lhe o webhook.
+
+      **O motor mora na base, não no ecrã.** O pg_cron corre `whatsapp_chamar_motor()` a
+      cada minuto; só quando há um chip pronto e alguém à espera chama (pg_net)
+      `/api/whatsapp/motor` com o token do motor (`whatsapp_sistema`, gerado na base, sem
+      políticas — ninguém de fora o lê). A rota pede trabalho (`whatsapp_reclamar`), manda
+      pela Evolution (verifica antes se o número tem WhatsApp e usa o número que o
+      WhatsApp devolve — no Brasil o nono dígito engana), e grava o resultado
+      (`whatsapp_resultado`). A chave da Evolution vive SÓ na Vercel. Sem chave de serviço.
+
+      **Ritmo seguro** (tudo na base): um envio por chip de cada vez, espera de
+      `intervalo_min` (5) × 70–130 %, máximo `limite_diario` (30) nas últimas 24 h, só entre
+      `hora_inicio` e `hora_fim` NA HORA DE QUEM RECEBE. Três falhas seguidas travam o chip
+      (`travado_motivo`) até alguém destravar; «número sem WhatsApp» não conta. Um envio
+      sem resposta em 15 min fica «falhou» e nunca se repete. O texto leva `{saudacao}`,
+      trocado na hora do envio (a mensagem fica horas na fila). Cada disparo leva no fim
+      «responda SAIR» (por omissão); `whatsapp_receber` põe quem responde SAIR / PARAR /
+      STOP… em `nao_contactar` pelo NÚMERO (coluna nova `telefone`) e cancela o que estava
+      na fila. Disparo enviado a um lead grava o mesmo que o botão da lista (contacto
+      `whatsapp` + espera de 3 dias).
+
+      **Aquecimento** (`aquecer`, `aquecimento_desde`): rampa no limite de disparos (5/dia
+      nos 3 primeiros dias, 10 até ao 7.º, 20 até ao 14.º, depois o limite) e frases curtas
+      de conversa, sem hora («Tudo bem por aí?»), a horas aleatórias (25–110 min), das 9h às
+      21h de quem recebe: 10/dia na 1.ª semana, 7 na 2.ª, depois 4. Vão para os outros chips
+      do mesmo dono e para `whatsapp_aquecimento_numeros` (números de confiança). NUNCA
+      para leads. Número antigo: «já está aquecido» salta a rampa. As contas repetem-se em
+      `src/lib/whatsapp/disparos.ts` (com teste) só para o ecrã — quem manda é a base.
+
+      Ecrãs: chips (estado, disparos hoje / limite, aquecimento, pausar, destravar, ritmo),
+      números de confiança, disparos com progresso; `/nova` (leads com os filtros da Lista
+      de WhatsApp, ou números colados; mensagem automática de `mensagem.ts` ou escrita à
+      mão com `{nome}`; pré-visualização obrigatória antes de começar; exclui «não
+      contactar» e quem já recebeu); `/[id]` (cada pessoa e o estado); `/conversas` (caixa
+      dos chips, responder pelo mesmo chip, marcar «não contactar»).
+
+      O webhook (`/api/whatsapp/webhook/<token do chip>`) passa à base só `event` e `data` —
+      a Evolution junta a chave da instância ao corpo, e essa não sai da rota. Grupos,
+      estados e canais são ignorados; endereços `@lid` usam o `remoteJidAlt`.
+
+      Testado na base com um chip falso (ordem, espera, saudação, aquecimento, SAIR,
+      respostas, grupos, travão) e revertido. NÃO testado ainda contra a Evolution a sério:
+      a primeira corrida é em produção, com o chip PT.
 
 ---
 

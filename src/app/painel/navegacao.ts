@@ -49,6 +49,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
     itens: [
       { href: '/painel/robo', label: 'Conversas do robô', acesso: 'robo', porLigar: true },
       { href: '/painel/whatsapp', label: 'Lista de WhatsApp', acesso: 'whatsapp' },
+      { href: '/painel/disparos', label: 'Disparos de WhatsApp', acesso: 'whatsapp' },
       { href: '/painel/instagram', label: 'Lista de Instagram', acesso: 'whatsapp' },
       { href: '/painel/emails', label: 'E-mails dos leads', acesso: 'emails' },
     ],
@@ -95,6 +96,9 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/modelos': ['Modelos de site', 'o que se mostra antes de dizer o preço'],
   '/painel/robo': ['Conversas do robô', 'Instagram → WhatsApp'],
   '/painel/whatsapp': ['Lista de WhatsApp', 'leads com telemóvel, para abrir a conversa'],
+  '/painel/disparos': ['Disparos de WhatsApp', 'chips, aquecimento e envios automáticos'],
+  '/painel/disparos/nova': ['Novo disparo', 'escolher, ver como fica, começar'],
+  '/painel/disparos/conversas': ['Conversas do WhatsApp', 'o que entra e sai nos chips'],
   '/painel/instagram': ['Lista de Instagram', 'leads com Instagram, para mandar pelo Direct'],
   '/painel/emails': ['E-mails dos leads', 'extraídos dos sites, como uma folha'],
   '/painel/clientes': ['Carteira de clientes', 'quem já comprou, e o quê'],
@@ -113,6 +117,8 @@ export function tituloDoEcra(caminho: string): [string, string] {
     return ['Ficha do lead', 'tudo o que decide a chamada'];
   }
   if (caminho.startsWith('/painel/emails/')) return ['E-mail do lead', 'ver antes de enviar'];
+  if (caminho.startsWith('/painel/disparos/'))
+    return ['Disparo de WhatsApp', 'quem já recebeu e quem falta'];
   if (caminho.startsWith('/painel/modelos/'))
     return ['Modelo de site', 'como o comerciante o vai ver'];
   if (caminho.endsWith('/pecas') && caminho.startsWith('/painel/site/')) {
