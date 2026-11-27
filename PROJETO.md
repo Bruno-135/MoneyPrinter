@@ -1041,7 +1041,10 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
 
 - [x] **Leads quentes do WhatsApp** — `/painel/disparos/quentes` (menu «Vender → Leads
       quentes», área `whatsapp`), migração 0051. Entram as conversas que o robô marcou quentes
-      (🔥), as que passou ao Bruno (🙋) e as que já têm etapa. Cada cartão: nome (o da ficha,
+      (🔥), as que passou ao Bruno (🙋) e as que já têm etapa. A lista é em LINHAS (nome, selos,
+      resumo, telefone, etapa, há quanto tempo); tocar abre `/painel/disparos/quentes/[numero]`,
+      a página do lead, com tudo e com a conversa e a caixa de responder (volta à própria
+      página). Na página do lead: nome (o da ficha,
       o do WhatsApp, ou um escrito à mão em `nome`), telefone com wa.me, «Abrir conversa»,
       «Ficha do lead», ramo e cidade, o resumo da IA (`motivo`), a última mensagem, e o
       tratamento: etapa (`etapa`: novo, em andamento, negociando, fechado, recusado), nome e

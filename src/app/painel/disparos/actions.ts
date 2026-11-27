@@ -383,7 +383,10 @@ export async function responder(form: FormData): Promise<void> {
   await exigirAcesso('whatsapp');
   const numero = texto(form, 'numero');
   const mensagem = texto(form, 'texto').slice(0, 4000);
-  const caminho = `${CAMINHO}/conversas?n=${numero}`;
+  const caminho =
+    texto(form, 'volta') === 'lead'
+      ? `${CAMINHO}/quentes/${numero}?respondido=1`
+      : `${CAMINHO}/conversas?n=${numero}`;
   if (!/^[1-9][0-9]{7,14}$/.test(numero) || !mensagem) return;
 
   const db = await createClient();
@@ -427,6 +430,7 @@ export async function responder(form: FormData): Promise<void> {
     .eq('numero', numero)
     .is('humano_desde', null);
   revalidatePath(`${CAMINHO}/conversas`);
+  revalidatePath(`${CAMINHO}/quentes/${numero}`);
   redirect(caminho as Route);
 }
 
@@ -706,9 +710,10 @@ export async function guardarLead(form: FormData): Promise<void> {
     revalidatePath(`/painel/comercio/${conversa.business_id}`);
   }
   revalidatePath(`${CAMINHO}/quentes`);
+  revalidatePath(`${CAMINHO}/quentes/${numero}`);
   const volta =
     texto(form, 'volta') === 'conversa'
       ? `${CAMINHO}/conversas?n=${numero}`
-      : `${CAMINHO}/quentes${texto(form, 'filtro') ? `?etapa=${texto(form, 'filtro')}` : ''}#n${numero}`;
+      : `${CAMINHO}/quentes/${numero}?gravado=1`;
   redirect(volta as Route);
 }

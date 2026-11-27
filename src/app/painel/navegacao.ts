@@ -120,6 +120,8 @@ export function tituloDoEcra(caminho: string): [string, string] {
     return ['Ficha do lead', 'tudo o que decide a chamada'];
   }
   if (caminho.startsWith('/painel/emails/')) return ['E-mail do lead', 'ver antes de enviar'];
+  if (caminho.startsWith('/painel/disparos/quentes/'))
+    return ['Lead quente', 'tudo, a conversa e a etapa'];
   if (caminho.startsWith('/painel/disparos/'))
     return ['Disparo de WhatsApp', 'quem já recebeu e quem falta'];
   if (caminho.startsWith('/painel/modelos/'))
