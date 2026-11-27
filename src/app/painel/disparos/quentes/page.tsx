@@ -40,7 +40,7 @@ export default async function LeadsQuentesPage({
   const { data: conversas } = await db
     .from('whatsapp_conversas')
     .select(
-      'numero, business_id, etapa, etapa_em, nome, notas, quente, quente_em, humano_desde, motivo, updated_at, ultima_entrada_em',
+      'numero, business_id, etapa, etapa_em, nome, notas, quente, quente_em, humano_desde, motivo, updated_at, ultima_entrada_em, teste',
     )
     .or('quente.eq.true,humano_desde.not.is.null,etapa.neq.novo')
     .order('updated_at', { ascending: false })
@@ -151,6 +151,11 @@ export default async function LeadsQuentesPage({
                     {c.humano_desde ? '🙋 ' : ''}
                     {nome}
                   </span>
+                  {c.teste && (
+                    <span className="rounded bg-violet-500/15 px-2 py-0.5 text-xs font-semibold text-violet-700 dark:text-violet-300">
+                      TESTE
+                    </span>
+                  )}
                   <span
                     className={`rounded px-2 py-0.5 text-xs font-medium ${ESTILO_DA_ETAPA[etapa]}`}
                   >

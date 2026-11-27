@@ -1049,7 +1049,8 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       base a etapa passa ao funil (`src/lib/whatsapp/etapas.ts`, `ETAPA_PARA_FUNIL`:
       em andamento → contactado, negociando → em negociação, fechado → ganho, recusado →
       perdido; «novo» não mexe) com o `setStage` de sempre. A caixa de conversas mostra a
-      etapa e leva ao cartão.
+      etapa e leva ao cartão. As conversas de teste (`teste = true`) aparecem nos dois sítios com o
+      selo «TESTE», para não se confundirem com clientes.
 
 ---
 

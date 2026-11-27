@@ -64,7 +64,7 @@ export default async function ConversasPage({
   // O estado do robô em cada conversa: quente, uma pessoa assumiu, robô desligado.
   const { data: estados } = await db
     .from('whatsapp_conversas')
-    .select('numero, quente, humano_desde, robo_ativo, motivo, respostas_robo, etapa')
+    .select('numero, quente, humano_desde, robo_ativo, motivo, respostas_robo, etapa, teste')
     .in(
       'numero',
       conversas.slice(0, 300).map((c) => c.numero),
@@ -139,8 +139,15 @@ export default async function ConversasPage({
               >
                 <span className="flex items-center gap-2">
                   <span className="min-w-0 flex-1 truncate font-medium">
+                    {estadoDe.get(c.numero)?.quente ? '🔥 ' : ''}
+                    {estadoDe.get(c.numero)?.humano_desde ? '🙋 ' : ''}
                     {c.nome ?? `+${c.numero}`}
                   </span>
+                  {estadoDe.get(c.numero)?.teste && (
+                    <span className="rounded bg-violet-500/15 px-1.5 text-[10px] font-semibold text-violet-700 dark:text-violet-300">
+                      TESTE
+                    </span>
+                  )}
                   {c.naoLidas > 0 && (
                     <span className="rounded-full bg-emerald-600 px-1.5 text-[11px] font-semibold text-white">
                       {c.naoLidas}
@@ -164,6 +171,11 @@ export default async function ConversasPage({
                 ←
               </Link>
               <span className="font-semibold">{daAberta?.nome ?? `+${aberta}`}</span>
+              {estadoDe.get(aberta)?.teste && (
+                <span className="rounded bg-violet-500/15 px-2 py-0.5 text-xs font-semibold text-violet-700 dark:text-violet-300">
+                  TESTE
+                </span>
+              )}
               <span className="text-ink3 font-mono text-[12px]">+{aberta}</span>
               {lead && (
                 <Link
