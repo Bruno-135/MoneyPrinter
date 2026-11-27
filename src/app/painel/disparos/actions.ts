@@ -479,7 +479,6 @@ export async function guardarRobo(form: FormData): Promise<void> {
   const db = await createClient();
   const { error } = await db.from('whatsapp_robo').upsert({
     owner_id: quem.donoId,
-    ativo: texto(form, 'ativo') === 'sim',
     modelo: ehModeloDoRobo(modelo) ? modelo : 'claude-opus-5-5',
     responder_a: ['disparos', 'leads', 'todos'].includes(responderA) ? responderA : 'disparos',
     sobre: texto(form, 'sobre').slice(0, 8000),
@@ -630,4 +629,36 @@ export async function enviarTeste(form: FormData): Promise<void> {
   );
   revalidatePath(`${CAMINHO}/conversas`);
   redirect(`${voltar}?teste=${numero}` as Route);
+}
+
+/** Ligar ou desligar o robô. Ao ligar, responde já a quem ficou à espera. */
+export async function ligarRobo(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const quem = await exigirAcesso('whatsapp');
+  const ligar = texto(form, 'acao') === 'ligar';
+  const db = await createClient();
+  const { error } = await db
+    .from('whatsapp_robo')
+    .upsert({ owner_id: quem.donoId, ativo: ligar, updated_at: new Date().toISOString() });
+  if (error) voltarComErro(`Não foi possível gravar: ${error.message}`, `${CAMINHO}/robo`);
+  if (ligar) {
+    // As conversas cuja última mensagem é da pessoa e ainda não têm resposta.
+    const { data: espera } = await db
+      .from('whatsapp_conversas')
+      .select('id, ultima_entrada_em, ultima_saida_em')
+      .eq('robo_ativo', true)
+      .is('humano_desde', null)
+      .not('ultima_entrada_em', 'is', null);
+    const ids = (espera ?? [])
+      .filter((c) => !c.ultima_saida_em || c.ultima_entrada_em! > c.ultima_saida_em)
+      .map((c) => c.id);
+    if (ids.length > 0) {
+      await db
+        .from('whatsapp_conversas')
+        .update({ responder_em: new Date().toISOString() })
+        .in('id', ids);
+    }
+  }
+  revalidatePath(`${CAMINHO}/robo`);
+  redirect(`${CAMINHO}/robo` as Route);
 }

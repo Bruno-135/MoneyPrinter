@@ -1021,6 +1021,13 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       bloqueia o número; repetir recomeça a conversa (zera respostas, seguimento e humano).
       Recusa números em «não contactar» e o próprio chip.
 
+      Ligar/desligar o robô é uma faixa à parte no topo do ecrã (verde/vermelha), com o seu
+      botão (`ligarRobo`) — era uma caixa dentro do formulário e ficou gravada desligada sem
+      se dar por isso. Ao ligar, as conversas cuja última mensagem é da pessoa recebem
+      resposta logo. Os botões que mandam ou gravam (`botao-enviar.tsx`, `useFormStatus`)
+      ficam desligados enquanto a acção corre: no primeiro teste real, cada clique impaciente
+      mandou mais uma mensagem igual.
+
       **Teste simulado**: conversa de teste no ecrã com a configuração GRAVADA (lead fictício, PT ou
       BR), mostra os sinais. Testado na base (resposta acorda, número desconhecido não,
       eco do disparo não conta como humano, quente avisa, humano cala) e revertido; a IA em

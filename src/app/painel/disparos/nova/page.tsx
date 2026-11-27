@@ -13,6 +13,7 @@ import {
   MAXIMO_POR_DISPARO,
 } from '@/lib/whatsapp/painel-disparos';
 import { criarDisparo, enviarTeste } from '../actions';
+import { BotaoEnviar } from '../botao-enviar';
 
 /**
  * Um disparo novo, em dois passos: escolher (GET, que mostra quem recebe e
@@ -363,9 +364,9 @@ export default async function NovoDisparoPage({ searchParams }: { searchParams: 
                       className="border-line h-9 w-64 rounded-md border bg-transparent px-2 text-[13px]"
                     />
                   </label>
-                  <button className="border-line rounded-md border px-3 py-2 text-[13px] font-semibold">
+                  <BotaoEnviar className="border-line rounded-md border px-3 py-2 text-[13px] font-semibold">
                     Enviar teste
-                  </button>
+                  </BotaoEnviar>
                 </form>
               )}
 
@@ -373,10 +374,13 @@ export default async function NovoDisparoPage({ searchParams }: { searchParams: 
                 {escondidos.map(([k, v], i) => (
                   <input key={`${k}-${i}`} type="hidden" name={k} value={v} />
                 ))}
-                <button className="bg-brand-600 rounded-md px-4 py-2 text-sm font-semibold text-white">
+                <BotaoEnviar
+                  aCorrer="A pôr na fila…"
+                  className="bg-brand-600 rounded-md px-4 py-2 text-sm font-semibold text-white"
+                >
                   Começar disparo para {selecao.destinatarios.length}{' '}
                   {selecao.destinatarios.length === 1 ? 'pessoa' : 'pessoas'}
-                </button>
+                </BotaoEnviar>
               </form>
             </>
           )}

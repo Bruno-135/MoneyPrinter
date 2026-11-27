@@ -8,7 +8,8 @@ import {
   OBJETIVO_POR_OMISSAO,
   SOBRE_POR_OMISSAO,
 } from '@/lib/whatsapp/robo-prompt';
-import { enviarTeste, guardarRobo } from '../actions';
+import { enviarTeste, guardarRobo, ligarRobo } from '../actions';
+import { BotaoEnviar } from '../botao-enviar';
 import { TesteDoRobo } from './teste';
 
 /**
@@ -73,6 +74,7 @@ export default async function RoboPage({
         <p className="rounded-md bg-emerald-500/10 px-3 py-2 text-[13px] text-emerald-800 dark:text-emerald-300">
           Teste enviado para +{teste}. Responda desse telemóvel como se fosse um cliente: com o robô
           ligado, ele responde em cerca de um minuto. Acompanhe em Disparos → Conversas.
+          {!robo?.ativo && ' Atenção: o robô está DESLIGADO — ligue-o acima para ele responder.'}
         </p>
       )}
       {gravado && (
@@ -92,19 +94,26 @@ export default async function RoboPage({
         </p>
       )}
 
+      <form
+        action={ligarRobo}
+        className={`flex flex-wrap items-center gap-3 rounded-xl border-2 p-4 ${robo?.ativo ? 'border-emerald-600 bg-emerald-500/10' : 'border-red-600/60 bg-red-500/10'}`}
+      >
+        <span className="text-[15px] font-semibold">
+          {robo?.ativo
+            ? '● Robô LIGADO — está a responder às conversas'
+            : '○ Robô DESLIGADO — não responde a ninguém'}
+        </span>
+        <input type="hidden" name="acao" value={robo?.ativo ? 'desligar' : 'ligar'} />
+        <BotaoEnviar
+          aCorrer="A gravar…"
+          className={`ml-auto rounded-md px-4 py-2 text-sm font-semibold ${robo?.ativo ? 'border-line border' : 'bg-emerald-600 text-white'}`}
+        >
+          {robo?.ativo ? 'Desligar o robô' : 'Ligar o robô'}
+        </BotaoEnviar>
+      </form>
+
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <form action={guardarRobo} className="flex flex-col gap-4">
-          <label className="flex items-center gap-3 rounded-xl border-2 border-emerald-600/40 p-4 text-[14px] font-semibold">
-            <input
-              type="checkbox"
-              name="ativo"
-              value="sim"
-              defaultChecked={robo?.ativo ?? false}
-              className="h-5 w-5"
-            />
-            Robô ligado — responde às conversas sozinho
-          </label>
-
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label className={rotulo}>
               <span className="text-ink3">A quem responde</span>
@@ -229,9 +238,12 @@ export default async function RoboPage({
             </label>
           </div>
 
-          <button className="bg-brand-600 self-start rounded-md px-4 py-2 text-sm font-semibold text-white">
+          <BotaoEnviar
+            aCorrer="A gravar…"
+            className="bg-brand-600 self-start rounded-md px-4 py-2 text-sm font-semibold text-white"
+          >
             Gravar
-          </button>
+          </BotaoEnviar>
           <p className="text-ink3 text-[12px]">
             O teste ao lado usa o que estiver gravado — grave antes de testar uma mudança.
           </p>
@@ -270,9 +282,9 @@ export default async function RoboPage({
               defaultValue="Olá! Chamo-me Bruno e trabalho com criação de sites. Encontrei o vosso negócio no Google Maps e reparei que ainda não têm site próprio. Querem que prepare um para verem como fica?"
               className="border-line rounded-md border bg-transparent p-2 text-[13px]"
             />
-            <button className="bg-brand-600 self-start rounded-md px-4 py-2 text-sm font-semibold text-white">
+            <BotaoEnviar className="bg-brand-600 self-start rounded-md px-4 py-2 text-sm font-semibold text-white">
               Enviar teste para o WhatsApp
-            </button>
+            </BotaoEnviar>
           </form>
           <section className="border-line flex flex-col gap-2 rounded-xl border p-4">
             <h2 className="text-[14px] font-semibold">
