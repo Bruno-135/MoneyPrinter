@@ -1039,6 +1039,18 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       eco do disparo não conta como humano, quente avisa, humano cala) e revertido; a IA em
       si só se vê a sério em produção (o sandbox não tem a chave).
 
+- [x] **Leads quentes do WhatsApp** — `/painel/disparos/quentes` (menu «Vender → Leads
+      quentes», área `whatsapp`), migração 0051. Entram as conversas que o robô marcou quentes
+      (🔥), as que passou ao Bruno (🙋) e as que já têm etapa. Cada cartão: nome (o da ficha,
+      o do WhatsApp, ou um escrito à mão em `nome`), telefone com wa.me, «Abrir conversa»,
+      «Ficha do lead», ramo e cidade, o resumo da IA (`motivo`), a última mensagem, e o
+      tratamento: etapa (`etapa`: novo, em andamento, negociando, fechado, recusado), nome e
+      notas. Separadores por etapa; por omissão «Em aberto» (as três primeiras). Num lead da
+      base a etapa passa ao funil (`src/lib/whatsapp/etapas.ts`, `ETAPA_PARA_FUNIL`:
+      em andamento → contactado, negociando → em negociação, fechado → ganho, recusado →
+      perdido; «novo» não mexe) com o `setStage` de sempre. A caixa de conversas mostra a
+      etapa e leva ao cartão.
+
 ---
 
 ## 9. Nota sobre o repositório

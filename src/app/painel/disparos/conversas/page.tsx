@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { haQuantoTempo } from '@/components/quando';
 import { mudarConversa, naoContactarNumero, responder } from '../actions';
+import { ETAPAS_DO_LEAD } from '@/lib/whatsapp/etapas';
 
 /**
  * A caixa de conversas dos chips: o que entra (respostas aos disparos, e o
@@ -63,7 +64,7 @@ export default async function ConversasPage({
   // O estado do robô em cada conversa: quente, uma pessoa assumiu, robô desligado.
   const { data: estados } = await db
     .from('whatsapp_conversas')
-    .select('numero, quente, humano_desde, robo_ativo, motivo, respostas_robo')
+    .select('numero, quente, humano_desde, robo_ativo, motivo, respostas_robo, etapa')
     .in(
       'numero',
       conversas.slice(0, 300).map((c) => c.numero),
@@ -193,6 +194,15 @@ export default async function ConversasPage({
                   : `Robô a responder (${e.respostas_robo} ${e.respostas_robo === 1 ? 'resposta' : 'respostas'})`;
               return (
                 <div className="border-line flex flex-wrap items-center gap-2 border-b bg-black/[0.02] px-4 py-2 text-[12px] dark:bg-white/[0.03]">
+                  {(e.quente || e.humano_desde || e.etapa !== 'novo') && (
+                    <Link
+                      href={`/painel/disparos/quentes?etapa=todos#n${aberta}`}
+                      className="text-brand-600 font-semibold"
+                    >
+                      Leads quentes:{' '}
+                      {ETAPAS_DO_LEAD.find((x) => x.value === e.etapa)?.label ?? 'Novo'} →
+                    </Link>
+                  )}
                   {e.quente && (
                     <span className="font-semibold text-orange-700 dark:text-orange-300">
                       🔥 Lead quente

@@ -20,6 +20,8 @@ import { nomeDeInstancia, normalizarNumero, paisDoNumero } from '@/lib/whatsapp/
 import { lerPedido, selecionar } from '@/lib/whatsapp/painel-disparos';
 import { gerarResposta } from '@/lib/whatsapp/robo';
 import { ehModeloDoRobo, type RespostaDoRobo } from '@/lib/whatsapp/robo-prompt';
+import { ETAPA_PARA_FUNIL, ehEtapaDoLead } from '@/lib/whatsapp/etapas';
+import { setStage } from '@/lib/deals/repository';
 
 /**
  * As acções do ecrã de disparos. Todas com a sessão de quem carrega (a RLS
@@ -664,4 +666,49 @@ export async function ligarRobo(form: FormData): Promise<void> {
   }
   revalidatePath(`${CAMINHO}/robo`);
   redirect(`${CAMINHO}/robo` as Route);
+}
+
+// ---------- leads quentes ----------
+
+/**
+ * Muda a etapa, o nome ou as notas de um lead quente. Quando a conversa é de
+ * um lead da base, a etapa passa também para o funil (`deals.stage`), para a
+ * ficha e o Funil dizerem o mesmo.
+ */
+export async function guardarLead(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const numero = texto(form, 'numero');
+  if (!/^[1-9][0-9]{7,14}$/.test(numero)) return;
+  const etapa = texto(form, 'etapa');
+  const db = await createClient();
+  const { data: conversa } = await db
+    .from('whatsapp_conversas')
+    .select('id, etapa, business_id')
+    .eq('numero', numero)
+    .maybeSingle();
+  if (!conversa) return;
+
+  const mudancas: Database['public']['Tables']['whatsapp_conversas']['Update'] = {
+    nome: texto(form, 'nome').slice(0, 120) || null,
+    notas: texto(form, 'notas').slice(0, 4000) || null,
+    updated_at: new Date().toISOString(),
+  };
+  const mudouEtapa = ehEtapaDoLead(etapa) && etapa !== conversa.etapa;
+  if (mudouEtapa) {
+    mudancas.etapa = etapa;
+    mudancas.etapa_em = new Date().toISOString();
+  }
+  await db.from('whatsapp_conversas').update(mudancas).eq('id', conversa.id);
+
+  const noFunil = mudouEtapa ? ETAPA_PARA_FUNIL[etapa] : null;
+  if (noFunil && conversa.business_id) {
+    await setStage(db, conversa.business_id, noFunil);
+    revalidatePath(`/painel/comercio/${conversa.business_id}`);
+  }
+  revalidatePath(`${CAMINHO}/quentes`);
+  const volta =
+    texto(form, 'volta') === 'conversa'
+      ? `${CAMINHO}/conversas?n=${numero}`
+      : `${CAMINHO}/quentes${texto(form, 'filtro') ? `?etapa=${texto(form, 'filtro')}` : ''}#n${numero}`;
+  redirect(volta as Route);
 }

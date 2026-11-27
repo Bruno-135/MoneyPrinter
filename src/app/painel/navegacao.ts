@@ -37,6 +37,7 @@ export const MENU: readonly SeccaoDeMenu[] = [
       { href: '/painel', label: 'Painel', acesso: 'todos' },
       { href: '/painel/pedidos', label: 'E-mails recebidos', acesso: 'pedidos' },
       { href: '/painel/contactar', label: 'Leads a contactar', acesso: 'contactar' },
+      { href: '/painel/disparos/quentes', label: 'Leads quentes', acesso: 'whatsapp' },
       { href: '/painel/comercios', label: 'Leads', acesso: 'leads' },
       { href: '/painel/funil', label: 'Funil', acesso: 'funil' },
       { href: '/painel/varrimento', label: 'Prospetar leads', acesso: 'varrimento' },
@@ -100,6 +101,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/disparos/nova': ['Novo disparo', 'escolher, ver como fica, começar'],
   '/painel/disparos/conversas': ['Conversas do WhatsApp', 'o que entra e sai nos chips'],
   '/painel/disparos/robo': ['Robô do WhatsApp', 'a IA que responde às conversas'],
+  '/painel/disparos/quentes': ['Leads quentes', 'quem mostrou interesse no WhatsApp'],
   '/painel/instagram': ['Lista de Instagram', 'leads com Instagram, para mandar pelo Direct'],
   '/painel/emails': ['E-mails dos leads', 'extraídos dos sites, como uma folha'],
   '/painel/clientes': ['Carteira de clientes', 'quem já comprou, e o quê'],
@@ -141,6 +143,9 @@ export function tituloDoEcra(caminho: string): [string, string] {
 export function estaAceso(item: ItemDeMenu, caminho: string): boolean {
   if (caminho === item.href) return true;
   if (item.href === '/painel') return false;
+  // «Leads quentes» vive dentro de /painel/disparos mas tem a sua própria
+  // entrada no menu: só ela acende lá, e não as duas.
+  if (item.href === '/painel/disparos' && caminho.startsWith('/painel/disparos/quentes')) return false;
   // A ficha de um comércio acende "Comércios", que é de onde se lá chega.
   if (item.href === '/painel/comercios' && caminho.startsWith('/painel/comercio/')) return true;
   return caminho.startsWith(`${item.href}/`);

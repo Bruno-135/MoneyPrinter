@@ -1667,6 +1667,10 @@ export type Database = {
           updated_at: string
           teste: boolean
           contexto_desde: string | null
+          etapa: string
+          etapa_em: string | null
+          nome: string | null
+          notas: string | null
         }
         Insert: {
           id?: string
@@ -1691,6 +1695,10 @@ export type Database = {
           updated_at?: string
           teste?: boolean
           contexto_desde?: string | null
+          etapa?: string
+          etapa_em?: string | null
+          nome?: string | null
+          notas?: string | null
         }
         Update: {
           id?: string
@@ -1715,6 +1723,10 @@ export type Database = {
           updated_at?: string
           teste?: boolean
           contexto_desde?: string | null
+          etapa?: string
+          etapa_em?: string | null
+          nome?: string | null
+          notas?: string | null
         }
         Relationships: []
       }

@@ -255,6 +255,12 @@ export default async function RoboPage({
             className="flex flex-col gap-2 rounded-xl border-2 border-emerald-600/40 p-4"
           >
             <input type="hidden" name="voltar" value="robo" />
+            <Link
+              href="/painel/disparos/quentes"
+              className="text-brand-600 text-[13px] font-semibold"
+            >
+              Ver todos em Leads quentes →
+            </Link>
             <h2 className="text-[14px] font-semibold">Teste real no WhatsApp</h2>
             <p className="text-ink3 text-[12px]">
               Manda esta mensagem a um número seu (outro telemóvel, ou de alguém que ajude).
