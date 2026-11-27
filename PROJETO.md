@@ -964,6 +964,16 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       contactar» e quem já recebeu); `/[id]` (cada pessoa e o estado); `/conversas` (caixa
       dos chips, responder pelo mesmo chip, marcar «não contactar»).
 
+      **Ligar por QR no painel**: «Ligar um número novo» cria o chip na base (para ter o
+      token do webhook), cria a instância na Evolution (`/instance/create`, grupos
+      ignorados), aponta o webhook e leva a `/painel/disparos/ligar/[id]`, onde um
+      componente de cliente pergunta a cada 4 s (`verificarLigacao`) pelo QR do momento
+      (`/instance/connect`) até o telemóvel ler; aí grava o número e diz «Ligado ✓». Pára
+      ao fim de 5 min («Gerar outro QR»). Com o número escrito ao criar, aparece também o
+      código de 8 letras, para quem tem o painel aberto no próprio telemóvel do chip. Um
+      chip desligado tem «Ligar por QR». Se a Evolution falhar a criar, o chip sai da base.
+      «Tirar do sistema» só apaga o chip da base — a instância fica na Evolution.
+
       O webhook (`/api/whatsapp/webhook/<token do chip>`) passa à base só `event` e `data` —
       a Evolution junta a chave da instância ao corpo, e essa não sai da rota. Grupos,
       estados e canais são ignorados; endereços `@lid` usam o `remoteJidAlt`.

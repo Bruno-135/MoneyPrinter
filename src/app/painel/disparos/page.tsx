@@ -7,6 +7,7 @@ import { diasDeAquecimento, limiteHoje, metaDeAquecimento } from '@/lib/whatsapp
 import { lerCampanhas, lerChips, type ChipComContas } from '@/lib/whatsapp/painel-disparos';
 import {
   adicionarChip,
+  novoChip,
   adicionarNumeroDeAquecimento,
   atualizarChip,
   mudarChip,
@@ -137,6 +138,14 @@ function CartaoDoChip({ chip, agora }: { chip: ChipComContas; agora: Date }) {
       </dl>
 
       <div className="flex flex-wrap items-center gap-2">
+        {chip.estado !== 'ligado' && (
+          <Link
+            href={`/painel/disparos/ligar/${chip.id}`}
+            className="bg-brand-600 rounded-md px-2.5 py-1 text-[12px] font-semibold text-white"
+          >
+            Ligar por QR
+          </Link>
+        )}
         <form action={atualizarChip}>
           <input type="hidden" name="id" value={chip.id} />
           <button className={botao}>Verificar ligação</button>
@@ -271,7 +280,8 @@ export default async function DisparosPage({
 
         {chips.length === 0 ? (
           <p className="border-line text-ink2 rounded-xl border border-dashed px-4 py-6 text-[13px]">
-            Nenhum chip ligado ao sistema ainda. Escolha abaixo a instância que ligou na Evolution.
+            Nenhum chip ligado ao sistema ainda. Ligue um número novo por QR Code, ou escolha abaixo
+            um que já ligou na Evolution.
           </p>
         ) : (
           <ul className="flex flex-col gap-3">
@@ -283,11 +293,54 @@ export default async function DisparosPage({
 
         {configurada && (
           <form
+            action={novoChip}
+            className="flex flex-col gap-3 rounded-xl border-2 border-emerald-600/40 p-4"
+          >
+            <div>
+              <h3 className="text-[14px] font-semibold">Ligar um número novo por QR Code</h3>
+              <p className="text-ink2 text-[12px]">
+                Cria o número no servidor e mostra o QR para ler com o WhatsApp do telemóvel.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-end gap-3">
+              <label className="flex min-w-0 flex-col gap-1 text-[12px]">
+                <span className="text-ink3">Nome do chip</span>
+                <input
+                  name="nome"
+                  className={`${entrada} w-48`}
+                  placeholder="Ex.: Chip PT 2"
+                  required
+                />
+              </label>
+              <label className="flex min-w-0 flex-col gap-1 text-[12px]">
+                <span className="text-ink3">Número (opcional, para o código de 8 letras)</span>
+                <input name="numero" className={`${entrada} w-52`} placeholder="+351 912 345 678" />
+              </label>
+              <label className="flex flex-col gap-1 text-[12px]">
+                <span className="text-ink3">País</span>
+                <select name="pais" className={entrada} defaultValue="PT">
+                  <option value="PT">Portugal</option>
+                  <option value="BR">Brasil</option>
+                </select>
+              </label>
+            </div>
+            <label className="flex items-center gap-2 text-[13px]">
+              <input type="checkbox" name="aquecido" value="sim" />
+              Número antigo, já com conversas (começa sem rampa)
+            </label>
+            <button className="bg-brand-600 self-start rounded-md px-4 py-2 text-sm font-semibold text-white">
+              Criar e mostrar o QR
+            </button>
+          </form>
+        )}
+
+        {configurada && porLigar.length > 0 && (
+          <form
             action={adicionarChip}
             className="border-line flex flex-wrap items-end gap-3 rounded-xl border p-4"
           >
             <label className="flex min-w-0 flex-col gap-1 text-[12px]">
-              <span className="text-ink3">Instância da Evolution</span>
+              <span className="text-ink3">Ou um número já ligado na Evolution</span>
               <select name="instancia" className={`${entrada} min-w-48`} required>
                 {porLigar.length === 0 && <option value="">Nenhuma por ligar</option>}
                 {porLigar.map((i) => (

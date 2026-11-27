@@ -196,3 +196,61 @@ export async function configurarWebhook(instancia: string, url: string): Promise
   });
   return r.ok ? { ok: true, dados: null } : r;
 }
+
+/**
+ * Cria uma instância nova (um número por ligar). Com `numero`, a Evolution
+ * prepara também o código de ligação de 8 letras, para quem não pode ler o QR
+ * (o painel aberto no próprio telemóvel do chip).
+ *
+ * Grupos ignorados à nascença: o robô e os disparos só falam com pessoas, e
+ * um grupo cheio de mensagens só enchia a caixa de conversas.
+ */
+export async function criarInstancia(
+  instancia: string,
+  numero?: string | null,
+): Promise<Resposta<null>> {
+  const r = await pedir<unknown>('POST', '/instance/create', {
+    instanceName: instancia,
+    integration: 'WHATSAPP-BAILEYS',
+    qrcode: true,
+    ...(numero ? { number: numero } : {}),
+    groupsIgnore: true,
+    rejectCall: false,
+    alwaysOnline: false,
+    readMessages: false,
+    readStatus: false,
+    syncFullHistory: false,
+  });
+  return r.ok ? { ok: true, dados: null } : r;
+}
+
+export type EstadoDoQr =
+  | { ligado: true }
+  | { ligado: false; qr: string | null; codigo: string | null };
+
+/**
+ * O QR do momento (imagem em `data:image/png;base64,...`), ou «já ligado».
+ * Cada QR dura uns 40 segundos; chamar outra vez devolve o seguinte.
+ */
+export async function pedirQr(instancia: string): Promise<Resposta<EstadoDoQr>> {
+  const r = await pedir<{
+    base64?: string;
+    pairingCode?: string | null;
+    instance?: { state?: string };
+    error?: boolean;
+    message?: string;
+  }>('GET', `/instance/connect/${enc(instancia)}`);
+  if (!r.ok) return r;
+  const d = r.dados ?? {};
+  if (d.error)
+    return { ok: false, erro: String(d.message ?? 'A Evolution recusou o pedido.').slice(0, 300) };
+  if (d.instance?.state === 'open') return { ok: true, dados: { ligado: true } };
+  return {
+    ok: true,
+    dados: {
+      ligado: false,
+      qr: typeof d.base64 === 'string' && d.base64.startsWith('data:image') ? d.base64 : null,
+      codigo: typeof d.pairingCode === 'string' && d.pairingCode ? d.pairingCode : null,
+    },
+  };
+}

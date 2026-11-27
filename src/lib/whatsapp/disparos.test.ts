@@ -7,6 +7,7 @@ import {
   lerNumerosColados,
   limiteHoje,
   metaDeAquecimento,
+  nomeDeInstancia,
   normalizarNumero,
   paisDoNumero,
   pedeParaSair,
@@ -131,5 +132,14 @@ describe('ritmo e aquecimento (o mesmo que a base)', () => {
     expect(diasParaTerminar(61, [chip('2026-11-01'), chip('2026-11-01')], hoje)).toBe(2);
     expect(diasParaTerminar(10, [], hoje)).toBe(Infinity);
     expect(diasParaTerminar(0, [], hoje)).toBe(0);
+  });
+});
+
+describe('nomeDeInstancia', () => {
+  it('só letras, números e hífenes, com um sufixo para não colidir', () => {
+    expect(nomeDeInstancia('Chip PT nº 2', 'K3X9')).toBe('chip-pt-n-2-k3x9');
+    expect(nomeDeInstancia('São João', 'ab12')).toBe('sao-joao-ab12');
+    expect(nomeDeInstancia('***', 'ab12')).toBe('chip-ab12');
+    expect(nomeDeInstancia('Chip PT nº 2', 'K3X9')).toMatch(/^[A-Za-z0-9_-]{1,60}$/);
   });
 });

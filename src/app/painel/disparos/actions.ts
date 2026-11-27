@@ -7,13 +7,16 @@ import type { Database } from '@/types/database.types';
 import { createClient } from '@/lib/supabase/server';
 import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { publicEnv } from '@/lib/env';
+import { randomBytes } from 'node:crypto';
 import {
   configurarWebhook,
+  criarInstancia,
   enviarTexto,
   estadoDaInstancia,
   listarInstancias,
+  pedirQr,
 } from '@/lib/whatsapp/evolution';
-import { normalizarNumero, paisDoNumero } from '@/lib/whatsapp/disparos';
+import { nomeDeInstancia, normalizarNumero, paisDoNumero } from '@/lib/whatsapp/disparos';
 import { lerPedido, selecionar } from '@/lib/whatsapp/painel-disparos';
 
 /**
@@ -89,6 +92,94 @@ export async function adicionarChip(form: FormData): Promise<void> {
   const webhook = await configurarWebhook(instancia, urlDoWebhook(chip.webhook_token));
   revalidatePath(CAMINHO);
   if (!webhook.ok) voltarComErro(`Chip gravado, mas o webhook não ficou: ${webhook.erro}`);
+}
+
+/**
+ * Um número novo, ligado a partir do painel: cria o chip na base (para ter o
+ * token do webhook), cria a instância na Evolution, aponta-lhe o webhook e
+ * leva ao ecrã do QR. Se a Evolution falhar, o chip sai da base — não fica um
+ * chip fantasma sem instância.
+ */
+export async function novoChip(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const rotulo = texto(form, 'nome').slice(0, 60) || 'Chip';
+  const jaAquecido = texto(form, 'aquecido') === 'sim';
+  const numeroEscrito = texto(form, 'numero');
+  const numero = numeroEscrito
+    ? normalizarNumero(numeroEscrito, texto(form, 'pais') === 'BR' ? 'BR' : 'PT')
+    : null;
+  if (numeroEscrito && !numero) {
+    voltarComErro('Esse número não parece certo. Escreva com o indicativo (+351 ou +55).');
+  }
+
+  const instancia = nomeDeInstancia(rotulo, randomBytes(3).toString('hex'));
+  const db = await createClient();
+  const hoje = new Date();
+  const { data: chip, error } = await db
+    .from('whatsapp_chips')
+    .insert({
+      instancia,
+      nome: rotulo,
+      numero,
+      pais: numero ? paisDoNumero(numero) : texto(form, 'pais') === 'BR' ? 'BR' : 'PT',
+      estado: 'a_ligar',
+      aquecimento_desde: jaAquecido
+        ? new Date(hoje.getTime() - 14 * 86_400_000).toISOString().slice(0, 10)
+        : hoje.toISOString().slice(0, 10),
+    })
+    .select('id, webhook_token')
+    .single();
+  if (error) voltarComErro(`Não foi possível gravar: ${error.message}`);
+
+  const criada = await criarInstancia(instancia, numero);
+  if (!criada.ok) {
+    await db.from('whatsapp_chips').delete().eq('id', chip.id);
+    voltarComErro(`A Evolution não criou o número: ${criada.erro}`);
+  }
+  await configurarWebhook(instancia, urlDoWebhook(chip.webhook_token));
+  revalidatePath(CAMINHO);
+  redirect(`${CAMINHO}/ligar/${chip.id}` as Route);
+}
+
+export type EstadoDaLigacao =
+  | { tipo: 'ligado'; numero: string | null; nome: string | null }
+  | { tipo: 'qr'; qr: string | null; codigo: string | null }
+  | { tipo: 'erro'; erro: string };
+
+/**
+ * Chamado pelo ecrã do QR de poucos em poucos segundos: devolve o QR do
+ * momento, ou — quando o telemóvel o leu — grava o número no chip e diz que
+ * ficou ligado.
+ */
+export async function verificarLigacao(chipId: string): Promise<EstadoDaLigacao> {
+  await exigirAcesso('whatsapp');
+  if (!UUID.test(chipId)) return { tipo: 'erro', erro: 'Chip desconhecido.' };
+  const db = await createClient();
+  const { data: chip } = await db
+    .from('whatsapp_chips')
+    .select('id, instancia, webhook_token')
+    .eq('id', chipId)
+    .maybeSingle();
+  if (!chip) return { tipo: 'erro', erro: 'Este chip já não está no sistema.' };
+
+  const qr = await pedirQr(chip.instancia);
+  if (!qr.ok) return { tipo: 'erro', erro: qr.erro };
+  if (!qr.dados.ligado) return { tipo: 'qr', qr: qr.dados.qr, codigo: qr.dados.codigo };
+
+  const lista = await listarInstancias();
+  const info = lista.ok ? lista.dados.find((i) => i.nome === chip.instancia) : undefined;
+  await db
+    .from('whatsapp_chips')
+    .update({
+      estado: 'ligado',
+      ...(info?.numero ? { numero: info.numero, pais: paisDoNumero(info.numero) } : {}),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', chip.id);
+  // O webhook outra vez: uma instância antiga podia ter outro endereço.
+  await configurarWebhook(chip.instancia, urlDoWebhook(chip.webhook_token));
+  revalidatePath(CAMINHO);
+  return { tipo: 'ligado', numero: info?.numero ?? null, nome: info?.perfil ?? null };
 }
 
 export async function atualizarChip(form: FormData): Promise<void> {

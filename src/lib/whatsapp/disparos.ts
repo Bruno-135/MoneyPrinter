@@ -181,3 +181,23 @@ export function diasParaTerminar(
   if (porDia <= 0) return Infinity;
   return Math.ceil(pessoas / porDia);
 }
+
+/**
+ * O nome da instância na Evolution para um chip novo: o nome que a pessoa deu,
+ * só com letras e números, mais 4 caracteres ao acaso para nunca colidir.
+ * «Chip PT nº 2» → «chip-pt-n-2-k3x9».
+ */
+export function nomeDeInstancia(rotulo: string, sufixo: string): string {
+  const base = rotulo
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+  const limpo = sufixo
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .slice(0, 8);
+  return `${base || 'chip'}-${limpo || '0000'}`;
+}
