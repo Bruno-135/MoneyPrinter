@@ -1026,7 +1026,10 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       se dar por isso. Ao ligar, as conversas cuja última mensagem é da pessoa recebem
       resposta logo. Os botões que mandam ou gravam (`botao-enviar.tsx`, `useFormStatus`)
       ficam desligados enquanto a acção corre: no primeiro teste real, cada clique impaciente
-      mandou mais uma mensagem igual.
+      mandou mais uma mensagem igual. E o robô via essas repetidas no histórico, pedia
+      desculpa e passava ao Bruno: desde a 0048 cada teste põe `contexto_desde` e o robô só
+      lê a conversa a partir dele; as regras fixas mandam ignorar repetidas nossas e responder
+      ele às perguntas sobre o serviço.
 
       **Teste simulado**: conversa de teste no ecrã com a configuração GRAVADA (lead fictício, PT ou
       BR), mostra os sinais. Testado na base (resposta acorda, número desconhecido não,

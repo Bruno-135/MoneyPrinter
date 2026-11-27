@@ -594,10 +594,11 @@ export async function enviarTeste(form: FormData): Promise<void> {
   if (!chip) voltarComErro('Não há nenhum chip ligado e ativo para enviar o teste.', voltar);
   if (chip.numero === numero) voltarComErro('Use outro número: este é o próprio chip.', voltar);
 
+  // Antes do envio: a mensagem de abertura tem de ficar DEPOIS deste instante.
+  const agora = new Date(Date.now() - 1000).toISOString();
   const enviado = await enviarTexto(chip.instancia, numero, mensagem, 1500);
   if (!enviado.ok) voltarComErro(`A Evolution não enviou: ${enviado.erro}`, voltar);
 
-  const agora = new Date().toISOString();
   await db.from('whatsapp_mensagens').insert({
     owner_id: quem.donoId,
     chip_id: chip.id,
@@ -617,6 +618,8 @@ export async function enviarTeste(form: FormData): Promise<void> {
       robo_ativo: true,
       humano_desde: null,
       devolvido_em: agora,
+      // O robô só lê a conversa a partir deste teste: os testes anteriores não contam.
+      contexto_desde: agora,
       responder_em: null,
       respostas_robo: 0,
       quente: false,

@@ -1666,6 +1666,7 @@ export type Database = {
           created_at: string
           updated_at: string
           teste: boolean
+          contexto_desde: string | null
         }
         Insert: {
           id?: string
@@ -1689,6 +1690,7 @@ export type Database = {
           created_at?: string
           updated_at?: string
           teste?: boolean
+          contexto_desde?: string | null
         }
         Update: {
           id?: string
@@ -1712,6 +1714,7 @@ export type Database = {
           created_at?: string
           updated_at?: string
           teste?: boolean
+          contexto_desde?: string | null
         }
         Relationships: []
       }
