@@ -12,7 +12,7 @@ import {
   selecionar,
   MAXIMO_POR_DISPARO,
 } from '@/lib/whatsapp/painel-disparos';
-import { criarDisparo } from '../actions';
+import { criarDisparo, enviarTeste } from '../actions';
 
 /**
  * Um disparo novo, em dois passos: escolher (GET, que mostra quem recebe e
@@ -35,6 +35,7 @@ export default async function NovoDisparoPage({ searchParams }: { searchParams: 
   const pedido = lerPedido(params);
   const ver = params.ver === '1';
   const erro = typeof params.erro === 'string' ? params.erro : null;
+  const testeEnviado = typeof params.teste === 'string' ? params.teste : null;
   const db = await createClient();
   const chips = await lerChips(db);
   const selecao = ver ? await selecionar(db, pedido) : null;
@@ -65,6 +66,12 @@ export default async function NovoDisparoPage({ searchParams }: { searchParams: 
       <Link href="/painel/disparos" className="text-ink2 text-[13px]">
         ← Disparos
       </Link>
+      {testeEnviado && (
+        <p className="rounded-md bg-emerald-500/10 px-3 py-2 text-[13px] text-emerald-800 dark:text-emerald-300">
+          Teste enviado para +{testeEnviado}. Responda desse telemóvel: com o robô ligado, ele
+          responde em cerca de um minuto. Acompanhe em Disparos → Conversas.
+        </p>
+      )}
       {erro && (
         <p className="rounded-md bg-red-500/10 px-3 py-2 text-[13px] text-red-700 dark:text-red-300">
           {erro}
@@ -330,6 +337,37 @@ export default async function NovoDisparoPage({ searchParams }: { searchParams: 
                   </div>
                 ))}
               </div>
+
+              {selecao.destinatarios[0] && (
+                <form
+                  action={enviarTeste}
+                  className="border-line flex flex-wrap items-end gap-2 rounded-lg border border-dashed p-3"
+                >
+                  <input
+                    type="hidden"
+                    name="texto"
+                    value={selecao.destinatarios[0].texto.replaceAll(
+                      '{saudacao}',
+                      saudacao(selecao.destinatarios[0].pais),
+                    )}
+                  />
+                  <input type="hidden" name="pais" value={selecao.destinatarios[0].pais} />
+                  <label className="flex min-w-0 flex-col gap-1 text-[12px]">
+                    <span className="text-ink3">
+                      Antes, ver no meu WhatsApp como chega a 1.ª mensagem
+                    </span>
+                    <input
+                      name="numero"
+                      required
+                      placeholder="O seu número, ex.: +351 912 345 678"
+                      className="border-line h-9 w-64 rounded-md border bg-transparent px-2 text-[13px]"
+                    />
+                  </label>
+                  <button className="border-line rounded-md border px-3 py-2 text-[13px] font-semibold">
+                    Enviar teste
+                  </button>
+                </form>
+              )}
 
               <form action={criarDisparo}>
                 {escondidos.map(([k, v], i) => (

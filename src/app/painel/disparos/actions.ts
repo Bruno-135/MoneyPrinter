@@ -556,3 +556,78 @@ export async function mudarConversa(form: FormData): Promise<void> {
   revalidatePath(`${CAMINHO}/conversas`);
   redirect(`${CAMINHO}/conversas?n=${numero}` as Route);
 }
+
+// ---------- teste real no WhatsApp ----------
+
+/**
+ * Manda uma mensagem de abertura a um número escolhido à mão e abre uma
+ * conversa de TESTE: o robô (se estiver ligado) responde-lhe a sério, mesmo
+ * sem disparo. Não entra em disparo nenhum, não conta para o limite do chip e
+ * não impede disparos futuros para esse número. Repetir recomeça a conversa.
+ */
+export async function enviarTeste(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const quem = await exigirAcesso('whatsapp');
+  const voltar = texto(form, 'voltar') === 'robo' ? `${CAMINHO}/robo` : `${CAMINHO}/nova`;
+  const pais = texto(form, 'pais') === 'BR' ? 'BR' : 'PT';
+  const numero = normalizarNumero(texto(form, 'numero'), pais);
+  const mensagem = texto(form, 'texto').slice(0, 4000);
+  if (!numero) voltarComErro('Escreva o número de teste com o indicativo (+351 ou +55).', voltar);
+  if (!mensagem) voltarComErro('Falta a mensagem.', voltar);
+
+  const db = await createClient();
+  const { data: bloqueado } = await db
+    .from('nao_contactar')
+    .select('id')
+    .eq('telefone', numero)
+    .limit(1)
+    .maybeSingle();
+  if (bloqueado) voltarComErro('Esse número está em «não contactar» (respondeu SAIR).', voltar);
+
+  const { data: chips } = await db
+    .from('whatsapp_chips')
+    .select('id, instancia, numero')
+    .eq('estado', 'ligado')
+    .eq('ativo', true)
+    .order('created_at')
+    .limit(1);
+  const chip = chips?.[0];
+  if (!chip) voltarComErro('Não há nenhum chip ligado e ativo para enviar o teste.', voltar);
+  if (chip.numero === numero) voltarComErro('Use outro número: este é o próprio chip.', voltar);
+
+  const enviado = await enviarTexto(chip.instancia, numero, mensagem, 1500);
+  if (!enviado.ok) voltarComErro(`A Evolution não enviou: ${enviado.erro}`, voltar);
+
+  const agora = new Date().toISOString();
+  await db.from('whatsapp_mensagens').insert({
+    owner_id: quem.donoId,
+    chip_id: chip.id,
+    numero,
+    de_mim: true,
+    texto: mensagem,
+    mensagem_id: enviado.dados.id,
+    origem: 'disparo',
+    lida: true,
+  });
+  await db.from('whatsapp_conversas').upsert(
+    {
+      owner_id: quem.donoId,
+      numero,
+      chip_id: chip.id,
+      teste: true,
+      robo_ativo: true,
+      humano_desde: null,
+      devolvido_em: agora,
+      responder_em: null,
+      respostas_robo: 0,
+      quente: false,
+      seguimento_em: null,
+      seguimento_feito: false,
+      ultima_saida_em: agora,
+      updated_at: agora,
+    },
+    { onConflict: 'owner_id,numero' },
+  );
+  revalidatePath(`${CAMINHO}/conversas`);
+  redirect(`${voltar}?teste=${numero}` as Route);
+}

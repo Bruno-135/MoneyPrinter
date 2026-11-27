@@ -1014,7 +1014,14 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       a conversa. Uma falha da IA que não é da conversa (sem créditos, API em baixo) deixa a
       conversa trancada; a base devolve-a à fila em 5 min.
 
-      **Teste**: conversa de teste no ecrã com a configuração GRAVADA (lead fictício, PT ou
+      **Teste real** (migração 0047): «Enviar teste para o WhatsApp» no ecrã do robô e no
+      «Novo disparo» (a 1.ª mensagem tal como sai). Manda pelo primeiro chip ligado, grava a
+      mensagem com `origem = 'disparo'` e abre uma conversa com `teste = true`, a que o robô
+      responde mesmo sem disparo. Não entra em disparo nenhum, não conta para o limite e não
+      bloqueia o número; repetir recomeça a conversa (zera respostas, seguimento e humano).
+      Recusa números em «não contactar» e o próprio chip.
+
+      **Teste simulado**: conversa de teste no ecrã com a configuração GRAVADA (lead fictício, PT ou
       BR), mostra os sinais. Testado na base (resposta acorda, número desconhecido não,
       eco do disparo não conta como humano, quente avisa, humano cala) e revertido; a IA em
       si só se vê a sério em produção (o sandbox não tem a chave).

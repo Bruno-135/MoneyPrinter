@@ -8,7 +8,7 @@ import {
   OBJETIVO_POR_OMISSAO,
   SOBRE_POR_OMISSAO,
 } from '@/lib/whatsapp/robo-prompt';
-import { guardarRobo } from '../actions';
+import { enviarTeste, guardarRobo } from '../actions';
 import { TesteDoRobo } from './teste';
 
 /**
@@ -28,10 +28,10 @@ const area = 'border-line w-full rounded-md border bg-transparent p-2 text-[13px
 export default async function RoboPage({
   searchParams,
 }: {
-  searchParams: Promise<{ erro?: string; gravado?: string }>;
+  searchParams: Promise<{ erro?: string; gravado?: string; teste?: string }>;
 }) {
   await exigirAcesso('whatsapp');
-  const { erro, gravado } = await searchParams;
+  const { erro, gravado, teste } = await searchParams;
   const db = await createClient();
   const [{ data: robo }, { data: quentes }, contagem] = await Promise.all([
     db.from('whatsapp_robo').select('*').maybeSingle(),
@@ -67,6 +67,12 @@ export default async function RoboPage({
       {erro && (
         <p className="rounded-md bg-red-500/10 px-3 py-2 text-[13px] text-red-700 dark:text-red-300">
           {erro}
+        </p>
+      )}
+      {teste && (
+        <p className="rounded-md bg-emerald-500/10 px-3 py-2 text-[13px] text-emerald-800 dark:text-emerald-300">
+          Teste enviado para +{teste}. Responda desse telemóvel como se fosse um cliente: com o robô
+          ligado, ele responde em cerca de um minuto. Acompanhe em Disparos → Conversas.
         </p>
       )}
       {gravado && (
@@ -233,6 +239,41 @@ export default async function RoboPage({
 
         <div className="flex flex-col gap-4">
           <TesteDoRobo />
+          <form
+            action={enviarTeste}
+            className="flex flex-col gap-2 rounded-xl border-2 border-emerald-600/40 p-4"
+          >
+            <input type="hidden" name="voltar" value="robo" />
+            <h2 className="text-[14px] font-semibold">Teste real no WhatsApp</h2>
+            <p className="text-ink3 text-[12px]">
+              Manda esta mensagem a um número seu (outro telemóvel, ou de alguém que ajude).
+              Responda de lá e o robô responde a sério, mesmo sem disparo. Pode repetir à vontade. O
+              robô tem de estar ligado e gravado, e dentro das horas.
+            </p>
+            <input
+              name="numero"
+              required
+              placeholder="+351 912 345 678"
+              className="border-line h-9 rounded-md border bg-transparent px-2 text-[13px]"
+            />
+            <select
+              name="pais"
+              defaultValue="PT"
+              className="border-line h-9 rounded-md border bg-transparent px-2 text-[13px]"
+            >
+              <option value="PT">Número de Portugal</option>
+              <option value="BR">Número do Brasil</option>
+            </select>
+            <textarea
+              name="texto"
+              rows={4}
+              defaultValue="Olá! Chamo-me Bruno e trabalho com criação de sites. Encontrei o vosso negócio no Google Maps e reparei que ainda não têm site próprio. Querem que prepare um para verem como fica?"
+              className="border-line rounded-md border bg-transparent p-2 text-[13px]"
+            />
+            <button className="bg-brand-600 self-start rounded-md px-4 py-2 text-sm font-semibold text-white">
+              Enviar teste para o WhatsApp
+            </button>
+          </form>
           <section className="border-line flex flex-col gap-2 rounded-xl border p-4">
             <h2 className="text-[14px] font-semibold">
               Para si ({contagem.count ?? 0} conversas com o robô)

@@ -1665,6 +1665,7 @@ export type Database = {
           ultima_saida_em: string | null
           created_at: string
           updated_at: string
+          teste: boolean
         }
         Insert: {
           id?: string
@@ -1687,6 +1688,7 @@ export type Database = {
           ultima_saida_em?: string | null
           created_at?: string
           updated_at?: string
+          teste?: boolean
         }
         Update: {
           id?: string
@@ -1709,6 +1711,7 @@ export type Database = {
           ultima_saida_em?: string | null
           created_at?: string
           updated_at?: string
+          teste?: boolean
         }
         Relationships: []
       }
