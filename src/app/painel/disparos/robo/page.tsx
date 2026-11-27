@@ -57,12 +57,11 @@ export default async function RoboPage({
         ← Disparos
       </Link>
       <p className="text-ink2 max-w-3xl text-[13px] leading-relaxed">
-        Quando alguém responde a um disparo, o robô responde pelo mesmo chip entre 30 segundos e um
-        minuto e meio depois, como uma pessoa. Cala-se sozinho quando você escreve na conversa (no
-        telemóvel ou aqui no painel), quando a pessoa pede para falar consigo, ou quando pede para
-        sair. Lead quente sobe para o topo de «Leads a contactar» e, se puser o seu número abaixo,
-        recebe um aviso no WhatsApp. Se lhe perguntarem, diz que é o assistente virtual da
-        VaiDesign.
+        Quando alguém responde a um disparo, o robô responde pelo mesmo chip uns 15 a 30 segundos
+        depois, como uma pessoa. Cala-se sozinho quando você escreve na conversa (no telemóvel ou
+        aqui no painel), quando a pessoa pede para falar consigo, ou quando pede para sair. Lead
+        quente sobe para o topo de «Leads a contactar» e, se puser o seu número abaixo, recebe um
+        aviso no WhatsApp. Se lhe perguntarem, diz que é o assistente virtual da VaiDesign.
       </p>
 
       {erro && (

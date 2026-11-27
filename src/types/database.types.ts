@@ -2029,6 +2029,10 @@ export type Database = {
       };
     };
     Functions: {
+      whatsapp_acordar: {
+        Args: { p_token: string };
+        Returns: undefined;
+      };
       whatsapp_reclamar_robo: {
         Args: { p_token: string };
         Returns: {

@@ -96,9 +96,9 @@ interface ContextoDoRobo {
   mensagens: MensagemDoHistorico[];
 }
 
-/** «A escrever…» proporcional ao tamanho, entre 2 e 7 segundos. */
+/** «A escrever…» proporcional ao tamanho, entre 1,2 e 4 segundos. */
 function atrasoDoRobo(texto: string): number {
-  return Math.min(7000, 2000 + texto.length * 25);
+  return Math.min(4000, 1200 + texto.length * 12);
 }
 
 /**

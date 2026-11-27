@@ -989,9 +989,10 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       máximo de respostas por conversa, um seguimento. Estado por conversa em
       `whatsapp_conversas`.
 
-      **Como responde**: `whatsapp_receber` marca `responder_em` = agora + 25 s (cada
-      mensagem nova empurra — três seguidas, uma resposta); o motor (o mesmo pg_cron de
-      minuto a minuto) pede até 5 conversas (`whatsapp_reclamar_robo`, com o contexto todo
+      **Como responde**: `whatsapp_receber` marca `responder_em` = agora + 8 s (0049; era 25 s —
+      cada mensagem nova empurra, três seguidas, uma resposta) e o webhook, com `after()`,
+      acorda o motor 9 s depois (`whatsapp_acordar`, guardada pelo token do chip) em vez de
+      esperar pelo pg_cron, que fica como rede de segurança. Resposta em ~15–30 s. O motor pede até 5 conversas (`whatsapp_reclamar_robo`, com o contexto todo
       em JSON: configuração, lead, últimas 30 mensagens), chama a IA (`src/lib/whatsapp/robo.ts`,
       esforço baixo, saída validada por esquema `RespostaDoRobo`: mensagem + lead_quente +
       passar_a_humano + sair + motivo; Opus/Sonnet com o fallback do servidor da Anthropic),
