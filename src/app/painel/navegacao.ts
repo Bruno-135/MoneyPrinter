@@ -99,6 +99,7 @@ const TITULOS: Record<string, [string, string]> = {
   '/painel/disparos': ['Disparos de WhatsApp', 'chips, aquecimento e envios automáticos'],
   '/painel/disparos/nova': ['Novo disparo', 'escolher, ver como fica, começar'],
   '/painel/disparos/conversas': ['Conversas do WhatsApp', 'o que entra e sai nos chips'],
+  '/painel/disparos/robo': ['Robô do WhatsApp', 'a IA que responde às conversas'],
   '/painel/instagram': ['Lista de Instagram', 'leads com Instagram, para mandar pelo Direct'],
   '/painel/emails': ['E-mails dos leads', 'extraídos dos sites, como uma folha'],
   '/painel/clientes': ['Carteira de clientes', 'quem já comprou, e o quê'],

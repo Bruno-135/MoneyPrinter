@@ -982,6 +982,43 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       respostas, grupos, travão) e revertido. NÃO testado ainda contra a Evolution a sério:
       a primeira corrida é em produção, com o chip PT.
 
+- [x] **Robô com IA nas conversas do WhatsApp** — `/painel/disparos/robo`, migração 0046.
+      Configuração por dono (`whatsapp_robo`): ligado, modelo (Opus 5.5 por omissão, Sonnet
+      5.5, Haiku 5.5), a quem responde (só disparos / também leads / todos), o que sabe da
+      empresa, o objetivo, regras do dono, número para avisos, horas (na hora do cliente),
+      máximo de respostas por conversa, um seguimento. Estado por conversa em
+      `whatsapp_conversas`.
+
+      **Como responde**: `whatsapp_receber` marca `responder_em` = agora + 25 s (cada
+      mensagem nova empurra — três seguidas, uma resposta); o motor (o mesmo pg_cron de
+      minuto a minuto) pede até 5 conversas (`whatsapp_reclamar_robo`, com o contexto todo
+      em JSON: configuração, lead, últimas 30 mensagens), chama a IA (`src/lib/whatsapp/robo.ts`,
+      esforço baixo, saída validada por esquema `RespostaDoRobo`: mensagem + lead_quente +
+      passar_a_humano + sair + motivo; Opus/Sonnet com o fallback do servidor da Anthropic),
+      manda pela Evolution com «a escrever…» proporcional, e grava (`whatsapp_robo_resultado`).
+      O prompt de sistema é estável por dono e vai em cache; o contexto do lead vai na 1.ª
+      mensagem. Regras fixas (não se mudam no painel): WhatsApp curto, PT-PT/PT-BR pelo país,
+      nunca inventar preços nem links, e **diz a verdade se lhe perguntarem se é um robô**.
+
+      **Quando se cala**: robô desligado; conversa excluída («Desligar o robô aqui»); **uma
+      pessoa escreveu** — mensagem nossa com `origem` nula (o telemóvel) com mais de 20 s, ou
+      resposta pelo painel (`origem = 'painel'`, marca `humano_desde`); máximo de respostas;
+      SAIR; a IA pediu humano; recusa da IA. Fora de horas espera. Toda a mensagem que o
+      sistema manda grava a `origem` com `on conflict ... do update`, porque o webhook da
+      própria mensagem pode chegar antes. «Devolver ao robô» põe `devolvido_em` e as
+      mensagens do telemóvel anteriores deixam de contar.
+
+      **Lead quente / pedido de humano**: a conversa fica marcada (🔥/🙋 na caixa e no ecrã do
+      robô), o lead sobe ao topo de «Leads a contactar» (`deals.next_action_at = agora`) e,
+      com número para avisos, vai um WhatsApp ao Bruno pelo próprio chip com a ligação para
+      a conversa. Uma falha da IA que não é da conversa (sem créditos, API em baixo) deixa a
+      conversa trancada; a base devolve-a à fila em 5 min.
+
+      **Teste**: conversa de teste no ecrã com a configuração GRAVADA (lead fictício, PT ou
+      BR), mostra os sinais. Testado na base (resposta acorda, número desconhecido não,
+      eco do disparo não conta como humano, quente avisa, humano cala) e revertido; a IA em
+      si só se vê a sério em produção (o sandbox não tem a chave).
+
 ---
 
 ## 9. Nota sobre o repositório

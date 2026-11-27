@@ -269,6 +269,9 @@ export default async function DisparosPage({
       <section className="flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-[17px] font-semibold">Chips</h2>
+          <Link href="/painel/disparos/robo" className="text-brand-600 text-[13px] font-semibold">
+            Robô com IA →
+          </Link>
           <Link
             href="/painel/disparos/conversas"
             className="text-brand-600 text-[13px] font-semibold"

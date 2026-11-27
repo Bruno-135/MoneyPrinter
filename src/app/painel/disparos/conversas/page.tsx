@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { exigirAcesso } from '@/lib/equipa/quem-sou';
 import { haQuantoTempo } from '@/components/quando';
-import { naoContactarNumero, responder } from '../actions';
+import { mudarConversa, naoContactarNumero, responder } from '../actions';
 
 /**
  * A caixa de conversas dos chips: o que entra (respostas aos disparos, e o
@@ -59,6 +59,16 @@ export default async function ConversasPage({
     if (!m.de_mim && !m.lida) c.naoLidas++;
   }
   const conversas = [...porNumero.values()];
+
+  // O estado do robô em cada conversa: quente, uma pessoa assumiu, robô desligado.
+  const { data: estados } = await db
+    .from('whatsapp_conversas')
+    .select('numero, quente, humano_desde, robo_ativo, motivo, respostas_robo')
+    .in(
+      'numero',
+      conversas.slice(0, 300).map((c) => c.numero),
+    );
+  const estadoDe = new Map((estados ?? []).map((e) => [e.numero, e]));
 
   let mensagens: {
     id: string;
@@ -173,6 +183,47 @@ export default async function ConversasPage({
                 </form>
               )}
             </header>
+            {(() => {
+              const e = estadoDe.get(aberta);
+              if (!e) return null;
+              const estado = !e.robo_ativo
+                ? 'Robô desligado nesta conversa'
+                : e.humano_desde
+                  ? 'Você assumiu esta conversa — o robô está calado'
+                  : `Robô a responder (${e.respostas_robo} ${e.respostas_robo === 1 ? 'resposta' : 'respostas'})`;
+              return (
+                <div className="border-line flex flex-wrap items-center gap-2 border-b bg-black/[0.02] px-4 py-2 text-[12px] dark:bg-white/[0.03]">
+                  {e.quente && (
+                    <span className="font-semibold text-orange-700 dark:text-orange-300">
+                      🔥 Lead quente
+                    </span>
+                  )}
+                  <span className="text-ink2">{estado}</span>
+                  {e.motivo && <span className="text-ink3 w-full">{e.motivo}</span>}
+                  <div className="ml-auto flex gap-2">
+                    {e.robo_ativo && !e.humano_desde ? (
+                      <form action={mudarConversa}>
+                        <input type="hidden" name="numero" value={aberta} />
+                        <input type="hidden" name="acao" value="desligar_robo" />
+                        <button className="border-line rounded-md border px-2.5 py-1">
+                          Desligar o robô aqui
+                        </button>
+                      </form>
+                    ) : (
+                      !bloqueado && (
+                        <form action={mudarConversa}>
+                          <input type="hidden" name="numero" value={aberta} />
+                          <input type="hidden" name="acao" value="devolver" />
+                          <button className="border-line rounded-md border px-2.5 py-1">
+                            Devolver ao robô
+                          </button>
+                        </form>
+                      )
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
             {erro && (
               <p className="bg-red-500/10 px-4 py-2 text-[13px] text-red-700 dark:text-red-300">
                 {erro}

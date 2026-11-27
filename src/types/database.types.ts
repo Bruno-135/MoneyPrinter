@@ -20,7 +20,9 @@
  *
  * Pela mesma razão, as colunas `email*` de `businesses` (e da vista) e as tabelas
  * `nao_contactar` e `emails_enviados` (0040), as tabelas `whatsapp_*` e as
- * funções `whatsapp_reclamar`, `whatsapp_resultado` e `whatsapp_receber` (0045), e a tabela `pedidos` e as funções `registar_pedido` e
+ * funções `whatsapp_reclamar`, `whatsapp_resultado` e `whatsapp_receber` (0045), e o
+ * robô — `whatsapp_robo`, `whatsapp_conversas`, `origem`, `whatsapp_reclamar_robo` e
+ * `whatsapp_robo_resultado` (0046), e a tabela `pedidos` e as funções `registar_pedido` e
  * `dono_da_agencia` (0033), as colunas `aviso`, `aviso_em` e `aviso_detalhe` e
  * a função `marcar_aviso` (0035), e a tabela `membros_da_equipa` com a função
  * `quem_sou` (0036), também foram acrescentadas à mão. Regerar tudo para
@@ -1526,6 +1528,7 @@ export type Database = {
           mensagem_id: string | null
           enviada_em: string
           lida: boolean
+          origem: string | null
           created_at: string
         }
         Insert: {
@@ -1541,6 +1544,7 @@ export type Database = {
           mensagem_id?: string | null
           enviada_em?: string
           lida?: boolean
+          origem?: string | null
           created_at?: string
         }
         Update: {
@@ -1556,6 +1560,7 @@ export type Database = {
           mensagem_id?: string | null
           enviada_em?: string
           lida?: boolean
+          origem?: string | null
           created_at?: string
         }
         Relationships: []
@@ -1584,6 +1589,126 @@ export type Database = {
           nome?: string
           pais?: string
           created_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_robo: {
+        Row: {
+          owner_id: string
+          ativo: boolean
+          modelo: string
+          responder_a: string
+          sobre: string
+          objetivo: string
+          regras: string
+          avisar_numero: string | null
+          hora_inicio: number
+          hora_fim: number
+          max_respostas: number
+          seguimento: boolean
+          seguimento_horas: number
+          updated_at: string
+        }
+        Insert: {
+          owner_id?: string
+          ativo?: boolean
+          modelo?: string
+          responder_a?: string
+          sobre?: string
+          objetivo?: string
+          regras?: string
+          avisar_numero?: string | null
+          hora_inicio?: number
+          hora_fim?: number
+          max_respostas?: number
+          seguimento?: boolean
+          seguimento_horas?: number
+          updated_at?: string
+        }
+        Update: {
+          owner_id?: string
+          ativo?: boolean
+          modelo?: string
+          responder_a?: string
+          sobre?: string
+          objetivo?: string
+          regras?: string
+          avisar_numero?: string | null
+          hora_inicio?: number
+          hora_fim?: number
+          max_respostas?: number
+          seguimento?: boolean
+          seguimento_horas?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_conversas: {
+        Row: {
+          id: string
+          owner_id: string
+          numero: string
+          chip_id: string | null
+          business_id: string | null
+          robo_ativo: boolean
+          humano_desde: string | null
+          devolvido_em: string | null
+          responder_em: string | null
+          a_responder_desde: string | null
+          respostas_robo: number
+          quente: boolean
+          quente_em: string | null
+          motivo: string | null
+          seguimento_em: string | null
+          seguimento_feito: boolean
+          ultima_entrada_em: string | null
+          ultima_saida_em: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id: string
+          numero: string
+          chip_id?: string | null
+          business_id?: string | null
+          robo_ativo?: boolean
+          humano_desde?: string | null
+          devolvido_em?: string | null
+          responder_em?: string | null
+          a_responder_desde?: string | null
+          respostas_robo?: number
+          quente?: boolean
+          quente_em?: string | null
+          motivo?: string | null
+          seguimento_em?: string | null
+          seguimento_feito?: boolean
+          ultima_entrada_em?: string | null
+          ultima_saida_em?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          numero?: string
+          chip_id?: string | null
+          business_id?: string | null
+          robo_ativo?: boolean
+          humano_desde?: string | null
+          devolvido_em?: string | null
+          responder_em?: string | null
+          a_responder_desde?: string | null
+          respostas_robo?: number
+          quente?: boolean
+          quente_em?: string | null
+          motivo?: string | null
+          seguimento_em?: string | null
+          seguimento_feito?: boolean
+          ultima_entrada_em?: string | null
+          ultima_saida_em?: string | null
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1898,6 +2023,37 @@ export type Database = {
       };
     };
     Functions: {
+      whatsapp_reclamar_robo: {
+        Args: { p_token: string };
+        Returns: {
+          conversa_id: string;
+          numero: string;
+          instancia: string;
+          pais: string;
+          tipo: string;
+          contexto: Json;
+        }[];
+      };
+      whatsapp_robo_resultado: {
+        Args: {
+          p_token: string;
+          p_conversa: string;
+          p_tipo: string;
+          p_texto?: string | null;
+          p_mensagem_id?: string | null;
+          p_quente?: boolean;
+          p_humano?: boolean;
+          p_sair?: boolean;
+          p_motivo?: string | null;
+        };
+        Returns: {
+          avisar: boolean;
+          avisar_numero: string | null;
+          instancia: string | null;
+          numero: string;
+          nome: string | null;
+        }[];
+      };
       whatsapp_reclamar: {
         Args: { p_token: string };
         Returns: {

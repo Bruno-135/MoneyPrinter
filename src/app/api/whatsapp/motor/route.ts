@@ -2,6 +2,13 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { ehUuid } from '@/lib/emails/uuid';
 import { enviarTexto, verificarNumero } from '@/lib/whatsapp/evolution';
+import { publicEnv } from '@/lib/env';
+import { gerarResposta } from '@/lib/whatsapp/robo';
+import {
+  textoDoAviso,
+  type LeadDoRobo,
+  type MensagemDoHistorico,
+} from '@/lib/whatsapp/robo-prompt';
 
 /**
  * O motor dos disparos e do aquecimento.
@@ -72,9 +79,114 @@ export async function POST(request: NextRequest) {
     }),
   );
 
+  const respondidas = await responderComORobo(db, token);
+
   return NextResponse.json({
     status: 'success',
     enviados: resultados.filter(Boolean).length,
     falhados: resultados.filter((ok) => !ok).length,
+    respondidas,
   });
+}
+
+interface ContextoDoRobo {
+  robo: { modelo: string; sobre: string; objetivo: string; regras: string };
+  lead: LeadDoRobo | null;
+  nome_whatsapp: string | null;
+  mensagens: MensagemDoHistorico[];
+}
+
+/** «A escrever…» proporcional ao tamanho, entre 2 e 7 segundos. */
+function atrasoDoRobo(texto: string): number {
+  return Math.min(7000, 2000 + texto.length * 25);
+}
+
+/**
+ * As conversas a que o robô tem de responder (no máximo 5 por volta, cada
+ * uma uma chamada à IA). Uma falha da IA que não é culpa da conversa (sem
+ * créditos, API em baixo) deixa a conversa trancada: a base devolve-a à fila
+ * ao fim de 5 minutos e tenta-se outra vez.
+ */
+async function responderComORobo(
+  db: Awaited<ReturnType<typeof createClient>>,
+  token: string,
+): Promise<number> {
+  const { data, error } = await db.rpc('whatsapp_reclamar_robo', { p_token: token });
+  if (error) {
+    console.error('robô do WhatsApp: a base não entregou conversas', error.message);
+    return 0;
+  }
+
+  const feitas = await Promise.all(
+    (data ?? []).map(async (c) => {
+      const ctx = c.contexto as unknown as ContextoDoRobo;
+      const gerada = await gerarResposta({
+        modelo: ctx.robo.modelo,
+        configuracao: ctx.robo,
+        pais: c.pais,
+        lead: ctx.lead,
+        nomeWhatsapp: ctx.nome_whatsapp,
+        historico: ctx.mensagens ?? [],
+        seguimento: c.tipo === 'seguimento',
+      });
+
+      if (!gerada.ok) {
+        console.error('robô do WhatsApp:', gerada.erro);
+        if (!gerada.passarAHumano) return false;
+        await db.rpc('whatsapp_robo_resultado', {
+          p_token: token,
+          p_conversa: c.conversa_id,
+          p_tipo: c.tipo,
+          p_humano: true,
+          p_motivo: `O robô não conseguiu responder: ${gerada.erro}`,
+        });
+        return false;
+      }
+
+      const r = gerada.resposta;
+      let mensagemId: string | null = null;
+      let enviado = false;
+      if (r.mensagem) {
+        const envio = await enviarTexto(
+          c.instancia,
+          c.numero,
+          r.mensagem,
+          atrasoDoRobo(r.mensagem),
+        );
+        enviado = envio.ok;
+        if (envio.ok) mensagemId = envio.dados.id;
+        else console.error('robô do WhatsApp: a Evolution não enviou', envio.erro);
+      }
+      if (r.mensagem && !enviado) return false; // fica trancada; volta à fila em 5 min
+
+      const { data: aviso } = await db.rpc('whatsapp_robo_resultado', {
+        p_token: token,
+        p_conversa: c.conversa_id,
+        p_tipo: c.tipo,
+        p_texto: r.mensagem || null,
+        p_mensagem_id: mensagemId,
+        p_quente: r.lead_quente,
+        p_humano: r.passar_a_humano,
+        p_sair: r.sair,
+        p_motivo: r.motivo,
+      });
+
+      const a = aviso?.[0];
+      if (a?.avisar && a.avisar_numero && a.instancia) {
+        await enviarTexto(
+          a.instancia,
+          a.avisar_numero,
+          textoDoAviso({
+            nome: a.nome,
+            numero: a.numero,
+            motivo: r.motivo,
+            humano: r.passar_a_humano,
+            site: publicEnv.NEXT_PUBLIC_SITE_URL,
+          }),
+        );
+      }
+      return enviado;
+    }),
+  );
+  return feitas.filter(Boolean).length;
 }

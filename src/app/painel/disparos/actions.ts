@@ -18,6 +18,8 @@ import {
 } from '@/lib/whatsapp/evolution';
 import { nomeDeInstancia, normalizarNumero, paisDoNumero } from '@/lib/whatsapp/disparos';
 import { lerPedido, selecionar } from '@/lib/whatsapp/painel-disparos';
+import { gerarResposta } from '@/lib/whatsapp/robo';
+import { ehModeloDoRobo, type RespostaDoRobo } from '@/lib/whatsapp/robo-prompt';
 
 /**
  * As acções do ecrã de disparos. Todas com a sessão de quem carrega (a RLS
@@ -414,7 +416,14 @@ export async function responder(form: FormData): Promise<void> {
     texto: mensagem,
     mensagem_id: enviado.dados.id,
     lida: true,
+    origem: 'painel',
   });
+  // Quem responde à mão assume a conversa: o robô cala-se até «Devolver ao robô».
+  await db
+    .from('whatsapp_conversas')
+    .update({ humano_desde: new Date().toISOString(), responder_em: null, seguimento_em: null })
+    .eq('numero', numero)
+    .is('humano_desde', null);
   revalidatePath(`${CAMINHO}/conversas`);
   redirect(caminho as Route);
 }
@@ -446,6 +455,104 @@ export async function naoContactarNumero(form: FormData): Promise<void> {
     .update({ estado: 'cancelado', erro: 'marcado como não contactar' })
     .eq('numero', numero)
     .eq('estado', 'pendente');
+  revalidatePath(`${CAMINHO}/conversas`);
+  redirect(`${CAMINHO}/conversas?n=${numero}` as Route);
+}
+
+// ---------- robô ----------
+
+export async function guardarRobo(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const quem = await exigirAcesso('whatsapp');
+  const inteiro = (k: string, min: number, max: number, omissao: number) => {
+    const n = Number.parseInt(texto(form, k), 10);
+    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : omissao;
+  };
+  const avisarEscrito = texto(form, 'avisar_numero');
+  const avisar = avisarEscrito ? normalizarNumero(avisarEscrito, 'PT') : null;
+  if (avisarEscrito && !avisar) {
+    voltarComErro('O número para avisos não parece certo.', `${CAMINHO}/robo`);
+  }
+  const modelo = texto(form, 'modelo');
+  const responderA = texto(form, 'responder_a');
+  const horaInicio = inteiro('hora_inicio', 0, 23, 8);
+  const db = await createClient();
+  const { error } = await db.from('whatsapp_robo').upsert({
+    owner_id: quem.donoId,
+    ativo: texto(form, 'ativo') === 'sim',
+    modelo: ehModeloDoRobo(modelo) ? modelo : 'claude-opus-5-5',
+    responder_a: ['disparos', 'leads', 'todos'].includes(responderA) ? responderA : 'disparos',
+    sobre: texto(form, 'sobre').slice(0, 8000),
+    objetivo: texto(form, 'objetivo').slice(0, 2000),
+    regras: texto(form, 'regras').slice(0, 4000),
+    avisar_numero: avisar,
+    hora_inicio: horaInicio,
+    hora_fim: Math.max(horaInicio + 1, inteiro('hora_fim', 1, 24, 22)),
+    max_respostas: inteiro('max_respostas', 1, 50, 12),
+    seguimento: texto(form, 'seguimento') === 'sim',
+    seguimento_horas: inteiro('seguimento_horas', 2, 168, 24),
+    updated_at: new Date().toISOString(),
+  });
+  if (error) voltarComErro(`Não foi possível gravar: ${error.message}`, `${CAMINHO}/robo`);
+  revalidatePath(`${CAMINHO}/robo`);
+  redirect(`${CAMINHO}/robo?gravado=1` as Route);
+}
+
+export type RespostaDoTeste = { ok: true; resposta: RespostaDoRobo } | { ok: false; erro: string };
+
+/**
+ * O teste do robô no painel: a mesma IA, a mesma configuração GRAVADA, sem
+ * WhatsApp. `historico` é a conversa de teste (o que escreveu como se fosse o
+ * cliente, e o que o robô respondeu).
+ */
+export async function testarRobo(
+  historico: { de_mim: boolean; texto: string }[],
+  pais: 'PT' | 'BR',
+): Promise<RespostaDoTeste> {
+  await exigirAcesso('whatsapp');
+  const db = await createClient();
+  const { data: robo } = await db.from('whatsapp_robo').select('*').maybeSingle();
+  const limpo = historico
+    .slice(-30)
+    .map((m) => ({ de_mim: Boolean(m.de_mim), texto: String(m.texto ?? '').slice(0, 2000) }));
+  const r = await gerarResposta({
+    modelo: robo?.modelo ?? 'claude-opus-5-5',
+    configuracao: {
+      sobre: robo?.sobre ?? '',
+      objetivo: robo?.objetivo ?? '',
+      regras: robo?.regras ?? '',
+    },
+    pais,
+    lead: {
+      nome: 'Padaria de Teste',
+      ramo: 'Padaria',
+      cidade: pais === 'BR' ? 'São Paulo' : 'Lisboa',
+      site: 'none',
+    },
+    historico: limpo,
+    seguimento: false,
+  });
+  return r.ok ? { ok: true, resposta: r.resposta } : { ok: false, erro: r.erro };
+}
+
+export async function mudarConversa(form: FormData): Promise<void> {
+  await exigirAcesso('whatsapp');
+  const numero = texto(form, 'numero');
+  const acao = texto(form, 'acao');
+  if (!/^[1-9][0-9]{7,14}$/.test(numero)) return;
+  const db = await createClient();
+  const agora = new Date().toISOString();
+  if (acao === 'desligar_robo') {
+    await db
+      .from('whatsapp_conversas')
+      .update({ robo_ativo: false, responder_em: null, seguimento_em: null, updated_at: agora })
+      .eq('numero', numero);
+  } else if (acao === 'devolver') {
+    await db
+      .from('whatsapp_conversas')
+      .update({ robo_ativo: true, humano_desde: null, devolvido_em: agora, updated_at: agora })
+      .eq('numero', numero);
+  }
   revalidatePath(`${CAMINHO}/conversas`);
   redirect(`${CAMINHO}/conversas?n=${numero}` as Route);
 }
