@@ -2055,6 +2055,7 @@ export type Database = {
           p_humano?: boolean;
           p_sair?: boolean;
           p_motivo?: string | null;
+          p_partes?: Json | null;
         };
         Returns: {
           avisar: boolean;

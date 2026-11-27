@@ -96,9 +96,13 @@ interface ContextoDoRobo {
   mensagens: MensagemDoHistorico[];
 }
 
-/** «A escrever…» proporcional ao tamanho, entre 1,2 e 4 segundos. */
-function atrasoDoRobo(texto: string): number {
-  return Math.min(4000, 1200 + texto.length * 12);
+/**
+ * «A escrever…» proporcional ao tamanho: o primeiro balão entre 1,2 e 4 s, os
+ * seguintes um pouco menos (já se estava a escrever).
+ */
+function atrasoDoRobo(texto: string, ordem: number): number {
+  const base = ordem === 0 ? 1200 : 800;
+  return Math.min(ordem === 0 ? 4000 : 3000, base + texto.length * 15);
 }
 
 /**
@@ -144,27 +148,26 @@ async function responderComORobo(
       }
 
       const r = gerada.resposta;
-      let mensagemId: string | null = null;
-      let enviado = false;
-      if (r.mensagem) {
-        const envio = await enviarTexto(
-          c.instancia,
-          c.numero,
-          r.mensagem,
-          atrasoDoRobo(r.mensagem),
-        );
-        enviado = envio.ok;
-        if (envio.ok) mensagemId = envio.dados.id;
-        else console.error('robô do WhatsApp: a Evolution não enviou', envio.erro);
+      // Um balão de cada vez, com «a escrever…» antes de cada um, como uma pessoa.
+      const partes: { texto: string; id: string | null }[] = [];
+      for (const [n, texto] of r.mensagens.entries()) {
+        const envio = await enviarTexto(c.instancia, c.numero, texto, atrasoDoRobo(texto, n));
+        if (!envio.ok) {
+          console.error('robô do WhatsApp: a Evolution não enviou', envio.erro);
+          break;
+        }
+        partes.push({ texto, id: envio.dados.id });
       }
-      if (r.mensagem && !enviado) return false; // fica trancada; volta à fila em 5 min
+      // Nada saiu: fica trancada e a base devolve-a à fila em 5 min.
+      if (r.mensagens.length > 0 && partes.length === 0) return false;
+      const enviado = partes.length > 0;
 
       const { data: aviso } = await db.rpc('whatsapp_robo_resultado', {
         p_token: token,
         p_conversa: c.conversa_id,
         p_tipo: c.tipo,
-        p_texto: r.mensagem || null,
-        p_mensagem_id: mensagemId,
+        p_texto: enviado ? partes.map((p) => p.texto).join('\n\n') : null,
+        p_partes: enviado ? partes : null,
         p_quente: r.lead_quente,
         p_humano: r.passar_a_humano,
         p_sair: r.sair,

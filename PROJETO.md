@@ -994,7 +994,9 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       acorda o motor 9 s depois (`whatsapp_acordar`, guardada pelo token do chip) em vez de
       esperar pelo pg_cron, que fica como rede de segurança. Resposta em ~15–30 s. O motor pede até 5 conversas (`whatsapp_reclamar_robo`, com o contexto todo
       em JSON: configuração, lead, últimas 30 mensagens), chama a IA (`src/lib/whatsapp/robo.ts`,
-      esforço baixo, saída validada por esquema `RespostaDoRobo`: mensagem + lead_quente +
+      esforço baixo, saída validada por esquema `RespostaDoRobo`: 1 a 3 balões curtos (0050 —
+      um parágrafo comprido denunciava o robô; cada balão vai com o seu «a escrever…» e fica
+      como mensagem própria) + lead_quente +
       passar_a_humano + sair + motivo; Opus/Sonnet com o fallback do servidor da Anthropic),
       manda pela Evolution com «a escrever…» proporcional, e grava (`whatsapp_robo_resultado`).
       O prompt de sistema é estável por dono e vai em cache; o contexto do lead vai na 1.ª

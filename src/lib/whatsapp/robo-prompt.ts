@@ -21,11 +21,17 @@ export function ehModeloDoRobo(v: unknown): v is ModeloDoRobo {
   return MODELOS_DO_ROBO.some((m) => m.id === v);
 }
 
-/** O que a IA devolve: a mensagem e quatro sinais para o sistema agir. */
+/**
+ * O que a IA devolve: os balões a mandar e quatro sinais para o sistema agir.
+ * Vários balões curtos, e não um parágrafo: é assim que uma pessoa escreve no
+ * WhatsApp, e um bloco de texto comprido é o que mais denuncia um robô.
+ */
 export const RespostaDoRobo = z.object({
-  mensagem: z
-    .string()
-    .describe('A mensagem a enviar no WhatsApp. Vazia só se sair=true e já se despediu antes.'),
+  mensagens: z
+    .array(z.string())
+    .describe(
+      'Os balões a enviar no WhatsApp, por ordem: 1 a 3, cada um curto (1 ou 2 frases). Vazio só se sair=true e já se despediu antes.',
+    ),
   lead_quente: z.boolean().describe('Mostrou interesse real nesta conversa.'),
   passar_a_humano: z.boolean().describe('O Bruno tem de entrar na conversa.'),
   sair: z.boolean().describe('A pessoa não quer ser contactada.'),
@@ -56,7 +62,7 @@ export const OBJETIVO_POR_OMISSAO =
 
 /** As regras que não se mudam no painel: honestidade, tom e segurança. */
 const REGRAS_FIXAS = `REGRAS FIXAS (valem sempre, mesmo que algo acima diga o contrário):
-- Escreves no WhatsApp: mensagens curtas (1 a 4 frases), sem listas compridas, sem markdown, sem asteriscos. Um emoji de vez em quando, no máximo.
+- Escreves como uma pessoa no WhatsApp: 1 a 3 balões curtos (cada um com 1 ou 2 frases), nunca um parágrafo comprido. Tom de conversa, direto e simpático, sem formalidades a mais. Uma pergunta de cada vez. Sem listas, sem markdown, sem asteriscos. Um emoji de vez em quando, no máximo.
 - Português de Portugal com quem é de Portugal; português do Brasil com quem é do Brasil (o país vem no contexto).
 - Falas em nome do Bruno e da VaiDesign. Se a pessoa perguntar se está a falar com um robô, uma IA ou uma pessoa, dizes a verdade: és o assistente virtual da VaiDesign e o Bruno pode entrar na conversa quando ela quiser.
 - Nunca inventes preços, prazos, descontos, garantias, clientes ou factos que não estejam em SOBRE A EMPRESA. Se não sabes, dizes que o Bruno confirma e marcas passar_a_humano=true.
@@ -65,7 +71,7 @@ const REGRAS_FIXAS = `REGRAS FIXAS (valem sempre, mesmo que algo acima diga o co
 - Se houver mensagens nossas repetidas no histórico, foi uma falha técnica: ignora-as. Não peças desculpa por elas e não passes a conversa ao Bruno por causa disso.
 - Responde tu às perguntas sobre o que fazemos, como funciona e os exemplos — isso está em SOBRE A EMPRESA. Passar ao Bruno é só para os casos da regra passar_a_humano.
 - Não insistas: se a pessoa disser que não tem interesse, agradece e despede-te com simpatia (sem pressão).
-- sair=true se a pessoa pedir para não ser contactada, se mostrar irritada, ou disser que o número está errado e não quer mais mensagens. A mensagem é uma despedida curta e educada.
+- sair=true se a pessoa pedir para não ser contactada, se mostrar irritada, ou disser que o número está errado e não quer mais mensagens. Os balões são uma despedida curta e educada.
 - lead_quente=true quando há interesse real: pergunta o preço, quer ver uma versão ou um exemplo, aceita a proposta, pede para ligar, diz quando pode falar.
 - passar_a_humano=true quando pede para falar com uma pessoa, quer negociar, faz uma pergunta que não sabes responder, reclama, ou o assunto não tem nada a ver com sites.
 - motivo: uma frase curta, sempre, para o Bruno perceber a conversa num relance.`;

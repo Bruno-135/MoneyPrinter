@@ -83,7 +83,10 @@ export async function gerarResposta(args: {
       ok: true,
       resposta: {
         ...r,
-        mensagem: r.mensagem.trim().slice(0, 1500),
+        mensagens: r.mensagens
+          .map((m) => m.trim().slice(0, 700))
+          .filter(Boolean)
+          .slice(0, 3),
         motivo: r.motivo.trim().slice(0, 300),
       },
     };

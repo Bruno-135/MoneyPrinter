@@ -63,13 +63,15 @@ export function TesteDoRobo() {
       ]
         .filter(Boolean)
         .join(' · ');
+      const baloes = s.mensagens.length > 0 ? s.mensagens : ['(sem mensagem)'];
+      const notas = [sinais, s.motivo].filter(Boolean).join(' — ');
       setLinhas((atual) => [
         ...atual,
-        {
+        ...baloes.map((texto, i) => ({
           de_mim: true,
-          texto: s.mensagem || '(sem mensagem)',
-          sinais: [sinais, s.motivo].filter(Boolean).join(' — '),
-        },
+          texto,
+          sinais: i === baloes.length - 1 ? notas : undefined,
+        })),
       ]);
     });
   }
