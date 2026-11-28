@@ -1055,6 +1055,15 @@ gerar → pré-visualizar → PDF → mandar ao dono → publicar → editar.
       etapa e leva ao cartão. As conversas de teste (`teste = true`) aparecem nos dois sítios com o
       selo «TESTE», para não se confundirem com clientes.
 
+### Pedido pelo dono, para depois (WhatsApp)
+
+- [ ] Afinar os textos e o tom das conversas do robô, e mudanças/acréscimos na automação.
+- [ ] Modelos de site com fotos ilustrativas para mostrar no WhatsApp; se a pessoa quiser,
+      o sistema monta o site com os dados dela do Google Maps e manda o link para ver.
+- [ ] Mandar a proposta pelo WhatsApp.
+- [ ] Treinar a IA para conduzir um funil de vendas completo na conversa.
+- [ ] Fase 3: Instagram oficial (Direct, comentários, stories, anúncios → WhatsApp do robô).
+
 ---
 
 ## 9. Nota sobre o repositório
